@@ -1,5 +1,6 @@
 package com.SaasRRHH.main.model;
 
+import com.SaasRRHH.main.entity.Empleado;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -26,7 +27,7 @@ import lombok.AllArgsConstructor;
                 @Index(name = "idx_fecha", columnList = "fecha")
         }
 )
-public class EncuestaBienestar {
+public class Encuestabienestar {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

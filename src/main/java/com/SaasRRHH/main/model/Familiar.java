@@ -1,5 +1,6 @@
 package com.SaasRRHH.main.model;
 
+import com.SaasRRHH.main.entity.Empleado;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;

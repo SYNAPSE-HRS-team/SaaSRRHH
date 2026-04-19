@@ -1,5 +1,7 @@
 package com.SaasRRHH.main.model;
 
+import com.SaasRRHH.main.entity.AreaTrabajo;
+import com.SaasRRHH.main.entity.Empleado;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
