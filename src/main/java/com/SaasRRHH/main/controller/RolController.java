@@ -1,36 +1,37 @@
 package com.SaasRRHH.main.controller;
-import com.SaasRRHH.main.entity.Usuario;
-import com.SaasRRHH.main.services.UsuarioService;
+
+import com.SaasRRHH.main.entity.Rol; 
+import com.SaasRRHH.main.services.RolService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
-public class UsuarioController {
+@RequestMapping("/api/roles")
+public class RolController {
 
-    private final UsuarioService service; 
+    private final RolService service;
 
-    public UsuarioController(UsuarioService service) {
+    public RolController(RolService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<Usuario> listar() {
+    public List<Rol> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtener(@PathVariable Long id) {
+    public ResponseEntity<Rol> obtener(@PathVariable Long id) {
         return service.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Usuario crear(@RequestBody Usuario usuario) {
-        return service.guardar(usuario);
+    public Rol crear(@RequestBody Rol rol) {
+        return service.guardar(rol);
     }
 
     @DeleteMapping("/{id}")
@@ -38,9 +39,9 @@ public class UsuarioController {
         service.eliminar(id);
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Usuario> buscarPorEmail(@PathVariable String email) {
-        return service.buscarPorEmail(email)
+    @GetMapping("/buscar")
+    public ResponseEntity<Rol> buscarPorNombre(@RequestParam String nombre) {
+        return service.buscarPorNombre(nombre)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
