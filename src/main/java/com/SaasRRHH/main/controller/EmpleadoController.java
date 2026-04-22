@@ -17,13 +17,13 @@ public class EmpleadoController {
         this.service = service;
     }
 
-    // 📌 Listar todos los empleados
+   
     @GetMapping
     public List<Empleado> listar() {
         return service.listar();
     }
 
-    // 📌 Buscar por ID
+   
     @GetMapping("/{id}")
     public ResponseEntity<Empleado> obtener(@PathVariable Long id) {
         return service.buscarPorId(id)
@@ -31,13 +31,13 @@ public class EmpleadoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // 📌 Crear empleado
+    
     @PostMapping
     public Empleado crear(@RequestBody Empleado empleado) {
         return service.guardar(empleado);
     }
 
-    // 📌 Eliminar empleado
+    
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
