@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,22 +12,23 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", length = 150, nullable = false, unique = true)
+    @Column(length = 150, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", length = 255, nullable = false)
+    @Column(length = 255, nullable = false)
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
 
-    @Column(name = "activo")
+    @Column(nullable = false)
     private Boolean activo = true;
 
     @Column(name = "fecha_creacion")
@@ -35,4 +36,9 @@ public class Usuario {
 
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
+    
+    // Helper methods
+    public void setActivo(Boolean activo) {
+        this.activo = activo != null ? activo : true;
+    }
 }
