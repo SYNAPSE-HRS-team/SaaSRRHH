@@ -1,8 +1,8 @@
-package com.SaasRRHH.main.model;
-
+package com.SaasRRHH.main.model; 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
+
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 import lombok.Getter;

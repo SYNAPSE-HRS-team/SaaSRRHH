@@ -1,9 +1,6 @@
 package com.SaasRRHH.main.model;
-
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-
 import java.time.LocalDate;
 
 import lombok.Getter;
@@ -26,7 +23,7 @@ import lombok.AllArgsConstructor;
                 @Index(name = "idx_fecha", columnList = "fecha")
         }
 )
-public class EncuestaBienestar {
+public class Encuestabienestar {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

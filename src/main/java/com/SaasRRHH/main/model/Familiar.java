@@ -1,12 +1,13 @@
-package com.SaasRRHH.main.model;
-
+package com.SaasRRHH.main.model; 
 import jakarta.persistence.*;
+
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
