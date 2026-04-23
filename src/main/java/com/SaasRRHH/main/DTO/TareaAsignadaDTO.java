@@ -1,12 +1,13 @@
-package com.SaasRRHH.main.model;
+package com.SaasRRHH.main.DTO; 
 
-import com.SaasRRHH.main.model.AreaTrabajo;
-import com.SaasRRHH.main.model.Empleado;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.SaasRRHH.main.model.AreaTrabajo;
+import com.SaasRRHH.main.model.Empleado;
 
 import lombok.Getter;
 import lombok.Setter;

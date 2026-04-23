@@ -1,9 +1,8 @@
-package com.SaasRRHH.main.model;
-
+package com.SaasRRHH.main.DTO; 
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+
 
 /**
  * DTO for TipoDocumento - Non-persistent model

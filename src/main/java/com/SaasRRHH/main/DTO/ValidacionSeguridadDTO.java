@@ -1,5 +1,4 @@
-package com.SaasRRHH.main.model;
-
+package com.SaasRRHH.main.DTO; 
 import com.SaasRRHH.main.model.RegistroAsistencia;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +22,7 @@ public class ValidacionSeguridadDTO {
     @NotNull(message = "La asistencia es obligatoria")
     private RegistroAsistencia asistencia;
 
-    private com.SaasRRHH.main.model.DispositivoAutorizado dispositivo;
+    private com.SaasRRHH.main.DTO.DispositivoAutorizado dispositivo;
 
     @Size(max = 255, message = "El TOTP hash no puede superar 255 caracteres")
     private String totpHash;

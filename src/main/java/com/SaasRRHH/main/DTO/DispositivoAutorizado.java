@@ -1,13 +1,15 @@
-package com.SaasRRHH.main.model;
-
-import com.SaasRRHH.main.model.Usuario;
+package com.SaasRRHH.main.DTO;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+
 import java.time.LocalDateTime;
+
+import com.SaasRRHH.main.model.Usuario;
 
 /**
  * DTO for DispositivoAutorizado - Non-persistent model

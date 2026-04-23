@@ -1,9 +1,9 @@
-package com.SaasRRHH.main.model;
-
-import com.SaasRRHH.main.model.Empleado;
+package com.SaasRRHH.main.DTO;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.SaasRRHH.main.model.Empleado;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class BoletaPago {
     private Empleado empleado;
 
     @NotNull(message = "La planilla es obligatoria")
-    private com.SaasRRHH.main.model.Planilla planilla;  // Reference model DTO
+    private com.SaasRRHH.main.DTO.Planilla planilla;  // Reference model DTO
 
     @NotNull(message = "El sueldo base es obligatorio")
     @DecimalMin(value = "0.00", message = "El sueldo base no puede ser negativo")
