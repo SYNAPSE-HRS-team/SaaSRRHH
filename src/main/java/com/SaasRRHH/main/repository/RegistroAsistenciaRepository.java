@@ -1,7 +1,6 @@
 package com.SaasRRHH.main.repository;
 
 import com.SaasRRHH.main.model.RegistroAsistencia;
-import com.SaasRRHH.main.model.Empleado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

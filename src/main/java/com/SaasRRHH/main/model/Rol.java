@@ -17,7 +17,7 @@ public class Rol {
     private Long idRol;
     
     @Column(name = "nombre_rol", length = 30, nullable = false, unique = true)
-    private String nombreRol; // ADMIN, SUPERVISOR, TRABAJADOR
+    private String nombreRol; 
     
     @Column(name = "descripcion", length = 250)
     private String descripcion;
