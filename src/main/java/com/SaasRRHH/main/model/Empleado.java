@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "empleados")
@@ -34,7 +36,7 @@ public class Empleado {
     private String dni;
 
     @Column(name = "foto_perfil_url", length = 500)
-    private String fotoPerfllUrl;
+    private String fotoPerfilUrl;
 
     @Column(name = "sueldo_base", precision = 10, scale = 2)
     private BigDecimal sueldoBase;
@@ -56,4 +58,22 @@ public class Empleado {
 
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    // ==========================
+    // RELACION CON METRICAS BURNOUT
+    // ==========================
+
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MetricaBurnout> metricasBurnout = new ArrayList<>();
+
+    // Métodos de conveniencia (muy recomendables)
+    public void agregarMetricaBurnout(MetricaBurnout metrica) {
+        metricasBurnout.add(metrica);
+        metrica.setEmpleado(this);
+    }
+
+    public void removerMetricaBurnout(MetricaBurnout metrica) {
+        metricasBurnout.remove(metrica);
+        metrica.setEmpleado(null);
+    }
 }
