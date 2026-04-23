@@ -1,9 +1,8 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.entity.RegistroAsistencia;
+import com.SaasRRHH.main.model.RegistroAsistencia;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-
 
 import com.SaasRRHH.main.services.RegistroAsistenciaService;
 import java.util.List;

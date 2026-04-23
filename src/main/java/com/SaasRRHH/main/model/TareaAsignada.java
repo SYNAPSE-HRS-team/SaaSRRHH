@@ -1,58 +1,54 @@
 package com.SaasRRHH.main.model;
 
-import com.SaasRRHH.main.entity.AreaTrabajo;
-import com.SaasRRHH.main.entity.Empleado;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-/**
- * DTO for TareaAsignada - Non-persistent model for API transfer
- */
-@Getter
-@Setter
+@Entity
+@Table(name = "tareas_asignadas")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TareaAsignada {
 
-    /** Funcion enum: CULTIVADOR, ROCIADOR, ARADOR, RECOLECTOR, LIMPIADOR */
-    public enum Funcion {
-        CULTIVADOR, ROCIADOR, ARADOR, RECOLECTOR, LIMPIADOR
-    }
-
-    /** Estado enum: PENDIENTE, EN_PROGRESO, COMPLETADO, CANCELADO */
-    public enum EstadoTarea {
-        PENDIENTE, EN_PROGRESO, COMPLETADO, CANCELADO
-    }
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "El empleado es obligatorio")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empleado_id", nullable = false)
     private Empleado empleado;
 
-    @NotNull(message = "El supervisor es obligatorio")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supervisor_id", nullable = false)
     private Empleado supervisor;
 
-    @NotNull(message = "El área es obligatoria")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "area_id", nullable = false)
     private AreaTrabajo area;
 
-    @NotNull(message = "La función es obligatoria")
-    private Funcion funcion;
+    /**
+     * Valores permitidos: CULTIVADOR, ROCIADOR, ARADOR, RECOLECTOR, LIMPIADOR
+     */
+    @Column(name = "funcion", length = 30, nullable = false)
+    private String funcion;
 
-    @NotNull(message = "La fecha es obligatoria")
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    @Size(max = 500, message = "La descripción no puede superar 500 caracteres")
+    @Column(name = "descripcion", length = 500)
     private String descripcion;
 
-    private EstadoTarea estado = EstadoTarea.PENDIENTE;
+    /**
+     * Valores: PENDIENTE, EN_PROGRESO, COMPLETADO, CANCELADO
+     */
+    @Column(name = "estado", length = 20)
+    private String estado = "PENDIENTE";
 
-    private LocalDateTime fechaRegistro;
+    @Column(name = "fecha_registro")
+    private LocalDateTime fechaRegistro = LocalDateTime.now();
 }

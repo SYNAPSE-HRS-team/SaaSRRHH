@@ -1,6 +1,6 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.entity.Empleado;
+import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.services.EmpleadoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,6 +1,6 @@
 package com.SaasRRHH.main.model;
 
-import com.SaasRRHH.main.entity.Usuario;
+import com.SaasRRHH.main.model.Usuario;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

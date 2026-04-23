@@ -1,6 +1,6 @@
 package com.SaasRRHH.main.model;
 
-import com.SaasRRHH.main.entity.Empleado;
+import com.SaasRRHH.main.model.Empleado;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;

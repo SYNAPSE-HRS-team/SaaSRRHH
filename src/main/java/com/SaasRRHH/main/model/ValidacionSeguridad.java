@@ -1,7 +1,6 @@
 package com.SaasRRHH.main.model;
 
-import com.SaasRRHH.main.entity.RegistroAsistencia;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,26 +8,30 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO for ValidacionSeguridad - Non-persistent model
- */
+@Entity
+@Table(name = "validaciones_seguridad")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ValidacionSeguridad {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "La asistencia es obligatoria")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asistencia_id")
     private RegistroAsistencia asistencia;
 
-    private com.SaasRRHH.main.model.DispositivoAutorizado dispositivo;
-
-    @Size(max = 255, message = "El TOTP hash no puede superar 255 caracteres")
+@Column(name = "totp_hash", length = 255)
     private String totpHash;
 
+    @Column(name = "totp_valido")
     private Boolean totpValido = false;
 
+    @Column(name = "fecha_validacion")
     private LocalDateTime fechaValidacion;
+
+    // Remove dispositivo reference since no entity
 }

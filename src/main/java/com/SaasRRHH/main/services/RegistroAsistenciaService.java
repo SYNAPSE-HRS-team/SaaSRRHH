@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.SaasRRHH.main.entity.RegistroAsistencia;
+import com.SaasRRHH.main.model.RegistroAsistencia;
 import com.SaasRRHH.main.repository.RegistroAsistenciaRepository;
 
 @Service

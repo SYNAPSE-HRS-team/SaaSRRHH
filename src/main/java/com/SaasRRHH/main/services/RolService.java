@@ -1,6 +1,6 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.entity.Rol;
+import com.SaasRRHH.main.model.Rol;
 import com.SaasRRHH.main.repository.RolRepository;
 import org.springframework.stereotype.Service;
 
