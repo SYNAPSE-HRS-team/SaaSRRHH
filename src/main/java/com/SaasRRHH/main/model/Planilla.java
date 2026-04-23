@@ -1,4 +1,4 @@
-package com.SaasRRHH.main.DTO; 
+package com.SaasRRHH.main.model; 
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.*;

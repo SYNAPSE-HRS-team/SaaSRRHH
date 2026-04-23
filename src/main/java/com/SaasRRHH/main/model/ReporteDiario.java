@@ -1,13 +1,10 @@
-package com.SaasRRHH.main.DTO; 
+package com.SaasRRHH.main.model; 
 import jakarta.persistence.*;
 
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import com.SaasRRHH.main.model.Empleado;
-import com.SaasRRHH.main.model.TareaAsignada;
 
 import lombok.Getter;
 import lombok.Setter;

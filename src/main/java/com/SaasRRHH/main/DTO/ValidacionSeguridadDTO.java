@@ -1,7 +1,5 @@
 package com.SaasRRHH.main.DTO;
 
-import com.SaasRRHH.main.model.RegistroAsistencia;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
+import com.SaasRRHH.main.model.DispositivoAutorizado;
+import com.SaasRRHH.main.model.RegistroAsistencia;
 
 @Getter
 @Setter

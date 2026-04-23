@@ -1,8 +1,5 @@
-package com.SaasRRHH.main.DTO; 
+package com.SaasRRHH.main.model; 
 import jakarta.persistence.*;
-
-import com.SaasRRHH.main.model.Empleado;
-
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;

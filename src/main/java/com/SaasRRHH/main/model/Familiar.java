@@ -1,4 +1,4 @@
-package com.SaasRRHH.main.DTO; 
+package com.SaasRRHH.main.model; 
 import jakarta.persistence.*;
 
 import jakarta.validation.constraints.*;
@@ -7,8 +7,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
-
-import com.SaasRRHH.main.model.Empleado;
 
 @Getter
 @Setter
