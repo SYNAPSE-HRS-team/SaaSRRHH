@@ -1,5 +1,8 @@
-package com.SaasRRHH.main.DTO; 
+package com.SaasRRHH.main.DTO;
+
 import com.SaasRRHH.main.model.RegistroAsistencia;
+
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,26 +11,36 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO for ValidacionSeguridad - Non-persistent model
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "validaciones_seguridad", indexes = {
+                @Index(name = "idx_asistencia", columnList = "asistencia_id")
+})
 public class ValidacionSeguridadDTO {
 
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @NotNull(message = "La asistencia es obligatoria")
-    private RegistroAsistencia asistencia;
+        @NotNull(message = "La asistencia es obligatoria")
+        @ManyToOne(fetch = FetchType.LAZY, optional = false)
+        @JoinColumn(name = "asistencia_id", nullable = false, foreignKey = @ForeignKey(name = "fk_valid_asist"))
+        private RegistroAsistencia asistencia;
 
-    private com.SaasRRHH.main.DTO.DispositivoAutorizado dispositivo;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "dispositivo_id", foreignKey = @ForeignKey(name = "fk_valid_dispositivo"))
+        private DispositivoAutorizado dispositivo;
 
-    @Size(max = 255, message = "El TOTP hash no puede superar 255 caracteres")
-    private String totpHash;
+        @Size(max = 255, message = "El TOTP hash no puede superar 255 caracteres")
+        @Column(name = "totp_hash", length = 255)
+        private String totpHash;
 
-    private Boolean totpValido = false;
+        @Column(name = "totp_valido", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+        private Boolean totpValido = false;
 
-    private LocalDateTime fechaValidacion;
+        @Column(name = "fecha_validacion", nullable = false, insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        private LocalDateTime fechaValidacion;
 }
