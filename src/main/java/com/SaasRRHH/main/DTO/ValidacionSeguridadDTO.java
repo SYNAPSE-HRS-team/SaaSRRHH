@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "validaciones_seguridad", indexes = {
                 @Index(name = "idx_asistencia", columnList = "asistencia_id")
 })
