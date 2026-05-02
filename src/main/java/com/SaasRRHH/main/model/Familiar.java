@@ -1,7 +1,4 @@
 package com.SaasRRHH.main.model;
-
-import com.SaasRRHH.main.entity.Empleado;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

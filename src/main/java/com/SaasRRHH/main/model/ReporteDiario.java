@@ -1,17 +1,7 @@
-package com.SaasRRHH.main.model;
+package com.SaasRRHH.main.model; 
+import jakarta.persistence.*;
 
-import com.SaasRRHH.main.entity.Empleado;
-import com.SaasRRHH.main.entity.TareaAsignada;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,14 +11,21 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-@Entity
-@Table(name = "reportes_diarios")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(
+        name = "reportes_diarios",
+        indexes = {
+                @Index(name = "idx_tarea", columnList = "tarea_id"),
+                @Index(name = "idx_empleado", columnList = "empleado_id")
+        }
+)
 public class ReporteDiario {
 
+    /** CHECK: estado IN ('PENDIENTE','VALIDADO','OBSERVADO') */
     public enum EstadoReporte {
         PENDIENTE, VALIDADO, OBSERVADO
     }
@@ -37,28 +34,58 @@ public class ReporteDiario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "tarea_id", nullable = false)
+    
     @NotNull(message = "La tarea es obligatoria")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "tarea_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_reporte_tarea")
+    )
     private TareaAsignada tarea;
 
-    @ManyToOne
-    @JoinColumn(name = "empleado_id", nullable = false)
+    
     @NotNull(message = "El empleado es obligatorio")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "empleado_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "fk_reporte_empleado")
+    )
     private Empleado empleado;
 
-    @Size(max = 1000)
+    @Size(max = 1000, message = "La descripción del trabajador no puede superar 1000 caracteres")
+    @Column(name = "descripcion_trabajador", length = 1000)
     private String descripcionTrabajador;
 
-    @Size(max = 1000)
+    @Size(max = 1000, message = "La observación del supervisor no puede superar 1000 caracteres")
+    @Column(name = "observacion_supervisor", length = 1000)
     private String observacionSupervisor;
 
-    @DecimalMin("0.00")
-    @DecimalMax("100.00")
+    @DecimalMin(value = "0.00", message = "El porcentaje no puede ser negativo")
+    @DecimalMax(value = "100.00", message = "El porcentaje no puede superar 100")
+    @Column(
+            name = "porcentaje_avance",
+            precision = 5,
+            scale = 2,
+            columnDefinition = "DECIMAL(5,2) DEFAULT 0.00"
+    )
     private BigDecimal porcentajeAvance = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
+    @Column(
+            name = "estado",
+            length = 20,
+            columnDefinition = "VARCHAR(20) DEFAULT 'PENDIENTE'"
+    )
     private EstadoReporte estado = EstadoReporte.PENDIENTE;
 
+    @Column(
+            name = "fecha_reporte",
+            nullable = false,
+            insertable = false,
+            updatable = false,
+            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP"
+    )
     private LocalDateTime fechaReporte;
 }

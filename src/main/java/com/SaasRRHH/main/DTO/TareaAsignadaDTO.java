@@ -1,4 +1,4 @@
-package com.SaasRRHH.main.entity;
+package com.SaasRRHH.main.DTO;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,12 +8,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.SaasRRHH.main.model.AreaTrabajo;
+import com.SaasRRHH.main.model.Empleado;
+
 @Entity
 @Table(name = "tareas_asignadas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TareaAsignada {
+public class TareaAsignadaDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

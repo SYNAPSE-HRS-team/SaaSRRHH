@@ -1,5 +1,5 @@
 package com.SaasRRHH.main.repository;
-import com.SaasRRHH.main.entity.Rol; 
+import com.SaasRRHH.main.model.Rol; 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;

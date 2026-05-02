@@ -1,4 +1,4 @@
-package com.SaasRRHH.main.entity;
+package com.SaasRRHH.main.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

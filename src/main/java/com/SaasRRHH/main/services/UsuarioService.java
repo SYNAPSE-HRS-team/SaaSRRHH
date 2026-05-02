@@ -1,6 +1,6 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.entity.Usuario;
+import com.SaasRRHH.main.model.Usuario;
 import com.SaasRRHH.main.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
