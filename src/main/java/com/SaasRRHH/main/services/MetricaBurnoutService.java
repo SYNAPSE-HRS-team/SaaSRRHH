@@ -1,50 +1,19 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.MetricaBurnout;
-import com.SaasRRHH.main.repository.MetricaBurnoutRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-@Service
-public class MetricaBurnoutService {
+public interface MetricaBurnoutService {
 
-    private final MetricaBurnoutRepository repository;
+    List<MetricaBurnout> listar();
 
-    public MetricaBurnoutService(MetricaBurnoutRepository repository) {
-        this.repository = repository;
-    }
+    MetricaBurnout guardar(MetricaBurnout metrica);
 
-    public List<MetricaBurnout> listar() {
-        return repository.findAll();
-    }
+    MetricaBurnout obtenerPorId(Long id);
 
-    public MetricaBurnout guardar(MetricaBurnout metrica) {
-        return repository.save(metrica);
-    }
+    List<MetricaBurnout> buscarPorEmpleado(Long empleadoId);
 
-    public MetricaBurnout obtenerPorId(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No encontrado"));
-    }
+    MetricaBurnout actualizar(Long id, MetricaBurnout metrica);
 
-    public List<MetricaBurnout> buscarPorEmpleado(Long empleadoId) {
-        return repository.findByEmpleadoId(empleadoId);
-    }
-
-    public MetricaBurnout actualizar(Long id, MetricaBurnout metrica) {
-
-        MetricaBurnout actual = obtenerPorId(id);
-
-        actual.setNivelRiesgo(metrica.getNivelRiesgo());
-        actual.setHorasExtraAcumuladas(metrica.getHorasExtraAcumuladas());
-        actual.setTendenciaTardanza(metrica.getTendenciaTardanza());
-        actual.setEmpleado(metrica.getEmpleado());
-
-        return repository.save(actual);
-    }
-
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    void eliminar(Long id);
 }

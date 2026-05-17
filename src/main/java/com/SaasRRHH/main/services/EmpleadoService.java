@@ -1,36 +1,17 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.Empleado;
-import com.SaasRRHH.main.repository.EmpleadoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class EmpleadoService {
+public interface EmpleadoService {
 
-    @Autowired
-    private EmpleadoRepository repository;
+    List<Empleado> listar();
 
-    // 📌 Listar todos
-    public List<Empleado> listar() {
-        return repository.findAll();
-    }
+    Optional<Empleado> buscarPorId(Long id);
 
-    // 📌 Buscar por ID
-    public Optional<Empleado> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    Empleado guardar(Empleado empleado);
 
-    // 📌 Guardar empleado
-    public Empleado guardar(Empleado empleado) {
-        return repository.save(empleado);
-    }
-
-    // 📌 Eliminar empleado
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    void eliminar(Long id);
 }
