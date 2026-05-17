@@ -7,7 +7,10 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
+@Service
 public class DispositivoAutorizadoImpl implements DispositivoAutorizadoService {
 
 private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;

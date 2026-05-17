@@ -4,6 +4,8 @@ import com.SaasRRHH.main.model.DispositivoAutorizado;
 import com.SaasRRHH.main.model.DocumentoPrivado;
 import com.SaasRRHH.main.services.DispositivoAutorizadoService;
 import com.SaasRRHH.main.services.impl.DispositivoAutorizadoImpl;
+
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -52,7 +54,7 @@ public class DispositivoAutorizadoController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<void> eliminar (@PathVariable Long id){
+    public ResponseEntity<Void> eliminar (@PathVariable Long id){
         try
         {
              dispositivoAutorizadoService.eliminar(id);
