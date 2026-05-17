@@ -1,40 +1,19 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.ValidacionSeguridad;
-import com.SaasRRHH.main.repository.ValidacionSeguridadRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class ValidacionSeguridadService {
-    private final ValidacionSeguridadRepository repository;
+public interface ValidacionSeguridadService {
 
-    public ValidacionSeguridadService(ValidacionSeguridadRepository repository) {
-        this.repository = repository;
-    }
+    List<ValidacionSeguridad> listar();
 
-    public List<ValidacionSeguridad> listar() {
-        return repository.findAll();
-    }
+    Optional<ValidacionSeguridad> buscarPorId(Long id);
 
-    public Optional<ValidacionSeguridad> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    ValidacionSeguridad guardar(ValidacionSeguridad validacionSeguridad);
 
-    public ValidacionSeguridad guardar(ValidacionSeguridad validacionSeguridad) {
-        return repository.save(validacionSeguridad);
-    }
+    Optional<ValidacionSeguridad> actualizar(Long id, ValidacionSeguridad validacionSeguridad);
 
-    public Optional<ValidacionSeguridad> actualizar(Long id, ValidacionSeguridad validacionSeguridad) {
-        return repository.findById(id).map(existing -> {
-            validacionSeguridad.setId(id);
-            return repository.save(validacionSeguridad);
-        });
-    }
-
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    void eliminar(Long id);
 }
