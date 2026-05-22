@@ -3,6 +3,7 @@ package com.SaasRRHH.main.services;
 import com.SaasRRHH.main.model.Rol;
 import com.SaasRRHH.main.model.Usuario;
 import com.SaasRRHH.main.repository.UsuarioRepository;
+import com.SaasRRHH.main.services.impl.UsuarioServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,7 +23,7 @@ class UsuarioServiceTest {
     private UsuarioRepository usuarioRepository;
 
     @InjectMocks
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
 
     private Rol rol;
 

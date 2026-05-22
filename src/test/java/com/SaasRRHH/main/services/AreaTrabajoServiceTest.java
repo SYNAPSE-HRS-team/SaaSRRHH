@@ -2,6 +2,7 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.AreaTrabajo;
 import com.SaasRRHH.main.repository.AreaTrabajoRepository;
+import com.SaasRRHH.main.services.impl.AreaTrabajoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class AreaTrabajoServiceTest {
     private AreaTrabajoRepository areaRepository;
 
     @InjectMocks
-    private AreaTrabajoService areaService;
+    private AreaTrabajoServiceImpl areaService;
 
     private AreaTrabajo area1;
     private AreaTrabajo area2;
@@ -91,7 +92,7 @@ class AreaTrabajoServiceTest {
 
         assertThatThrownBy(() -> areaService.guardar(areaDuplicada))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Ya existe un área");
+            .hasMessageContaining("Ya existe un area");
         
         verify(areaRepository, never()).save(any());
     }

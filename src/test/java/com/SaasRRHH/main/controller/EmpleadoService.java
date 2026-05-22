@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TareaAsignadaController.class)
-class TareaAsignadaControllerTest {
+class TareaAsignadaControllerWebMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
