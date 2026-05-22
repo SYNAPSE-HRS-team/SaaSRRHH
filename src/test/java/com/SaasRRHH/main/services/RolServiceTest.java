@@ -2,6 +2,7 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.Rol;
 import com.SaasRRHH.main.repository.RolRepository;
+import com.SaasRRHH.main.services.impl.RolServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class RolServiceTest {
     private RolRepository rolRepository;
 
     @InjectMocks
-    private RolService rolService;
+    private RolServiceImpl rolService;
 
     private Rol rolAdmin;
     private Rol rolSupervisor;

@@ -2,9 +2,8 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.model.RegistroAsistencia;
-import com.SaasRRHH.main.model.Rol;
-import com.SaasRRHH.main.model.Usuario;
 import com.SaasRRHH.main.repository.RegistroAsistenciaRepository;
+import com.SaasRRHH.main.services.impl.RegistroAsistenciaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +31,7 @@ class RegistroAsistenciaServiceTest {
     private EmpleadoService empleadoService;
 
     @InjectMocks
-    private RegistroAsistenciaService registroService;
+    private RegistroAsistenciaServiceImpl registroService;
 
     private Empleado empleado;
     private RegistroAsistencia registroEntrada;
@@ -134,7 +132,7 @@ class RegistroAsistenciaServiceTest {
 
         assertThatThrownBy(() -> registroService.guardar(registroInvalido))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Tipo de marcación inválido");
+            .hasMessageContaining("Tipo de marcacion invalido");
         
         verify(registroRepository, never()).save(any());
     }

@@ -2,6 +2,7 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.*;
 import com.SaasRRHH.main.repository.TareaAsignadaRepository;
+import com.SaasRRHH.main.services.impl.TareaAsignadaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +33,7 @@ class TareaAsignadaServiceTest {
     private AreaTrabajoService areaService;
 
     @InjectMocks
-    private TareaAsignadaService tareaService;
+    private TareaAsignadaServiceImpl tareaService;
 
     private Empleado empleado;
     private Empleado supervisor;
