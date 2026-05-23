@@ -34,4 +34,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void eliminar(Long id) {
         repository.deleteById(id);
     }
+
+
+
 }

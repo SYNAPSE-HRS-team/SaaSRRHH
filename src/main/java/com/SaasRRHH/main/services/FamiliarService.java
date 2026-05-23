@@ -1,19 +1,20 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.Familiar;
+import com.SaasRRHH.main.DTO.FamiliarDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FamiliarService {
 
-    List<Familiar> listar();
+    List<FamiliarDTO> listar();
 
-    Optional<Familiar> buscarPorId(Long id);
+    FamiliarDTO buscarPorId(Long id);
 
-    Familiar guardar(Familiar familiar);
+    FamiliarDTO guardar(FamiliarDTO dto);
 
-    Familiar actualizar(Long id, Familiar familiar);
+    FamiliarDTO actualizar(Long id, FamiliarDTO dto);
 
     void eliminar(Long id);
+
+    List<FamiliarDTO> findByEmpleadoId(Long empleadoId);
 }

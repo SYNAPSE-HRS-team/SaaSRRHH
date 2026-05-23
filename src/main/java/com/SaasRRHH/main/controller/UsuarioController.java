@@ -12,7 +12,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 
-    private final UsuarioService service; 
+    private final UsuarioService service;
 
     public UsuarioController(UsuarioService service) {
         this.service = service;
@@ -67,7 +67,7 @@ public class UsuarioController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
     @PatchMapping("/{id}/ultimo-acceso")
     public ResponseEntity<Usuario> registrarUltimoAcceso(@PathVariable Long id) {
         try {
