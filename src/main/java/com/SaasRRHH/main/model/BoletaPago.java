@@ -10,9 +10,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-/**
- * DTO for BoletaPago - Non-persistent model
- */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 import com.SaasRRHH.main.model.DispositivoAutorizado;
 import com.SaasRRHH.main.model.RegistroAsistencia;
-
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor

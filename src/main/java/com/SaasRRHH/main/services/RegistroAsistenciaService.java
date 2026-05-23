@@ -1,36 +1,27 @@
 package com.SaasRRHH.main.services;
 
+import com.SaasRRHH.main.model.RegistroAsistencia;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+public interface RegistroAsistenciaService {
 
-import com.SaasRRHH.main.model.RegistroAsistencia;
-import com.SaasRRHH.main.repository.RegistroAsistenciaRepository;
+    List<RegistroAsistencia> listar();
 
-@Service
-public class RegistroAsistenciaService {
-    @Autowired
-    private RegistroAsistenciaRepository repository;
+    Optional<RegistroAsistencia> buscarPorId(Long id);
 
-    // Listar todos
-    public List<RegistroAsistencia> listar() {
-        return repository.findAll();
-    }
+    RegistroAsistencia guardar(RegistroAsistencia registroAsistencia);
 
-    // Buscar por ID
-    public Optional<RegistroAsistencia> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    RegistroAsistencia registrarEntrada(Long empleadoId, String metodo);
 
-    // Guardar registro de asistencia
-    public RegistroAsistencia guardar(RegistroAsistencia registroAsistencia) {
-        return repository.save(registroAsistencia);
-    }
+    RegistroAsistencia registrarSalida(Long empleadoId, String metodo);
 
-    // Eliminar registro de asistencia
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    void eliminar(Long id);
+
+    List<RegistroAsistencia> buscarPorEmpleado(Long empleadoId);
+
+    List<RegistroAsistencia> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
+
+    List<RegistroAsistencia> buscarPorEstado(String estado);
 }

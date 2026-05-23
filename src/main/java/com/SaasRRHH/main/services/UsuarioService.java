@@ -1,36 +1,22 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.Usuario;
-import com.SaasRRHH.main.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class UsuarioService {
+public interface UsuarioService {
 
-    @Autowired
-    private UsuarioRepository repository;
+    List<Usuario> listar();
 
-    public List<Usuario> listar() {
-        return repository.findAll();
-    }
+    Optional<Usuario> buscarPorId(Long id);
 
-    public Optional<Usuario> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    Usuario guardar(Usuario usuario);
 
-    public Usuario guardar(Usuario usuario) {
-        return repository.save(usuario);
-    }
+    void eliminar(Long id);
 
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    Optional<Usuario> buscarPorEmail(String email);
 
-    public Optional<Usuario> buscarPorEmail(String email) {
-        return repository.findByEmail(email);
-    }
+    Usuario actualizarUltimoAcceso(Long id);
+
+    boolean existsByEmail(String email);
 }

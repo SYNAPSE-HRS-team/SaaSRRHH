@@ -1,40 +1,30 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.TareaAsignada;
-import com.SaasRRHH.main.repository.TareaAsignadaRepository;
-import org.springframework.stereotype.Service;
-
+import com.SaasRRHH.main.model.TareaAsignada.EstadoTarea;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class TareaAsignadaService {
-    private final TareaAsignadaRepository repository;
+public interface TareaAsignadaService {
 
-    public TareaAsignadaService(TareaAsignadaRepository repository) {
-        this.repository = repository;
-    }
+    List<TareaAsignada> listar();
 
-    public List<TareaAsignada> listar() {
-        return repository.findAll();
-    }
+    Optional<TareaAsignada> buscarPorId(Long id);
 
-    public Optional<TareaAsignada> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    TareaAsignada guardar(TareaAsignada tarea);
 
-    public TareaAsignada guardar(TareaAsignada tareaAsignada) {
-        return repository.save(tareaAsignada);
-    }
+    Optional<TareaAsignada> actualizar(Long id, TareaAsignada tarea);
 
-    public Optional<TareaAsignada> actualizar(Long id, TareaAsignada tareaAsignada) {
-        return repository.findById(id).map(existing -> {
-            tareaAsignada.setId(id);
-            return repository.save(tareaAsignada);
-        });
-    }
+    void eliminar(Long id);
 
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    List<TareaAsignada> buscarPorEmpleado(Long empleadoId);
+
+    List<TareaAsignada> buscarPorSupervisor(Long supervisorId);
+
+    List<TareaAsignada> buscarPorEstado(EstadoTarea estado);
+
+    List<TareaAsignada> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
+
+    TareaAsignada cambiarEstado(Long id, EstadoTarea nuevoEstado);
 }

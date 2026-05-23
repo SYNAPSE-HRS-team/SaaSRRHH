@@ -1,40 +1,20 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.AreaTrabajo;
-import com.SaasRRHH.main.repository.AreaTrabajoRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class AreaTrabajoService {
-    private final AreaTrabajoRepository repository;
+public interface AreaTrabajoService {
 
-    public AreaTrabajoService(AreaTrabajoRepository repository) {
-        this.repository = repository;
-    }
+    List<AreaTrabajo> listar();
 
-    public List<AreaTrabajo> listar() {
-        return repository.findAll();
-    }
+    Optional<AreaTrabajo> buscarPorId(Long id);
 
-    public Optional<AreaTrabajo> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
+    AreaTrabajo guardar(AreaTrabajo area);
 
-    public AreaTrabajo guardar(AreaTrabajo areaTrabajo) {
-        return repository.save(areaTrabajo);
-    }
+    void eliminar(Long id);
 
-    public Optional<AreaTrabajo> actualizar(Long id, AreaTrabajo areaTrabajo) {
-        return repository.findById(id).map(existing -> {
-            areaTrabajo.setId(id);
-            return repository.save(areaTrabajo);
-        });
-    }
+    Optional<AreaTrabajo> buscarPorNombre(String nombre);
 
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    List<AreaTrabajo> listarActivas();
 }
