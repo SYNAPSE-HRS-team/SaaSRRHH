@@ -18,11 +18,11 @@ import lombok.AllArgsConstructor;
 @Table(
         name = "reportes_incidentes",
         indexes = {
-                @Index(name = "idx_empleado", columnList = "empleado_id"),
+                @Index(name = "idx_reporte_incidente_empleado", columnList = "empleado_id"),
                 @Index(name = "idx_supervisor", columnList = "supervisor_id"),
-                @Index(name = "idx_tarea", columnList = "tarea_id"),
+                @Index(name = "idx_repote_incidente_tarea", columnList = "tarea_id"),
                 @Index(name = "idx_area", columnList = "area_id"),
-                @Index(name = "idx_fecha", columnList = "fecha_incidente")
+                @Index(name = "idx_reporte_incidente_fecha", columnList = "fecha_incidente")
         }
 )
 public class ReporteIncidente {
@@ -108,7 +108,7 @@ public class ReporteIncidente {
             nullable = false,
             insertable = false,
             updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP"
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
     )
     private LocalDateTime fechaRegistro;
 }

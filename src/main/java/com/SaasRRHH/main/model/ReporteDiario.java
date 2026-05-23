@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
         name = "reportes_diarios",
         indexes = {
                 @Index(name = "idx_tarea", columnList = "tarea_id"),
-                @Index(name = "idx_empleado", columnList = "empleado_id")
+                @Index(name = "idx_tarea_empleado", columnList = "empleado_id")
         }
 )
 public class ReporteDiario {
@@ -83,7 +83,7 @@ public class ReporteDiario {
             nullable = false,
             insertable = false,
             updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP"
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
     )
     private LocalDateTime fechaReporte;
 }

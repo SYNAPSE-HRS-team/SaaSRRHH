@@ -41,7 +41,7 @@ public class AccesoUsuario {
 
     @Column(name = "fecha_login", nullable = false,
             insertable = false, updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaLogin;
 
     @Column(name = "fecha_logout")

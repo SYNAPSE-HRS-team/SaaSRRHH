@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
                 )
         },
         indexes = {
-                @Index(name = "idx_empleado", columnList = "empleado_id")
+                @Index(name = "idx_metadatos_empleado", columnList = "empleado_id")
         }
 )
 public class MetadatoEmpleado {

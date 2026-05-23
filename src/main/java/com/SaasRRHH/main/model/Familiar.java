@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Table(
         name = "familiares",
         indexes = {
-                @Index(name = "idx_empleado", columnList = "empleado_id")
+                @Index(name = "idx_familiar_empleado", columnList = "empleado_id")
         }
 )
 public class Familiar {

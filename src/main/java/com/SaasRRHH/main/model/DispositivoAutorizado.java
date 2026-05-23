@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
                 )
         },
         indexes = {
-                @Index(name = "idx_usuario", columnList = "usuario_id")
+                @Index(name = "idx_dispositivo_usuario", columnList = "usuario_id")
         }
 )
 public class DispositivoAutorizado {
@@ -57,7 +57,7 @@ public class DispositivoAutorizado {
 
     @Column(name = "fecha_registro", nullable = false,
             insertable = false, updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaRegistro;
 
 

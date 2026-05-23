@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(
         name = "documentos_privados",
         indexes = {
-                @Index(name = "idx_empleado", columnList = "empleado_id"),
+                @Index(name = "idx_documento_empleado", columnList = "empleado_id"),
                 @Index(name = "idx_tipo",     columnList = "tipo_id")
         }
 )
@@ -55,7 +55,7 @@ public class DocumentoPrivado {
 
     @Column(name = "fecha_carga", nullable = false,
             insertable = false, updatable = false,
-            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaCarga;
 
     @Column(name = "activo", nullable = false,
