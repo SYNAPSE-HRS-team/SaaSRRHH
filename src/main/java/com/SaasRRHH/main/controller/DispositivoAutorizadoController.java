@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping("/api/dispositivo_autorizado")
 @RequiredArgsConstructor
 @RestController
 public class DispositivoAutorizadoController {
