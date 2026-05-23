@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,5 +71,41 @@ class AccesoUsuarioServiceImplTest {
 
         assertEquals(acceso, resultado);
         verify(repository).save(acceso);
+    }
+
+    @Test
+    void buscarPorUsuario_debeRetornarLista() {
+        when(repository.findByUsuarioId(1L)).thenReturn(List.of(acceso));
+
+        List<AccesoUsuario> resultado = service.buscarPorUsuario(1L);
+
+        assertEquals(1, resultado.size());
+        verify(repository).findByUsuarioId(1L);
+    }
+
+    @Test
+    void actualizar_debeActualizarCampos() {
+        AccesoUsuario accesoActualizado = new AccesoUsuario();
+        accesoActualizado.setFechaLogout(LocalDateTime.of(2026, 5, 23, 10, 0));
+        accesoActualizado.setUserAgent("Mozilla/5.0");
+        accesoActualizado.setExitoso(true);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(acceso));
+        when(repository.save(acceso)).thenReturn(acceso);
+
+        AccesoUsuario resultado = service.actualizar(1L, accesoActualizado);
+
+        assertEquals(LocalDateTime.of(2026, 5, 23, 10, 0), resultado.getFechaLogout());
+        assertEquals("Mozilla/5.0", resultado.getUserAgent());
+        assertEquals(true, resultado.getExitoso());
+        verify(repository).findById(1L);
+        verify(repository).save(acceso);
+    }
+
+    @Test
+    void eliminar_debeInvocarDelete() {
+        service.eliminar(1L);
+
+        verify(repository).deleteById(1L);
     }
 }

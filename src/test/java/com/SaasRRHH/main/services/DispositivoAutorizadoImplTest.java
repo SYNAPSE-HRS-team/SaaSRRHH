@@ -76,4 +76,11 @@ class DispositivoAutorizadoImplTest {
         verify(repository).findById(1L);
         verify(repository).save(dispositivo);
     }
+
+    @Test
+    void eliminar_debeInvocarDelete() {
+        service.eliminar(1L);
+
+        verify(repository).deleteById(1L);
+    }
 }

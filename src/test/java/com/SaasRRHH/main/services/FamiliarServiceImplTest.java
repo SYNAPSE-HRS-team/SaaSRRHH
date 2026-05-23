@@ -65,6 +65,21 @@ class FamiliarServiceImplTest {
     }
 
     @Test
+    void actualizar_debePersistirExistente() {
+        when(repository.findById(1L)).thenReturn(Optional.of(familiar));
+        when(repository.save(familiar)).thenReturn(familiar);
+
+        Familiar actualizado = new Familiar();
+        actualizado.setNombres("Ana");
+
+        Familiar resultado = service.actualizar(1L, actualizado);
+
+        assertEquals(1L, resultado.getId());
+        verify(repository).findById(1L);
+        verify(repository).save(familiar);
+    }
+
+    @Test
     void eliminar_debeInvocarDelete() {
         service.eliminar(1L);
 

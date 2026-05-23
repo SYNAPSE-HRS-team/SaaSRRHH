@@ -92,8 +92,38 @@ class AreaTrabajoServiceTest {
 
         assertThatThrownBy(() -> areaService.guardar(areaDuplicada))
                 .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining("Ya existe un area");
-        
+                .hasMessageContaining("Ya existe un area");
+
         verify(areaRepository, never()).save(any());
+    }
+
+    @Test
+    void testEliminarArea_Exitoso() {
+        when(areaRepository.existsById(1L)).thenReturn(true);
+
+        areaService.eliminar(1L);
+
+        verify(areaRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testBuscarPorNombre_Encontrado() {
+        when(areaRepository.findByNombre("Parcela Norte")).thenReturn(Optional.of(area1));
+
+        Optional<AreaTrabajo> resultado = areaService.buscarPorNombre("Parcela Norte");
+
+        assertThat(resultado).isPresent();
+        assertThat(resultado.get().getNombre()).isEqualTo("Parcela Norte");
+        verify(areaRepository).findByNombre("Parcela Norte");
+    }
+
+    @Test
+    void testListarActivas_DevuelveSoloActivas() {
+        when(areaRepository.findByActivoTrue()).thenReturn(List.of(area1, area2));
+
+        List<AreaTrabajo> resultado = areaService.listarActivas();
+
+        assertThat(resultado).hasSize(2);
+        verify(areaRepository).findByActivoTrue();
     }
 }

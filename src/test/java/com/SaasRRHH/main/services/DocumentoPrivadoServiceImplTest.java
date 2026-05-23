@@ -75,4 +75,11 @@ class DocumentoPrivadoServiceImplTest {
         verify(repository).findById(1L);
         verify(repository).save(documento);
     }
+
+    @Test
+    void eliminar_debeInvocarDelete() {
+        service.eliminar(1L);
+
+        verify(repository).deleteById(1L);
+    }
 }

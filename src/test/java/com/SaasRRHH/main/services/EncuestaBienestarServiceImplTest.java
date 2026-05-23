@@ -66,6 +66,23 @@ class EncuestaBienestarServiceImplTest {
     }
 
     @Test
+    void actualizar_debeGuardarCambios() {
+        Encuestabienestar encuestaActualizada = new Encuestabienestar();
+        encuestaActualizada.setId(1L);
+        encuestaActualizada.setCargaLaboral(2);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(encuesta));
+        when(repository.save(encuesta)).thenReturn(encuesta);
+
+        Encuestabienestar resultado = service.actualizar(1L, encuestaActualizada);
+
+        assertEquals(encuesta.getId(), resultado.getId());
+        assertEquals(2, resultado.getCargaLaboral());
+        verify(repository).findById(1L);
+        verify(repository).save(encuesta);
+    }
+
+    @Test
     void eliminar_debeInvocarDelete() {
         service.eliminar(1L);
 

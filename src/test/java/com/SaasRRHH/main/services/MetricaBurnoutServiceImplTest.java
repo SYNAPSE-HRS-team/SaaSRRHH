@@ -62,6 +62,40 @@ class MetricaBurnoutServiceImplTest {
     }
 
     @Test
+    void guardar_debePersistir() {
+        when(repository.save(metrica)).thenReturn(metrica);
+
+        MetricaBurnout resultado = service.guardar(metrica);
+
+        assertEquals(1L, resultado.getId());
+        verify(repository).save(metrica);
+    }
+
+    @Test
+    void buscarPorEmpleado_debeRetornarLista() {
+        when(repository.findByEmpleadoId(1L)).thenReturn(List.of(metrica));
+
+        List<MetricaBurnout> resultado = service.buscarPorEmpleado(1L);
+
+        assertEquals(1, resultado.size());
+        verify(repository).findByEmpleadoId(1L);
+    }
+
+    @Test
+    void actualizar_debeGuardarCambios() {
+        MetricaBurnout metricaActualizada = new MetricaBurnout();
+        metricaActualizada.setNivelRiesgo(MetricaBurnout.NivelRiesgoBurnout.ALTO);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(metrica));
+        when(repository.save(metrica)).thenReturn(metrica);
+
+        MetricaBurnout resultado = service.actualizar(1L, metricaActualizada);
+
+        assertEquals(1L, resultado.getId());
+        verify(repository).save(metrica);
+    }
+
+    @Test
     void eliminar_debeInvocarDelete() {
         service.eliminar(1L);
 

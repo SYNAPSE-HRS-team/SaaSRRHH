@@ -64,6 +64,31 @@ class ReporteIncidenteServiceImplTest {
     }
 
     @Test
+    void obtenerPorId_encontrado_debeRetornarEntidad() {
+        when(repository.findById(1L)).thenReturn(Optional.of(reporte));
+
+        ReporteIncidente resultado = service.obtenerPorId(1L);
+
+        assertEquals(1L, resultado.getId());
+        verify(repository).findById(1L);
+    }
+
+    @Test
+    void actualizar_debePersistirCambios() {
+        when(repository.findById(1L)).thenReturn(Optional.of(reporte));
+        when(repository.save(reporte)).thenReturn(reporte);
+
+        ReporteIncidente datos = new ReporteIncidente();
+        datos.setDescripcion("Nuevo incidente");
+
+        ReporteIncidente resultado = service.actualizar(1L, datos);
+
+        assertEquals(1L, resultado.getId());
+        verify(repository).findById(1L);
+        verify(repository).save(reporte);
+    }
+
+    @Test
     void eliminar_debeInvocarDelete() {
         service.eliminar(1L);
 
