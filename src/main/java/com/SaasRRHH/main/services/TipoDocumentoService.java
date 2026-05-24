@@ -11,9 +11,27 @@ public interface TipoDocumentoService {
 
     TipoDocumentoResponseDTO buscarPorId(Long id);
 
-    TipoDocumentoResponseDTO guardar(TipoDocumentoRequestDTO dto);
+    TipoDocumentoResponseDTO guardar(
+            TipoDocumentoRequestDTO dto);
 
-    TipoDocumentoResponseDTO actualizar(Long id, TipoDocumentoRequestDTO dto);
+    TipoDocumentoResponseDTO actualizar(
+            Long id,
+            TipoDocumentoRequestDTO dto);
 
     void eliminar(Long id);
+
+    // ==========================
+    // CONSULTAS
+    // ==========================
+
+    List<TipoDocumentoResponseDTO>
+    listarObligatorios();
+
+    List<TipoDocumentoResponseDTO>
+    listarRenovables();
+
+    List<TipoDocumentoResponseDTO>
+    listarPorVigencia();
+
+    Long contarObligatorios();
 }

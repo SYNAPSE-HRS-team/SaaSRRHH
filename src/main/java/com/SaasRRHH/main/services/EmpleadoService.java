@@ -2,10 +2,9 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
-import com.SaasRRHH.main.model.Empleado;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface EmpleadoService {
 
@@ -23,5 +22,22 @@ public interface EmpleadoService {
 
     void eliminar(Long id);
 
+    // =========================
+    // CONSULTAS JPQL
+    // =========================
 
+    List<EmpleadoResponseDTO> buscarPorCargo(String cargo);
+
+    List<EmpleadoResponseDTO> buscarPorCargoYActivo(
+            String cargo,
+            Boolean activo);
+
+    List<EmpleadoResponseDTO> listarActivosConUsuario();
+
+    List<EmpleadoResponseDTO> contratosVencidos();
+
+    List<EmpleadoResponseDTO> contratosPorVencer(
+            LocalDate fechaLimite);
+
+    List<Object[]> contarEmpleadosPorCargo();
 }

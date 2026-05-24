@@ -5,6 +5,7 @@ import com.SaasRRHH.main.DTO.TipoDocumentoResponseDTO;
 import com.SaasRRHH.main.services.TipoDocumentoService;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,43 +20,129 @@ public class TipoDocumentoController {
 
     private final TipoDocumentoService service;
 
-    // LISTAR
     @GetMapping
-    public ResponseEntity<List<TipoDocumentoResponseDTO>> listar() {
-        return ResponseEntity.ok(service.listar());
+    public ResponseEntity<List<TipoDocumentoResponseDTO>>
+    listar() {
+
+        return ResponseEntity.ok(
+                service.listar());
     }
 
-    // BUSCAR POR ID
     @GetMapping("/{id}")
-    public ResponseEntity<TipoDocumentoResponseDTO> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.buscarPorId(id));
+    public ResponseEntity<TipoDocumentoResponseDTO>
+    buscarPorId(
+            @PathVariable Long id) {
+
+        try {
+
+            return ResponseEntity.ok(
+                    service.buscarPorId(id));
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
     }
 
-    // CREAR
     @PostMapping
-    public ResponseEntity<TipoDocumentoResponseDTO> crear(
-            @RequestBody TipoDocumentoRequestDTO dto) {
+    public ResponseEntity<TipoDocumentoResponseDTO>
+    crear(
+            @RequestBody
+            TipoDocumentoRequestDTO dto) {
 
-        TipoDocumentoResponseDTO response = service.guardar(dto);
+        try {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            TipoDocumentoResponseDTO response =
+                    service.guardar(dto);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(response);
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .build();
+        }
     }
 
-    // ACTUALIZAR
     @PutMapping("/{id}")
-    public ResponseEntity<TipoDocumentoResponseDTO> actualizar(
+    public ResponseEntity<TipoDocumentoResponseDTO>
+    actualizar(
             @PathVariable Long id,
-            @RequestBody TipoDocumentoRequestDTO dto) {
+            @RequestBody
+            TipoDocumentoRequestDTO dto) {
 
-        return ResponseEntity.ok(service.actualizar(id, dto));
+        try {
+
+            return ResponseEntity.ok(
+                    service.actualizar(id, dto));
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
     }
 
-    // ELIMINAR
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void>
+    eliminar(
+            @PathVariable Long id) {
 
-        service.eliminar(id);
+        try {
 
-        return ResponseEntity.noContent().build();
+            service.eliminar(id);
+
+            return ResponseEntity
+                    .noContent()
+                    .build();
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+    }
+
+    // ==================================
+    // CONSULTAS
+    // ==================================
+
+    @GetMapping("/obligatorios")
+    public ResponseEntity<List<TipoDocumentoResponseDTO>>
+    listarObligatorios() {
+
+        return ResponseEntity.ok(
+                service.listarObligatorios());
+    }
+
+    @GetMapping("/renovables")
+    public ResponseEntity<List<TipoDocumentoResponseDTO>>
+    listarRenovables() {
+
+        return ResponseEntity.ok(
+                service.listarRenovables());
+    }
+
+    @GetMapping("/vigencia")
+    public ResponseEntity<List<TipoDocumentoResponseDTO>>
+    listarPorVigencia() {
+
+        return ResponseEntity.ok(
+                service.listarPorVigencia());
+    }
+
+    @GetMapping("/estadisticas/obligatorios")
+    public ResponseEntity<Long>
+    contarObligatorios() {
+
+        return ResponseEntity.ok(
+                service.contarObligatorios());
     }
 }
