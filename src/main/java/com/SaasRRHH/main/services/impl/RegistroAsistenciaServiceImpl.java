@@ -3,6 +3,9 @@ package com.SaasRRHH.main.services.impl;
 import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.RegistroAsistencia;
+import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
+import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
+import com.SaasRRHH.main.mapper.RegistroAsistenciaMapper;
 import com.SaasRRHH.main.repository.RegistroAsistenciaRepository;
 import com.SaasRRHH.main.services.EmpleadoService;
 import com.SaasRRHH.main.services.RegistroAsistenciaService;
@@ -25,52 +28,51 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
     private final EmpleadoService empleadoService;
 
     @Override
-    public List<RegistroAsistencia> listar() {
-        return repository.findAll();
+    public List<RegistroAsistenciaResponseDTO> listar() {
+        return repository.findAll()
+                .stream()
+                .map(RegistroAsistenciaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<RegistroAsistencia> buscarPorId(Long id) {
-        return repository.findById(id);
+    public RegistroAsistenciaResponseDTO buscarPorId(Long id) {
+        return repository.findById(id)
+                .map(RegistroAsistenciaMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Registro de asistencia no encontrado"));
     }
 
     @Override
     @Transactional
-    public RegistroAsistencia guardar(RegistroAsistencia registroAsistencia) {
-        if (registroAsistencia.getEmpleado() == null || registroAsistencia.getEmpleado().getId() == null) {
+    public RegistroAsistenciaResponseDTO guardar(RegistroAsistenciaRequestDTO dto) {
+        if (dto.getEmpleadoId() == null) {
             throw new RuntimeException("El empleado es obligatorio");
         }
 
-        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(registroAsistencia.getEmpleado().getId());
+        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(dto.getEmpleadoId());
         if (empleadoDto == null) {
-            throw new RuntimeException("Empleado no encontrado con id: " + registroAsistencia.getEmpleado().getId());
+            throw new RuntimeException("Empleado no encontrado con id: " + dto.getEmpleadoId());
         }
-        Empleado empleado = new Empleado();
-        empleado.setId(empleadoDto.getId());
-        registroAsistencia.setEmpleado(empleado);
 
-        if (!registroAsistencia.getTipoMarcacion().matches("ENTRADA|SALIDA")) {
+        if (dto.getTipoMarcacion() == null || !dto.getTipoMarcacion().matches("ENTRADA|SALIDA")) {
             throw new RuntimeException("Tipo de marcacion invalido. Debe ser ENTRADA o SALIDA");
         }
 
-        if (!registroAsistencia.getEstado().matches("VALIDADO|OBSERVADO|RECHAZADO")) {
+        if (dto.getEstado() == null || !dto.getEstado().matches("VALIDADO|OBSERVADO|RECHAZADO")) {
             throw new RuntimeException("Estado invalido. Debe ser VALIDADO, OBSERVADO o RECHAZADO");
         }
 
-        if (registroAsistencia.getFechaHora() == null) {
-            registroAsistencia.setFechaHora(LocalDateTime.now());
-        }
+        RegistroAsistencia entity = RegistroAsistenciaMapper.toEntity(dto);
+        if (entity.getFechaHora() == null) entity.setFechaHora(LocalDateTime.now());
+        if (entity.getMetodo() == null) entity.setMetodo("QR");
 
-        if (registroAsistencia.getMetodo() == null) {
-            registroAsistencia.setMetodo("QR");
-        }
-
-        return repository.save(registroAsistencia);
+        RegistroAsistencia saved = repository.save(entity);
+        return RegistroAsistenciaMapper.toDTO(saved);
     }
 
     @Override
     @Transactional
-    public RegistroAsistencia registrarEntrada(Long empleadoId, String metodo) {
+    public RegistroAsistenciaResponseDTO registrarEntrada(Long empleadoId, String metodo) {
         EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(empleadoId);
         if (empleadoDto == null) {
             throw new RuntimeException("Empleado no encontrado");
@@ -85,12 +87,12 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
         registro.setEstado("VALIDADO");
         registro.setFechaHora(LocalDateTime.now());
 
-        return repository.save(registro);
+        return RegistroAsistenciaMapper.toDTO(repository.save(registro));
     }
 
     @Override
     @Transactional
-    public RegistroAsistencia registrarSalida(Long empleadoId, String metodo) {
+    public RegistroAsistenciaResponseDTO registrarSalida(Long empleadoId, String metodo) {
         EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(empleadoId);
         if (empleadoDto == null) {
             throw new RuntimeException("Empleado no encontrado");
@@ -105,7 +107,7 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
         registro.setEstado("VALIDADO");
         registro.setFechaHora(LocalDateTime.now());
 
-        return repository.save(registro);
+        return RegistroAsistenciaMapper.toDTO(repository.save(registro));
     }
 
     @Override
@@ -118,19 +120,28 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
     }
 
     @Override
-    public List<RegistroAsistencia> buscarPorEmpleado(Long empleadoId) {
-        return repository.findByEmpleadoId(empleadoId);
+    public List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId) {
+        return repository.findByEmpleadoId(empleadoId)
+                .stream()
+                .map(RegistroAsistenciaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public List<RegistroAsistencia> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha) {
+    public List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha) {
         LocalDateTime inicio = fecha.atStartOfDay();
         LocalDateTime fin = fecha.atTime(LocalTime.MAX);
-        return repository.findByEmpleadoIdAndFechaHoraBetween(empleadoId, inicio, fin);
+        return repository.findByEmpleadoIdAndFechaHoraBetween(empleadoId, inicio, fin)
+                .stream()
+                .map(RegistroAsistenciaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public List<RegistroAsistencia> buscarPorEstado(String estado) {
-        return repository.findByEstado(estado);
+    public List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado) {
+        return repository.findByEstado(estado)
+                .stream()
+                .map(RegistroAsistenciaMapper::toDTO)
+                .toList();
     }
 }

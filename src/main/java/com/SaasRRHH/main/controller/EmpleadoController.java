@@ -2,10 +2,8 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
-import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.services.EmpleadoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
