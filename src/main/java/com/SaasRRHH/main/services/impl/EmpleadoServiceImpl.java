@@ -10,6 +10,7 @@ import com.SaasRRHH.main.repository.UsuarioRepository;
 import com.SaasRRHH.main.services.EmpleadoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmpleadoResponseDTO> listar() {
         return repository.findAll()
                 .stream()
@@ -72,6 +74,5 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void eliminar(Long id) {
         repository.deleteById(id);
     }
-
 
 }

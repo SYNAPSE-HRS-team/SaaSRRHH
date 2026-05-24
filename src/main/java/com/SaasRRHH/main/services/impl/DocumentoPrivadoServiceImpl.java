@@ -14,6 +14,7 @@ import com.SaasRRHH.main.services.DocumentoPrivadoService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
         private final TipoDocumentoRepository tipoDocumentoRepository;
 
         @Override
+        @Transactional(readOnly = true) // ← agregar
         public List<DocumentoPrivadoResponseDTO> listar() {
                 return repository.findAll()
                                 .stream()
@@ -34,6 +36,7 @@ public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
         }
 
         @Override
+        @Transactional(readOnly = true) // ← agregar
         public DocumentoPrivadoResponseDTO buscarPorId(Long id) {
 
                 DocumentoPrivado d = repository.findById(id)

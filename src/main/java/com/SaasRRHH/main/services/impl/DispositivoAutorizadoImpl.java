@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -17,8 +18,9 @@ public class DispositivoAutorizadoImpl implements DispositivoAutorizadoService {
     private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DispositivoAutorizado> listarTodo() {
-        return dispositivoAutorizadoRepository.findAll();
+        return dispositivoAutorizadoRepository.findAllWithUsuario();
     }
 
     @Override

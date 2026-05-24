@@ -5,6 +5,7 @@ import com.SaasRRHH.main.repository.AccesoUsuarioRepository;
 import com.SaasRRHH.main.services.AccesoUsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,19 +16,20 @@ public class AccesoUsuarioServiceImpl implements AccesoUsuarioService {
     private final AccesoUsuarioRepository repository;
 
     @Override
+    @Transactional(readOnly = true)  // ← agregar
     public List<AccesoUsuario> listar() {
         return repository.findAll();
     }
 
     @Override
     public AccesoUsuario buscarPorId(Long id) {
-        return repository.findById(id)
+        return repository.findByIdWithUsuario(id)
                 .orElseThrow(() -> new RuntimeException("Acceso no encontrado"));
     }
 
     @Override
     public List<AccesoUsuario> buscarPorUsuario(Long usuarioId) {
-        return repository.findByUsuarioId(usuarioId);
+        return repository.findByUsuarioIdWithUsuario(usuarioId);
     }
 
     @Override
