@@ -2,10 +2,8 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
-import com.SaasRRHH.main.model.Empleado;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EmpleadoService {
 

@@ -2,10 +2,8 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
 import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
-import com.SaasRRHH.main.model.DocumentoPrivado;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DocumentoPrivadoService {
 
