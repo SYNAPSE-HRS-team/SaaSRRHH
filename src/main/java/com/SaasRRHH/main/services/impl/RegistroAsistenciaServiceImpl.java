@@ -1,6 +1,7 @@
 package com.SaasRRHH.main.services.impl;
 
 import com.SaasRRHH.main.model.Empleado;
+import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.RegistroAsistencia;
 import com.SaasRRHH.main.repository.RegistroAsistenciaRepository;
 import com.SaasRRHH.main.services.EmpleadoService;
@@ -40,10 +41,13 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
             throw new RuntimeException("El empleado es obligatorio");
         }
 
-        Optional<Empleado> empleado = empleadoService.buscarPorId(registroAsistencia.getEmpleado().getId());
-        if (empleado.isEmpty()) {
+        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(registroAsistencia.getEmpleado().getId());
+        if (empleadoDto == null) {
             throw new RuntimeException("Empleado no encontrado con id: " + registroAsistencia.getEmpleado().getId());
         }
+        Empleado empleado = new Empleado();
+        empleado.setId(empleadoDto.getId());
+        registroAsistencia.setEmpleado(empleado);
 
         if (!registroAsistencia.getTipoMarcacion().matches("ENTRADA|SALIDA")) {
             throw new RuntimeException("Tipo de marcacion invalido. Debe ser ENTRADA o SALIDA");
@@ -67,8 +71,12 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
     @Override
     @Transactional
     public RegistroAsistencia registrarEntrada(Long empleadoId, String metodo) {
-        Empleado empleado = empleadoService.buscarPorId(empleadoId)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(empleadoId);
+        if (empleadoDto == null) {
+            throw new RuntimeException("Empleado no encontrado");
+        }
+        Empleado empleado = new Empleado();
+        empleado.setId(empleadoDto.getId());
 
         RegistroAsistencia registro = new RegistroAsistencia();
         registro.setEmpleado(empleado);
@@ -83,8 +91,12 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
     @Override
     @Transactional
     public RegistroAsistencia registrarSalida(Long empleadoId, String metodo) {
-        Empleado empleado = empleadoService.buscarPorId(empleadoId)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(empleadoId);
+        if (empleadoDto == null) {
+            throw new RuntimeException("Empleado no encontrado");
+        }
+        Empleado empleado = new Empleado();
+        empleado.setId(empleadoDto.getId());
 
         RegistroAsistencia registro = new RegistroAsistencia();
         registro.setEmpleado(empleado);

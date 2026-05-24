@@ -1,6 +1,7 @@
 package com.SaasRRHH.main.services.impl;
 
 import com.SaasRRHH.main.model.Empleado;
+import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.TareaAsignada;
 import com.SaasRRHH.main.model.TareaAsignada.EstadoTarea;
 import com.SaasRRHH.main.repository.TareaAsignadaRepository;
@@ -40,20 +41,24 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
         if (tarea.getEmpleado() == null || tarea.getEmpleado().getId() == null) {
             throw new RuntimeException("El empleado es obligatorio");
         }
-        Optional<Empleado> empleado = empleadoService.buscarPorId(tarea.getEmpleado().getId());
-        if (empleado.isEmpty()) {
+        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(tarea.getEmpleado().getId());
+        if (empleadoDto == null) {
             throw new RuntimeException("Empleado no encontrado con id: " + tarea.getEmpleado().getId());
         }
-        tarea.setEmpleado(empleado.get());
+        Empleado empleado = new Empleado();
+        empleado.setId(empleadoDto.getId());
+        tarea.setEmpleado(empleado);
 
         if (tarea.getSupervisor() == null || tarea.getSupervisor().getId() == null) {
             throw new RuntimeException("El supervisor es obligatorio");
         }
-        Optional<Empleado> supervisor = empleadoService.buscarPorId(tarea.getSupervisor().getId());
-        if (supervisor.isEmpty()) {
+        EmpleadoResponseDTO supervisorDto = empleadoService.buscarPorId(tarea.getSupervisor().getId());
+        if (supervisorDto == null) {
             throw new RuntimeException("Supervisor no encontrado con id: " + tarea.getSupervisor().getId());
         }
-        tarea.setSupervisor(supervisor.get());
+        Empleado supervisor = new Empleado();
+        supervisor.setId(supervisorDto.getId());
+        tarea.setSupervisor(supervisor);
 
         if (tarea.getArea() == null || tarea.getArea().getId() == null) {
             throw new RuntimeException("El area es obligatoria");
