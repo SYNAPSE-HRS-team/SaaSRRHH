@@ -1,10 +1,10 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.model.DocumentoPrivado;
+import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
+import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
 import com.SaasRRHH.main.services.DocumentoPrivadoService;
 
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -19,63 +19,45 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class DocumentoPrivadoController {
 
-    private final DocumentoPrivadoService documentoPrivadoService;
+    private final DocumentoPrivadoService service;
 
+    // LISTAR
     @GetMapping
-    public ResponseEntity<List<DocumentoPrivado>> listar() {
-
-        return ResponseEntity.ok(documentoPrivadoService.listar());
+    public ResponseEntity<List<DocumentoPrivadoResponseDTO>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
+    // BUSCAR POR ID
     @GetMapping("/{id}")
-    public ResponseEntity<DocumentoPrivado> buscarPorId(@PathVariable Long id) {
-
-        return documentoPrivadoService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<DocumentoPrivadoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    // CREAR
     @PostMapping
-    public ResponseEntity<DocumentoPrivado> guardar(
-            @Valid @RequestBody DocumentoPrivado documentoPrivado) {
+    public ResponseEntity<DocumentoPrivadoResponseDTO> guardar(
+            @Valid @RequestBody DocumentoPrivadoRequestDTO dto) {
 
-        DocumentoPrivado nuevoDocumento =
-                documentoPrivadoService.guardar(documentoPrivado);
+        DocumentoPrivadoResponseDTO response = service.guardar(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(nuevoDocumento);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // ACTUALIZAR
     @PutMapping("/{id}")
-    public ResponseEntity<DocumentoPrivado> actualizar(
+    public ResponseEntity<DocumentoPrivadoResponseDTO> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody DocumentoPrivado documentoPrivado) {
+            @Valid @RequestBody DocumentoPrivadoRequestDTO dto) {
 
-        try {
-
-            DocumentoPrivado documentoActualizado =
-                    documentoPrivadoService.actualizar(id, documentoPrivado);
-
-            return ResponseEntity.ok(documentoActualizado);
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
+    // ELIMINAR
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
 
-        try {
+        service.eliminar(id);
 
-            documentoPrivadoService.eliminar(id);
-
-            return ResponseEntity.noContent().build();
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.noContent().build();
     }
 }

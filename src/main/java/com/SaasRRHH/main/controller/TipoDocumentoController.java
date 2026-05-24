@@ -1,12 +1,10 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.model.TipoDocumento;
+import com.SaasRRHH.main.DTO.TipoDocumentoRequestDTO;
+import com.SaasRRHH.main.DTO.TipoDocumentoResponseDTO;
 import com.SaasRRHH.main.services.TipoDocumentoService;
 
-import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,63 +17,45 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class TipoDocumentoController {
 
-    private final TipoDocumentoService tipoDocumentoService;
+    private final TipoDocumentoService service;
 
+    // LISTAR
     @GetMapping
-    public ResponseEntity<List<TipoDocumento>> listar() {
-
-        return ResponseEntity.ok(tipoDocumentoService.listar());
+    public ResponseEntity<List<TipoDocumentoResponseDTO>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
+    // BUSCAR POR ID
     @GetMapping("/{id}")
-    public ResponseEntity<TipoDocumento> buscarPorId(@PathVariable Long id) {
-
-        return tipoDocumentoService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TipoDocumentoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    // CREAR
     @PostMapping
-    public ResponseEntity<TipoDocumento> guardar(
-            @Valid @RequestBody TipoDocumento tipoDocumento) {
+    public ResponseEntity<TipoDocumentoResponseDTO> crear(
+            @RequestBody TipoDocumentoRequestDTO dto) {
 
-        TipoDocumento nuevoTipoDocumento =
-                tipoDocumentoService.guardar(tipoDocumento);
+        TipoDocumentoResponseDTO response = service.guardar(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(nuevoTipoDocumento);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // ACTUALIZAR
     @PutMapping("/{id}")
-    public ResponseEntity<TipoDocumento> actualizar(
+    public ResponseEntity<TipoDocumentoResponseDTO> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody TipoDocumento tipoDocumento) {
+            @RequestBody TipoDocumentoRequestDTO dto) {
 
-        try {
-
-            TipoDocumento tipoDocumentoActualizado =
-                    tipoDocumentoService.actualizar(id, tipoDocumento);
-
-            return ResponseEntity.ok(tipoDocumentoActualizado);
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
+    // ELIMINAR
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
 
-        try {
+        service.eliminar(id);
 
-            tipoDocumentoService.eliminar(id);
-
-            return ResponseEntity.noContent().build();
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.noContent().build();
     }
 }

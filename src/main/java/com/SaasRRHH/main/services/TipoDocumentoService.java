@@ -1,19 +1,19 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.TipoDocumento;
+import com.SaasRRHH.main.DTO.TipoDocumentoRequestDTO;
+import com.SaasRRHH.main.DTO.TipoDocumentoResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TipoDocumentoService {
 
-    List<TipoDocumento> listar();
+    List<TipoDocumentoResponseDTO> listar();
 
-    Optional<TipoDocumento> buscarPorId(Long id);
+    TipoDocumentoResponseDTO buscarPorId(Long id);
 
-    TipoDocumento guardar(TipoDocumento tipoDocumento);
+    TipoDocumentoResponseDTO guardar(TipoDocumentoRequestDTO dto);
 
-    TipoDocumento actualizar(Long id, TipoDocumento tipoDocumento);
+    TipoDocumentoResponseDTO actualizar(Long id, TipoDocumentoRequestDTO dto);
 
     void eliminar(Long id);
 }

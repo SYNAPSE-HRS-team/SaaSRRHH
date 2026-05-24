@@ -1,5 +1,7 @@
 package com.SaasRRHH.main.services;
 
+import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
+import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.Empleado;
 
 import java.util.List;
@@ -7,11 +9,17 @@ import java.util.Optional;
 
 public interface EmpleadoService {
 
-    List<Empleado> listar();
+    List<EmpleadoResponseDTO> listar();
 
-    Optional<Empleado> buscarPorId(Long id);
+    EmpleadoResponseDTO buscarPorId(Long id);
 
-    Empleado guardar(Empleado empleado);
+    EmpleadoResponseDTO buscarPorDni(String dni);
+
+    List<EmpleadoResponseDTO> listarActivos();
+
+    EmpleadoResponseDTO buscarPorUsuarioId(Long userId);
+
+    EmpleadoResponseDTO guardar(EmpleadoRequestDTO dto);
 
     void eliminar(Long id);
 

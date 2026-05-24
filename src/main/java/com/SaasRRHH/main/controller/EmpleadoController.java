@@ -1,45 +1,50 @@
 package com.SaasRRHH.main.controller;
 
+import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
+import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.services.EmpleadoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/empleados")
-public class EmpleadoController {
 
-    private final EmpleadoService service;
+    @RestController
+    @RequestMapping("/api/empleados")
+    @RequiredArgsConstructor
+    public class EmpleadoController {
 
-    public EmpleadoController(EmpleadoService service) {
-        this.service = service;
+        private final EmpleadoService service;
+
+        @GetMapping
+        public List<EmpleadoResponseDTO> listar() {
+            return service.listar();
+        }
+
+        @GetMapping("/{id}")
+        public EmpleadoResponseDTO obtener(@PathVariable Long id) {
+            return service.buscarPorId(id);
+        }
+
+        @GetMapping("/dni/{dni}")
+        public EmpleadoResponseDTO buscarPorDni(@PathVariable String dni) {
+            return service.buscarPorDni(dni);
+        }
+
+        @GetMapping("/activos")
+        public List<EmpleadoResponseDTO> listarActivos() {
+            return service.listarActivos();
+        }
+
+        @PostMapping
+        public EmpleadoResponseDTO crear(@RequestBody EmpleadoRequestDTO dto) {
+            return service.guardar(dto);
+        }
+
+        @DeleteMapping("/{id}")
+        public void eliminar(@PathVariable Long id) {
+            service.eliminar(id);
+        }
     }
-
-    // 📌 Listar todos los empleados
-    @GetMapping
-    public List<Empleado> listar() {
-        return service.listar();
-    }
-
-    // 📌 Buscar por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Empleado> obtener(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // 📌 Crear empleado
-    @PostMapping
-    public Empleado crear(@RequestBody Empleado empleado) {
-        return service.guardar(empleado);
-    }
-
-    // 📌 Eliminar empleado
-    @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-    }
-}

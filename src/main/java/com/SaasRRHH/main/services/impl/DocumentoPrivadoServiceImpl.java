@@ -1,7 +1,14 @@
 package com.SaasRRHH.main.services.impl;
 
+import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
+import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
+import com.SaasRRHH.main.mapper.DocumentoPrivadoMapper;
 import com.SaasRRHH.main.model.DocumentoPrivado;
+import com.SaasRRHH.main.model.Empleado;
+import com.SaasRRHH.main.model.TipoDocumento;
 import com.SaasRRHH.main.repository.DocumentoPrivadoRepository;
+import com.SaasRRHH.main.repository.EmpleadoRepository;
+import com.SaasRRHH.main.repository.TipoDocumentoRepository;
 import com.SaasRRHH.main.services.DocumentoPrivadoService;
 
 import lombok.RequiredArgsConstructor;
@@ -11,53 +18,69 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
 
-    private final DocumentoPrivadoRepository documentoPrivadoRepository;
+    private final DocumentoPrivadoRepository repository;
+    private final EmpleadoRepository empleadoRepository;
+    private final TipoDocumentoRepository tipoDocumentoRepository;
 
     @Override
-    public List<DocumentoPrivado> listar() {
-        return documentoPrivadoRepository.findAll();
+    public List<DocumentoPrivadoResponseDTO> listar() {
+        return repository.findAll()
+                .stream()
+                .map(DocumentoPrivadoMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<DocumentoPrivado> buscarPorId(Long id) {
-        return documentoPrivadoRepository.findById(id);
+    public DocumentoPrivadoResponseDTO buscarPorId(Long id) {
+
+        DocumentoPrivado d = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+
+        return DocumentoPrivadoMapper.toDTO(d);
     }
 
     @Override
-    public DocumentoPrivado guardar(DocumentoPrivado documentoPrivado) {
+    public DocumentoPrivadoResponseDTO guardar(DocumentoPrivadoRequestDTO dto) {
 
-        return documentoPrivadoRepository.save(documentoPrivado);
+        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+        TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
+                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
+
+        DocumentoPrivado entidad =
+                DocumentoPrivadoMapper.toEntity(dto, empleado, tipo);
+
+        return DocumentoPrivadoMapper.toDTO(repository.save(entidad));
     }
 
-        @Override
-        public DocumentoPrivado actualizar(Long id, DocumentoPrivado documentoPrivado) {
+    @Override
+    public DocumentoPrivadoResponseDTO actualizar(Long id, DocumentoPrivadoRequestDTO dto) {
 
-            DocumentoPrivado existente = documentoPrivadoRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("DocumentoPrivado no encontrado"));
+        DocumentoPrivado existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
 
-            actualizarDatos(existente, documentoPrivado);
+        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-            return documentoPrivadoRepository.save(existente);
-        }
+        TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
+                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
 
-        private void actualizarDatos(
-                DocumentoPrivado existente,
-                DocumentoPrivado nuevo) {
+        existente.setEmpleado(empleado);
+        existente.setTipo(tipo);
+        existente.setArchivoUrl(dto.getArchivoUrl());
+        existente.setFechaVencimiento(dto.getFechaVencimiento());
+        existente.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
 
-            existente.setEmpleado(nuevo.getEmpleado());
-            existente.setTipo(nuevo.getTipo());
-            existente.setArchivoUrl(nuevo.getArchivoUrl());
-            existente.setFechaVencimiento(nuevo.getFechaVencimiento());
-            existente.setActivo(nuevo.getActivo());
-        }
+        return DocumentoPrivadoMapper.toDTO(repository.save(existente));
+    }
 
     @Override
     public void eliminar(Long id) {
-
-        documentoPrivadoRepository.deleteById(id);
+        repository.deleteById(id);
     }
 }

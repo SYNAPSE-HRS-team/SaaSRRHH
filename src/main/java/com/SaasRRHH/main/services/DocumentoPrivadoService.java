@@ -1,5 +1,7 @@
 package com.SaasRRHH.main.services;
 
+import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
+import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
 import com.SaasRRHH.main.model.DocumentoPrivado;
 
 import java.util.List;
@@ -7,13 +9,13 @@ import java.util.Optional;
 
 public interface DocumentoPrivadoService {
 
-    List<DocumentoPrivado> listar();
+    List<DocumentoPrivadoResponseDTO> listar();
 
-    Optional<DocumentoPrivado> buscarPorId(Long id);
+    DocumentoPrivadoResponseDTO buscarPorId(Long id);
 
-    DocumentoPrivado guardar(DocumentoPrivado documentoPrivado);
+    DocumentoPrivadoResponseDTO guardar(DocumentoPrivadoRequestDTO dto);
 
-    DocumentoPrivado actualizar(Long id, DocumentoPrivado documentoPrivado);
+    DocumentoPrivadoResponseDTO actualizar(Long id, DocumentoPrivadoRequestDTO dto);
 
     void eliminar(Long id);
 }

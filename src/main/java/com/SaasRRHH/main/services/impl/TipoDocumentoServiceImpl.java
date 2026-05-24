@@ -1,61 +1,62 @@
 package com.SaasRRHH.main.services.impl;
 
+import com.SaasRRHH.main.DTO.TipoDocumentoRequestDTO;
+import com.SaasRRHH.main.DTO.TipoDocumentoResponseDTO;
+import com.SaasRRHH.main.mapper.TipoDocumentoMapper;
 import com.SaasRRHH.main.model.TipoDocumento;
 import com.SaasRRHH.main.repository.TipoDocumentoRepository;
 import com.SaasRRHH.main.services.TipoDocumentoService;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class TipoDocumentoServiceImpl implements TipoDocumentoService {
 
-    private final TipoDocumentoRepository tipoDocumentoRepository;
+    private final TipoDocumentoRepository repository;
 
     @Override
-    public List<TipoDocumento> listar() {
-        return tipoDocumentoRepository.findAll();
+    public List<TipoDocumentoResponseDTO> listar() {
+
+        return repository.findAll()
+                .stream()
+                .map(TipoDocumentoMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<TipoDocumento> buscarPorId(Long id) {
-        return tipoDocumentoRepository.findById(id);
-    }
+    public TipoDocumentoResponseDTO buscarPorId(Long id) {
 
-    @Override
-    public TipoDocumento guardar(TipoDocumento tipoDocumento) {
-
-        return tipoDocumentoRepository.save(tipoDocumento);
-    }
-
-    @Override
-    public TipoDocumento actualizar(Long id, TipoDocumento tipoDocumento) {
-
-        TipoDocumento existente = tipoDocumentoRepository.findById(id)
+        TipoDocumento t = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("TipoDocumento no encontrado"));
 
-        actualizarDatos(existente, tipoDocumento);
-
-        return tipoDocumentoRepository.save(existente);
+        return TipoDocumentoMapper.toDTO(t);
     }
 
-    private void actualizarDatos(TipoDocumento existente, TipoDocumento nuevo) {
+    @Override
+    public TipoDocumentoResponseDTO guardar(TipoDocumentoRequestDTO dto) {
 
-        existente.setNombre(nuevo.getNombre());
-        existente.setObligatorio(nuevo.getObligatorio());
-        existente.setDiasVigencia(nuevo.getDiasVigencia());
-        existente.setRequiereRenovacion(nuevo.getRequiereRenovacion());
-        existente.setDescripcion(nuevo.getDescripcion());
+        TipoDocumento entity = TipoDocumentoMapper.toEntity(dto);
+
+        return TipoDocumentoMapper.toDTO(repository.save(entity));
+    }
+
+    @Override
+    public TipoDocumentoResponseDTO actualizar(Long id, TipoDocumentoRequestDTO dto) {
+
+        TipoDocumento existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("TipoDocumento no encontrado"));
+
+        TipoDocumentoMapper.updateEntity(existente, dto);
+
+        return TipoDocumentoMapper.toDTO(repository.save(existente));
     }
 
     @Override
     public void eliminar(Long id) {
-
-        tipoDocumentoRepository.deleteById(id);
+        repository.deleteById(id);
     }
 }
