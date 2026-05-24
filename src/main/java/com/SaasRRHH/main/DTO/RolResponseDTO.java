@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class RolResponseDTO {
     private Long idRol;
+    
     private String nombreRol;
 }

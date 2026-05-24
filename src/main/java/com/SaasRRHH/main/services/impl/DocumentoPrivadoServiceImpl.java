@@ -16,71 +16,69 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
 
-    private final DocumentoPrivadoRepository repository;
-    private final EmpleadoRepository empleadoRepository;
-    private final TipoDocumentoRepository tipoDocumentoRepository;
+        private final DocumentoPrivadoRepository repository;
+        private final EmpleadoRepository empleadoRepository;
+        private final TipoDocumentoRepository tipoDocumentoRepository;
 
-    @Override
-    public List<DocumentoPrivadoResponseDTO> listar() {
-        return repository.findAll()
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+        @Override
+        public List<DocumentoPrivadoResponseDTO> listar() {
+                return repository.findAll()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    public DocumentoPrivadoResponseDTO buscarPorId(Long id) {
+        @Override
+        public DocumentoPrivadoResponseDTO buscarPorId(Long id) {
 
-        DocumentoPrivado d = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+                DocumentoPrivado d = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
 
-        return DocumentoPrivadoMapper.toDTO(d);
-    }
+                return DocumentoPrivadoMapper.toDTO(d);
+        }
 
-    @Override
-    public DocumentoPrivadoResponseDTO guardar(DocumentoPrivadoRequestDTO dto) {
+        @Override
+        public DocumentoPrivadoResponseDTO guardar(DocumentoPrivadoRequestDTO dto) {
 
-        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+                Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
+                                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-        TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
-                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
+                TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
+                                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
 
-        DocumentoPrivado entidad =
-                DocumentoPrivadoMapper.toEntity(dto, empleado, tipo);
+                DocumentoPrivado entidad = DocumentoPrivadoMapper.toEntity(dto, empleado, tipo);
 
-        return DocumentoPrivadoMapper.toDTO(repository.save(entidad));
-    }
+                return DocumentoPrivadoMapper.toDTO(repository.save(entidad));
+        }
 
-    @Override
-    public DocumentoPrivadoResponseDTO actualizar(Long id, DocumentoPrivadoRequestDTO dto) {
+        @Override
+        public DocumentoPrivadoResponseDTO actualizar(Long id, DocumentoPrivadoRequestDTO dto) {
 
-        DocumentoPrivado existente = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+                DocumentoPrivado existente = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
 
-        Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+                Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
+                                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-        TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
-                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
+                TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
+                                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
 
-        existente.setEmpleado(empleado);
-        existente.setTipo(tipo);
-        existente.setArchivoUrl(dto.getArchivoUrl());
-        existente.setFechaVencimiento(dto.getFechaVencimiento());
-        existente.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+                existente.setEmpleado(empleado);
+                existente.setTipo(tipo);
+                existente.setArchivoUrl(dto.getArchivoUrl());
+                existente.setFechaVencimiento(dto.getFechaVencimiento());
+                existente.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
 
-        return DocumentoPrivadoMapper.toDTO(repository.save(existente));
-    }
+                return DocumentoPrivadoMapper.toDTO(repository.save(existente));
+        }
 
-    @Override
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+        @Override
+        public void eliminar(Long id) {
+                repository.deleteById(id);
+        }
 }

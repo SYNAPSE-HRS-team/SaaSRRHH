@@ -9,9 +9,15 @@ import java.time.LocalDateTime;
 @Setter
 public class AccesoUsuarioResponseDTO {
     private Long idAcceso;
+    
     private Long usuarioId;
+
     private LocalDateTime fechaLogin;
+
     private LocalDateTime fechaLogout;
+
     private String userAgent;
+
     private Boolean exitoso;
+
 }

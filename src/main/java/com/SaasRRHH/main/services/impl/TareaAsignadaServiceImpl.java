@@ -1,6 +1,5 @@
 package com.SaasRRHH.main.services.impl;
 
-import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.TareaAsignada;
 import com.SaasRRHH.main.model.TareaAsignada.EstadoTarea;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
