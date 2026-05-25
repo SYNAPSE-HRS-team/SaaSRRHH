@@ -1,19 +1,43 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.ValidacionSeguridad;
+import com.SaasRRHH.main.DTO.ValidacionSeguridadRequestDTO;
+import com.SaasRRHH.main.DTO.ValidacionSeguridadResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ValidacionSeguridadService {
 
-    List<ValidacionSeguridad> listar();
+    // =====================================
+    // CRUD
+    // =====================================
 
-    Optional<ValidacionSeguridad> buscarPorId(Long id);
+    List<ValidacionSeguridadResponseDTO> listar();
 
-    ValidacionSeguridad guardar(ValidacionSeguridad validacionSeguridad);
+    ValidacionSeguridadResponseDTO buscarPorId(Long id);
 
-    Optional<ValidacionSeguridad> actualizar(Long id, ValidacionSeguridad validacionSeguridad);
+    ValidacionSeguridadResponseDTO guardar(
+            ValidacionSeguridadRequestDTO dto);
+
+    ValidacionSeguridadResponseDTO actualizar(
+            Long id,
+            ValidacionSeguridadRequestDTO dto);
 
     void eliminar(Long id);
+
+    // =====================================
+    // CONSULTAS
+    // =====================================
+
+    List<ValidacionSeguridadResponseDTO>
+    buscarPorTotpValido(Boolean valido);
+
+    List<ValidacionSeguridadResponseDTO>
+    recientes();
+
+    List<ValidacionSeguridadResponseDTO>
+    buscarPorEmpleado(Long empleadoId);
+
+    List<ValidacionSeguridadResponseDTO>
+    intentosFallidos();
+
 }

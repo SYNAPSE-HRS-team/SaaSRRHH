@@ -17,4 +17,39 @@ public interface ValidacionSeguridadRepository extends JpaRepository<ValidacionS
 
     @Query("SELECT v FROM ValidacionSeguridad v JOIN FETCH v.asistencia a JOIN FETCH a.empleado e JOIN FETCH e.usuario LEFT JOIN FETCH v.dispositivo WHERE v.id = :id")
     Optional<ValidacionSeguridad> findByIdWithRelaciones(@Param("id") Long id);
+
+
+    List<ValidacionSeguridad>
+    findByTotpValido(Boolean valido);
+
+    @Query("""
+   SELECT v
+   FROM ValidacionSeguridad v
+   ORDER BY v.fechaValidacion DESC
+   """)
+    List<ValidacionSeguridad> recientes();
+
+
+    @Query("""
+   SELECT v
+   FROM ValidacionSeguridad v
+   JOIN FETCH v.asistencia a
+   JOIN FETCH a.empleado e
+   LEFT JOIN FETCH v.dispositivo
+   WHERE e.id = :empleadoId
+   ORDER BY v.fechaValidacion DESC
+   """)
+    List<ValidacionSeguridad>
+    buscarPorEmpleado(
+            @Param("empleadoId")
+            Long empleadoId);
+
+    @Query("""
+   SELECT v
+   FROM ValidacionSeguridad v
+   WHERE v.totpValido = false
+   ORDER BY v.fechaValidacion DESC
+   """)
+    List<ValidacionSeguridad>
+    intentosFallidos();
 }
