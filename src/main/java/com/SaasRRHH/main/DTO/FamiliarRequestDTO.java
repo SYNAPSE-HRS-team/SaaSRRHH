@@ -9,9 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class FamiliarDTO {
-
-    private Long id;
+public class FamiliarRequestDTO {
 
     private Long empleadoId;
 
