@@ -1,19 +1,43 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.DispositivoAutorizado;
+import com.SaasRRHH.main.DTO.DispositivoAutorizadoRequestDTO;
+import com.SaasRRHH.main.DTO.DispositivoAutorizadoResponseDTO;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public interface DispositivoAutorizadoService {
 
-    List<DispositivoAutorizado> listarTodo();
-    Optional<DispositivoAutorizado> buscarPorId(Long id);
-    DispositivoAutorizado guardar(DispositivoAutorizado dispositivoAutorizado);
-    DispositivoAutorizado actualizar(Long id, DispositivoAutorizado dispositivoAutorizado);
+    // ================================
+    // CRUD
+    // ================================
+
+    List<DispositivoAutorizadoResponseDTO> listarTodo();
+
+    DispositivoAutorizadoResponseDTO buscarPorId(Long id);
+
+    DispositivoAutorizadoResponseDTO guardar(
+            DispositivoAutorizadoRequestDTO dto);
+
+    DispositivoAutorizadoResponseDTO actualizar(
+            Long id,
+            DispositivoAutorizadoRequestDTO dto);
+
     void eliminar(Long id);
 
+    // ================================
+    // CONSULTAS
+    // ================================
+
+    List<DispositivoAutorizadoResponseDTO>
+    listarActivos();
+
+    List<DispositivoAutorizadoResponseDTO>
+    buscarPorUsuario(Long usuarioId);
+
+    boolean existeHardwareRegistrado(
+            Long usuarioId,
+            String hardwareId);
+
+    List<DispositivoAutorizadoResponseDTO>
+    dispositivosRecientes();
 }

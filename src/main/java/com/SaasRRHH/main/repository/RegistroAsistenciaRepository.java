@@ -25,12 +25,78 @@ public interface RegistroAsistenciaRepository extends JpaRepository<RegistroAsis
     List<RegistroAsistencia> findByEmpleadoIdAndFecha(@Param("empleadoId") Long empleadoId, @Param("fecha") LocalDate fecha);
     
     // Buscar última marcación de un empleado
-    @Query("SELECT r FROM RegistroAsistencia r WHERE r.empleado.id = :empleadoId ORDER BY r.fechaHora DESC")
-    Optional<RegistroAsistencia> findUltimaMarcacionByEmpleadoId(@Param("empleadoId") Long empleadoId);
+    Optional<RegistroAsistencia>
+    findTopByEmpleadoIdOrderByFechaHoraDesc(Long empleadoId);
     
     // Buscar por estado
     List<RegistroAsistencia> findByEstado(String estado);
     
     // Contar asistencias por empleado en un rango de fechas
     long countByEmpleadoIdAndFechaHoraBetween(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
+
+    @Query("""
+       SELECT r
+       FROM RegistroAsistencia r
+       JOIN FETCH r.empleado e
+       WHERE DATE(r.fechaHora) = CURRENT_DATE
+       ORDER BY r.fechaHora DESC
+       """)
+    List<RegistroAsistencia> asistenciasHoy();
+
+    @Query("""
+       SELECT r
+       FROM RegistroAsistencia r
+       WHERE r.estado IN ('OBSERVADO', 'RECHAZADO')
+       ORDER BY r.fechaHora DESC
+       """)
+    List<RegistroAsistencia> incidenciasAsistencia();
+
+
+    @Query("""
+       SELECT COUNT(r)
+       FROM RegistroAsistencia r
+       WHERE r.empleado.id = :empleadoId
+       AND r.fechaHora BETWEEN :inicio AND :fin
+       """)
+    Long contarAsistenciasMensuales(
+            @Param("empleadoId") Long empleadoId,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin);
+
+
+    @Query("""
+       SELECT r.empleado.id, r.empleado.nombres, COUNT(r)
+       FROM RegistroAsistencia r
+       WHERE r.estado = 'OBSERVADO'
+       GROUP BY r.empleado.id, r.empleado.nombres
+       ORDER BY COUNT(r) DESC
+       """)
+    List<Object[]> rankingTardanzas();
+
+
+    @Query("""
+       SELECT COUNT(r) > 0
+       FROM RegistroAsistencia r
+       WHERE r.empleado.id = :empleadoId
+       AND DATE(r.fechaHora) = CURRENT_DATE
+       AND r.tipoMarcacion = :tipo
+       """)
+    boolean yaMarcoHoy(
+            @Param("empleadoId") Long empleadoId,
+            @Param("tipo") String tipo);
+
+
+    @Query("""
+       SELECT r
+       FROM RegistroAsistencia r
+       JOIN FETCH r.empleado
+       LEFT JOIN FETCH r.dispositivo
+       ORDER BY r.fechaHora DESC
+       """)
+    List<RegistroAsistencia> listarCompleto();
+
+
+
+
+
 }

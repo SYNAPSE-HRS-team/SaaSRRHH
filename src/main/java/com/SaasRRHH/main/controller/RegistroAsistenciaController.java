@@ -3,125 +3,204 @@ package com.SaasRRHH.main.controller;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
 import com.SaasRRHH.main.services.RegistroAsistenciaService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/registros-asistencia")
+@RequestMapping("/api/asistencias")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class RegistroAsistenciaController {
 
     private final RegistroAsistenciaService service;
 
-    public RegistroAsistenciaController(RegistroAsistenciaService service) {
-        this.service = service;
-    }
+    // ===================================
+    // CRUD
+    // ===================================
 
-    // Listar todos
     @GetMapping
     public ResponseEntity<List<RegistroAsistenciaResponseDTO>> listar() {
+
         return ResponseEntity.ok(service.listar());
     }
 
-    // Buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<RegistroAsistenciaResponseDTO> obtener(@PathVariable Long id) {
-        try {
-            RegistroAsistenciaResponseDTO dto = service.buscarPorId(id);
-            return ResponseEntity.ok(dto);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<RegistroAsistenciaResponseDTO> buscarPorId(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
-    // Crear Registro
     @PostMapping
-    public ResponseEntity<RegistroAsistenciaResponseDTO> crear(@RequestBody RegistroAsistenciaRequestDTO registroAsistencia) {
-        try {
-            RegistroAsistenciaResponseDTO nuevoRegistro = service.guardar(registroAsistencia);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoRegistro);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<RegistroAsistenciaResponseDTO> guardar(
+            @Valid @RequestBody RegistroAsistenciaRequestDTO dto) {
+
+        RegistroAsistenciaResponseDTO response =
+                service.guardar(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
-    // Registrar entrada (endpoint específico)
-    @PostMapping("/entrada")
-    public ResponseEntity<RegistroAsistenciaResponseDTO> registrarEntrada(@RequestBody Map<String, Object> payload) {
-        try {
-            Long empleadoId = Long.valueOf(payload.get("empleadoId").toString());
-            String metodo = payload.containsKey("metodo") ? payload.get("metodo").toString() : "QR";
-            RegistroAsistenciaResponseDTO registro = service.registrarEntrada(empleadoId, metodo);
-            return ResponseEntity.status(HttpStatus.CREATED).body(registro);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    // Registrar salida (endpoint específico)
-    @PostMapping("/salida")
-    public ResponseEntity<RegistroAsistenciaResponseDTO> registrarSalida(@RequestBody Map<String, Object> payload) {
-        try {
-            Long empleadoId = Long.valueOf(payload.get("empleadoId").toString());
-            String metodo = payload.containsKey("metodo") ? payload.get("metodo").toString() : "QR";
-            RegistroAsistenciaResponseDTO registro = service.registrarSalida(empleadoId, metodo);
-            return ResponseEntity.status(HttpStatus.CREATED).body(registro);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    // Buscar por empleado
-    @GetMapping("/empleado/{empleadoId}")
-    public ResponseEntity<List<RegistroAsistenciaResponseDTO>> buscarPorEmpleado(@PathVariable Long empleadoId) {
-        List<RegistroAsistenciaResponseDTO> registros = service.buscarPorEmpleado(empleadoId);
-        return ResponseEntity.ok(registros);
-    }
-
-    // Buscar por empleado y fecha
-    @GetMapping("/empleado/{empleadoId}/fecha")
-    public ResponseEntity<List<RegistroAsistenciaResponseDTO>> buscarPorEmpleadoYFecha(
-            @PathVariable Long empleadoId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-        List<RegistroAsistenciaResponseDTO> registros = service.buscarPorEmpleadoYFecha(empleadoId, fecha);
-        return ResponseEntity.ok(registros);
-    }
-
-    // Buscar por estado
-    @GetMapping("/estado/{estado}")
-    public ResponseEntity<List<RegistroAsistenciaResponseDTO>> buscarPorEstado(@PathVariable String estado) {
-        List<RegistroAsistenciaResponseDTO> registros = service.buscarPorEstado(estado);
-        return ResponseEntity.ok(registros);
-    }
-
-    // Actualizar registro
-    @PutMapping("/{id}")
-    public ResponseEntity<RegistroAsistenciaResponseDTO> actualizar(@PathVariable Long id, @RequestBody RegistroAsistenciaRequestDTO registroAsistencia) {
-        try {
-            // verificar existencia
-            service.buscarPorId(id);
-            registroAsistencia.setId(id);
-            RegistroAsistenciaResponseDTO actualizado = service.guardar(registroAsistencia);
-            return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    // Eliminar registro
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        try {
-            service.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    // ===================================
+    // REGISTRO ENTRADA / SALIDA
+    // ===================================
+
+    @PostMapping("/entrada/{empleadoId}")
+    public ResponseEntity<RegistroAsistenciaResponseDTO>
+    registrarEntrada(
+            @PathVariable Long empleadoId,
+            @RequestParam(required = false)
+            String metodo) {
+
+        return ResponseEntity.ok(
+                service.registrarEntrada(
+                        empleadoId,
+                        metodo));
+    }
+
+    @PostMapping("/salida/{empleadoId}")
+    public ResponseEntity<RegistroAsistenciaResponseDTO>
+    registrarSalida(
+            @PathVariable Long empleadoId,
+            @RequestParam(required = false)
+            String metodo) {
+
+        return ResponseEntity.ok(
+                service.registrarSalida(
+                        empleadoId,
+                        metodo));
+    }
+
+    // ===================================
+    // CONSULTAS
+    // ===================================
+
+    @GetMapping("/empleado/{empleadoId}")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
+    buscarPorEmpleado(
+            @PathVariable Long empleadoId) {
+
+        return ResponseEntity.ok(
+                service.buscarPorEmpleado(
+                        empleadoId));
+    }
+
+    @GetMapping("/empleado/{empleadoId}/fecha")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
+    buscarPorEmpleadoYFecha(
+            @PathVariable Long empleadoId,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate fecha) {
+
+        return ResponseEntity.ok(
+                service.buscarPorEmpleadoYFecha(
+                        empleadoId,
+                        fecha));
+    }
+
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
+    buscarPorEstado(
+            @PathVariable String estado) {
+
+        return ResponseEntity.ok(
+                service.buscarPorEstado(
+                        estado));
+    }
+
+    // ===================================
+    // CONSULTAS ANALITICAS
+    // ===================================
+
+    @GetMapping("/hoy")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
+    asistenciasHoy() {
+
+        return ResponseEntity.ok(
+                service.asistenciasHoy());
+    }
+
+    @GetMapping("/incidencias")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
+    incidenciasAsistencia() {
+
+        return ResponseEntity.ok(
+                service.incidenciasAsistencia());
+    }
+
+    @GetMapping("/mensual/{empleadoId}")
+    public ResponseEntity<Long>
+    contarAsistenciasMensuales(
+
+            @PathVariable Long empleadoId,
+
+            @RequestParam
+            @DateTimeFormat(
+                    iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime inicio,
+
+            @RequestParam
+            @DateTimeFormat(
+                    iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fin) {
+
+        return ResponseEntity.ok(
+                service.contarAsistenciasMensuales(
+                        empleadoId,
+                        inicio,
+                        fin));
+    }
+
+    @GetMapping("/ranking-tardanzas")
+    public ResponseEntity<List<Object[]>>
+    rankingTardanzas() {
+
+        return ResponseEntity.ok(
+                service.rankingTardanzas());
+    }
+
+    @GetMapping("/ya-marco")
+    public ResponseEntity<Boolean>
+    yaMarcoHoy(
+
+            @RequestParam Long empleadoId,
+
+            @RequestParam String tipo) {
+
+        return ResponseEntity.ok(
+                service.yaMarcoHoy(
+                        empleadoId,
+                        tipo));
+    }
+
+    @GetMapping("/completo")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
+    listarCompleto() {
+
+        return ResponseEntity.ok(
+                service.listarCompleto());
     }
 }

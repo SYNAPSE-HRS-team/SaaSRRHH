@@ -2,7 +2,9 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RegistroAsistenciaService {
@@ -11,17 +13,51 @@ public interface RegistroAsistenciaService {
 
     RegistroAsistenciaResponseDTO buscarPorId(Long id);
 
-    RegistroAsistenciaResponseDTO guardar(RegistroAsistenciaRequestDTO registroAsistencia);
+    RegistroAsistenciaResponseDTO guardar(
+            RegistroAsistenciaRequestDTO dto);
 
-    RegistroAsistenciaResponseDTO registrarEntrada(Long empleadoId, String metodo);
+    RegistroAsistenciaResponseDTO registrarEntrada(
+            Long empleadoId,
+            String metodo);
 
-    RegistroAsistenciaResponseDTO registrarSalida(Long empleadoId, String metodo);
+    RegistroAsistenciaResponseDTO registrarSalida(
+            Long empleadoId,
+            String metodo);
 
     void eliminar(Long id);
 
-    List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId);
+    List<RegistroAsistenciaResponseDTO>
+    buscarPorEmpleado(Long empleadoId);
 
-    List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
+    List<RegistroAsistenciaResponseDTO>
+    buscarPorEmpleadoYFecha(
+            Long empleadoId,
+            LocalDate fecha);
 
-    List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado);
+    List<RegistroAsistenciaResponseDTO>
+    buscarPorEstado(String estado);
+
+    // ===================================
+    // CONSULTAS ANALITICAS
+    // ===================================
+
+    List<RegistroAsistenciaResponseDTO>
+    asistenciasHoy();
+
+    List<RegistroAsistenciaResponseDTO>
+    incidenciasAsistencia();
+
+    Long contarAsistenciasMensuales(
+            Long empleadoId,
+            LocalDateTime inicio,
+            LocalDateTime fin);
+
+    List<Object[]> rankingTardanzas();
+
+    boolean yaMarcoHoy(
+            Long empleadoId,
+            String tipo);
+
+    List<RegistroAsistenciaResponseDTO>
+    listarCompleto();
 }

@@ -1,59 +1,178 @@
 package com.SaasRRHH.main.services.impl;
 
+import com.SaasRRHH.main.DTO.DispositivoAutorizadoRequestDTO;
+import com.SaasRRHH.main.DTO.DispositivoAutorizadoResponseDTO;
+import com.SaasRRHH.main.mapper.DispositivoAutorizadoMapper;
 import com.SaasRRHH.main.model.DispositivoAutorizado;
+import com.SaasRRHH.main.model.Usuario;
 import com.SaasRRHH.main.repository.DispositivoAutorizadoRepository;
+import com.SaasRRHH.main.repository.UsuarioRepository;
 import com.SaasRRHH.main.services.DispositivoAutorizadoService;
-import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
-@Service
-public class DispositivoAutorizadoImpl implements DispositivoAutorizadoService {
+import java.time.LocalDateTime;
+import java.util.List;
 
-    private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class DispositivoAutorizadoImpl
+        implements DispositivoAutorizadoService {
+
+    private final DispositivoAutorizadoRepository repository;
+    private final UsuarioRepository usuarioRepository;
+
+    // =====================================
+    // CRUD
+    // =====================================
 
     @Override
     @Transactional(readOnly = true)
-    public List<DispositivoAutorizado> listarTodo() {
-        return dispositivoAutorizadoRepository.findAllWithUsuario();
+    public List<DispositivoAutorizadoResponseDTO>
+    listarTodo() {
+
+        return repository.findAllWithUsuario()
+                .stream()
+                .map(DispositivoAutorizadoMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<DispositivoAutorizado> buscarPorId(Long id) {
-        return dispositivoAutorizadoRepository.findById(id);
+    @Transactional(readOnly = true)
+    public DispositivoAutorizadoResponseDTO
+    buscarPorId(Long id) {
+
+        DispositivoAutorizado dispositivo =
+                repository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Dispositivo no encontrado"));
+
+        return DispositivoAutorizadoMapper.toDTO(dispositivo);
     }
 
     @Override
-    public DispositivoAutorizado guardar(DispositivoAutorizado dispositivoAutorizado) {
-        return dispositivoAutorizadoRepository.save(dispositivoAutorizado);
+    public DispositivoAutorizadoResponseDTO guardar(
+            DispositivoAutorizadoRequestDTO dto) {
+
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Usuario no encontrado"));
+
+        boolean existe =
+                repository.existsByUsuarioIdAndHardwareId(
+                        dto.getUsuarioId(),
+                        dto.getHardwareId());
+
+        if (existe) {
+
+            throw new RuntimeException(
+                    "El dispositivo ya está registrado");
+        }
+
+        DispositivoAutorizado entity =
+                DispositivoAutorizadoMapper.toEntity(dto);
+
+        entity.setUsuario(usuario);
+
+        return DispositivoAutorizadoMapper.toDTO(
+                repository.save(entity));
     }
 
     @Override
-    public DispositivoAutorizado actualizar(Long id, DispositivoAutorizado dispositivoAutorizado) {
-        DispositivoAutorizado existe = dispositivoAutorizadoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DocumentoPrivado no encontrado"));
+    public DispositivoAutorizadoResponseDTO actualizar(
+            Long id,
+            DispositivoAutorizadoRequestDTO dto) {
 
-        actualizarDatos(existe, dispositivoAutorizado);
+        DispositivoAutorizado existente =
+                repository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Dispositivo no encontrado"));
 
-        return dispositivoAutorizadoRepository.save(existe);
-    }
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Usuario no encontrado"));
 
-    private void actualizarDatos(DispositivoAutorizado existente, DispositivoAutorizado nuevo) {
-        existente.setActivo(nuevo.getActivo());
-        existente.setUsuario(nuevo.getUsuario());
-        existente.setFcmToken(nuevo.getFcmToken());
-        existente.setHardwareId(nuevo.getHardwareId());
-        existente.setFechaRegistro(nuevo.getFechaRegistro());
+        existente.setUsuario(usuario);
+        existente.setHardwareId(dto.getHardwareId());
+        existente.setFcmToken(dto.getFcmToken());
+        existente.setActivo(
+                dto.getActivo() != null
+                        ? dto.getActivo()
+                        : true);
 
+        return DispositivoAutorizadoMapper.toDTO(
+                repository.save(existente));
     }
 
     @Override
     public void eliminar(Long id) {
 
+        DispositivoAutorizado dispositivo =
+                repository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Dispositivo no encontrado"));
+
+        repository.delete(dispositivo);
+    }
+
+    // =====================================
+    // CONSULTAS DE SEGURIDAD Y CONTROL
+    // =====================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DispositivoAutorizadoResponseDTO>
+    listarActivos() {
+
+        return repository.findByActivoTrue()
+                .stream()
+                .map(DispositivoAutorizadoMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DispositivoAutorizadoResponseDTO>
+    buscarPorUsuario(Long usuarioId) {
+
+        return repository.findByUsuarioId(usuarioId)
+                .stream()
+                .map(DispositivoAutorizadoMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existeHardwareRegistrado(
+            Long usuarioId,
+            String hardwareId) {
+
+        return repository.existsByUsuarioIdAndHardwareId(
+                usuarioId,
+                hardwareId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DispositivoAutorizadoResponseDTO>
+    dispositivosRecientes() {
+
+        LocalDateTime hace30Dias =
+                LocalDateTime.now().minusDays(30);
+
+        return repository
+                .buscarDispositivosRecientes(hace30Dias)
+                .stream()
+                .map(DispositivoAutorizadoMapper::toDTO)
+                .toList();
     }
 }
