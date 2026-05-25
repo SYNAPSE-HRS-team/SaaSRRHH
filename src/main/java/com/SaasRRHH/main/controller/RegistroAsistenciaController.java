@@ -26,7 +26,7 @@ public class RegistroAsistenciaController {
     // Listar todos
     @GetMapping
     public ResponseEntity<List<RegistroAsistenciaResponseDTO>> listar() {
-        return ResponseEntity.ok(service.listar());
+        return (ResponseEntity<List<RegistroAsistenciaResponseDTO>>) ResponseEntity.ok(service.listar());
     }
 
     // Buscar por ID
