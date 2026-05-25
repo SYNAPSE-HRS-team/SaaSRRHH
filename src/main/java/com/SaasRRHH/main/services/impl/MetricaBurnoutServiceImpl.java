@@ -5,6 +5,7 @@ import com.SaasRRHH.main.repository.MetricaBurnoutRepository;
 import com.SaasRRHH.main.services.MetricaBurnoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,27 +16,35 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     private final MetricaBurnoutRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<MetricaBurnout> listar() {
-        return repository.findAll();
+        return repository.findAllWithRelaciones();
     }
 
     @Override
+    @Transactional(readOnly = true)
+
     public MetricaBurnout guardar(MetricaBurnout metrica) {
         return repository.save(metrica);
     }
 
     @Override
+    @Transactional(readOnly = true)
+
     public MetricaBurnout obtenerPorId(Long id) {
-        return repository.findById(id)
+        return repository.findByIdWithRelaciones(id)
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
     }
 
     @Override
+    @Transactional(readOnly = true)
+
     public List<MetricaBurnout> buscarPorEmpleado(Long empleadoId) {
         return repository.findByEmpleadoId(empleadoId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MetricaBurnout actualizar(Long id, MetricaBurnout metrica) {
         MetricaBurnout actual = obtenerPorId(id);
 
@@ -48,6 +57,8 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+
     public void eliminar(Long id) {
         repository.deleteById(id);
     }

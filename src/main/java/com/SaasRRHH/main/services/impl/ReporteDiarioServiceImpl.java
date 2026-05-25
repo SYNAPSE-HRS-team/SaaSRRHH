@@ -7,6 +7,7 @@ import com.SaasRRHH.main.services.ReporteDiarioService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +19,15 @@ public class ReporteDiarioServiceImpl implements ReporteDiarioService {
     private final ReporteDiarioRepository reporteDiarioRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ReporteDiario> listar() {
-        return reporteDiarioRepository.findAll();
+        return reporteDiarioRepository.findAllWithRelaciones();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<ReporteDiario> buscarPorId(Long id) {
-        return reporteDiarioRepository.findById(id);
+        return reporteDiarioRepository.findByIdWithRelaciones(id);
     }
 
     @Override

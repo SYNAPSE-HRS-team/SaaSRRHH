@@ -17,4 +17,6 @@ public interface FamiliarService {
     void eliminar(Long id);
 
     List<FamiliarDTO> findByEmpleadoId(Long empleadoId);
+
+
 }

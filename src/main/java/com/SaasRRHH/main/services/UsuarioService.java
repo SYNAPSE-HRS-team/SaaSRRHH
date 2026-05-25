@@ -1,22 +1,37 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.Usuario;
+import com.SaasRRHH.main.DTO.UsuarioRequestDTO;
+import com.SaasRRHH.main.DTO.UsuarioResponseDTO;
+
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface UsuarioService {
 
-    List<Usuario> listar();
+    List<UsuarioResponseDTO> listar();
 
-    Optional<Usuario> buscarPorId(Long id);
+    UsuarioResponseDTO buscarPorId(Long id);
 
-    Usuario guardar(Usuario usuario);
+    UsuarioResponseDTO guardar(UsuarioRequestDTO dto);
 
     void eliminar(Long id);
 
-    Optional<Usuario> buscarPorEmail(String email);
+    UsuarioResponseDTO buscarPorEmail(String email);
 
-    Usuario actualizarUltimoAcceso(Long id);
+    UsuarioResponseDTO actualizarUltimoAcceso(Long id);
 
     boolean existsByEmail(String email);
+
+    // =========================
+    // CONSULTAS JPQL
+    // =========================
+
+    List<UsuarioResponseDTO> listarUsuariosActivos();
+
+    List<UsuarioResponseDTO> buscarPorRol(String rol);
+
+    List<UsuarioResponseDTO> usuariosConAccesoReciente(
+            LocalDateTime fecha);
+
+    List<Object[]> contarUsuariosPorRol();
 }

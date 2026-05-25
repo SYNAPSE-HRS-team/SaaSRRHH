@@ -16,19 +16,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
+@Transactional
+public class DocumentoPrivadoServiceImpl
+                implements DocumentoPrivadoService {
 
         private final DocumentoPrivadoRepository repository;
+
         private final EmpleadoRepository empleadoRepository;
+
         private final TipoDocumentoRepository tipoDocumentoRepository;
 
         @Override
-        @Transactional(readOnly = true) // ← agregar
+        @Transactional(readOnly = true)
         public List<DocumentoPrivadoResponseDTO> listar() {
+
                 return repository.findAll()
                                 .stream()
                                 .map(DocumentoPrivadoMapper::toDTO)
@@ -36,11 +42,12 @@ public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
         }
 
         @Override
-        @Transactional(readOnly = true) // ← agregar
+        @Transactional(readOnly = true)
         public DocumentoPrivadoResponseDTO buscarPorId(Long id) {
 
                 DocumentoPrivado d = repository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Documento no encontrado"));
 
                 return DocumentoPrivadoMapper.toDTO(d);
         }
@@ -48,40 +55,152 @@ public class DocumentoPrivadoServiceImpl implements DocumentoPrivadoService {
         @Override
         public DocumentoPrivadoResponseDTO guardar(DocumentoPrivadoRequestDTO dto) {
 
-                Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
-                                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+                Empleado empleado = empleadoRepository.findById(
+                                dto.getEmpleadoId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
 
-                TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
-                                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
+                TipoDocumento tipo = tipoDocumentoRepository.findById(
+                                dto.getTipoId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Tipo documento no encontrado"));
 
-                DocumentoPrivado entidad = DocumentoPrivadoMapper.toEntity(dto, empleado, tipo);
+                DocumentoPrivado entidad = DocumentoPrivadoMapper.toEntity(
+                                dto,
+                                empleado,
+                                tipo);
 
-                return DocumentoPrivadoMapper.toDTO(repository.save(entidad));
+                return DocumentoPrivadoMapper.toDTO(
+                                repository.save(entidad));
         }
 
         @Override
-        public DocumentoPrivadoResponseDTO actualizar(Long id, DocumentoPrivadoRequestDTO dto) {
+        public DocumentoPrivadoResponseDTO actualizar(
+                        Long id,
+                        DocumentoPrivadoRequestDTO dto) {
 
                 DocumentoPrivado existente = repository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Documento no encontrado"));
 
-                Empleado empleado = empleadoRepository.findById(dto.getEmpleadoId())
-                                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+                Empleado empleado = empleadoRepository.findById(
+                                dto.getEmpleadoId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
 
-                TipoDocumento tipo = tipoDocumentoRepository.findById(dto.getTipoId())
-                                .orElseThrow(() -> new RuntimeException("Tipo documento no encontrado"));
+                TipoDocumento tipo = tipoDocumentoRepository.findById(
+                                dto.getTipoId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Tipo documento no encontrado"));
 
                 existente.setEmpleado(empleado);
                 existente.setTipo(tipo);
-                existente.setArchivoUrl(dto.getArchivoUrl());
-                existente.setFechaVencimiento(dto.getFechaVencimiento());
-                existente.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+                existente.setArchivoUrl(
+                                dto.getArchivoUrl());
+                existente.setFechaVencimiento(
+                                dto.getFechaVencimiento());
 
-                return DocumentoPrivadoMapper.toDTO(repository.save(existente));
+                existente.setActivo(
+                                dto.getActivo() != null
+                                                ? dto.getActivo()
+                                                : true);
+
+                return DocumentoPrivadoMapper.toDTO(
+                                repository.save(existente));
         }
 
         @Override
         public void eliminar(Long id) {
-                repository.deleteById(id);
+
+                DocumentoPrivado documento = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Documento no encontrado"));
+
+                repository.delete(documento);
+        }
+
+        // ===================================
+        // CONSULTAS
+        // ===================================
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> listarActivos() {
+
+                return repository.findByActivoTrue()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> buscarPorEmpleado(Long empleadoId) {
+
+                return repository.findByEmpleadoId(
+                                empleadoId)
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> buscarPorTipo(Long tipoId) {
+
+                return repository.findByTipoIdTipo(tipoId)
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> listarActivosConRelaciones() {
+
+                return repository
+                                .listarActivosConRelaciones()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> documentosVencidos() {
+
+                return repository.documentosVencidos()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> documentosPorVencer(
+                        LocalDate fechaLimite) {
+
+                return repository
+                                .documentosPorVencer(
+                                                fechaLimite)
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<Object[]> contarDocumentosPorTipo() {
+
+                return repository
+                                .contarDocumentosPorTipo();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<Object[]> empleadosConMasDocumentos() {
+
+                return repository
+                                .empleadosConMasDocumentos();
         }
 }

@@ -2,22 +2,56 @@ package com.SaasRRHH.main.repository;
 
 import com.SaasRRHH.main.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    
-    Optional<Usuario> findByEmail(String email);
-    
-    boolean existsByEmail(String email);
-    
-    @Modifying
-    @Transactional
-    @Query("UPDATE Usuario u SET u.ultimoAcceso = CURRENT_TIMESTAMP WHERE u.id = :id")
-    void updateUltimoAcceso(@Param("id") Long id);
+public interface UsuarioRepository
+              extends JpaRepository<Usuario, Long> {
+
+       // ===================================
+       // CONSULTAS DERIVADAS
+       // ===================================
+
+       Optional<Usuario> findByEmail(String email);
+
+       boolean existsByEmail(String email);
+
+       List<Usuario> findByActivoTrue();
+
+       // ===================================
+       // JPQL
+       // ===================================
+
+       @Query("""
+                     SELECT u
+                     FROM Usuario u
+                     JOIN FETCH u.rol r
+                     WHERE r.nombreRol = :rol
+                     ORDER BY u.email ASC
+                     """)
+       List<Usuario> buscarPorRol(
+                     @Param("rol") String rol);
+
+       @Query("""
+                     SELECT u
+                     FROM Usuario u
+                     WHERE u.ultimoAcceso IS NOT NULL
+                     AND u.ultimoAcceso >= :fecha
+                     ORDER BY u.ultimoAcceso DESC
+                     """)
+       List<Usuario> usuariosConAccesoReciente(
+                     @Param("fecha") LocalDateTime fecha);
+
+       @Query("""
+                     SELECT r.nombreRol, COUNT(u)
+                     FROM Usuario u
+                     JOIN u.rol r
+                     GROUP BY r.nombreRol
+                     ORDER BY COUNT(u) DESC
+                     """)
+       List<Object[]> contarUsuariosPorRol();
 }
