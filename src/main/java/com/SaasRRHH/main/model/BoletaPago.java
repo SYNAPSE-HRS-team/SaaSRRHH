@@ -88,4 +88,7 @@ public class BoletaPago {
 
         @Column(name = "fecha_emision", nullable = false, insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
         private LocalDateTime fechaEmision;
+
+        @Column(name = "pdf_url", length = 500)
+        private String pdfUrl;
 }
