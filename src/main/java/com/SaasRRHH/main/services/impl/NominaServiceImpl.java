@@ -74,6 +74,9 @@ public class NominaServiceImpl implements NominaService {
         BigDecimal totalIngresos = sueldoBase.add(asignacionFamiliar).add(bonoBeta).add(horasExtra).add(otrosBonos);
         BigDecimal totalDescuentos = descuentoInasistencia.add(otrosDescuentos);
         BigDecimal neto = totalIngresos.subtract(totalDescuentos).setScale(2, RoundingMode.HALF_UP);
+        if (neto.compareTo(BigDecimal.ZERO) < 0) {
+            neto = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
 
         BoletaPagoRequestDTO dto = new BoletaPagoRequestDTO();
         dto.setEmpleadoId(empleadoId);

@@ -38,7 +38,7 @@ class PdfGeneratorServiceImplTest {
         b.setSueldoBase(new BigDecimal("1000.00"));
         b.setNetoPagar(new BigDecimal("800.00"));
 
-        when(boletaRepo.findById(id)).thenReturn(Optional.of(b));
+        when(boletaRepo.findByIdWithRelaciones(id)).thenReturn(Optional.of(b));
         when(boletaRepo.save(b)).thenReturn(b);
 
         byte[] pdf = pdfService.generarBoletaPdf(id);

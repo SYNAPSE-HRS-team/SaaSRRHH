@@ -45,7 +45,13 @@ public class NominaProcessorServiceImpl implements NominaProcessorService {
             boleta.setEmpleado(e);
             boleta.setPlanilla(planilla);
             boleta = boletaRepo.save(boleta);
-            if (boleta.getNetoPagar() != null) totalPagado = totalPagado.add(boleta.getNetoPagar());
+            if (boleta.getNetoPagar() != null) {
+                BigDecimal neto = boleta.getNetoPagar();
+                if (neto.compareTo(BigDecimal.ZERO) < 0) {
+                    neto = BigDecimal.ZERO;
+                }
+                totalPagado = totalPagado.add(neto);
+            }
         }
 
         planilla.setTotalPagado(totalPagado);
