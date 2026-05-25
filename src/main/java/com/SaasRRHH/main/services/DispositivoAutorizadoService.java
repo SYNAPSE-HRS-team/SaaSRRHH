@@ -1,7 +1,6 @@
 package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.model.DispositivoAutorizado;
-import com.SaasRRHH.main.repository.DispositivoAutorizadoRepository;
 
 import java.util.List;
 import java.util.Optional;

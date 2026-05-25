@@ -9,14 +9,18 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @RequiredArgsConstructor
 @Service
 public class DispositivoAutorizadoImpl implements DispositivoAutorizadoService {
 
-private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;
+    private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;
+
     @Override
+    @Transactional(readOnly = true)
     public List<DispositivoAutorizado> listarTodo() {
-        return dispositivoAutorizadoRepository.findAll();
+        return dispositivoAutorizadoRepository.findAllWithUsuario();
     }
 
     @Override
@@ -31,21 +35,22 @@ private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;
 
     @Override
     public DispositivoAutorizado actualizar(Long id, DispositivoAutorizado dispositivoAutorizado) {
-        DispositivoAutorizado existe = dispositivoAutorizadoRepository.findById(id).orElseThrow(() -> new RuntimeException("DocumentoPrivado no encontrado"));
+        DispositivoAutorizado existe = dispositivoAutorizadoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("DocumentoPrivado no encontrado"));
 
         actualizarDatos(existe, dispositivoAutorizado);
 
         return dispositivoAutorizadoRepository.save(existe);
-     }
+    }
 
-     private void actualizarDatos(DispositivoAutorizado existente, DispositivoAutorizado nuevo){
+    private void actualizarDatos(DispositivoAutorizado existente, DispositivoAutorizado nuevo) {
         existente.setActivo(nuevo.getActivo());
         existente.setUsuario(nuevo.getUsuario());
         existente.setFcmToken(nuevo.getFcmToken());
         existente.setHardwareId(nuevo.getHardwareId());
         existente.setFechaRegistro(nuevo.getFechaRegistro());
 
-     }
+    }
 
     @Override
     public void eliminar(Long id) {

@@ -1,30 +1,30 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.TareaAsignada;
+import com.SaasRRHH.main.DTO.TareaAsignadaRequestDTO;
+import com.SaasRRHH.main.DTO.TareaAsignadaResponseDTO;
 import com.SaasRRHH.main.model.TareaAsignada.EstadoTarea;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface TareaAsignadaService {
 
-    List<TareaAsignada> listar();
+    List<TareaAsignadaResponseDTO> listar();
 
-    Optional<TareaAsignada> buscarPorId(Long id);
+    TareaAsignadaResponseDTO buscarPorId(Long id);
 
-    TareaAsignada guardar(TareaAsignada tarea);
+    TareaAsignadaResponseDTO guardar(TareaAsignadaRequestDTO tarea);
 
-    Optional<TareaAsignada> actualizar(Long id, TareaAsignada tarea);
+    TareaAsignadaResponseDTO actualizar(Long id, TareaAsignadaRequestDTO tarea);
 
     void eliminar(Long id);
 
-    List<TareaAsignada> buscarPorEmpleado(Long empleadoId);
+    List<TareaAsignadaResponseDTO> buscarPorEmpleado(Long empleadoId);
 
-    List<TareaAsignada> buscarPorSupervisor(Long supervisorId);
+    List<TareaAsignadaResponseDTO> buscarPorSupervisor(Long supervisorId);
 
-    List<TareaAsignada> buscarPorEstado(EstadoTarea estado);
+    List<TareaAsignadaResponseDTO> buscarPorEstado(EstadoTarea estado);
 
-    List<TareaAsignada> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
+    List<TareaAsignadaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
 
-    TareaAsignada cambiarEstado(Long id, EstadoTarea nuevoEstado);
+    TareaAsignadaResponseDTO cambiarEstado(Long id, EstadoTarea nuevoEstado);
 }

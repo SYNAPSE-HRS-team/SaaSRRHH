@@ -23,212 +23,184 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class DocumentoPrivadoServiceImpl
-        implements DocumentoPrivadoService {
+                implements DocumentoPrivadoService {
 
-    private final DocumentoPrivadoRepository repository;
+        private final DocumentoPrivadoRepository repository;
 
-    private final EmpleadoRepository empleadoRepository;
+        private final EmpleadoRepository empleadoRepository;
 
-    private final TipoDocumentoRepository
-            tipoDocumentoRepository;
+        private final TipoDocumentoRepository tipoDocumentoRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    listar() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> listar() {
 
-        return repository.findAll()
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository.findAll()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public DocumentoPrivadoResponseDTO
-    buscarPorId(Long id) {
+        @Override
+        @Transactional(readOnly = true)
+        public DocumentoPrivadoResponseDTO buscarPorId(Long id) {
 
-        DocumentoPrivado d =
-                repository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Documento no encontrado"));
+                DocumentoPrivado d = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Documento no encontrado"));
 
-        return DocumentoPrivadoMapper.toDTO(d);
-    }
+                return DocumentoPrivadoMapper.toDTO(d);
+        }
 
-    @Override
-    public DocumentoPrivadoResponseDTO
-    guardar(DocumentoPrivadoRequestDTO dto) {
+        @Override
+        public DocumentoPrivadoResponseDTO guardar(DocumentoPrivadoRequestDTO dto) {
 
-        Empleado empleado =
-                empleadoRepository.findById(
+                Empleado empleado = empleadoRepository.findById(
                                 dto.getEmpleadoId())
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Empleado no encontrado"));
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
 
-        TipoDocumento tipo =
-                tipoDocumentoRepository.findById(
+                TipoDocumento tipo = tipoDocumentoRepository.findById(
                                 dto.getTipoId())
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Tipo documento no encontrado"));
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Tipo documento no encontrado"));
 
-        DocumentoPrivado entidad =
-                DocumentoPrivadoMapper.toEntity(
-                        dto,
-                        empleado,
-                        tipo);
+                DocumentoPrivado entidad = DocumentoPrivadoMapper.toEntity(
+                                dto,
+                                empleado,
+                                tipo);
 
-        return DocumentoPrivadoMapper.toDTO(
-                repository.save(entidad));
-    }
+                return DocumentoPrivadoMapper.toDTO(
+                                repository.save(entidad));
+        }
 
-    @Override
-    public DocumentoPrivadoResponseDTO
-    actualizar(
-            Long id,
-            DocumentoPrivadoRequestDTO dto) {
+        @Override
+        public DocumentoPrivadoResponseDTO actualizar(
+                        Long id,
+                        DocumentoPrivadoRequestDTO dto) {
 
-        DocumentoPrivado existente =
-                repository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Documento no encontrado"));
+                DocumentoPrivado existente = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Documento no encontrado"));
 
-        Empleado empleado =
-                empleadoRepository.findById(
+                Empleado empleado = empleadoRepository.findById(
                                 dto.getEmpleadoId())
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Empleado no encontrado"));
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
 
-        TipoDocumento tipo =
-                tipoDocumentoRepository.findById(
+                TipoDocumento tipo = tipoDocumentoRepository.findById(
                                 dto.getTipoId())
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Tipo documento no encontrado"));
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Tipo documento no encontrado"));
 
-        existente.setEmpleado(empleado);
-        existente.setTipo(tipo);
-        existente.setArchivoUrl(
-                dto.getArchivoUrl());
-        existente.setFechaVencimiento(
-                dto.getFechaVencimiento());
+                existente.setEmpleado(empleado);
+                existente.setTipo(tipo);
+                existente.setArchivoUrl(
+                                dto.getArchivoUrl());
+                existente.setFechaVencimiento(
+                                dto.getFechaVencimiento());
 
-        existente.setActivo(
-                dto.getActivo() != null
-                        ? dto.getActivo()
-                        : true);
+                existente.setActivo(
+                                dto.getActivo() != null
+                                                ? dto.getActivo()
+                                                : true);
 
-        return DocumentoPrivadoMapper.toDTO(
-                repository.save(existente));
-    }
+                return DocumentoPrivadoMapper.toDTO(
+                                repository.save(existente));
+        }
 
-    @Override
-    public void eliminar(Long id) {
+        @Override
+        public void eliminar(Long id) {
 
-        DocumentoPrivado documento =
-                repository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Documento no encontrado"));
+                DocumentoPrivado documento = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Documento no encontrado"));
 
-        repository.delete(documento);
-    }
+                repository.delete(documento);
+        }
 
-    // ===================================
-    // CONSULTAS
-    // ===================================
+        // ===================================
+        // CONSULTAS
+        // ===================================
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    listarActivos() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> listarActivos() {
 
-        return repository.findByActivoTrue()
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository.findByActivoTrue()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    buscarPorEmpleado(Long empleadoId) {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> buscarPorEmpleado(Long empleadoId) {
 
-        return repository.findByEmpleadoId(
-                        empleadoId)
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository.findByEmpleadoId(
+                                empleadoId)
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    buscarPorTipo(Long tipoId) {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> buscarPorTipo(Long tipoId) {
 
-        return repository.findByTipoId(tipoId)
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository.findByTipoIdTipo(tipoId)
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    listarActivosConRelaciones() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> listarActivosConRelaciones() {
 
-        return repository
-                .listarActivosConRelaciones()
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository
+                                .listarActivosConRelaciones()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    documentosVencidos() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> documentosVencidos() {
 
-        return repository.documentosVencidos()
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository.documentosVencidos()
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DocumentoPrivadoResponseDTO>
-    documentosPorVencer(
-            LocalDate fechaLimite) {
+        @Override
+        @Transactional(readOnly = true)
+        public List<DocumentoPrivadoResponseDTO> documentosPorVencer(
+                        LocalDate fechaLimite) {
 
-        return repository
-                .documentosPorVencer(
-                        fechaLimite)
-                .stream()
-                .map(DocumentoPrivadoMapper::toDTO)
-                .toList();
-    }
+                return repository
+                                .documentosPorVencer(
+                                                fechaLimite)
+                                .stream()
+                                .map(DocumentoPrivadoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Object[]>
-    contarDocumentosPorTipo() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<Object[]> contarDocumentosPorTipo() {
 
-        return repository
-                .contarDocumentosPorTipo();
-    }
+                return repository
+                                .contarDocumentosPorTipo();
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Object[]>
-    empleadosConMasDocumentos() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<Object[]> empleadosConMasDocumentos() {
 
-        return repository
-                .empleadosConMasDocumentos();
-    }
+                return repository
+                                .empleadosConMasDocumentos();
+        }
 }

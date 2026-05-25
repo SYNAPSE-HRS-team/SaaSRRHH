@@ -23,7 +23,7 @@ public interface DocumentoPrivadoRepository
     findByEmpleadoId(Long empleadoId);
 
     List<DocumentoPrivado>
-    findByTipoId(Long tipoId);
+       findByTipoIdTipo(Long tipoId);
 
     // ===================================
     // JPQL

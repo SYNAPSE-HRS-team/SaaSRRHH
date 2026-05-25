@@ -15,10 +15,10 @@ public class Rol {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
     private Long idRol;
-    
+
     @Column(name = "nombre_rol", length = 30, nullable = false, unique = true)
-    private String nombreRol; 
-    
+    private String nombreRol;
+
     @Column(name = "descripcion", length = 250)
     private String descripcion;
 }

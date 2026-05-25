@@ -10,49 +10,48 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UsuarioRepository
-        extends JpaRepository<Usuario, Long> {
+              extends JpaRepository<Usuario, Long> {
 
-    // ===================================
-    // CONSULTAS DERIVADAS
-    // ===================================
+       // ===================================
+       // CONSULTAS DERIVADAS
+       // ===================================
 
-    Optional<Usuario> findByEmail(String email);
+       Optional<Usuario> findByEmail(String email);
 
-    boolean existsByEmail(String email);
+       boolean existsByEmail(String email);
 
-    List<Usuario> findByActivoTrue();
+       List<Usuario> findByActivoTrue();
 
-    // ===================================
-    // JPQL
-    // ===================================
+       // ===================================
+       // JPQL
+       // ===================================
 
-    @Query("""
-           SELECT u
-           FROM Usuario u
-           JOIN FETCH u.rol r
-           WHERE r.nombre = :rol
-           ORDER BY u.email ASC
-           """)
-    List<Usuario> buscarPorRol(
-            @Param("rol") String rol);
+       @Query("""
+                     SELECT u
+                     FROM Usuario u
+                     JOIN FETCH u.rol r
+                     WHERE r.nombreRol = :rol
+                     ORDER BY u.email ASC
+                     """)
+       List<Usuario> buscarPorRol(
+                     @Param("rol") String rol);
 
-    @Query("""
-           SELECT u
-           FROM Usuario u
-           WHERE u.ultimoAcceso IS NOT NULL
-           AND u.ultimoAcceso >= :fecha
-           ORDER BY u.ultimoAcceso DESC
-           """)
-    List<Usuario> usuariosConAccesoReciente(
-            @Param("fecha")
-            LocalDateTime fecha);
+       @Query("""
+                     SELECT u
+                     FROM Usuario u
+                     WHERE u.ultimoAcceso IS NOT NULL
+                     AND u.ultimoAcceso >= :fecha
+                     ORDER BY u.ultimoAcceso DESC
+                     """)
+       List<Usuario> usuariosConAccesoReciente(
+                     @Param("fecha") LocalDateTime fecha);
 
-    @Query("""
-           SELECT r.nombre, COUNT(u)
-           FROM Usuario u
-           JOIN u.rol r
-           GROUP BY r.nombre
-           ORDER BY COUNT(u) DESC
-           """)
-    List<Object[]> contarUsuariosPorRol();
+       @Query("""
+                     SELECT r.nombreRol, COUNT(u)
+                     FROM Usuario u
+                     JOIN u.rol r
+                     GROUP BY r.nombreRol
+                     ORDER BY COUNT(u) DESC
+                     """)
+       List<Object[]> contarUsuariosPorRol();
 }

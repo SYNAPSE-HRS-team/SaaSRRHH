@@ -22,156 +22,150 @@ import java.util.List;
 @Transactional
 public class EmpleadoServiceImpl implements EmpleadoService {
 
-    private final EmpleadoRepository repository;
-    private final UsuarioRepository usuarioRepository;
+        private final EmpleadoRepository repository;
+        private final UsuarioRepository usuarioRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> listar() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> listar() {
 
-        return repository.findAll()
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public EmpleadoResponseDTO buscarPorId(Long id) {
-
-        return repository.findById(id)
-                .map(EmpleadoMapper::toDTO)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Empleado no encontrado"));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public EmpleadoResponseDTO buscarPorDni(String dni) {
-
-        return repository.findByDni(dni)
-                .map(EmpleadoMapper::toDTO)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Empleado no encontrado"));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> listarActivos() {
-
-        return repository.findByActivoTrue()
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public EmpleadoResponseDTO buscarPorUsuarioId(Long userId) {
-
-        return repository.findByUsuarioId(userId)
-                .map(EmpleadoMapper::toDTO)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Empleado no encontrado"));
-    }
-
-    @Override
-    public EmpleadoResponseDTO guardar(EmpleadoRequestDTO dto) {
-
-        if (repository.findByDni(dto.getDni()).isPresent()) {
-
-            throw new RuntimeException(
-                    "El DNI ya está registrado");
+                return repository.findAll()
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
         }
 
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuario no encontrado"));
+        @Override
+        @Transactional(readOnly = true)
+        public EmpleadoResponseDTO buscarPorId(Long id) {
 
-        Empleado empleado =
-                EmpleadoMapper.toEntity(dto, usuario);
+                return repository.findById(id)
+                                .map(EmpleadoMapper::toDTO)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
+        }
 
-        return EmpleadoMapper.toDTO(
-                repository.save(empleado));
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public EmpleadoResponseDTO buscarPorDni(String dni) {
 
-    @Override
-    public void eliminar(Long id) {
+                return repository.findByDni(dni)
+                                .map(EmpleadoMapper::toDTO)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
+        }
 
-        Empleado empleado = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Empleado no encontrado"));
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> listarActivos() {
 
-        repository.delete(empleado);
-    }
+                return repository.findByActivoTrue()
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
+        }
 
-    // ===================================
-    // CONSULTAS JPQL
-    // ===================================
+        @Override
+        @Transactional(readOnly = true)
+        public EmpleadoResponseDTO buscarPorUsuarioId(Long userId) {
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> buscarPorCargo(
-            String cargo) {
+                return repository.findByUsuarioId(userId)
+                                .map(EmpleadoMapper::toDTO)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
+        }
 
-        return repository.buscarPorCargo(cargo)
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
+        @Override
+        public EmpleadoResponseDTO guardar(EmpleadoRequestDTO dto) {
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> buscarPorCargoYActivo(
-            String cargo,
-            Boolean activo) {
+                if (repository.findByDni(dto.getDni()).isPresent()) {
 
-        return repository.buscarPorCargoYEstado(cargo, activo)
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
+                        throw new RuntimeException(
+                                        "El DNI ya está registrado");
+                }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> listarActivosConUsuario() {
+                Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Usuario no encontrado"));
 
-        return repository.listarActivosConUsuario()
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
+                Empleado empleado = EmpleadoMapper.toEntity(dto, usuario);
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> contratosVencidos() {
+                return EmpleadoMapper.toDTO(
+                                repository.save(empleado));
+        }
 
-        return repository.contratosVencidos()
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
+        @Override
+        public void eliminar(Long id) {
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<EmpleadoResponseDTO> contratosPorVencer(
-            LocalDate fechaLimite) {
+                Empleado empleado = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Empleado no encontrado"));
 
-        return repository.contratosPorVencer(fechaLimite)
-                .stream()
-                .map(EmpleadoMapper::toDTO)
-                .toList();
-    }
+                repository.delete(empleado);
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Object[]> contarEmpleadosPorCargo() {
+        // ===================================
+        // CONSULTAS JPQL
+        // ===================================
 
-        return repository.contarEmpleadosPorCargo();
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> buscarPorCargo(
+                        String cargo) {
+
+                return repository.buscarPorCargo(cargo)
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> buscarPorCargoYActivo(
+                        String cargo,
+                        Boolean activo) {
+
+                return repository.buscarPorCargoYEstado(cargo, activo)
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> listarActivosConUsuario() {
+
+                return repository.listarActivosConUsuario()
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> contratosVencidos() {
+
+                return repository.contratosVencidos()
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<EmpleadoResponseDTO> contratosPorVencer(
+                        LocalDate fechaLimite) {
+
+                return repository.contratosPorVencer(fechaLimite)
+                                .stream()
+                                .map(EmpleadoMapper::toDTO)
+                                .toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<Object[]> contarEmpleadosPorCargo() {
+
+                return repository.contarEmpleadosPorCargo();
+        }
 }

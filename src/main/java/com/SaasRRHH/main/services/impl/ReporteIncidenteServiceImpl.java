@@ -6,6 +6,7 @@ import com.SaasRRHH.main.services.ReporteIncidenteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,18 +17,23 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
     private final ReporteIncidenteRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ReporteIncidente> listar() {
-        return repository.findAll();
+        return repository.findAllWithRelaciones();
     }
 
     @Override
+    @Transactional(readOnly = true)
+
     public ReporteIncidente guardar(ReporteIncidente data) {
         return repository.save(data);
     }
 
     @Override
+    @Transactional(readOnly = true)
+
     public ReporteIncidente obtenerPorId(Long id) {
-        return repository.findById(id).orElse(null);
+        return repository.findByIdWithRelaciones(id).orElse(null);
     }
 
     @Override

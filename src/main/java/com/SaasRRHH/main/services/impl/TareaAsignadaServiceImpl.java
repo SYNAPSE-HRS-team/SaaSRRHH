@@ -1,8 +1,11 @@
 package com.SaasRRHH.main.services.impl;
 
-import com.SaasRRHH.main.model.Empleado;
+import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.model.TareaAsignada;
 import com.SaasRRHH.main.model.TareaAsignada.EstadoTarea;
+import com.SaasRRHH.main.DTO.TareaAsignadaRequestDTO;
+import com.SaasRRHH.main.DTO.TareaAsignadaResponseDTO;
+import com.SaasRRHH.main.mapper.TareaAsignadaMapper;
 import com.SaasRRHH.main.repository.TareaAsignadaRepository;
 import com.SaasRRHH.main.services.AreaTrabajoService;
 import com.SaasRRHH.main.services.EmpleadoService;
@@ -13,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -25,65 +27,68 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
     private final AreaTrabajoService areaService;
 
     @Override
-    public List<TareaAsignada> listar() {
-        return repository.findAll();
+    public List<TareaAsignadaResponseDTO> listar() {
+        return repository.findAll()
+                .stream()
+                .map(TareaAsignadaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<TareaAsignada> buscarPorId(Long id) {
-        return repository.findById(id);
+    public TareaAsignadaResponseDTO buscarPorId(Long id) {
+        return repository.findById(id)
+                .map(TareaAsignadaMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
     }
 
     @Override
     @Transactional
-    public TareaAsignada guardar(TareaAsignada tarea) {
-        if (tarea.getEmpleado() == null || tarea.getEmpleado().getId() == null) {
+    public TareaAsignadaResponseDTO guardar(TareaAsignadaRequestDTO tareaDto) {
+        if (tareaDto.getEmpleadoId() == null) {
             throw new RuntimeException("El empleado es obligatorio");
         }
-        Optional<Empleado> empleado = empleadoService.buscarPorId(tarea.getEmpleado().getId());
-        if (empleado.isEmpty()) {
-            throw new RuntimeException("Empleado no encontrado con id: " + tarea.getEmpleado().getId());
+        EmpleadoResponseDTO empleadoDto = empleadoService.buscarPorId(tareaDto.getEmpleadoId());
+        if (empleadoDto == null) {
+            throw new RuntimeException("Empleado no encontrado con id: " + tareaDto.getEmpleadoId());
         }
-        tarea.setEmpleado(empleado.get());
 
-        if (tarea.getSupervisor() == null || tarea.getSupervisor().getId() == null) {
+        if (tareaDto.getSupervisorId() == null) {
             throw new RuntimeException("El supervisor es obligatorio");
         }
-        Optional<Empleado> supervisor = empleadoService.buscarPorId(tarea.getSupervisor().getId());
-        if (supervisor.isEmpty()) {
-            throw new RuntimeException("Supervisor no encontrado con id: " + tarea.getSupervisor().getId());
+        EmpleadoResponseDTO supervisorDto = empleadoService.buscarPorId(tareaDto.getSupervisorId());
+        if (supervisorDto == null) {
+            throw new RuntimeException("Supervisor no encontrado con id: " + tareaDto.getSupervisorId());
         }
-        tarea.setSupervisor(supervisor.get());
 
-        if (tarea.getArea() == null || tarea.getArea().getId() == null) {
+        if (tareaDto.getAreaId() == null) {
             throw new RuntimeException("El area es obligatoria");
         }
-        if (areaService.buscarPorId(tarea.getArea().getId()).isEmpty()) {
-            throw new RuntimeException("Area no encontrada con id: " + tarea.getArea().getId());
+        if (areaService.buscarPorId(tareaDto.getAreaId()).isEmpty()) {
+            throw new RuntimeException("Area no encontrada con id: " + tareaDto.getAreaId());
         }
 
-        if (tarea.getFuncion() == null) {
+        if (tareaDto.getFuncion() == null) {
             throw new RuntimeException("La funcion es obligatoria");
         }
 
-        if (tarea.getFecha() == null) {
-            tarea.setFecha(LocalDate.now());
-        }
+        TareaAsignada entity = TareaAsignadaMapper.toEntity(tareaDto);
+        if (entity.getFecha() == null) entity.setFecha(LocalDate.now());
+        if (entity.getEstado() == null) entity.setEstado(EstadoTarea.PENDIENTE);
 
-        if (tarea.getEstado() == null) {
-            tarea.setEstado(EstadoTarea.PENDIENTE);
-        }
-
-        return repository.save(tarea);
+        TareaAsignada saved = repository.save(entity);
+        return TareaAsignadaMapper.toDTO(saved);
     }
 
     @Override
     @Transactional
-    public Optional<TareaAsignada> actualizar(Long id, TareaAsignada tarea) {
+    public TareaAsignadaResponseDTO actualizar(Long id, TareaAsignadaRequestDTO tareaDto) {
         return repository.findById(id).map(existing -> {
-            tarea.setId(id);
-            return repository.save(tarea);
-        });
+            tareaDto.setId(id);
+            TareaAsignada entity = TareaAsignadaMapper.toEntity(tareaDto);
+            entity.setId(id);
+            TareaAsignada saved = repository.save(entity);
+            return TareaAsignadaMapper.toDTO(saved);
+        }).orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
     }
 
     @Override
@@ -96,31 +101,44 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
     }
 
     @Override
-    public List<TareaAsignada> buscarPorEmpleado(Long empleadoId) {
-        return repository.findByEmpleadoId(empleadoId);
+    public List<TareaAsignadaResponseDTO> buscarPorEmpleado(Long empleadoId) {
+        return repository.findByEmpleadoId(empleadoId)
+                .stream()
+                .map(TareaAsignadaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public List<TareaAsignada> buscarPorSupervisor(Long supervisorId) {
-        return repository.findBySupervisorId(supervisorId);
+    public List<TareaAsignadaResponseDTO> buscarPorSupervisor(Long supervisorId) {
+        return repository.findBySupervisorId(supervisorId)
+                .stream()
+                .map(TareaAsignadaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public List<TareaAsignada> buscarPorEstado(EstadoTarea estado) {
-        return repository.findByEstado(estado);
+    public List<TareaAsignadaResponseDTO> buscarPorEstado(EstadoTarea estado) {
+        return repository.findByEstado(estado)
+                .stream()
+                .map(TareaAsignadaMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public List<TareaAsignada> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha) {
-        return repository.findByEmpleadoIdAndFecha(empleadoId, fecha);
+    public List<TareaAsignadaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha) {
+        return repository.findByEmpleadoIdAndFecha(empleadoId, fecha)
+                .stream()
+                .map(TareaAsignadaMapper::toDTO)
+                .toList();
     }
 
     @Override
     @Transactional
-    public TareaAsignada cambiarEstado(Long id, EstadoTarea nuevoEstado) {
+    public TareaAsignadaResponseDTO cambiarEstado(Long id, EstadoTarea nuevoEstado) {
         TareaAsignada tarea = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
         tarea.setEstado(nuevoEstado);
-        return repository.save(tarea);
+        TareaAsignada saved = repository.save(tarea);
+        return TareaAsignadaMapper.toDTO(saved);
     }
 }

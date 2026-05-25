@@ -1,18 +1,19 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.Encuestabienestar;
+import com.SaasRRHH.main.DTO.EncuestaBienestarRequestDTO;
+import com.SaasRRHH.main.DTO.EncuestaBienestarResponseDTO;
 
 import java.util.List;
 
 public interface EncuestaBienestarService {
 
-    List<Encuestabienestar> listar();
+    List<EncuestaBienestarResponseDTO> listar();
 
-    Encuestabienestar guardar(Encuestabienestar encuesta);
+    EncuestaBienestarResponseDTO guardar(EncuestaBienestarRequestDTO encuesta);
 
-    Encuestabienestar obtenerPorId(Long id);
+    EncuestaBienestarResponseDTO obtenerPorId(Long id);
 
-    Encuestabienestar actualizar(Long id, Encuestabienestar data);
+    EncuestaBienestarResponseDTO actualizar(Long id, EncuestaBienestarRequestDTO data);
 
     void eliminar(Long id);
 }

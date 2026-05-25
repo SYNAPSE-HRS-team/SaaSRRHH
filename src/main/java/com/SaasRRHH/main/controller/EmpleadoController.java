@@ -20,166 +20,150 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class EmpleadoController {
 
-    private final EmpleadoService service;
+        private final EmpleadoService service;
 
-    // ===================================
-    // CRUD
-    // ===================================
+        // ===================================
+        // CRUD
+        // ===================================
 
-    @GetMapping
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    listar() {
+        @GetMapping
+        public ResponseEntity<List<EmpleadoResponseDTO>> listar() {
 
-        return ResponseEntity.ok(
-                service.listar());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<EmpleadoResponseDTO>
-    obtener(@PathVariable Long id) {
-
-        try {
-
-            return ResponseEntity.ok(
-                    service.buscarPorId(id));
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return ResponseEntity.ok(
+                                service.listar());
         }
-    }
 
-    @GetMapping("/dni/{dni}")
-    public ResponseEntity<EmpleadoResponseDTO>
-    buscarPorDni(
-            @PathVariable String dni) {
+        @GetMapping("/{id}")
+        public ResponseEntity<EmpleadoResponseDTO> obtener(@PathVariable Long id) {
 
-        try {
+                try {
 
-            return ResponseEntity.ok(
-                    service.buscarPorDni(dni));
+                        return ResponseEntity.ok(
+                                        service.buscarPorId(id));
 
-        } catch (RuntimeException e) {
+                } catch (RuntimeException e) {
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+                }
         }
-    }
 
-    @GetMapping("/activos")
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    listarActivos() {
+        @GetMapping("/dni/{dni}")
+        public ResponseEntity<EmpleadoResponseDTO> buscarPorDni(
+                        @PathVariable String dni) {
 
-        return ResponseEntity.ok(
-                service.listarActivos());
-    }
+                try {
 
-    @PostMapping
-    public ResponseEntity<EmpleadoResponseDTO>
-    crear(
-            @RequestBody EmpleadoRequestDTO dto) {
+                        return ResponseEntity.ok(
+                                        service.buscarPorDni(dni));
 
-        try {
+                } catch (RuntimeException e) {
 
-            EmpleadoResponseDTO empleado =
-                    service.guardar(dto);
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(empleado);
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .build();
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+                }
         }
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void>
-    eliminar(@PathVariable Long id) {
+        @GetMapping("/activos")
+        public ResponseEntity<List<EmpleadoResponseDTO>> listarActivos() {
 
-        try {
-
-            service.eliminar(id);
-
-            return ResponseEntity
-                    .noContent()
-                    .build();
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return ResponseEntity.ok(
+                                service.listarActivos());
         }
-    }
 
-    // ===================================
-    // CONSULTAS JPQL
-    // ===================================
+        @PostMapping
+        public ResponseEntity<EmpleadoResponseDTO> crear(
+                        @RequestBody EmpleadoRequestDTO dto) {
 
-    @GetMapping("/cargo/{cargo}")
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    buscarPorCargo(
-            @PathVariable String cargo) {
+                try {
 
-        return ResponseEntity.ok(
-                service.buscarPorCargo(cargo));
-    }
+                        EmpleadoResponseDTO empleado = service.guardar(dto);
 
-    @GetMapping("/cargo-activo")
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    buscarPorCargoYActivo(
+                        return ResponseEntity
+                                        .status(HttpStatus.CREATED)
+                                        .body(empleado);
 
-            @RequestParam String cargo,
-            @RequestParam Boolean activo) {
+                } catch (RuntimeException e) {
 
-        return ResponseEntity.ok(
-                service.buscarPorCargoYActivo(
-                        cargo,
-                        activo));
-    }
+                        return ResponseEntity
+                                        .badRequest()
+                                        .build();
+                }
+        }
 
-    @GetMapping("/activos-usuario")
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    listarActivosConUsuario() {
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> eliminar(@PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                service.listarActivosConUsuario());
-    }
+                try {
 
-    @GetMapping("/contratos-vencidos")
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    contratosVencidos() {
+                        service.eliminar(id);
 
-        return ResponseEntity.ok(
-                service.contratosVencidos());
-    }
+                        return ResponseEntity
+                                        .noContent()
+                                        .build();
 
-    @GetMapping("/contratos-por-vencer")
-    public ResponseEntity<List<EmpleadoResponseDTO>>
-    contratosPorVencer(
+                } catch (RuntimeException e) {
 
-            @RequestParam
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE)
-            LocalDate fechaLimite) {
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+                }
+        }
 
-        return ResponseEntity.ok(
-                service.contratosPorVencer(
-                        fechaLimite));
-    }
+        // ===================================
+        // CONSULTAS JPQL
+        // ===================================
 
-    @GetMapping("/estadisticas/cargos")
-    public ResponseEntity<List<Object[]>>
-    contarEmpleadosPorCargo() {
+        @GetMapping("/cargo/{cargo}")
+        public ResponseEntity<List<EmpleadoResponseDTO>> buscarPorCargo(
+                        @PathVariable String cargo) {
 
-        return ResponseEntity.ok(
-                service.contarEmpleadosPorCargo());
-    }
+                return ResponseEntity.ok(
+                                service.buscarPorCargo(cargo));
+        }
+
+        @GetMapping("/cargo-activo")
+        public ResponseEntity<List<EmpleadoResponseDTO>> buscarPorCargoYActivo(
+
+                        @RequestParam String cargo,
+                        @RequestParam Boolean activo) {
+
+                return ResponseEntity.ok(
+                                service.buscarPorCargoYActivo(
+                                                cargo,
+                                                activo));
+        }
+
+        @GetMapping("/activos-usuario")
+        public ResponseEntity<List<EmpleadoResponseDTO>> listarActivosConUsuario() {
+
+                return ResponseEntity.ok(
+                                service.listarActivosConUsuario());
+        }
+
+        @GetMapping("/contratos-vencidos")
+        public ResponseEntity<List<EmpleadoResponseDTO>> contratosVencidos() {
+
+                return ResponseEntity.ok(
+                                service.contratosVencidos());
+        }
+
+        @GetMapping("/contratos-por-vencer")
+        public ResponseEntity<List<EmpleadoResponseDTO>> contratosPorVencer(
+
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaLimite) {
+
+                return ResponseEntity.ok(
+                                service.contratosPorVencer(
+                                                fechaLimite));
+        }
+
+        @GetMapping("/estadisticas/cargos")
+        public ResponseEntity<List<Object[]>> contarEmpleadosPorCargo() {
+
+                return ResponseEntity.ok(
+                                service.contarEmpleadosPorCargo());
+        }
 }

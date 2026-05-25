@@ -1,6 +1,7 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.model.TareaAsignada;
+import com.SaasRRHH.main.DTO.TareaAsignadaRequestDTO;
+import com.SaasRRHH.main.DTO.TareaAsignadaResponseDTO;
 import com.SaasRRHH.main.model.TareaAsignada.EstadoTarea;
 import com.SaasRRHH.main.services.TareaAsignadaService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,21 +24,23 @@ public class TareaAsignadaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TareaAsignada>> listar() {
+    public ResponseEntity<List<TareaAsignadaResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TareaAsignada> obtener(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TareaAsignadaResponseDTO> obtener(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(service.buscarPorId(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
-    public ResponseEntity<TareaAsignada> crear(@RequestBody TareaAsignada tarea) {
+    public ResponseEntity<TareaAsignadaResponseDTO> crear(@RequestBody TareaAsignadaRequestDTO tarea) {
         try {
-            TareaAsignada nuevaTarea = service.guardar(tarea);
+            TareaAsignadaResponseDTO nuevaTarea = service.guardar(tarea);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaTarea);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
@@ -45,10 +48,13 @@ public class TareaAsignadaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TareaAsignada> actualizar(@PathVariable Long id, @RequestBody TareaAsignada tarea) {
-        return service.actualizar(id, tarea)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TareaAsignadaResponseDTO> actualizar(@PathVariable Long id, @RequestBody TareaAsignadaRequestDTO tarea) {
+        try {
+            TareaAsignadaResponseDTO actualizado = service.actualizar(id, tarea);
+            return ResponseEntity.ok(actualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -62,17 +68,17 @@ public class TareaAsignadaController {
     }
 
     @GetMapping("/empleado/{empleadoId}")
-    public ResponseEntity<List<TareaAsignada>> buscarPorEmpleado(@PathVariable Long empleadoId) {
+    public ResponseEntity<List<TareaAsignadaResponseDTO>> buscarPorEmpleado(@PathVariable Long empleadoId) {
         return ResponseEntity.ok(service.buscarPorEmpleado(empleadoId));
     }
 
     @GetMapping("/supervisor/{supervisorId}")
-    public ResponseEntity<List<TareaAsignada>> buscarPorSupervisor(@PathVariable Long supervisorId) {
+    public ResponseEntity<List<TareaAsignadaResponseDTO>> buscarPorSupervisor(@PathVariable Long supervisorId) {
         return ResponseEntity.ok(service.buscarPorSupervisor(supervisorId));
     }
 
     @GetMapping("/estado/{estado}")
-    public ResponseEntity<List<TareaAsignada>> buscarPorEstado(@PathVariable String estado) {
+    public ResponseEntity<List<TareaAsignadaResponseDTO>> buscarPorEstado(@PathVariable String estado) {
         try {
             EstadoTarea estadoEnum = EstadoTarea.valueOf(estado.toUpperCase());
             return ResponseEntity.ok(service.buscarPorEstado(estadoEnum));
@@ -82,19 +88,19 @@ public class TareaAsignadaController {
     }
 
     @GetMapping("/empleado/{empleadoId}/fecha")
-    public ResponseEntity<List<TareaAsignada>> buscarPorEmpleadoYFecha(
+    public ResponseEntity<List<TareaAsignadaResponseDTO>> buscarPorEmpleadoYFecha(
             @PathVariable Long empleadoId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         return ResponseEntity.ok(service.buscarPorEmpleadoYFecha(empleadoId, fecha));
     }
 
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<TareaAsignada> cambiarEstado(
+    public ResponseEntity<TareaAsignadaResponseDTO> cambiarEstado(
             @PathVariable Long id,
             @RequestParam String estado) {
         try {
             EstadoTarea nuevoEstado = EstadoTarea.valueOf(estado.toUpperCase());
-            TareaAsignada tareaActualizada = service.cambiarEstado(id, nuevoEstado);
+            TareaAsignadaResponseDTO tareaActualizada = service.cambiarEstado(id, nuevoEstado);
             return ResponseEntity.ok(tareaActualizada);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

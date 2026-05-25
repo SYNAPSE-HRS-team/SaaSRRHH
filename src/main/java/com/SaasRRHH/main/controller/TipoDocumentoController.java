@@ -21,16 +21,14 @@ public class TipoDocumentoController {
     private final TipoDocumentoService service;
 
     @GetMapping
-    public ResponseEntity<List<TipoDocumentoResponseDTO>>
-    listar() {
+    public ResponseEntity<List<TipoDocumentoResponseDTO>> listar() {
 
         return ResponseEntity.ok(
                 service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TipoDocumentoResponseDTO>
-    buscarPorId(
+    public ResponseEntity<TipoDocumentoResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
         try {
@@ -47,15 +45,12 @@ public class TipoDocumentoController {
     }
 
     @PostMapping
-    public ResponseEntity<TipoDocumentoResponseDTO>
-    crear(
-            @RequestBody
-            TipoDocumentoRequestDTO dto) {
+    public ResponseEntity<TipoDocumentoResponseDTO> crear(
+            @RequestBody TipoDocumentoRequestDTO dto) {
 
         try {
 
-            TipoDocumentoResponseDTO response =
-                    service.guardar(dto);
+            TipoDocumentoResponseDTO response = service.guardar(dto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
@@ -70,11 +65,9 @@ public class TipoDocumentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TipoDocumentoResponseDTO>
-    actualizar(
+    public ResponseEntity<TipoDocumentoResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody
-            TipoDocumentoRequestDTO dto) {
+            @RequestBody TipoDocumentoRequestDTO dto) {
 
         try {
 
@@ -90,8 +83,7 @@ public class TipoDocumentoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void>
-    eliminar(
+    public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
 
         try {
@@ -115,32 +107,28 @@ public class TipoDocumentoController {
     // ==================================
 
     @GetMapping("/obligatorios")
-    public ResponseEntity<List<TipoDocumentoResponseDTO>>
-    listarObligatorios() {
+    public ResponseEntity<List<TipoDocumentoResponseDTO>> listarObligatorios() {
 
         return ResponseEntity.ok(
                 service.listarObligatorios());
     }
 
     @GetMapping("/renovables")
-    public ResponseEntity<List<TipoDocumentoResponseDTO>>
-    listarRenovables() {
+    public ResponseEntity<List<TipoDocumentoResponseDTO>> listarRenovables() {
 
         return ResponseEntity.ok(
                 service.listarRenovables());
     }
 
     @GetMapping("/vigencia")
-    public ResponseEntity<List<TipoDocumentoResponseDTO>>
-    listarPorVigencia() {
+    public ResponseEntity<List<TipoDocumentoResponseDTO>> listarPorVigencia() {
 
         return ResponseEntity.ok(
                 service.listarPorVigencia());
     }
 
     @GetMapping("/estadisticas/obligatorios")
-    public ResponseEntity<Long>
-    contarObligatorios() {
+    public ResponseEntity<Long> contarObligatorios() {
 
         return ResponseEntity.ok(
                 service.contarObligatorios());

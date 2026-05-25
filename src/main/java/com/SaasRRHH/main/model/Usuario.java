@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class Usuario {
 
     @Column(name = "ultimo_acceso")
     private LocalDateTime ultimoAcceso;
-    
+
     // Helper methods
     public void setActivo(Boolean activo) {
         this.activo = activo != null ? activo : true;
