@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +20,17 @@ public interface RegistroAsistenciaRepository extends JpaRepository<RegistroAsis
     List<RegistroAsistencia> findByEmpleadoIdAndFechaHoraBetween(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
     
     // Buscar registros de un día específico
-    @Query("SELECT r FROM RegistroAsistencia r WHERE r.empleado.id = :empleadoId AND DATE(r.fechaHora) = :fecha")
-    List<RegistroAsistencia> findByEmpleadoIdAndFecha(@Param("empleadoId") Long empleadoId, @Param("fecha") LocalDate fecha);
+       @Query("""
+          SELECT r
+          FROM RegistroAsistencia r
+          WHERE r.empleado.id = :empleadoId
+          AND r.fechaHora >= :inicio
+          AND r.fechaHora < :fin
+          """)
+       List<RegistroAsistencia> findByEmpleadoIdAndFecha(
+          @Param("empleadoId") Long empleadoId,
+          @Param("inicio") LocalDateTime inicio,
+          @Param("fin") LocalDateTime fin);
     
     // Buscar última marcación de un empleado
     Optional<RegistroAsistencia>
@@ -38,10 +46,13 @@ public interface RegistroAsistenciaRepository extends JpaRepository<RegistroAsis
        SELECT r
        FROM RegistroAsistencia r
        JOIN FETCH r.empleado e
-       WHERE DATE(r.fechaHora) = CURRENT_DATE
+       WHERE r.fechaHora >= :inicio
+       AND r.fechaHora < :fin
        ORDER BY r.fechaHora DESC
        """)
-    List<RegistroAsistencia> asistenciasHoy();
+    List<RegistroAsistencia> asistenciasHoy(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin);
 
     @Query("""
        SELECT r
@@ -78,11 +89,14 @@ public interface RegistroAsistenciaRepository extends JpaRepository<RegistroAsis
        SELECT COUNT(r) > 0
        FROM RegistroAsistencia r
        WHERE r.empleado.id = :empleadoId
-       AND DATE(r.fechaHora) = CURRENT_DATE
+          AND r.fechaHora >= :inicio
+          AND r.fechaHora < :fin
        AND r.tipoMarcacion = :tipo
        """)
     boolean yaMarcoHoy(
             @Param("empleadoId") Long empleadoId,
+          @Param("inicio") LocalDateTime inicio,
+          @Param("fin") LocalDateTime fin,
             @Param("tipo") String tipo);
 
 

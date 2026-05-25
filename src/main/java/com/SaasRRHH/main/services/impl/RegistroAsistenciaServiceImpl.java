@@ -111,6 +111,16 @@ public class RegistroAsistenciaServiceImpl
     // REGISTRO ENTRADA / SALIDA
     // ===================================
 
+        private LocalDateTime inicioDelDia(LocalDate fecha) {
+
+                return fecha.atStartOfDay();
+        }
+
+        private LocalDateTime finDelDia(LocalDate fecha) {
+
+                return fecha.plusDays(1).atStartOfDay();
+        }
+
     @Override
     public RegistroAsistenciaResponseDTO registrarEntrada(
             Long empleadoId,
@@ -128,6 +138,8 @@ public class RegistroAsistenciaServiceImpl
         boolean yaMarco =
                 repository.yaMarcoHoy(
                         empleadoId,
+                        inicioDelDia(LocalDate.now()),
+                        finDelDia(LocalDate.now()),
                         "ENTRADA");
 
         if (yaMarco) {
@@ -170,6 +182,8 @@ public class RegistroAsistenciaServiceImpl
         boolean yaMarco =
                 repository.yaMarcoHoy(
                         empleadoId,
+                        inicioDelDia(LocalDate.now()),
+                        finDelDia(LocalDate.now()),
                         "SALIDA");
 
         if (yaMarco) {
@@ -253,7 +267,11 @@ public class RegistroAsistenciaServiceImpl
     public List<RegistroAsistenciaResponseDTO>
     asistenciasHoy() {
 
-        return repository.asistenciasHoy()
+        LocalDate hoy = LocalDate.now();
+
+        return repository.asistenciasHoy(
+                        inicioDelDia(hoy),
+                        finDelDia(hoy))
                 .stream()
                 .map(RegistroAsistenciaMapper::toDTO)
                 .toList();
@@ -298,6 +316,8 @@ public class RegistroAsistenciaServiceImpl
 
         return repository.yaMarcoHoy(
                 empleadoId,
+                inicioDelDia(LocalDate.now()),
+                finDelDia(LocalDate.now()),
                 tipo);
     }
 
