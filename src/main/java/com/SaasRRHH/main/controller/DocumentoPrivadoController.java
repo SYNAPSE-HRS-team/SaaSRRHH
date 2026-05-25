@@ -22,182 +22,161 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class DocumentoPrivadoController {
 
-    private final DocumentoPrivadoService service;
+        private final DocumentoPrivadoService service;
 
-    // ===================================
-    // CRUD
-    // ===================================
+        // ===================================
+        // CRUD
+        // ===================================
 
-    @GetMapping
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    listar() {
+        @GetMapping
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> listar() {
 
-        return ResponseEntity.ok(
-                service.listar());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<DocumentoPrivadoResponseDTO>
-    buscarPorId(
-            @PathVariable Long id) {
-
-        try {
-
-            return ResponseEntity.ok(
-                    service.buscarPorId(id));
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return ResponseEntity.ok(
+                                service.listar());
         }
-    }
 
-    @PostMapping
-    public ResponseEntity<DocumentoPrivadoResponseDTO>
-    guardar(
+        @GetMapping("/{id}")
+        public ResponseEntity<DocumentoPrivadoResponseDTO> buscarPorId(
+                        @PathVariable Long id) {
 
-            @Valid
-            @RequestBody
-            DocumentoPrivadoRequestDTO dto) {
+                try {
 
-        try {
+                        return ResponseEntity.ok(
+                                        service.buscarPorId(id));
 
-            DocumentoPrivadoResponseDTO response =
-                    service.guardar(dto);
+                } catch (RuntimeException e) {
 
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(response);
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .build();
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+                }
         }
-    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<DocumentoPrivadoResponseDTO>
-    actualizar(
+        @PostMapping
+        public ResponseEntity<DocumentoPrivadoResponseDTO> guardar(
 
-            @PathVariable Long id,
+                        @Valid @RequestBody DocumentoPrivadoRequestDTO dto) {
 
-            @Valid
-            @RequestBody
-            DocumentoPrivadoRequestDTO dto) {
+                try {
 
-        try {
+                        DocumentoPrivadoResponseDTO response = service.guardar(dto);
 
-            return ResponseEntity.ok(
-                    service.actualizar(id, dto));
+                        return ResponseEntity
+                                        .status(HttpStatus.CREATED)
+                                        .body(response);
 
-        } catch (RuntimeException e) {
+                } catch (RuntimeException e) {
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                        return ResponseEntity
+                                        .badRequest()
+                                        .build();
+                }
         }
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void>
-    eliminar(
-            @PathVariable Long id) {
+        @PutMapping("/{id}")
+        public ResponseEntity<DocumentoPrivadoResponseDTO> actualizar(
 
-        try {
+                        @PathVariable Long id,
 
-            service.eliminar(id);
+                        @Valid @RequestBody DocumentoPrivadoRequestDTO dto) {
 
-            return ResponseEntity
-                    .noContent()
-                    .build();
+                try {
 
-        } catch (RuntimeException e) {
+                        return ResponseEntity.ok(
+                                        service.actualizar(id, dto));
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                } catch (RuntimeException e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+                }
         }
-    }
 
-    // ===================================
-    // CONSULTAS
-    // ===================================
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> eliminar(
+                        @PathVariable Long id) {
 
-    @GetMapping("/activos")
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    listarActivos() {
+                try {
 
-        return ResponseEntity.ok(
-                service.listarActivos());
-    }
+                        service.eliminar(id);
 
-    @GetMapping("/empleado/{empleadoId}")
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    buscarPorEmpleado(
-            @PathVariable Long empleadoId) {
+                        return ResponseEntity
+                                        .noContent()
+                                        .build();
 
-        return ResponseEntity.ok(
-                service.buscarPorEmpleado(
-                        empleadoId));
-    }
+                } catch (RuntimeException e) {
 
-    @GetMapping("/tipo/{tipoId}")
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    buscarPorTipo(
-            @PathVariable Long tipoId) {
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+                }
+        }
 
-        return ResponseEntity.ok(
-                service.buscarPorTipo(
-                        tipoId));
-    }
+        // ===================================
+        // CONSULTAS
+        // ===================================
 
-    @GetMapping("/activos-relaciones")
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    listarActivosConRelaciones() {
+        @GetMapping("/activos")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> listarActivos() {
 
-        return ResponseEntity.ok(
-                service.listarActivosConRelaciones());
-    }
+                return ResponseEntity.ok(
+                                service.listarActivos());
+        }
 
-    @GetMapping("/vencidos")
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    documentosVencidos() {
+        @GetMapping("/empleado/{empleadoId}")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> buscarPorEmpleado(
+                        @PathVariable Long empleadoId) {
 
-        return ResponseEntity.ok(
-                service.documentosVencidos());
-    }
+                return ResponseEntity.ok(
+                                service.buscarPorEmpleado(
+                                                empleadoId));
+        }
 
-    @GetMapping("/por-vencer")
-    public ResponseEntity<List<DocumentoPrivadoResponseDTO>>
-    documentosPorVencer(
+        @GetMapping("/tipo/{tipoId}")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> buscarPorTipo(
+                        @PathVariable Long tipoId) {
 
-            @RequestParam
-            @DateTimeFormat(
-                    iso = DateTimeFormat.ISO.DATE)
-            LocalDate fechaLimite) {
+                return ResponseEntity.ok(
+                                service.buscarPorTipo(
+                                                tipoId));
+        }
 
-        return ResponseEntity.ok(
-                service.documentosPorVencer(
-                        fechaLimite));
-    }
+        @GetMapping("/activos-relaciones")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> listarActivosConRelaciones() {
 
-    @GetMapping("/estadisticas/tipos")
-    public ResponseEntity<List<Object[]>>
-    contarDocumentosPorTipo() {
+                return ResponseEntity.ok(
+                                service.listarActivosConRelaciones());
+        }
 
-        return ResponseEntity.ok(
-                service.contarDocumentosPorTipo());
-    }
+        @GetMapping("/vencidos")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> documentosVencidos() {
 
-    @GetMapping("/estadisticas/empleados")
-    public ResponseEntity<List<Object[]>>
-    empleadosConMasDocumentos() {
+                return ResponseEntity.ok(
+                                service.documentosVencidos());
+        }
 
-        return ResponseEntity.ok(
-                service.empleadosConMasDocumentos());
-    }
+        @GetMapping("/por-vencer")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> documentosPorVencer(
+
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaLimite) {
+
+                return ResponseEntity.ok(
+                                service.documentosPorVencer(
+                                                fechaLimite));
+        }
+
+        @GetMapping("/estadisticas/tipos")
+        public ResponseEntity<List<Object[]>> contarDocumentosPorTipo() {
+
+                return ResponseEntity.ok(
+                                service.contarDocumentosPorTipo());
+        }
+
+        @GetMapping("/estadisticas/empleados")
+        public ResponseEntity<List<Object[]>> empleadosConMasDocumentos() {
+
+                return ResponseEntity.ok(
+                                service.empleadosConMasDocumentos());
+        }
 }
