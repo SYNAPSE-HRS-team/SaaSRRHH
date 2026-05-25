@@ -12,29 +12,34 @@ import java.util.List;
 
 @Repository
 public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Long> {
-    
+
     // Buscar por empleado
     List<TareaAsignada> findByEmpleadoId(Long empleadoId);
-    
+
     // Buscar por supervisor
     List<TareaAsignada> findBySupervisorId(Long supervisorId);
-    
+
     // Buscar por área
     List<TareaAsignada> findByAreaId(Long areaId);
-    
+
     // Buscar por estado
     List<TareaAsignada> findByEstado(EstadoTarea estado);
-    
+
     // Buscar por empleado y fecha
     List<TareaAsignada> findByEmpleadoIdAndFecha(Long empleadoId, LocalDate fecha);
-    
+
     // Buscar por supervisor y estado
     List<TareaAsignada> findBySupervisorIdAndEstado(Long supervisorId, EstadoTarea estado);
-    
+
     // Contar tareas por empleado en estado pendiente
     long countByEmpleadoIdAndEstado(Long empleadoId, EstadoTarea estado);
-    
+
+    // Filtra por estado y tarea asignada a un área específica
+    @Query("SELECT t FROM TareaAsignada t WHERE t.area.id = :areaId AND t.estado = :estado")
+    List<TareaAsignada> findByAreaAndEstado(@Param("areaId") Long areaId, @Param("estado") EstadoTarea estado);
+
     // Buscar tareas por rango de fechas
     @Query("SELECT t FROM TareaAsignada t WHERE t.fecha BETWEEN :fechaInicio AND :fechaFin")
-    List<TareaAsignada> findTareasByFechaRange(@Param("fechaInicio") LocalDate fechaInicio, @Param("fechaFin") LocalDate fechaFin);
+    List<TareaAsignada> findTareasByFechaRange(@Param("fechaInicio") LocalDate fechaInicio,
+            @Param("fechaFin") LocalDate fechaFin);
 }

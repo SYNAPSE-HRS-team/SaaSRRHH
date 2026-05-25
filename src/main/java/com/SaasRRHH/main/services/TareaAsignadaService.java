@@ -27,4 +27,6 @@ public interface TareaAsignadaService {
     List<TareaAsignadaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
 
     TareaAsignadaResponseDTO cambiarEstado(Long id, EstadoTarea nuevoEstado);
+
+    List<TareaAsignadaResponseDTO> buscarPorAreaYEstado(Long areaId, EstadoTarea estado);
 }
