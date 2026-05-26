@@ -22,15 +22,13 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-
+    @Transactional
     public MetricaBurnout guardar(MetricaBurnout metrica) {
         return repository.save(metrica);
     }
 
     @Override
     @Transactional(readOnly = true)
-
     public MetricaBurnout obtenerPorId(Long id) {
         return repository.findByIdWithRelaciones(id)
                 .orElseThrow(() -> new RuntimeException("No encontrado"));
@@ -38,13 +36,12 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
 
     @Override
     @Transactional(readOnly = true)
-
     public List<MetricaBurnout> buscarPorEmpleado(Long empleadoId) {
         return repository.findByEmpleadoId(empleadoId);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public MetricaBurnout actualizar(Long id, MetricaBurnout metrica) {
         MetricaBurnout actual = obtenerPorId(id);
 
@@ -57,9 +54,11 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-
+    @Transactional
     public void eliminar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Métrica no encontrada");
+        }
         repository.deleteById(id);
     }
 }

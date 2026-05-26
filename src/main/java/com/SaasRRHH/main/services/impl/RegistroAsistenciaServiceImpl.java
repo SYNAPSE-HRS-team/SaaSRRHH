@@ -24,92 +24,87 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class RegistroAsistenciaServiceImpl
-        implements RegistroAsistenciaService {
+                implements RegistroAsistenciaService {
 
-    private final RegistroAsistenciaRepository repository;
-    private final EmpleadoService empleadoService;
+        private final RegistroAsistenciaRepository repository;
+        private final EmpleadoService empleadoService;
 
-    // ===================================
-    // CRUD
-    // ===================================
+        // ===================================
+        // CRUD
+        // ===================================
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO> listar() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> listar() {
 
-        return repository.listarCompleto()
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public RegistroAsistenciaResponseDTO buscarPorId(Long id) {
-
-        return repository.findById(id)
-                .map(RegistroAsistenciaMapper::toDTO)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Registro de asistencia no encontrado"));
-    }
-
-    @Override
-    public RegistroAsistenciaResponseDTO guardar(
-            RegistroAsistenciaRequestDTO dto) {
-
-        if (dto.getEmpleadoId() == null) {
-
-            throw new RuntimeException(
-                    "El empleado es obligatorio");
+                return repository.listarCompleto()
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
         }
 
-        EmpleadoResponseDTO empleadoDTO =
-                empleadoService.buscarPorId(dto.getEmpleadoId());
+        @Override
+        @Transactional(readOnly = true)
+        public RegistroAsistenciaResponseDTO buscarPorId(Long id) {
 
-        if (empleadoDTO == null) {
-
-            throw new RuntimeException(
-                    "Empleado no encontrado");
+                return repository.findById(id)
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Registro de asistencia no encontrado"));
         }
 
-        if (!dto.getTipoMarcacion()
-                .matches("ENTRADA|SALIDA")) {
+        @Override
+        public RegistroAsistenciaResponseDTO guardar(
+                        RegistroAsistenciaRequestDTO dto) {
 
-            throw new RuntimeException(
-                    "Tipo de marcación inválido");
+                if (dto.getEmpleadoId() == null) {
+
+                        throw new RuntimeException(
+                                        "El empleado es obligatorio");
+                }
+
+                EmpleadoResponseDTO empleadoDTO = empleadoService.buscarPorId(dto.getEmpleadoId());
+
+                if (empleadoDTO == null) {
+
+                        throw new RuntimeException(
+                                        "Empleado no encontrado");
+                }
+
+                if (!dto.getTipoMarcacion()
+                                .matches("ENTRADA|SALIDA")) {
+
+                        throw new RuntimeException(
+                                        "Tipo de marcación inválido");
+                }
+
+                RegistroAsistencia entity = RegistroAsistenciaMapper.toEntity(dto);
+
+                if (entity.getFechaHora() == null) {
+                        entity.setFechaHora(LocalDateTime.now());
+                }
+
+                if (entity.getMetodo() == null) {
+                        entity.setMetodo("QR");
+                }
+
+                return RegistroAsistenciaMapper.toDTO(
+                                repository.save(entity));
         }
 
-        RegistroAsistencia entity =
-                RegistroAsistenciaMapper.toEntity(dto);
+        @Override
+        public void eliminar(Long id) {
 
-        if (entity.getFechaHora() == null) {
-            entity.setFechaHora(LocalDateTime.now());
+                RegistroAsistencia registro = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Registro no encontrado"));
+
+                repository.delete(registro);
         }
 
-        if (entity.getMetodo() == null) {
-            entity.setMetodo("QR");
-        }
-
-        return RegistroAsistenciaMapper.toDTO(
-                repository.save(entity));
-    }
-
-    @Override
-    public void eliminar(Long id) {
-
-        RegistroAsistencia registro =
-                repository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Registro no encontrado"));
-
-        repository.delete(registro);
-    }
-
-    // ===================================
-    // REGISTRO ENTRADA / SALIDA
-    // ===================================
+        // ===================================
+        // REGISTRO ENTRADA / SALIDA
+        // ===================================
 
         private LocalDateTime inicioDelDia(LocalDate fecha) {
 
@@ -121,214 +116,200 @@ public class RegistroAsistenciaServiceImpl
                 return fecha.plusDays(1).atStartOfDay();
         }
 
-    @Override
-    public RegistroAsistenciaResponseDTO registrarEntrada(
-            Long empleadoId,
-            String metodo) {
+        @Override
+        public RegistroAsistenciaResponseDTO registrarEntrada(
+                        Long empleadoId,
+                        String metodo) {
 
-        EmpleadoResponseDTO empleadoDTO =
-                empleadoService.buscarPorId(empleadoId);
+                EmpleadoResponseDTO empleadoDTO = empleadoService.buscarPorId(empleadoId);
 
-        if (empleadoDTO == null) {
+                if (empleadoDTO == null) {
 
-            throw new RuntimeException(
-                    "Empleado no encontrado");
+                        throw new RuntimeException(
+                                        "Empleado no encontrado");
+                }
+
+                boolean yaMarco = repository.yaMarcoHoy(
+                                empleadoId,
+                                inicioDelDia(LocalDate.now()),
+                                finDelDia(LocalDate.now()),
+                                "ENTRADA");
+
+                if (yaMarco) {
+
+                        throw new RuntimeException(
+                                        "El empleado ya registró entrada hoy");
+                }
+
+                Empleado empleado = new Empleado();
+                empleado.setId(empleadoId);
+
+                RegistroAsistencia registro = new RegistroAsistencia();
+
+                registro.setEmpleado(empleado);
+                registro.setTipoMarcacion("ENTRADA");
+                registro.setMetodo(
+                                metodo != null ? metodo : "QR");
+                registro.setEstado("VALIDADO");
+                registro.setFechaHora(LocalDateTime.now());
+
+                return RegistroAsistenciaMapper.toDTO(
+                                repository.save(registro));
         }
 
-        boolean yaMarco =
-                repository.yaMarcoHoy(
-                        empleadoId,
-                        inicioDelDia(LocalDate.now()),
-                        finDelDia(LocalDate.now()),
-                        "ENTRADA");
+        @Override
+        public RegistroAsistenciaResponseDTO registrarSalida(
+                        Long empleadoId,
+                        String metodo) {
 
-        if (yaMarco) {
+                EmpleadoResponseDTO empleadoDTO = empleadoService.buscarPorId(empleadoId);
 
-            throw new RuntimeException(
-                    "El empleado ya registró entrada hoy");
+                if (empleadoDTO == null) {
+
+                        throw new RuntimeException(
+                                        "Empleado no encontrado");
+                }
+
+                boolean yaMarco = repository.yaMarcoHoy(
+                                empleadoId,
+                                inicioDelDia(LocalDate.now()),
+                                finDelDia(LocalDate.now()),
+                                "SALIDA");
+
+                if (yaMarco) {
+
+                        throw new RuntimeException(
+                                        "El empleado ya registró salida hoy");
+                }
+
+                Empleado empleado = new Empleado();
+                empleado.setId(empleadoId);
+
+                RegistroAsistencia registro = new RegistroAsistencia();
+
+                registro.setEmpleado(empleado);
+                registro.setTipoMarcacion("SALIDA");
+                registro.setMetodo(
+                                metodo != null ? metodo : "QR");
+                registro.setEstado("VALIDADO");
+                registro.setFechaHora(LocalDateTime.now());
+
+                return RegistroAsistenciaMapper.toDTO(
+                                repository.save(registro));
         }
 
-        Empleado empleado = new Empleado();
-        empleado.setId(empleadoId);
+        // ===================================
+        // CONSULTAS
+        // ===================================
 
-        RegistroAsistencia registro =
-                new RegistroAsistencia();
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId) {
 
-        registro.setEmpleado(empleado);
-        registro.setTipoMarcacion("ENTRADA");
-        registro.setMetodo(
-                metodo != null ? metodo : "QR");
-        registro.setEstado("VALIDADO");
-        registro.setFechaHora(LocalDateTime.now());
-
-        return RegistroAsistenciaMapper.toDTO(
-                repository.save(registro));
-    }
-
-    @Override
-    public RegistroAsistenciaResponseDTO registrarSalida(
-            Long empleadoId,
-            String metodo) {
-
-        EmpleadoResponseDTO empleadoDTO =
-                empleadoService.buscarPorId(empleadoId);
-
-        if (empleadoDTO == null) {
-
-            throw new RuntimeException(
-                    "Empleado no encontrado");
+                return repository.findByEmpleadoId(empleadoId)
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
         }
 
-        boolean yaMarco =
-                repository.yaMarcoHoy(
-                        empleadoId,
-                        inicioDelDia(LocalDate.now()),
-                        finDelDia(LocalDate.now()),
-                        "SALIDA");
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(
+                        Long empleadoId,
+                        LocalDate fecha) {
 
-        if (yaMarco) {
+                LocalDateTime inicio = fecha.atStartOfDay();
 
-            throw new RuntimeException(
-                    "El empleado ya registró salida hoy");
+                LocalDateTime fin = fecha.atTime(LocalTime.MAX);
+
+                return repository
+                                .findByEmpleadoIdAndFechaHoraBetween(
+                                                empleadoId,
+                                                inicio,
+                                                fin)
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
         }
 
-        Empleado empleado = new Empleado();
-        empleado.setId(empleadoId);
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado) {
 
-        RegistroAsistencia registro =
-                new RegistroAsistencia();
+                return repository.findByEstado(estado)
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
+        }
 
-        registro.setEmpleado(empleado);
-        registro.setTipoMarcacion("SALIDA");
-        registro.setMetodo(
-                metodo != null ? metodo : "QR");
-        registro.setEstado("VALIDADO");
-        registro.setFechaHora(LocalDateTime.now());
+        // ===================================
+        // CONSULTAS ANALITICAS
+        // ===================================
 
-        return RegistroAsistenciaMapper.toDTO(
-                repository.save(registro));
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> asistenciasHoy() {
 
-    // ===================================
-    // CONSULTAS
-    // ===================================
+                LocalDate hoy = LocalDate.now();
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO>
-    buscarPorEmpleado(Long empleadoId) {
+                return repository.asistenciasHoy(
+                                inicioDelDia(hoy),
+                                finDelDia(hoy))
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
+        }
 
-        return repository.findByEmpleadoId(empleadoId)
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> incidenciasAsistencia() {
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO>
-    buscarPorEmpleadoYFecha(
-            Long empleadoId,
-            LocalDate fecha) {
+                return repository.incidenciasAsistencia()
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
+        }
 
-        LocalDateTime inicio =
-                fecha.atStartOfDay();
+        @Override
+        @Transactional(readOnly = true)
+        public Long contarAsistenciasMensuales(
+                        Long empleadoId,
+                        LocalDateTime inicio,
+                        LocalDateTime fin) {
 
-        LocalDateTime fin =
-                fecha.atTime(LocalTime.MAX);
+                return repository.contarAsistenciasMensuales(
+                                empleadoId,
+                                inicio,
+                                fin);
+        }
 
-        return repository
-                .findByEmpleadoIdAndFechaHoraBetween(
-                        empleadoId,
-                        inicio,
-                        fin)
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public List<Object[]> rankingTardanzas() {
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO>
-    buscarPorEstado(String estado) {
+                return repository.rankingTardanzas();
+        }
 
-        return repository.findByEstado(estado)
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
+        @Override
+        @Transactional(readOnly = true)
+        public boolean yaMarcoHoy(
+                        Long empleadoId,
+                        String tipo) {
 
-    // ===================================
-    // CONSULTAS ANALITICAS
-    // ===================================
+                return repository.yaMarcoHoy(
+                                empleadoId,
+                                inicioDelDia(LocalDate.now()),
+                                finDelDia(LocalDate.now()),
+                                tipo);
+        }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO>
-    asistenciasHoy() {
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> listarCompleto() {
 
-        LocalDate hoy = LocalDate.now();
-
-        return repository.asistenciasHoy(
-                        inicioDelDia(hoy),
-                        finDelDia(hoy))
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO>
-    incidenciasAsistencia() {
-
-        return repository.incidenciasAsistencia()
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Long contarAsistenciasMensuales(
-            Long empleadoId,
-            LocalDateTime inicio,
-            LocalDateTime fin) {
-
-        return repository.contarAsistenciasMensuales(
-                empleadoId,
-                inicio,
-                fin);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Object[]> rankingTardanzas() {
-
-        return repository.rankingTardanzas();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public boolean yaMarcoHoy(
-            Long empleadoId,
-            String tipo) {
-
-        return repository.yaMarcoHoy(
-                empleadoId,
-                inicioDelDia(LocalDate.now()),
-                finDelDia(LocalDate.now()),
-                tipo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<RegistroAsistenciaResponseDTO>
-    listarCompleto() {
-
-        return repository.listarCompleto()
-                .stream()
-                .map(RegistroAsistenciaMapper::toDTO)
-                .toList();
-    }
+                return repository.listarCompleto()
+                                .stream()
+                                .map(RegistroAsistenciaMapper::toDTO)
+                                .toList();
+        }
 }

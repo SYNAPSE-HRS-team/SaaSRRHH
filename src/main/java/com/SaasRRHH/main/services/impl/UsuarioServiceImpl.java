@@ -42,9 +42,8 @@ public class UsuarioServiceImpl
 
         return usuarioRepository.findById(id)
                 .map(UsuarioMapper::toDTO)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
     }
 
     @Override
@@ -59,13 +58,11 @@ public class UsuarioServiceImpl
         }
 
         Rol rol = rolRepository.findById(
-                        dto.getRolId())
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Rol no encontrado"));
+                dto.getRolId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Rol no encontrado"));
 
-        Usuario usuario =
-                UsuarioMapper.toEntity(dto, rol);
+        Usuario usuario = UsuarioMapper.toEntity(dto, rol);
 
         return UsuarioMapper.toDTO(
                 usuarioRepository.save(usuario));
@@ -74,11 +71,9 @@ public class UsuarioServiceImpl
     @Override
     public void eliminar(Long id) {
 
-        Usuario usuario =
-                usuarioRepository.findById(id)
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Usuario no encontrado"));
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
 
         usuarioRepository.delete(usuario);
     }
@@ -90,9 +85,8 @@ public class UsuarioServiceImpl
 
         return usuarioRepository.findByEmail(email)
                 .map(UsuarioMapper::toDTO)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
     }
 
     @Override
@@ -100,9 +94,8 @@ public class UsuarioServiceImpl
             Long id) {
 
         Usuario u = usuarioRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
 
         u.setUltimoAcceso(LocalDateTime.now());
 
@@ -122,8 +115,7 @@ public class UsuarioServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public List<UsuarioResponseDTO>
-    listarUsuariosActivos() {
+    public List<UsuarioResponseDTO> listarUsuariosActivos() {
 
         return usuarioRepository
                 .findByActivoTrue()
@@ -134,8 +126,7 @@ public class UsuarioServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public List<UsuarioResponseDTO>
-    buscarPorRol(String rol) {
+    public List<UsuarioResponseDTO> buscarPorRol(String rol) {
 
         return usuarioRepository
                 .buscarPorRol(rol)
@@ -146,8 +137,7 @@ public class UsuarioServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public List<UsuarioResponseDTO>
-    usuariosConAccesoReciente(
+    public List<UsuarioResponseDTO> usuariosConAccesoReciente(
             LocalDateTime fecha) {
 
         return usuarioRepository

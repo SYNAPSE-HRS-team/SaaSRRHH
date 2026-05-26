@@ -39,6 +39,33 @@ public class EncuestaBienestarMapper {
         dto.setCargaLaboral(encuesta.getCargaLaboral());
         dto.setApoyoEquipo(encuesta.getApoyoEquipo());
         dto.setProyeccion(encuesta.getProyeccion());
+        // Nombre del empleado
+        if (encuesta.getEmpleado() != null) {
+            dto.setNombreEmpleado(encuesta.getEmpleado().getNombres() + " " + encuesta.getEmpleado().getApellidos());
+        }
+
+        // Promedio y nivel de bienestar
+        Double promedio = calcularPromedio(encuesta.getCargaLaboral(), encuesta.getApoyoEquipo(),
+                encuesta.getProyeccion());
+        dto.setPromedioGeneral(promedio);
+        dto.setNivelBienestar(clasificarNivel(promedio));
         return dto;
+    }
+
+    private static Double calcularPromedio(Integer carga, Integer apoyo, Integer proyeccion) {
+        if (carga == null || apoyo == null || proyeccion == null)
+            return null;
+        double prom = (carga + apoyo + proyeccion) / 3.0;
+        return Math.round(prom * 100.0) / 100.0;
+    }
+
+    private static String clasificarNivel(Double promedio) {
+        if (promedio == null)
+            return null;
+        if (promedio >= 4.0)
+            return "BUENO";
+        if (promedio >= 2.5)
+            return "REGULAR";
+        return "CRITICO";
     }
 }

@@ -68,6 +68,13 @@ public class Empleado {
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MetricaBurnout> metricasBurnout = new ArrayList<>();
 
+    // ==========================
+    // RELACION CON ENCUESTAS BIENESTAR
+    // ==========================
+    @JsonIgnore
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Encuestabienestar> encuestasBienestar = new ArrayList<>();
+
     // Métodos de conveniencia (muy recomendables)
     public void agregarMetricaBurnout(MetricaBurnout metrica) {
         metricasBurnout.add(metrica);
@@ -77,5 +84,15 @@ public class Empleado {
     public void removerMetricaBurnout(MetricaBurnout metrica) {
         metricasBurnout.remove(metrica);
         metrica.setEmpleado(null);
+    }
+
+    public void agregarEncuestaBienestar(Encuestabienestar encuesta) {
+        encuestasBienestar.add(encuesta);
+        encuesta.setEmpleado(this);
+    }
+
+    public void removerEncuestaBienestar(Encuestabienestar encuesta) {
+        encuestasBienestar.remove(encuesta);
+        encuesta.setEmpleado(null);
     }
 }
