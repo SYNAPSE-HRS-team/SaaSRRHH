@@ -20,4 +20,10 @@ public class EncuestaBienestarResponseDTO {
     private Integer apoyoEquipo;
 
     private Integer proyeccion;
+
+    private String nombreEmpleado;
+
+    private Double promedioGeneral;
+
+    private String nivelBienestar;
 }
