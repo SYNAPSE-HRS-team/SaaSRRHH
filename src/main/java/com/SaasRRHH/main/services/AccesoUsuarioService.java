@@ -1,20 +1,51 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.AccesoUsuario;
+import com.SaasRRHH.main.DTO.AccesoUsuarioRequestDTO;
+import com.SaasRRHH.main.DTO.AccesoUsuarioResponseDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AccesoUsuarioService {
 
-   List<AccesoUsuario> listar();
+   // =========================
+   // 📋 CRUD
+   // =========================
 
-   AccesoUsuario buscarPorId(Long id);
+   List<AccesoUsuarioResponseDTO> listar();
+
+   AccesoUsuarioResponseDTO buscarPorId(Long id);
+
+   List<AccesoUsuarioResponseDTO> buscarPorUsuario(Long usuarioId);
+
+   AccesoUsuarioResponseDTO guardar(AccesoUsuarioRequestDTO dto);
+
+   AccesoUsuarioResponseDTO actualizar(Long id, AccesoUsuarioRequestDTO dto);
+
+   void eliminar(Long id);
 
    List<AccesoUsuario> buscarPorUsuario(Long usuarioId);
 
-   AccesoUsuario guardar(AccesoUsuario acceso);
+
+   List<AccesoUsuarioResponseDTO> listarOrdenadosPorUsuario(Long usuarioId);
+
+   List<AccesoUsuarioResponseDTO> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin);
+
+   List<AccesoUsuarioResponseDTO> listarFallidos();
+
+   List<AccesoUsuarioResponseDTO> listarFallidosConUsuario();
+
+   List<AccesoUsuarioResponseDTO> sesionesActivas();
+
+   List<AccesoUsuarioResponseDTO> ultimoAccesoUsuario(Long usuarioId);
 
    AccesoUsuario actualizar(Long id, AccesoUsuario acceso);
 
-   void eliminar(Long id);
+   // =========================
+   // 📈 ANALÍTICA
+   // =========================
+
+   List<Object[]> usuariosMasActivos();
+
+   List<Object[]> accesosExitososPorUsuario();
 }

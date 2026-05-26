@@ -1,19 +1,48 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.ReporteDiario;
+import com.SaasRRHH.main.DTO.ReporteDiarioRequestDTO;
+import com.SaasRRHH.main.DTO.ReporteDiarioResponseDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ReporteDiarioService {
 
-    List<ReporteDiario> listar();
+    // =========================
+    // 📋 CRUD
+    // =========================
 
-    Optional<ReporteDiario> buscarPorId(Long id);
+    List<ReporteDiarioResponseDTO> listar();
 
-    ReporteDiario guardar(ReporteDiario reporteDiario);
+    ReporteDiarioResponseDTO buscarPorId(Long id);
 
-    ReporteDiario actualizar(Long id, ReporteDiario reporteDiario);
+    ReporteDiarioResponseDTO guardar(ReporteDiarioRequestDTO dto);
+
+    ReporteDiarioResponseDTO actualizar(Long id, ReporteDiarioRequestDTO dto);
 
     void eliminar(Long id);
+
+    // =========================
+    // 📊 CONSULTAS JPQL
+    // =========================
+
+    List<ReporteDiarioResponseDTO> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin);
+
+    List<ReporteDiarioResponseDTO> buscarPorEmpleado(Long empleadoId);
+
+    List<ReporteDiarioResponseDTO> buscarPorTarea(Long tareaId);
+
+    List<ReporteDiarioResponseDTO> reportesBajoAvance();
+
+    List<ReporteDiarioResponseDTO> reportesDeHoy();
+
+    List<ReporteDiarioResponseDTO> listarPorEstado(String estado);
+
+    // =========================
+    // 📈 ANALÍTICA (GROUP BY)
+    // =========================
+
+    List<Object[]> reportesPorEmpleado();
+
+    List<Object[]> avancePromedioPorTarea();
 }

@@ -1,16 +1,17 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.model.ReporteDiario;
+import com.SaasRRHH.main.DTO.ReporteDiarioRequestDTO;
+import com.SaasRRHH.main.DTO.ReporteDiarioResponseDTO;
 import com.SaasRRHH.main.services.ReporteDiarioService;
 
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -19,63 +20,87 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ReporteDiarioController {
 
-    private final ReporteDiarioService reporteDiarioService;
+    private final ReporteDiarioService service;
+
 
     @GetMapping
-    public ResponseEntity<List<ReporteDiario>> listar() {
-
-        return ResponseEntity.ok(reporteDiarioService.listar());
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> listar() {
+        return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReporteDiario> buscarPorId(@PathVariable Long id) {
-
-        return reporteDiarioService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ReporteDiarioResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<ReporteDiario> guardar(
-            @Valid @RequestBody ReporteDiario reporteDiario) {
+    public ResponseEntity<ReporteDiarioResponseDTO> guardar(
+            @Valid @RequestBody ReporteDiarioRequestDTO dto) {
 
-        ReporteDiario nuevoReporte =
-                reporteDiarioService.guardar(reporteDiario);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(nuevoReporte);
+        return new ResponseEntity<>(
+                service.guardar(dto),
+                HttpStatus.CREATED
+        );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReporteDiario> actualizar(
+    public ResponseEntity<ReporteDiarioResponseDTO> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody ReporteDiario reporteDiario) {
+            @Valid @RequestBody ReporteDiarioRequestDTO dto) {
 
-        try {
-
-            ReporteDiario reporteActualizado =
-                    reporteDiarioService.actualizar(id, reporteDiario);
-
-            return ResponseEntity.ok(reporteActualizado);
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
 
-        try {
 
-            reporteDiarioService.eliminar(id);
 
-            return ResponseEntity.noContent().build();
+    @GetMapping("/rango")
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> porRango(
+            @RequestParam LocalDateTime inicio,
+            @RequestParam LocalDateTime fin) {
 
-        } catch (RuntimeException e) {
+        return ResponseEntity.ok(service.buscarPorRangoFechas(inicio, fin));
+    }
 
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/empleado/{id}")
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> porEmpleado(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorEmpleado(id));
+    }
+
+    @GetMapping("/tarea/{id}")
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> porTarea(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorTarea(id));
+    }
+
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> porEstado(@PathVariable String estado) {
+        return ResponseEntity.ok(service.listarPorEstado(estado));
+    }
+
+    @GetMapping("/bajo-avance")
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> bajoAvance() {
+        return ResponseEntity.ok(service.reportesBajoAvance());
+    }
+
+    @GetMapping("/hoy")
+    public ResponseEntity<List<ReporteDiarioResponseDTO>> reportesDeHoy() {
+        return ResponseEntity.ok(service.reportesDeHoy());
+    }
+
+
+
+    @GetMapping("/reportes-por-empleado")
+    public ResponseEntity<List<Object[]>> reportesPorEmpleado() {
+        return ResponseEntity.ok(service.reportesPorEmpleado());
+    }
+
+    @GetMapping("/avance-promedio")
+    public ResponseEntity<List<Object[]>> avancePromedio() {
+        return ResponseEntity.ok(service.avancePromedioPorTarea());
     }
 }

@@ -1,18 +1,53 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.ReporteIncidente;
+import com.SaasRRHH.main.DTO.ReporteIncidenteRequestDTO;
+import com.SaasRRHH.main.DTO.ReporteIncidenteResponseDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReporteIncidenteService {
 
-    List<ReporteIncidente> listar();
+    // =========================
+    // 📋 CRUD
+    // =========================
 
-    ReporteIncidente guardar(ReporteIncidente data);
+    List<ReporteIncidenteResponseDTO> listar();
 
-    ReporteIncidente obtenerPorId(Long id);
+    ReporteIncidenteResponseDTO guardar(ReporteIncidenteRequestDTO dto);
 
-    ReporteIncidente actualizar(Long id, ReporteIncidente data);
+    ReporteIncidenteResponseDTO obtenerPorId(Long id);
+
+    ReporteIncidenteResponseDTO actualizar(Long id, ReporteIncidenteRequestDTO dto);
 
     void eliminar(Long id);
+
+
+
+
+    List<ReporteIncidenteResponseDTO> listarConRelaciones();
+
+    List<ReporteIncidenteResponseDTO> listarPorEmpleado(Long empleadoId);
+
+    List<ReporteIncidenteResponseDTO> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin);
+
+    List<ReporteIncidenteResponseDTO> listarPorNivelRiesgo(String nivelRiesgo);
+
+    List<ReporteIncidenteResponseDTO> listarPorEstado(String estado);
+
+    List<ReporteIncidenteResponseDTO> incidentesCriticos();
+
+    List<ReporteIncidenteResponseDTO> incidentesDeHoy();
+
+    List<ReporteIncidenteResponseDTO> incidentesCriticosConDetalle();
+
+
+
+    List<Object[]> incidentesPorEmpleado();
+
+    List<Object[]> incidentesPorRiesgo();
+
+    List<Object[]> incidentesPorArea();
+
+    List<Object[]> incidentesPorSupervisor();
 }

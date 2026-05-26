@@ -1,14 +1,7 @@
 package com.SaasRRHH.main.model;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
+
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,38 +16,48 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "familiares", indexes = {
+                @Index(name = "idx_familiar_empleado", columnList = "empleado_id")
+})
 public class Familiar {
 
-    public enum Parentesco {
-        HIJO, CONYUGE, PADRE, MADRE
-    }
+        public enum Parentesco {
+                HIJO, CONYUGE, PADRE, MADRE
+        }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "empleado_id", nullable = false)
-    @NotNull(message = "El empleado es obligatorio")
-    private Empleado empleado;
+        @NotNull(message = "El empleado es obligatorio")
+        @ManyToOne(fetch = FetchType.LAZY, optional = false)
+        @JoinColumn(name = "empleado_id", nullable = false, foreignKey = @ForeignKey(name = "fk_familiar_empleado"))
+        private Empleado empleado;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull(message = "El parentesco es obligatorio")
-    private Parentesco parentesco;
+        @NotNull(message = "El parentesco es obligatorio")
+        @Enumerated(EnumType.STRING)
+        @Column(name = "parentesco", nullable = false, length = 50)
+        private Parentesco parentesco;
 
-    @NotBlank(message = "El nombre del familiar es obligatorio")
-    @Size(max = 200, message = "El nombre no puede superar 200 caracteres")
-    private String nombres;
+        @NotBlank(message = "El nombre del familiar es obligatorio")
+        @Size(max = 200, message = "El nombre no puede superar 200 caracteres")
+        @Column(name = "nombres", nullable = false, length = 200)
+        private String nombres;
 
-    @Pattern(regexp = "^[0-9]{8}$", message = "El DNI debe contener exactamente 8 dígitos numéricos")
-    @Column(unique = true, length = 8)
-    private String dniFamiliar;
+        @Pattern(regexp = "^[0-9]{8}$", message = "El DNI debe contener exactamente 8 dígitos numéricos")
+        @Column(name = "dni_familiar", length = 8)
+        private String dniFamiliar;
 
-    @NotNull(message = "La fecha de nacimiento es obligatoria")
-    @Past(message = "La fecha de nacimiento debe ser en el pasado")
-    private LocalDate fechaNacimiento;
+        @NotNull(message = "La fecha de nacimiento es obligatoria")
+        @Past(message = "La fecha de nacimiento debe ser en el pasado")
+        @Column(name = "fecha_nacimiento", nullable = false)
+        private LocalDate fechaNacimiento;
 
-    private Boolean estudia = false;
+        @Column(name = "estudia", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+        private Boolean estudia = false;
 
-    private Boolean activo = true;
+        @Column(name = "activo", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+        private Boolean activo = true;
+
 }

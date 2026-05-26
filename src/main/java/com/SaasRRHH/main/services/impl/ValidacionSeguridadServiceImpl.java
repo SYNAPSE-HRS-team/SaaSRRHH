@@ -1,45 +1,158 @@
 package com.SaasRRHH.main.services.impl;
 
+import com.SaasRRHH.main.DTO.ValidacionSeguridadRequestDTO;
+import com.SaasRRHH.main.DTO.ValidacionSeguridadResponseDTO;
+import com.SaasRRHH.main.mapper.ValidacionSeguridadMapper;
 import com.SaasRRHH.main.model.ValidacionSeguridad;
 import com.SaasRRHH.main.repository.ValidacionSeguridadRepository;
 import com.SaasRRHH.main.services.ValidacionSeguridadService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
-public class ValidacionSeguridadServiceImpl implements ValidacionSeguridadService {
+@RequiredArgsConstructor
+@Transactional
+public class ValidacionSeguridadServiceImpl
+        implements ValidacionSeguridadService {
 
     private final ValidacionSeguridadRepository repository;
 
+    // =====================================
+    // CRUD
+    // =====================================
+
     @Override
-    public List<ValidacionSeguridad> listar() {
-        return repository.findAll();
+    @Transactional(readOnly = true)
+    public List<ValidacionSeguridadResponseDTO> listar() {
+
+        return repository.findAllWithRelaciones()
+                .stream()
+                .map(ValidacionSeguridadMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<ValidacionSeguridad> buscarPorId(Long id) {
-        return repository.findById(id);
+    @Transactional(readOnly = true)
+    public ValidacionSeguridadResponseDTO buscarPorId(Long id) {
+
+        ValidacionSeguridad validacion =
+                repository.findByIdWithRelaciones(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Validación de seguridad no encontrada"));
+
+        return ValidacionSeguridadMapper.toDTO(validacion);
     }
 
     @Override
-    public ValidacionSeguridad guardar(ValidacionSeguridad validacionSeguridad) {
-        return repository.save(validacionSeguridad);
+    public ValidacionSeguridadResponseDTO guardar(
+            ValidacionSeguridadRequestDTO dto) {
+
+        if (dto.getAsistenciaId() == null) {
+
+            throw new RuntimeException(
+                    "La asistencia es obligatoria");
+        }
+
+        ValidacionSeguridad entity =
+                ValidacionSeguridadMapper.toEntity(dto);
+
+        return ValidacionSeguridadMapper.toDTO(
+                repository.save(entity));
     }
 
     @Override
-    public Optional<ValidacionSeguridad> actualizar(Long id, ValidacionSeguridad validacionSeguridad) {
-        return repository.findById(id).map(existing -> {
-            validacionSeguridad.setId(id);
-            return repository.save(validacionSeguridad);
-        });
+    public ValidacionSeguridadResponseDTO actualizar(
+            Long id,
+            ValidacionSeguridadRequestDTO dto) {
+
+        ValidacionSeguridad existente =
+                repository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Validación no encontrada"));
+
+        ValidacionSeguridad nuevaEntidad =
+                ValidacionSeguridadMapper.toEntity(dto);
+
+        existente.setAsistencia(
+                nuevaEntidad.getAsistencia());
+
+        existente.setDispositivo(
+                nuevaEntidad.getDispositivo());
+
+        existente.setTotpHash(
+                nuevaEntidad.getTotpHash());
+
+        existente.setTotpValido(
+                nuevaEntidad.getTotpValido());
+
+        return ValidacionSeguridadMapper.toDTO(
+                repository.save(existente));
     }
 
     @Override
     public void eliminar(Long id) {
-        repository.deleteById(id);
+
+        ValidacionSeguridad validacion =
+                repository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Validación no encontrada"));
+
+        repository.delete(validacion);
+    }
+
+    // =====================================
+    // CONSULTAS
+    // =====================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ValidacionSeguridadResponseDTO>
+    buscarPorTotpValido(Boolean valido) {
+
+        return repository.findByTotpValido(valido)
+                .stream()
+                .map(ValidacionSeguridadMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ValidacionSeguridadResponseDTO>
+    recientes() {
+
+        return repository.recientes()
+                .stream()
+                .map(ValidacionSeguridadMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ValidacionSeguridadResponseDTO>
+    buscarPorEmpleado(Long empleadoId) {
+
+        return repository.buscarPorEmpleado(empleadoId)
+                .stream()
+                .map(ValidacionSeguridadMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ValidacionSeguridadResponseDTO>
+    intentosFallidos() {
+
+        return repository.intentosFallidos()
+                .stream()
+                .map(ValidacionSeguridadMapper::toDTO)
+                .toList();
     }
 }

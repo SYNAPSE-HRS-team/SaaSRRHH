@@ -1,6 +1,7 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.model.Encuestabienestar;
+import com.SaasRRHH.main.DTO.EncuestaBienestarRequestDTO;
+import com.SaasRRHH.main.DTO.EncuestaBienestarResponseDTO;
 import com.SaasRRHH.main.services.EncuestaBienestarService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +18,22 @@ public class EncuestaBienestarController {
     }
 
     @GetMapping
-    public List<Encuestabienestar> listar() {
+    public List<EncuestaBienestarResponseDTO> listar() {
         return service.listar();
     }
 
     @GetMapping("/{id}")
-    public Encuestabienestar obtener(@PathVariable Long id) {
+    public EncuestaBienestarResponseDTO obtener(@PathVariable Long id) {
         return service.obtenerPorId(id);
     }
 
     @PostMapping
-    public Encuestabienestar crear(@RequestBody Encuestabienestar encuesta) {
+    public EncuestaBienestarResponseDTO crear(@RequestBody EncuestaBienestarRequestDTO encuesta) {
         return service.guardar(encuesta);
     }
 
     @PutMapping("/{id}")
-    public Encuestabienestar actualizar(@PathVariable Long id, @RequestBody Encuestabienestar encuesta) {
+    public EncuestaBienestarResponseDTO actualizar(@PathVariable Long id, @RequestBody EncuestaBienestarRequestDTO encuesta) {
         return service.actualizar(id, encuesta);
     }
 

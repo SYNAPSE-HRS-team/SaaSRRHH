@@ -1,19 +1,52 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.DocumentoPrivado;
+import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
+import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface DocumentoPrivadoService {
 
-    List<DocumentoPrivado> listar();
+    List<DocumentoPrivadoResponseDTO> listar();
 
-    Optional<DocumentoPrivado> buscarPorId(Long id);
+    DocumentoPrivadoResponseDTO buscarPorId(Long id);
 
-    DocumentoPrivado guardar(DocumentoPrivado documentoPrivado);
+    DocumentoPrivadoResponseDTO guardar(
+            DocumentoPrivadoRequestDTO dto);
 
-    DocumentoPrivado actualizar(Long id, DocumentoPrivado documentoPrivado);
+    DocumentoPrivadoResponseDTO actualizar(
+            Long id,
+            DocumentoPrivadoRequestDTO dto);
 
     void eliminar(Long id);
+
+    // ===================================
+    // CONSULTAS
+    // ===================================
+
+    List<DocumentoPrivadoResponseDTO>
+    listarActivos();
+
+    List<DocumentoPrivadoResponseDTO>
+    buscarPorEmpleado(Long empleadoId);
+
+    List<DocumentoPrivadoResponseDTO>
+    buscarPorTipo(Long tipoId);
+
+    List<DocumentoPrivadoResponseDTO>
+    listarActivosConRelaciones();
+
+    List<DocumentoPrivadoResponseDTO>
+    documentosVencidos();
+
+    List<DocumentoPrivadoResponseDTO>
+    documentosPorVencer(
+            LocalDate fechaLimite);
+
+    List<Object[]>
+    contarDocumentosPorTipo();
+
+    List<Object[]>
+    empleadosConMasDocumentos();
 }

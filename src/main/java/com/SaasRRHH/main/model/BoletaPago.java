@@ -18,7 +18,7 @@ import lombok.AllArgsConstructor;
 @Table(name = "boletas_pago", uniqueConstraints = {
                 @UniqueConstraint(name = "uq_boleta", columnNames = { "empleado_id", "planilla_id" })
 }, indexes = {
-                @Index(name = "idx_empleado", columnList = "empleado_id"),
+                @Index(name = "idx_boleta_empleado", columnList = "empleado_id"),
                 @Index(name = "idx_planilla", columnList = "planilla_id")
 })
 public class BoletaPago {
@@ -86,6 +86,6 @@ public class BoletaPago {
         @Column(name = "neto_pagar", nullable = false, precision = 12, scale = 2)
         private BigDecimal netoPagar;
 
-        @Column(name = "fecha_emision", nullable = false, insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        @Column(name = "fecha_emision", nullable = false, insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
         private LocalDateTime fechaEmision;
 }

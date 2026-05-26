@@ -5,6 +5,7 @@ import com.SaasRRHH.main.repository.BoletaPagoRepository;
 import com.SaasRRHH.main.services.BoletaPagoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +17,15 @@ public class BoletaPagoServiceImpl implements BoletaPagoService {
     private final BoletaPagoRepository repository;
 
     @Override
+    @Transactional(readOnly = true) // ← agregar
     public List<BoletaPago> listar() {
-        return repository.findAll();
+        return repository.findAllWithRelaciones();
     }
+
 
     @Override
     public Optional<BoletaPago> buscarPorId(Long id) {
-        return repository.findById(id);
+        return repository.findByIdWithRelaciones(id);
     }
 
     @Override
