@@ -10,8 +10,8 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDate;
 
 
-@Entity
-@Table(name = "familiares")
+
+
 @Getter
 @Setter
 @NoArgsConstructor
