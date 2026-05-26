@@ -24,9 +24,6 @@ public interface AccesoUsuarioService {
 
    void eliminar(Long id);
 
-   List<AccesoUsuario> buscarPorUsuario(Long usuarioId);
-
-
    List<AccesoUsuarioResponseDTO> listarOrdenadosPorUsuario(Long usuarioId);
 
    List<AccesoUsuarioResponseDTO> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin);
@@ -38,8 +35,6 @@ public interface AccesoUsuarioService {
    List<AccesoUsuarioResponseDTO> sesionesActivas();
 
    List<AccesoUsuarioResponseDTO> ultimoAccesoUsuario(Long usuarioId);
-
-   AccesoUsuario actualizar(Long id, AccesoUsuario acceso);
 
    // =========================
    // 📈 ANALÍTICA

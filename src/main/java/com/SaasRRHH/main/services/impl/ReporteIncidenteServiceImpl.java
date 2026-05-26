@@ -22,16 +22,17 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
 
     private final ReporteIncidenteRepository repository;
 
-    @Override
-    public List<ReporteIncidente> listar() {
-        return repository.findAll();
-    }
+    // =========================
+    // 📋 CRUD
+    // =========================
 
     @Override
-    public ReporteIncidente guardar(ReporteIncidente data) {
-        return repository.save(data);
-    }
-
+    @Transactional(readOnly = true)
+    public List<ReporteIncidenteResponseDTO> listar() {
+        return repository.findAllWithRelaciones()
+                .stream()
+                .map(ReporteIncidenteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -60,7 +61,6 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
 
         ReporteIncidente actualizado = ReporteIncidenteMapper.toEntity(dto);
 
-
         actualizado.setId(existente.getId());
 
         ReporteIncidente saved = repository.save(actualizado);
@@ -73,8 +73,6 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
     public void eliminar(Long id) {
         repository.deleteById(id);
     }
-
-
 
     @Override
     @Transactional(readOnly = true)
@@ -107,16 +105,16 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
     @Transactional(readOnly = true)
     public List<ReporteIncidenteResponseDTO> listarPorNivelRiesgo(String nivelRiesgo) {
         return repository.findByNivelRiesgo(
-                ReporteIncidente.NivelRiesgo.valueOf(nivelRiesgo)
-        ).stream().map(ReporteIncidenteMapper::toDTO).collect(Collectors.toList());
+                ReporteIncidente.NivelRiesgo.valueOf(nivelRiesgo)).stream().map(ReporteIncidenteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ReporteIncidenteResponseDTO> listarPorEstado(String estado) {
         return repository.findByEstado(
-                ReporteIncidente.EstadoIncidente.valueOf(estado)
-        ).stream().map(ReporteIncidenteMapper::toDTO).collect(Collectors.toList());
+                ReporteIncidente.EstadoIncidente.valueOf(estado)).stream().map(ReporteIncidenteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -146,9 +144,6 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
                 .collect(Collectors.toList());
     }
 
-
-
-
     @Override
     @Transactional(readOnly = true)
     public List<Object[]> incidentesPorEmpleado() {
@@ -173,4 +168,3 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
         return repository.incidentesPorSupervisor();
     }
 }
->>>>>>> 85df0eb67a38be109d5c76a2005ef4013d67ad5e

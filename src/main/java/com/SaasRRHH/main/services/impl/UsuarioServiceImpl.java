@@ -1,82 +1,157 @@
 package com.SaasRRHH.main.services.impl;
 
+import com.SaasRRHH.main.DTO.UsuarioRequestDTO;
+import com.SaasRRHH.main.DTO.UsuarioResponseDTO;
+import com.SaasRRHH.main.mapper.UsuarioMapper;
+import com.SaasRRHH.main.model.Rol;
 import com.SaasRRHH.main.model.Usuario;
+import com.SaasRRHH.main.repository.RolRepository;
 import com.SaasRRHH.main.repository.UsuarioRepository;
 import com.SaasRRHH.main.services.UsuarioService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional
-public class UsuarioServiceImpl implements UsuarioService {
+public class UsuarioServiceImpl
+        implements UsuarioService {
 
-    private final UsuarioRepository repository;
+    private final UsuarioRepository usuarioRepository;
+    private final RolRepository rolRepository;
 
     @Override
-    public List<Usuario> listar() {
-        return repository.findAll();
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> listar() {
+
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Optional<Usuario> buscarPorId(Long id) {
-        return repository.findById(id);
+    @Transactional(readOnly = true)
+    public UsuarioResponseDTO buscarPorId(Long id) {
+
+        return usuarioRepository.findById(id)
+                .map(UsuarioMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
     }
 
     @Override
-    @Transactional
-    public Usuario guardar(Usuario usuario) {
-        if (usuario.getId() == null && repository.existsByEmail(usuario.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con el email: " + usuario.getEmail());
+    public UsuarioResponseDTO guardar(
+            UsuarioRequestDTO dto) {
+
+        if (usuarioRepository.existsByEmail(
+                dto.getEmail())) {
+
+            throw new RuntimeException(
+                    "El email ya está registrado");
         }
 
-        if (usuario.getId() != null) {
-            Optional<Usuario> existing = repository.findByEmail(usuario.getEmail());
-            if (existing.isPresent() && !existing.get().getId().equals(usuario.getId())) {
-                throw new RuntimeException("Ya existe un usuario con el email: " + usuario.getEmail());
-            }
-        }
+        Rol rol = rolRepository.findById(
+                dto.getRolId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Rol no encontrado"));
 
-        if (usuario.getActivo() == null) {
-            usuario.setActivo(true);
-        }
-        if (usuario.getFechaCreacion() == null) {
-            usuario.setFechaCreacion(LocalDateTime.now());
-        }
+        Usuario usuario = UsuarioMapper.toEntity(dto, rol);
 
-        return repository.save(usuario);
+        return UsuarioMapper.toDTO(
+                usuarioRepository.save(usuario));
     }
 
     @Override
-    @Transactional
     public void eliminar(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado con id: " + id);
-        }
-        repository.deleteById(id);
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
+
+        usuarioRepository.delete(usuario);
     }
 
     @Override
-    public Optional<Usuario> buscarPorEmail(String email) {
-        return repository.findByEmail(email);
+    @Transactional(readOnly = true)
+    public UsuarioResponseDTO buscarPorEmail(
+            String email) {
+
+        return usuarioRepository.findByEmail(email)
+                .map(UsuarioMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
     }
 
     @Override
-    @Transactional
-    public Usuario actualizarUltimoAcceso(Long id) {
-        Usuario usuario = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        usuario.setUltimoAcceso(LocalDateTime.now());
-        return repository.save(usuario);
+    public UsuarioResponseDTO actualizarUltimoAcceso(
+            Long id) {
+
+        Usuario u = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(
+                        "Usuario no encontrado"));
+
+        u.setUltimoAcceso(LocalDateTime.now());
+
+        return UsuarioMapper.toDTO(
+                usuarioRepository.save(u));
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        return repository.existsByEmail(email);
+
+        return usuarioRepository.existsByEmail(email);
+    }
+
+    // ===================================
+    // CONSULTAS JPQL
+    // ===================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> listarUsuariosActivos() {
+
+        return usuarioRepository
+                .findByActivoTrue()
+                .stream()
+                .map(UsuarioMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> buscarPorRol(String rol) {
+
+        return usuarioRepository
+                .buscarPorRol(rol)
+                .stream()
+                .map(UsuarioMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> usuariosConAccesoReciente(
+            LocalDateTime fecha) {
+
+        return usuarioRepository
+                .usuariosConAccesoReciente(fecha)
+                .stream()
+                .map(UsuarioMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object[]> contarUsuariosPorRol() {
+
+        return usuarioRepository
+                .contarUsuariosPorRol();
     }
 }
