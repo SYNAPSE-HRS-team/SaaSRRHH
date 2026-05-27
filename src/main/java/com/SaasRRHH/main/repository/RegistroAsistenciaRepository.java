@@ -38,6 +38,7 @@ public interface RegistroAsistenciaRepository extends JpaRepository<RegistroAsis
     
     // Buscar por estado
     List<RegistroAsistencia> findByEstado(String estado);
+    long countByEstado(String estado);
     
     // Contar asistencias por empleado en un rango de fechas
     long countByEmpleadoIdAndFechaHoraBetween(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
