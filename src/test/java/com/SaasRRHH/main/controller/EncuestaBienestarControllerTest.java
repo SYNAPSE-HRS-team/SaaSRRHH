@@ -3,14 +3,17 @@ package com.SaasRRHH.main.controller;
 import com.SaasRRHH.main.DTO.EncuestaBienestarRequestDTO;
 import com.SaasRRHH.main.DTO.EncuestaBienestarResponseDTO;
 import com.SaasRRHH.main.DTO.ResumenBienestarDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.EncuestaBienestarService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -25,6 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EncuestaBienestarController.class)
+@AutoConfigureMockMvc(addFilters = false)
+
 class EncuestaBienestarControllerTest {
 
     @Autowired
@@ -32,6 +37,11 @@ class EncuestaBienestarControllerTest {
 
     @MockBean
     private EncuestaBienestarService service;
+            @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

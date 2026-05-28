@@ -2,14 +2,17 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.AccesoUsuarioRequestDTO;
 import com.SaasRRHH.main.DTO.AccesoUsuarioResponseDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.AccesoUsuarioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
@@ -23,6 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AccesoUsuarioController.class)
+@AutoConfigureMockMvc(addFilters = false)
+
 @WithMockUser
 class AccesoUsuarioControllerTest {
 
@@ -31,6 +36,11 @@ class AccesoUsuarioControllerTest {
 
     @MockBean
     private AccesoUsuarioService service;
+            @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

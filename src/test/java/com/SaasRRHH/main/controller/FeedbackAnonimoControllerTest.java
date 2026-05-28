@@ -3,14 +3,17 @@ package com.SaasRRHH.main.controller;
 import com.SaasRRHH.main.DTO.FeedbackAnonimoRequestDTO;
 import com.SaasRRHH.main.DTO.FeedbackAnonimoResponseDTO;
 import com.SaasRRHH.main.model.FeedbackAnonimo;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.FeedbackAnonimoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -25,6 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(FeedbackAnonimoController.class)
+@AutoConfigureMockMvc(addFilters = false)
+
 class FeedbackAnonimoControllerTest {
 
     @Autowired
@@ -32,6 +37,11 @@ class FeedbackAnonimoControllerTest {
 
     @MockBean
     private FeedbackAnonimoService service;
+            @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

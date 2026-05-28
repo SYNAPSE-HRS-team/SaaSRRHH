@@ -1,14 +1,17 @@
 package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.model.MetricaBurnout;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.MetricaBurnoutService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -24,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MetricaBurnoutController.class)
+@AutoConfigureMockMvc(addFilters = false)
+
 class MetricaBurnoutControllerTest {
 
     @Autowired
@@ -31,6 +36,11 @@ class MetricaBurnoutControllerTest {
 
     @MockBean
     private MetricaBurnoutService metricaBurnoutService;
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -122,8 +132,8 @@ class MetricaBurnoutControllerTest {
         when(metricaBurnoutService.guardar(any(MetricaBurnout.class))).thenReturn(metrica);
 
         mockMvc.perform(post("/api/burnout")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(metrica)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(metrica)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)));
 
@@ -137,8 +147,8 @@ class MetricaBurnoutControllerTest {
         when(metricaBurnoutService.actualizar(eq(1L), any(MetricaBurnout.class))).thenReturn(metrica);
 
         mockMvc.perform(put("/api/burnout/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(metrica)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(metrica)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)));
 
