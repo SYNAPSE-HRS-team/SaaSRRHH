@@ -52,6 +52,9 @@ public class AuthController {
         ));
     }
 
+
+    
+
     // DTO interno (record de Java 16+)
     public record LoginRequestDTO(String email, String password) {}
 }
