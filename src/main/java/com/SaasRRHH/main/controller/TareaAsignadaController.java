@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,7 +49,8 @@ public class TareaAsignadaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TareaAsignadaResponseDTO> actualizar(@PathVariable Long id, @RequestBody TareaAsignadaRequestDTO tarea) {
+    public ResponseEntity<TareaAsignadaResponseDTO> actualizar(@PathVariable Long id,
+            @RequestBody TareaAsignadaRequestDTO tarea) {
         try {
             TareaAsignadaResponseDTO actualizado = service.actualizar(id, tarea);
             return ResponseEntity.ok(actualizado);
@@ -108,8 +110,13 @@ public class TareaAsignadaController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // En TareaAsignadaController.java
+    @GetMapping("/seguimiento/{areaId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public ResponseEntity<List<TareaAsignadaResponseDTO>> obtenerSeguimientoArea(
+            @PathVariable Long areaId) {
+        // Lógica para listar tareas en progreso en un área específica
+        return ResponseEntity.ok(service.buscarPorAreaYEstado(areaId, EstadoTarea.EN_PROGRESO));
+    }
 }
-
-
-
-

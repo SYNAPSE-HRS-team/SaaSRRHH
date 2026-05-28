@@ -72,8 +72,10 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
         }
 
         TareaAsignada entity = TareaAsignadaMapper.toEntity(tareaDto);
-        if (entity.getFecha() == null) entity.setFecha(LocalDate.now());
-        if (entity.getEstado() == null) entity.setEstado(EstadoTarea.PENDIENTE);
+        if (entity.getFecha() == null)
+            entity.setFecha(LocalDate.now());
+        if (entity.getEstado() == null)
+            entity.setEstado(EstadoTarea.PENDIENTE);
 
         TareaAsignada saved = repository.save(entity);
         return TareaAsignadaMapper.toDTO(saved);
@@ -140,5 +142,13 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
         tarea.setEstado(nuevoEstado);
         TareaAsignada saved = repository.save(tarea);
         return TareaAsignadaMapper.toDTO(saved);
+    }
+
+    @Override
+    public List<TareaAsignadaResponseDTO> buscarPorAreaYEstado(Long areaId, EstadoTarea estado) {
+        return repository.findByAreaAndEstado(areaId, estado)
+                .stream()
+                .map(TareaAsignadaMapper::toDTO)
+                .toList();
     }
 }
