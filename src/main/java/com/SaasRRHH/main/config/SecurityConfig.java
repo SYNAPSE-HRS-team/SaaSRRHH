@@ -47,51 +47,51 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sess ->
-                        sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sess ->
+                    sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
 
-                        // ── Rutas públicas ─────────────────────────────────────
-                        .requestMatchers("/api/auth/**").permitAll()
+                // ── Rutas públicas ─────────────────────────────────────
+                .requestMatchers("/api/auth/**").permitAll()
 
-                        // ── Solo ADMIN ─────────────────────────────────────────
-                        .requestMatchers(
-                                "/api/usuarios/**",
-                                "/api/roles/**",
-                                "/api/nomina/**",
-                                "/api/planillas/**",
-                                "/api/boletas_pago/**",
-                                "/api/analitica/**",
-                                "/api/dispositivos-autorizados/**",
-                                "/api/accesos/**",
-                                "/api/validaciones-seguridad/**"
-                        ).hasRole("ADMIN")
+                // ── Solo ADMIN ─────────────────────────────────────────
+                .requestMatchers(
+                    "/api/usuarios/**",
+                    "/api/roles/**",
+                    "/api/nomina/**",
+                    "/api/planillas/**",
+                    "/api/boletas_pago/**",
+                    "/api/analitica/**",
+                    "/api/dispositivos-autorizados/**",
+                    "/api/accesos/**",
+                    "/api/validaciones-seguridad/**"
+                ).hasRole("ADMIN")
 
-                        // ── ADMIN o SUPERVISOR ─────────────────────────────────
-                        .requestMatchers(
-                                "/api/empleados/**",
-                                "/api/tareas-asignadas/**",
-                                "/api/reportes-incidentes/**",
-                                "/api/reportes-diarios/**",
-                                "/api/asistencias/**",
-                                "/api/documentos-privados/**",
-                                "/api/tipos-documento/**",
-                                "/api/areas-trabajo/**",
-                                "/api/burnout/**"
-                        ).hasAnyRole("ADMIN", "SUPERVISOR")
+                // ── ADMIN o SUPERVISOR ─────────────────────────────────
+                .requestMatchers(
+                    "/api/empleados/**",
+                    "/api/tareas-asignadas/**",
+                    "/api/reportes-incidentes/**",
+                    "/api/reportes-diarios/**",
+                    "/api/asistencias/**",
+                    "/api/documentos-privados/**",
+                    "/api/tipos-documento/**",
+                    "/api/areas-trabajo/**",
+                    "/api/burnout/**"
+                ).hasAnyRole("ADMIN", "SUPERVISOR")
 
-                        // ── Cualquier usuario autenticado ──────────────────────
-                        .requestMatchers(
-                                "/api/encuestas-bienestar/**",
-                                "/api/feedback-anonimo/**",
-                                "/api/familiares/**"
-                        ).authenticated()
+                // ── Cualquier usuario autenticado ──────────────────────
+                .requestMatchers(
+                    "/api/encuestas-bienestar/**",
+                    "/api/feedback-anonimo/**",
+                    "/api/familiares/**"
+                ).authenticated()
 
-                        // ── Todo lo demás requiere autenticación ──────────────
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // ── Todo lo demás requiere autenticación ──────────────
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

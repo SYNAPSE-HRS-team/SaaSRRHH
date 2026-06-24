@@ -39,10 +39,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Spring Security espera "ROLE_ADMIN", "ROLE_SUPERVISOR", etc.
         String roleAuthority = "ROLE_" + usuario.getRol().getNombreRol().toUpperCase();
 
+
+
         return User.builder()
                 .username(usuario.getEmail())
                 .password(usuario.getPassword())
                 .authorities(List.of(new SimpleGrantedAuthority(roleAuthority)))
                 .build();
     }
+
+
 }
