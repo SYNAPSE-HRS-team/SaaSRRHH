@@ -95,4 +95,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-}npm install --legacy-peer-deps
+}
