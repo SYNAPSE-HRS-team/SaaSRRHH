@@ -1,4 +1,3 @@
-// src/app/auth/sign-in/sign-in.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
@@ -26,7 +25,7 @@ export class SignInComponent implements OnInit {
   ngOnInit(): void {
     // Si ya está autenticado, redirigir al dashboard
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/dashboard/default']);
     }
   }
 
@@ -34,27 +33,37 @@ export class SignInComponent implements OnInit {
 
   // Método para iniciar sesión
   onLogin(): void {
-    // Validar campos
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor, complete todos los campos';
       return;
     }
 
-    // Activar loading
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Llamar al servicio de autenticación
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Login exitoso', response);
+        console.log(' Login exitoso', response);
         this.isLoading = false;
-        // Redirigir al dashboard
-        localStorage.setItem('token', response.token);
 
-        // opcional: guardar usuario
-        localStorage.setItem('user', JSON.stringify(response.user));
-        this.router.navigate(['/dashboard']);
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+
+        if (response.email) {
+          localStorage.setItem('email', response.email);
+        }
+
+        //  GUARDAR ROLES CON PREFIJO "ROLE_"
+        if (response.roles) {
+          const rolesConPrefijo = response.roles.map((rol: string) =>
+            rol.startsWith('ROLE_') ? rol : `ROLE_${rol}`,
+          );
+          localStorage.setItem('roles', JSON.stringify(rolesConPrefijo));
+          console.log(' Roles guardados (con prefijo):', rolesConPrefijo);
+        }
+
+        this.router.navigate(['/dashboard/default']);
       },
       error: (error) => {
         console.error('Error en login', error);
