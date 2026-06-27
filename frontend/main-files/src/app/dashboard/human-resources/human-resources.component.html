@@ -1,202 +1,205 @@
-<div class="row">
-    <div class="col-12 col-lg-12 col-xl-6">
-     <div class="row row-cols-1 row-cols-lg-2">
-         <div class="col">
-            <div class="card radius-10 overflow-hidden">
-                <div class="card-body">
-                  <div class="font-35 text-warning"><i class='bx bx-group'></i></div>
-                  <h3 class="mb-0 mt-0">928</h3>
-                  <p class="mb-0">Employee NPS</p>
-                </div>
-                <div id="emp-nps"></div>
-                </div>
-         </div>
-         <div class="col">
-            <div class="card radius-10 overflow-hidden">
-                <div class="card-body">
-                    <div class="font-35 text-primary"><i class='bx bx-dollar'></i></div>
-                  <h3 class="mb-0 mt-0">$20.2K</h3>
-                  <p class="mb-0 mt-1">Training Expenses</p>
-                </div>
-                <div id="training-expenses"></div>
-              </div>
-        </div>
-     </div>
-
-     <div class="row row-cols-1 row-cols-lg-2">
-         <div class="col">
-            <div class="card radius-10 overflow-hidden">
-                <div class="card-body">
-                    <div class="font-35 text-danger"><i class='bx bx-camera'></i></div>
-                    <h3 class="mb-0 mt-0">32</h3>
-                    <p class="mb-0 mt-1">CSR Activities</p>
-                </div>
-                <div id="csr-activities"></div>
-            </div>
-         </div>
-
-         <div class="col">
-            <div class="card radius-10 overflow-hidden">
-                <div class="card-body">
-                    <div class="font-35 text-success"><i class='bx bxs-face'></i></div>
-                    <h3 class="mb-0 mt-0">14</h3>
-                    <p class="mb-1">Starter This Month</p>
-                </div>
-                <div id="starter-this-month"></div>
-              </div>
-         </div>
-     </div>
-
-     <div class="card radius-10 overflow-hidden">
-        <div class="card-body">
-         <div class="d-flex align-items-center">
-           <div class="">
-             <h3 class="mb-0">78.49%</h3>
-             <p class="mb-0">Bounce Rate</p>
-           </div>
-           <div class="ms-auto">              
-             <div id="bounce-rate"></div>
-           </div>
-         </div>
-        </div>
-      </div>
-
+<div class="attendance-dashboard">
+  <div class="dashboard-hero">
+    <div>
+      <p class="eyebrow mb-2">Control de asistencia</p>
+      <h2 class="mb-2">Resumen operativo de marcaciones</h2>
+      <p class="mb-0 hero-copy">
+        Métricas sincronizadas con el backend para seguir entradas, salidas, incidencias y nivel de ausentismo.
+      </p>
     </div>
 
-    <div class="col-12 col-lg-12 col-xl-6">
-       <div class="card radius-10">
-          <div class="card-body">
-            <div id="submitted-application"></div>
-          </div>
-        </div>
-        <div class="card radius-10">
-         <div class="card-body">
-             <div id="users-status"></div>
-         </div>
-        </div>
+    <div class="hero-badges">
+      <span class="hero-badge accent">Riesgo {{ dashboard.nivelRiesgo }}</span>
+      <span class="hero-badge">Ausentismo {{ dashboard.porcentajeAusentismo | number:'1.0-1' }}%</span>
+      <span class="hero-badge">Hoy {{ marcacionesHoy.length }} marcaciones</span>
     </div>
+  </div>
 
-  </div><!--end row-->
+  <div *ngIf="loading" class="loading-banner">
+    Cargando métricas de asistencias...
+  </div>
 
-   <div class="row">
-        <div class="col-12 col-lg-8 col-xl-8">
-          <div class="card radius-10 overflow-hidden">
-           <div class="card-body">
-            <div class="d-flex align-items-center">
-                <div>
-                    <h6 class="mb-0">Recruitment Costs</h6>
-                </div>
-                <div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
-                </div>
-            </div>
-              <div class="chart-container">
-                 <div id="recruitment-cost"></div>
-              </div>
-           </div>
-         </div>
+  <div *ngIf="errorMessage" class="alert alert-warning border-0 shadow-sm mb-4">
+    {{ errorMessage }}
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-xl-3" *ngFor="let tarjeta of tarjetasResumen">
+      <div class="metric-card" [ngClass]="tarjeta.tono">
+        <div class="metric-card__icon">
+          <i [class]="tarjeta.icono"></i>
         </div>
-        <div class="col-12 col-lg-4 col-xl-4">
-          <div class="card radius-10">
-           <div class="card-body">
-            <div class="d-flex align-items-center">
-                <div>
-                    <h6 class="mb-0">Applications By Source</h6>
-                </div>
-                <div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
-                </div>
-             </div>
-             <div class="chart-container d-flex align-items-center justify-content-center mt-3">
-                <div id="application-by-source"></div>
-             </div>
-           </div>
-         </div>
-        </div>
-      </div><!--end row-->
-
-  <div class="row">
-    <div class="col-12 col-lg-4 col-xl-4">
-       <div class="card radius-10">
-         <div class="card-body">
-           <div class="d-flex align-items-center">
-           <div class="">
-            <h3 class="mt-3 mb-0">54</h3>
-              <p class="mb-0">Screening Calls</p>
-           </div>
-             <div class="card-content dash-array-chart-box ms-auto">
-              <div id="screening-calls"></div>
-             </div>
-           </div>
-         </div>
-       </div>
-       <div class="card radius-10">
-         <div class="card-body">
-           <div class="d-flex align-items-center">
-           <div class="">
-            <h3 class="mt-3 mb-0">82</h3>
-              <p class="mb-0">Assignments</p>
-           </div>
-             <div class="card-content dash-array-chart-box ms-auto">
-              <div id="assignments"></div>
-             </div>
-           </div>
-         </div>
-       </div>
-       <div class="card radius-10">
-         <div class="card-body">
-           <div class="d-flex align-items-center">
-           <div class="">
-            <h3 class="mt-3 mb-0">92</h3>
-              <p class="mb-0">Interviews</p>
-           </div>
-             <div class="card-content dash-array-chart-box ms-auto">
-              <div id="interviews"></div>
-             </div>
-           </div>
-         </div>
-       </div>
-    </div>
-    <div class="col-12 col-lg-4 col-xl-4">
-      <div class="card radius-10">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <div>
-                    <h6 class="mb-0">Vacancies Status</h6>
-                </div>
-                <div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
-                </div>
-             </div>
-           <div class="text-center chart-container-9 d-flex align-items-center justify-content-center">
-            <div id="vacancies-status"></div>
-          </div>
-         </div>
-         <div class="card-footer bg-transparent border-top">
-         <div class="row align-items-center text-center">
-           <div class="col border-end">
-            <h4 class="mb-0">452</h4>
-            <small class="extra-small-font">Filled Vacancies</small>
-         </div>
-           <div class="col">
-          <h4 class="mb-0">680</h4>
-          <small class="extra-small-font">Total Vacancies</small>
-         </div>
-         </div>
+        <div>
+          <p class="metric-card__title mb-1">{{ tarjeta.titulo }}</p>
+          <h3 class="metric-card__value mb-1">{{ tarjeta.valor }}</h3>
+          <small class="metric-card__subtitle">{{ tarjeta.subtitulo }}</small>
         </div>
       </div>
     </div>
-    <div class="col-12 col-lg-4 col-xl-4">
-      <div class="card radius-10">
-       <div class="card-body">
-        <div class="d-flex align-items-center">
-            <div>
-                <h6 class="mb-0">Top Referrers</h6>
-            </div>
-            <div class="font-22 ms-auto"><i class='bx bx-dots-horizontal-rounded'></i>
-            </div>
-         </div>
-          <div class="">
-            <div id="top-referrers"></div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-xl-7">
+      <div class="panel h-100">
+        <div class="panel__header">
+          <div>
+            <p class="panel__eyebrow mb-1">Dashboard general</p>
+            <h3 class="mb-0">Resumen desde /api/analitica/dashboard</h3>
           </div>
-       </div>
-     </div>
+
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="cargarDatos()">
+            Actualizar
+          </button>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span>Empleados</span>
+            <strong>{{ dashboard.totalEmpleados }}</strong>
+          </div>
+          <div class="summary-item">
+            <span>Usuarios</span>
+            <strong>{{ dashboard.totalUsuarios }}</strong>
+          </div>
+          <div class="summary-item">
+            <span>Reportes diarios</span>
+            <strong>{{ dashboard.reportesDiarios }}</strong>
+          </div>
+          <div class="summary-item">
+            <span>Ausencias</span>
+            <strong>{{ dashboard.ausencias }}</strong>
+          </div>
+          <div class="summary-item">
+            <span>Incidentes</span>
+            <strong>{{ dashboard.incidentes }}</strong>
+          </div>
+          <div class="summary-item summary-item--risk">
+            <span>Nivel de riesgo</span>
+            <strong>{{ dashboard.nivelRiesgo }}</strong>
+          </div>
+        </div>
+
+        <div class="risk-meter">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span>Porcentaje de ausentismo</span>
+            <strong>{{ dashboard.porcentajeAusentismo | number:'1.0-1' }}%</strong>
+          </div>
+
+          <div class="progress" role="progressbar" aria-label="Ausentismo">
+            <div class="progress-bar" [style.width.%]="porcentajeAusentismoSeguro"></div>
+          </div>
+
+          <p class="risk-meter__hint mb-0 mt-2">
+            Validaciones hoy: {{ marcacionesValidasHoy }}
+          </p>
+        </div>
+      </div>
     </div>
-  </div><!--end row-->
+
+    <div class="col-12 col-xl-5">
+      <div class="panel h-100">
+        <div class="panel__header">
+          <div>
+            <p class="panel__eyebrow mb-1">Movimiento del día</p>
+            <h3 class="mb-0">Últimas marcaciones</h3>
+          </div>
+        </div>
+
+        <ng-container *ngIf="marcacionesHoy.length; else sinMarcaciones">
+          <div class="timeline-list">
+            <div class="timeline-item" *ngFor="let registro of marcacionesHoy | slice:0:6">
+              <div class="timeline-marker" [ngClass]="claseMarcacion(registro.tipoMarcacion)"></div>
+              <div class="timeline-content">
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                  <strong>Empleado #{{ registro.empleadoId }}</strong>
+                  <small>{{ formatearFecha(registro.fechaHora) }}</small>
+                </div>
+                <div class="timeline-tags mt-2">
+                  <span class="status-tag">{{ registro.tipoMarcacion }}</span>
+                  <span class="status-tag">{{ registro.metodo }}</span>
+                  <span class="status-tag" [ngClass]="claseEstado(registro.estado)">{{ registro.estado }}</span>
+                </div>
+                <p *ngIf="registro.observaciones" class="timeline-note mb-0 mt-2">
+                  {{ registro.observaciones }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #sinMarcaciones>
+          <div class="empty-state">
+            <i class='bx bx-user-check'></i>
+            <p class="mb-0">Aún no hay marcaciones para mostrar.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-0">
+    <div class="col-12 col-xl-6">
+      <div class="panel h-100">
+        <div class="panel__header">
+          <div>
+            <p class="panel__eyebrow mb-1">Alertas operativas</p>
+            <h3 class="mb-0">Incidencias de asistencia</h3>
+          </div>
+        </div>
+
+        <ng-container *ngIf="incidencias.length; else sinIncidencias">
+          <div class="incident-list">
+            <div class="incident-item" *ngFor="let incidencia of incidencias | slice:0:5">
+              <div>
+                <strong>Empleado #{{ incidencia.empleadoId }}</strong>
+                <p class="mb-0">{{ incidencia.tipoMarcacion }} · {{ incidencia.metodo }}</p>
+              </div>
+              <div class="text-end">
+                <span class="status-tag" [ngClass]="claseEstado(incidencia.estado)">{{ incidencia.estado }}</span>
+                <small class="d-block mt-2">{{ formatearFecha(incidencia.fechaHora) }}</small>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #sinIncidencias>
+          <div class="empty-state empty-state--compact">
+            <i class='bx bx-check-shield'></i>
+            <p class="mb-0">No hay incidencias registradas.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-6">
+      <div class="panel h-100">
+        <div class="panel__header">
+          <div>
+            <p class="panel__eyebrow mb-1">Tardanzas</p>
+            <h3 class="mb-0">Ranking de retardos</h3>
+          </div>
+        </div>
+
+        <ng-container *ngIf="rankingTardanzas.length; else sinRanking">
+          <div class="ranking-list">
+            <div class="ranking-item" *ngFor="let item of rankingTardanzas; let index = index">
+              <div class="ranking-position">{{ index + 1 }}</div>
+              <div class="ranking-info">
+                <strong>Empleado #{{ item.empleadoId }}</strong>
+                <small>Marcaciones tardías acumuladas</small>
+              </div>
+              <div class="ranking-value">{{ item.tardanzas }}</div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #sinRanking>
+          <div class="empty-state empty-state--compact">
+            <i class='bx bx-timer'></i>
+            <p class="mb-0">Todavía no hay datos para el ranking.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

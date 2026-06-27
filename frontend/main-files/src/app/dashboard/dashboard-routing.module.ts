@@ -43,7 +43,7 @@ const routes: Routes = [
         path: 'human-resources',
         component: HumanResourcesComponent,
         data: {
-          title: 'Human Resources'
+          title: 'Asistencias'
         }
       },
     ]
