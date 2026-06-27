@@ -29,6 +29,12 @@ export const routes: Routes = [
         loadChildren: () => import('./features/areas-trabajo/area-trabajo.routes').then(m => m.areaTrabajoRoutes),
         title: 'Áreas de Trabajo - SaaSRRHH'
       },
+      // 🚀 AGREGA ESTE NUEVO MÓDULO AQUÍ DEBAJO:
+      {
+        path: 'usuarios',
+        loadChildren: () => import('./features/usuarios/usuario.routes').then(m => m.usuarioRoutes),
+        title: 'Usuarios - SaaSRRHH'
+      },
       {
         path: '',
         redirectTo: 'dashboard',
