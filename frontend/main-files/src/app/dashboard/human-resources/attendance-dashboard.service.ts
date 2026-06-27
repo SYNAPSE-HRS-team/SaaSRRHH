@@ -23,6 +23,15 @@ export interface RegistroAsistenciaResponse {
   observaciones?: string | null;
 }
 
+export interface ValidacionSeguridadResponse {
+  id: number;
+  asistenciaId?: number | null;
+  dispositivoId?: number | null;
+  totpHash: string;
+  totpValido: boolean;
+  fechaValidacion: string;
+}
+
 export interface RankingTardanza {
   empleadoId: number;
   tardanzas: number;
@@ -44,11 +53,29 @@ export class AttendanceDashboardService {
     return this.http.get<RegistroAsistenciaResponse[]>(`${this.apiUrl}/asistencias/hoy`);
   }
 
+  obtenerValidacionesSeguridad(): Observable<ValidacionSeguridadResponse[]> {
+    return this.http.get<ValidacionSeguridadResponse[]>(`${this.apiUrl}/validaciones-seguridad`);
+  }
+
   obtenerIncidencias(): Observable<RegistroAsistenciaResponse[]> {
     return this.http.get<RegistroAsistenciaResponse[]>(`${this.apiUrl}/asistencias/incidencias`);
   }
 
   obtenerRankingTardanzas(): Observable<Array<[number, number]>> {
     return this.http.get<Array<[number, number]>>(`${this.apiUrl}/asistencias/ranking-tardanzas`);
+  }
+
+  registrarEntrada(empleadoId: number, metodo = 'QR'): Observable<RegistroAsistenciaResponse> {
+    return this.http.post<RegistroAsistenciaResponse>(
+      `${this.apiUrl}/asistencias/entrada/${empleadoId}?metodo=${encodeURIComponent(metodo)}`,
+      {},
+    );
+  }
+
+  registrarSalida(empleadoId: number, metodo = 'QR'): Observable<RegistroAsistenciaResponse> {
+    return this.http.post<RegistroAsistenciaResponse>(
+      `${this.apiUrl}/asistencias/salida/${empleadoId}?metodo=${encodeURIComponent(metodo)}`,
+      {},
+    );
   }
 }

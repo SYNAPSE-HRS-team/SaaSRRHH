@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 
@@ -19,6 +20,7 @@ import { HumanResourcesComponent } from './human-resources/human-resources.compo
   ],
   imports: [
     CommonModule,
+    FormsModule,
     DashboardRoutingModule,
     PerfectScrollbarModule,
     HighchartsChartModule
