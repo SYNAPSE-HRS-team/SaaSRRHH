@@ -4,6 +4,7 @@ import { forkJoin } from 'rxjs';
 import {
   AttendanceDashboardService,
   DashboardResumen,
+  EmpleadoResponse,
   RankingTardanza,
   RegistroAsistenciaResponse,
   ValidacionSeguridadResponse,
@@ -36,6 +37,8 @@ export class HumanResourcesComponent implements OnInit {
   };
 
   tarjetasResumen: TarjetaResumen[] = [];
+  empleados: EmpleadoResponse[] = [];
+  empleadosPorId = new Map<number, EmpleadoResponse>();
   marcacionesHoy: RegistroAsistenciaResponse[] = [];
   incidencias: RegistroAsistenciaResponse[] = [];
   rankingTardanzas: RankingTardanza[] = [];
@@ -48,6 +51,13 @@ export class HumanResourcesComponent implements OnInit {
   qrTotpHash = '';
   tipoMarcacionQr: 'entrada' | 'salida' = 'entrada';
   validacionQr?: ValidacionSeguridadResponse;
+
+  empleadoQrPropioId = '';
+  totpEmpleado = '';
+  qrEmpleadoMensaje = '';
+  qrEmpleadoEnCurso = false;
+  qrCells: boolean[] = [];
+  qrGeneradoHasta?: Date;
 
   accionEnCurso = false;
   qrAccionEnCurso = false;
@@ -68,12 +78,15 @@ export class HumanResourcesComponent implements OnInit {
 
     forkJoin({
       dashboard: this.attendanceDashboardService.obtenerDashboard(),
+      empleados: this.attendanceDashboardService.obtenerEmpleados(),
       asistenciasHoy: this.attendanceDashboardService.obtenerAsistenciasHoy(),
       incidencias: this.attendanceDashboardService.obtenerIncidencias(),
       rankingTardanzas: this.attendanceDashboardService.obtenerRankingTardanzas(),
     }).subscribe({
-      next: ({ dashboard, asistenciasHoy, incidencias, rankingTardanzas }) => {
+      next: ({ dashboard, empleados, asistenciasHoy, incidencias, rankingTardanzas }) => {
         this.dashboard = dashboard;
+        this.empleados = empleados || [];
+        this.empleadosPorId = new Map(this.empleados.map((empleado) => [Number(empleado.id), empleado]));
         this.marcacionesHoy = this.ordenarPorFechaDesc(asistenciasHoy);
         this.incidencias = this.ordenarPorFechaDesc(incidencias);
         this.rankingTardanzas = (rankingTardanzas || [])
@@ -162,9 +175,41 @@ export class HumanResourcesComponent implements OnInit {
   }
 
   simularEscaneoQr(): void {
-    this.qrTotpHash = this.qrTotpHash || 'abc123...';
+    this.qrTotpHash = this.qrTotpHash || this.totpEmpleado || 'abc123...';
     this.validacionQr = undefined;
     this.mensajeQr = 'Hash cargado desde el lector QR simulado.';
+  }
+
+  generarQrEmpleado(): void {
+    const empleadoId = Number(this.empleadoQrPropioId);
+
+    if (!empleadoId || empleadoId <= 0) {
+      this.qrEmpleadoMensaje = 'Ingresa tu ID de empleado para generar el QR.';
+      return;
+    }
+
+    const hash = this.crearTotpHash(empleadoId);
+    this.qrEmpleadoEnCurso = true;
+    this.qrEmpleadoMensaje = '';
+
+    this.attendanceDashboardService.crearValidacionSeguridad({
+      asistenciaId: null,
+      dispositivoId: null,
+      totpHash: hash,
+      totpValido: true,
+    }).subscribe({
+      next: () => {
+        this.totpEmpleado = hash;
+        this.qrCells = this.crearQrVisual(hash);
+        this.qrGeneradoHasta = new Date(Date.now() + 60_000);
+        this.qrEmpleadoMensaje = 'QR TOTP generado. Muestralo al supervisor para registrar tu asistencia.';
+        this.qrEmpleadoEnCurso = false;
+      },
+      error: () => {
+        this.qrEmpleadoMensaje = 'No se pudo generar la validacion TOTP.';
+        this.qrEmpleadoEnCurso = false;
+      },
+    });
   }
 
   get entradasHoy(): number {
@@ -202,6 +247,31 @@ export class HumanResourcesComponent implements OnInit {
     return this.esEntrada(tipoMarcacion) ? 'marcacion-entrada' : 'marcacion-salida';
   }
 
+  nombreEmpleado(empleadoId?: number): string {
+    const empleado = empleadoId ? this.empleadosPorId.get(Number(empleadoId)) : undefined;
+    const nombre = [empleado?.nombres, empleado?.apellidos].filter(Boolean).join(' ').trim();
+
+    return nombre || `Empleado #${empleadoId || '-'}`;
+  }
+
+  areaEmpleado(empleadoId?: number): string {
+    const empleado = empleadoId ? this.empleadosPorId.get(Number(empleadoId)) : undefined;
+
+    return empleado?.areaNombre || empleado?.cargo || 'Area no registrada';
+  }
+
+  empleadoSeleccionadoNombre(empleadoIdTexto: string): string {
+    const empleadoId = Number(empleadoIdTexto);
+
+    return empleadoId > 0 ? this.nombreEmpleado(empleadoId) : 'Empleado sin seleccionar';
+  }
+
+  areaEmpleadoSeleccionado(empleadoIdTexto: string): string {
+    const empleadoId = Number(empleadoIdTexto);
+
+    return empleadoId > 0 ? this.areaEmpleado(empleadoId) : 'Area no registrada';
+  }
+
   formatearFecha(fecha?: string): string {
     return fecha ? new Date(fecha).toLocaleString('es-ES') : 'Sin fecha';
   }
@@ -215,6 +285,25 @@ export class HumanResourcesComponent implements OnInit {
   limpiarMensaje(): void {
     this.mensajeAccion = '';
     this.mensajeQr = '';
+  }
+
+  private crearTotpHash(empleadoId: number): string {
+    const ventanaTiempo = Math.floor(Date.now() / 30000);
+    const semilla = `EMP-${empleadoId}-${ventanaTiempo}-${Math.random().toString(36).slice(2, 8)}`;
+
+    return btoa(semilla).replace(/=+$/g, '').slice(0, 18);
+  }
+
+  private crearQrVisual(hash: string): boolean[] {
+    const base = Array.from(hash).reduce((total, char) => total + char.charCodeAt(0), 0);
+
+    return Array.from({ length: 81 }, (_, index) => {
+      const fila = Math.floor(index / 9);
+      const columna = index % 9;
+      const patronEsquina = (fila < 3 && columna < 3) || (fila < 3 && columna > 5) || (fila > 5 && columna < 3);
+
+      return patronEsquina || ((base + index * 7 + fila * 11 + columna * 13) % 5 < 2);
+    });
   }
 
   private marcarAsistencia(

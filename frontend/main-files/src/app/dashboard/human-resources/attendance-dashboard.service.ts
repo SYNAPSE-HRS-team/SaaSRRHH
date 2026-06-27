@@ -12,6 +12,16 @@ export interface DashboardResumen {
   nivelRiesgo: string;
 }
 
+export interface EmpleadoResponse {
+  id: number;
+  nombres: string;
+  apellidos: string;
+  cargo?: string | null;
+  areaNombre?: string | null;
+  email?: string | null;
+  activo?: boolean | null;
+}
+
 export interface RegistroAsistenciaResponse {
   id: number;
   empleadoId: number;
@@ -21,6 +31,13 @@ export interface RegistroAsistenciaResponse {
   metodo: string;
   estado: string;
   observaciones?: string | null;
+}
+
+export interface ValidacionSeguridadRequest {
+  asistenciaId?: number | null;
+  dispositivoId?: number | null;
+  totpHash: string;
+  totpValido: boolean;
 }
 
 export interface ValidacionSeguridadResponse {
@@ -49,12 +66,20 @@ export class AttendanceDashboardService {
     return this.http.get<DashboardResumen>(`${this.apiUrl}/analitica/dashboard`);
   }
 
+  obtenerEmpleados(): Observable<EmpleadoResponse[]> {
+    return this.http.get<EmpleadoResponse[]>(`${this.apiUrl}/empleados`);
+  }
+
   obtenerAsistenciasHoy(): Observable<RegistroAsistenciaResponse[]> {
     return this.http.get<RegistroAsistenciaResponse[]>(`${this.apiUrl}/asistencias/hoy`);
   }
 
   obtenerValidacionesSeguridad(): Observable<ValidacionSeguridadResponse[]> {
     return this.http.get<ValidacionSeguridadResponse[]>(`${this.apiUrl}/validaciones-seguridad`);
+  }
+
+  crearValidacionSeguridad(payload: ValidacionSeguridadRequest): Observable<ValidacionSeguridadResponse> {
+    return this.http.post<ValidacionSeguridadResponse>(`${this.apiUrl}/validaciones-seguridad`, payload);
   }
 
   obtenerIncidencias(): Observable<RegistroAsistenciaResponse[]> {

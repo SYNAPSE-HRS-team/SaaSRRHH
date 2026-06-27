@@ -25,7 +25,7 @@ export class SignInComponent implements OnInit {
   ngOnInit(): void {
     // Si ya está autenticado, redirigir al dashboard
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard/default']);
+      this.router.navigate([this.authService.getPrimaryRoute()]);
     }
   }
 
@@ -63,7 +63,7 @@ export class SignInComponent implements OnInit {
           console.log(' Roles guardados (con prefijo):', rolesConPrefijo);
         }
 
-        this.router.navigate(['/dashboard/default']);
+        this.router.navigate([this.authService.getPrimaryRoute()]);
       },
       error: (error) => {
         console.error('Error en login', error);

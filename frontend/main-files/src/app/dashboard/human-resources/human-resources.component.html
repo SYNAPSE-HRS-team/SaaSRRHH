@@ -19,6 +19,51 @@
     </article>
   </section>
 
+  <section class="employee-qr-section">
+    <article class="panel employee-qr-panel">
+      <header class="panel-header">
+        <div class="panel-icon employee-icon"></div>
+        <div>
+          <h3>QR del empleado</h3>
+          <p>Genera un codigo TOTP para que el supervisor registre tu asistencia</p>
+        </div>
+      </header>
+
+      <div class="employee-qr-body">
+        <div class="employee-qr-form">
+          <label for="empleadoQrPropio">Tu ID de empleado</label>
+          <input id="empleadoQrPropio" type="number" min="1" placeholder="Ej: 5" [(ngModel)]="empleadoQrPropioId">
+
+          <div class="employee-preview">
+            <strong>{{ empleadoSeleccionadoNombre(empleadoQrPropioId) }}</strong>
+            <small>{{ areaEmpleadoSeleccionado(empleadoQrPropioId) }}</small>
+          </div>
+
+          <button type="button" class="primary-action" (click)="generarQrEmpleado()" [disabled]="qrEmpleadoEnCurso">
+            Generar QR TOTP
+          </button>
+
+          <p *ngIf="qrEmpleadoMensaje" class="form-message" [class.success]="totpEmpleado">{{ qrEmpleadoMensaje }}</p>
+        </div>
+
+        <div class="employee-qr-card" [class.empty]="!totpEmpleado">
+          <ng-container *ngIf="totpEmpleado; else qrPendiente">
+            <div class="fake-qr" aria-label="QR TOTP generado">
+              <span *ngFor="let cell of qrCells" [class.active]="cell"></span>
+            </div>
+            <strong>{{ totpEmpleado }}</strong>
+            <small>Valido hasta {{ qrGeneradoHasta | date:'HH:mm:ss' }}</small>
+          </ng-container>
+
+          <ng-template #qrPendiente>
+            <i class="bx bx-qr-scan"></i>
+            <p>Genera el QR para mostrarlo al supervisor.</p>
+          </ng-template>
+        </div>
+      </div>
+    </article>
+  </section>
+
   <section class="forms-grid">
     <article class="panel">
       <header class="panel-header">
@@ -116,7 +161,15 @@
         </thead>
         <tbody>
           <tr *ngFor="let registro of marcacionesHoy">
-            <td><span class="employee-chip">E{{ registro.empleadoId }}</span> Empleado #{{ registro.empleadoId }}</td>
+            <td>
+              <div class="employee-cell">
+                <span class="employee-chip">E{{ registro.empleadoId }}</span>
+                <div>
+                  <strong>{{ nombreEmpleado(registro.empleadoId) }}</strong>
+                  <small>{{ areaEmpleado(registro.empleadoId) }}</small>
+                </div>
+              </div>
+            </td>
             <td><span class="status-tag" [ngClass]="claseMarcacion(registro.tipoMarcacion)">{{ registro.tipoMarcacion }}</span></td>
             <td>{{ formatearHora(registro.fechaHora) }}</td>
             <td><span class="status-tag method-tag">{{ registro.metodo }}</span></td>
@@ -195,7 +248,7 @@
             <div class="timeline-marker" [ngClass]="claseMarcacion(registro.tipoMarcacion)"></div>
             <div class="timeline-content">
               <div class="timeline-main">
-                <strong>Empleado #{{ registro.empleadoId }}</strong>
+                <strong>{{ nombreEmpleado(registro.empleadoId) }}</strong>
                 <small>{{ formatearFecha(registro.fechaHora) }}</small>
               </div>
               <div class="timeline-tags">
@@ -231,7 +284,8 @@
         <div class="incident-list">
           <div class="incident-item" *ngFor="let incidencia of incidencias | slice:0:5">
             <div>
-              <strong>Empleado #{{ incidencia.empleadoId }}</strong>
+              <strong>{{ nombreEmpleado(incidencia.empleadoId) }}</strong>
+              <small>{{ areaEmpleado(incidencia.empleadoId) }}</small>
               <p>{{ incidencia.tipoMarcacion }} · {{ incidencia.metodo }}</p>
             </div>
             <div class="incident-meta">
@@ -263,7 +317,7 @@
           <div class="ranking-item" *ngFor="let item of rankingTardanzas; let index = index">
             <div class="ranking-position">{{ index + 1 }}</div>
             <div class="ranking-info">
-              <strong>Empleado #{{ item.empleadoId }}</strong>
+              <strong>{{ nombreEmpleado(item.empleadoId) }}</strong>
               <small>Marcaciones tardias acumuladas</small>
             </div>
             <strong class="ranking-value">{{ item.tardanzas }}</strong>

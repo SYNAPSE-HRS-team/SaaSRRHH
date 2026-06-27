@@ -1,6 +1,5 @@
-// src/app/guards/auth.guard.ts
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -12,17 +11,18 @@ export class AuthGuard implements CanActivate {
     private router: Router,
   ) {}
 
-  canActivate(): boolean {
-    console.log('AuthGuard ejecutándose...'); // ← Agrega este log
-    const isAuth = this.authService.isAuthenticated();
-    console.log('¿Está autenticado?', isAuth); // ← Agrega este log
-
-    if (isAuth) {
-      return true;
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/auth/sign-in']);
+      return false;
     }
 
-    console.log('No autenticado, redirigiendo a login');
-    this.router.navigate(['/auth/sign-in']);
-    return false;
+    const allowedRoles = route.data?.['roles'] as string[] | undefined;
+    if (allowedRoles?.length && !this.authService.hasRole(...allowedRoles)) {
+      this.router.navigate([this.authService.getPrimaryRoute()]);
+      return false;
+    }
+
+    return true;
   }
 }
