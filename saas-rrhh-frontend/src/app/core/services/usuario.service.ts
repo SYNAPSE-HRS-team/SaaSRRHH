@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UsuarioRequest, UsuarioResponse } from '../models/usuario.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UsuarioService {
   private http = inject(HttpClient);
@@ -28,5 +28,13 @@ export class UsuarioService {
 
   listarActivos(): Observable<UsuarioResponse[]> {
     return this.http.get<UsuarioResponse[]>(`${this.apiUrl}/activos`);
+  }
+
+  actualizar(id: number, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  }
+
+  listarSinEmpleado(): Observable<UsuarioResponse[]> {
+    return this.http.get<UsuarioResponse[]>(`${this.apiUrl}/sin-empleado`);
   }
 }

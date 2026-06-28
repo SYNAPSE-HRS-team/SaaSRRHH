@@ -22,6 +22,7 @@ public interface UsuarioService {
 
     boolean existsByEmail(String email);
 
+
     // =========================
     // CONSULTAS JPQL
     // =========================
@@ -34,4 +35,8 @@ public interface UsuarioService {
             LocalDateTime fecha);
 
     List<Object[]> contarUsuariosPorRol();
+
+    public UsuarioResponseDTO actualizar(Long id, UsuarioRequestDTO dto);
+
+    List<UsuarioResponseDTO> listarUsuariosSinEmpleado();
 }

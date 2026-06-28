@@ -40,4 +40,6 @@ public interface EmpleadoService {
             LocalDate fechaLimite);
 
     List<Object[]> contarEmpleadosPorCargo();
+
+
 }

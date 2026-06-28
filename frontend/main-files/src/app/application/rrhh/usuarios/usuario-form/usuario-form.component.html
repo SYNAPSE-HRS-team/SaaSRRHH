@@ -1,1 +1,60 @@
-<p>usuario-form works!</p>
+<div class="card">
+  <div class="card-header">
+    <h5>Nuevo Usuario</h5>
+  </div>
+  <div class="card-body">
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <form (ngSubmit)="guardar()" #form="ngForm">
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          [(ngModel)]="usuario.email"
+          name="email"
+          placeholder="correo@ejemplo.com"
+          required
+          #email="ngModel"
+        />
+        <div *ngIf="email.invalid && email.touched" class="text-danger">
+          El email es requerido
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <input
+          type="password"
+          class="form-control"
+          [(ngModel)]="usuario.password"
+          name="password"
+          placeholder="******"
+          required
+          #password="ngModel"
+        />
+        <div *ngIf="password.invalid && password.touched" class="text-danger">
+          La contraseña es requerida
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Rol</label>
+        <select class="form-control" [(ngModel)]="usuario.role" name="role">
+          <option value="USER">Usuario</option>
+          <option value="ADMIN">Administrador</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+        Guardar
+      </button>
+      <button type="button" class="btn btn-secondary" routerLink="/usuarios">
+        Cancelar
+      </button>
+    </form>
+  </div>
+</div>

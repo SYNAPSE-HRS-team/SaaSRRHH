@@ -1,35 +1,37 @@
 export interface Usuario {
-  idUsuario?: number;
-  nombreUsuario: string;
-  correo: string;
-  contrasena?: string;
-  estado?: boolean;
+  id?: number;
+  email: string;
+  password?: string;
+  activo?: boolean;
   rol?: Rol;
-  idRol?: number;
+  fechaCreacion?: string;
+  ultimoAcceso?: string;
 }
-
 export interface UsuarioRequest {
-  nombreUsuario: string;
-  correo: string;
-  contrasena: string;
-  estado?: boolean;
-  idRol: number;
+  email: string;
+  password?: string; // El '?' significa opcional. Al crear es obligatorio, pero si usas esta misma interfaz para EDITAR, la contraseña no se envía (así no la sobreescribes en blanco).
+  activo?: boolean;
+  rol: {
+    id: number;
+  };
 }
-
 export interface UsuarioResponse {
-  idUsuario: number;
-  nombreUsuario: string;
-  correo: string;
-  estado: boolean;
+  id: number;
+  email: string;
+  activo: boolean;
   rol: RolResponse;
+  fechaCreacion: string;
+  ultimoAcceso?: string;
 }
 
 export interface Rol {
-  idRol?: number;
-  nombreRol: string;
+  id?: number;
+  nombre?: string;
+  nombreRol?: string;
 }
 
 export interface RolResponse {
   idRol: number;
-  nombreRol: string;
+  nombre?: string;
+  nombreRol?: string;
 }

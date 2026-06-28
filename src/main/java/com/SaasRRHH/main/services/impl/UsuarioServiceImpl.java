@@ -13,9 +13,11 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class UsuarioServiceImpl
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,25 +50,23 @@ public class UsuarioServiceImpl
     }
 
     @Override
-    public UsuarioResponseDTO guardar(
-            UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO guardar(UsuarioRequestDTO dto) {
 
-        if (usuarioRepository.existsByEmail(
-                dto.getEmail())) {
-
-            throw new RuntimeException(
-                    "El email ya está registrado");
+        // 1. Validar email
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("El email ya está registrado");
         }
 
-        Rol rol = rolRepository.findById(
-                dto.getRolId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Rol no encontrado"));
+        Rol rol = rolRepository.findById(dto.getRolId())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
         Usuario usuario = UsuarioMapper.toEntity(dto, rol);
 
-        return UsuarioMapper.toDTO(
-                usuarioRepository.save(usuario));
+        String passwordEncriptada = passwordEncoder.encode(dto.getPassword());
+        usuario.setPassword(passwordEncriptada);
+
+        // 5. Guardar
+        return UsuarioMapper.toDTO(usuarioRepository.save(usuario));
     }
 
     @Override
@@ -153,5 +154,45 @@ public class UsuarioServiceImpl
 
         return usuarioRepository
                 .contarUsuariosPorRol();
+    }
+
+    @Override
+    public UsuarioResponseDTO actualizar(Long id, UsuarioRequestDTO dto) {
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!usuario.getEmail().equals(dto.getEmail()) &&
+                usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("El email ya está siendo usado por otro usuario");
+        }
+
+
+        Rol rol = rolRepository.findById(dto.getRolId())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+
+        usuario.setEmail(dto.getEmail());
+        usuario.setRol(rol);
+        if (dto.getActivo() != null) {
+            usuario.setActivo(dto.getActivo());
+        }
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            String passwordEncriptada = passwordEncoder.encode(dto.getPassword());
+            usuario.setPassword(passwordEncriptada);
+        }
+
+
+        return UsuarioMapper.toDTO(usuarioRepository.save(usuario));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDTO> listarUsuariosSinEmpleado() {
+        return usuarioRepository.findUsuariosSinEmpleado()
+                .stream()
+                .map(UsuarioMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }
