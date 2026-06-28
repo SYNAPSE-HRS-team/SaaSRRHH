@@ -169,4 +169,21 @@ public class UsuarioController {
         return ResponseEntity.ok(
                 service.contarUsuariosPorRol());
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> actualizar(
+            @PathVariable Long id,
+            @RequestBody UsuarioRequestDTO dto) {
+        try {
+            UsuarioResponseDTO usuarioActualizado = service.actualizar(id, dto);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/sin-empleado")
+    public ResponseEntity<List<UsuarioResponseDTO>> listarUsuariosSinEmpleado() {
+        return ResponseEntity.ok(service.listarUsuariosSinEmpleado());
+    }
 }

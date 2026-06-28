@@ -40,4 +40,6 @@ public interface FamiliarService {
 
     List<Object[]>
     contarPorParentesco();
+
+
 }

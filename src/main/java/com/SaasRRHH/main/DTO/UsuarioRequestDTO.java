@@ -12,7 +12,6 @@ public class UsuarioRequestDTO {
     @Email
     private String email;
 
-    @NotBlank
     private String password;
 
     @NotNull

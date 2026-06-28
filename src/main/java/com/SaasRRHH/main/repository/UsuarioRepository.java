@@ -54,4 +54,28 @@ public interface UsuarioRepository
                      ORDER BY COUNT(u) DESC
                      """)
        List<Object[]> contarUsuariosPorRol();
+
+
+       @Query("""
+            SELECT u
+            FROM Usuario u
+            WHERE NOT EXISTS (
+                SELECT e
+                FROM Empleado e
+                WHERE e.usuario.id = u.id
+            )
+        """)
+       List<Usuario> findUsuariosSinEmpleado();
+
+       @Query("""
+            SELECT u
+            FROM Usuario u
+            WHERE EXISTS (
+                SELECT e
+                FROM Empleado e
+                WHERE e.usuario.id = u.id
+            )
+        """)
+       List<Usuario> findUsuariosConEmpleado();
+
 }

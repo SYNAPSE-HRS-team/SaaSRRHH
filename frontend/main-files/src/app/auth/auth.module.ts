@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AuthRoutingModule } from './auth-routing.module';
-
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { LockScreenComponent } from './lock-screen/lock-screen.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
@@ -26,13 +25,7 @@ import { AuthService } from './auth.service';
     SigninWithHeaderFooterComponent,
     SignupWithHeaderFooterComponent,
   ],
-  imports: [
-    CommonModule,
-    FormsModule, // ← NECESARIO para ngModel
-    AuthRoutingModule,
-  ],
-  providers: [
-    AuthService, // ← Provee el servicio
-  ],
+  imports: [CommonModule, FormsModule, AuthRoutingModule],
+  providers: [AuthService],
 })
 export class AuthModule {}
