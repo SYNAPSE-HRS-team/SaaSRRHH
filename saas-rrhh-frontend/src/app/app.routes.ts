@@ -34,11 +34,25 @@ export const routes: Routes = [
         loadChildren: () => import('./features/asistencias/asistencia.routes').then(m => m.asistenciaRoutes),
         title: 'Asistencia - SaaSRRHH'
       },
-      // 🚀 AGREGA ESTE NUEVO MÓDULO AQUÍ DEBAJO:
       {
         path: 'usuarios',
         loadChildren: () => import('./features/usuarios/usuario.routes').then(m => m.usuarioRoutes),
         title: 'Usuarios - SaaSRRHH'
+      },
+      {
+        path: 'nomina',
+        loadChildren: () => import('./features/nomina/nomina.routes').then(m => m.nominaRoutes),
+        title: 'Nómina - SaaSRRHH'
+      },
+      {
+        path: 'planillas',
+        loadChildren: () => import('./features/planillas/planilla.routes').then(m => m.planillaRoutes),
+        title: 'Planillas - SaaSRRHH'
+      },
+      {
+        path: 'boletas',
+        loadChildren: () => import('./features/boletas/boleta.routes').then(m => m.boletaRoutes),
+        title: 'Boletas de Pago - SaaSRRHH'
       },
       {
         path: '',

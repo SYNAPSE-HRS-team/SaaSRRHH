@@ -1,13 +1,33 @@
 import { Empleado } from './empleado.model';
 
 export interface BoletaPago {
-  idBoleta?: number;
-  periodo: string;
-  monto: number;
-  descuentos?: number;
-  bonificaciones?: number;
-  totalPagar: number;
+  id?: number;
+  empleadoId: number;
+  planillaId?: number;
+  sueldoBase: number;
+  diasTrabajados: number;
+  diasNoTrabajados: number;
+  asignacionFamiliar: number;
+  bonoBeta: number;
+  horasExtraPago: number;
+  otrosBonos: number;
+  descuentoInasistencia: number;
+  otrosDescuentos: number;
+  totalIngresos: number;
+  totalDescuentos: number;
+  netoPagar: number;
   fechaEmision?: string;
+  pdfUrl?: string;
+  // Opcional: empleado embebido para mostrar en UI
   empleado?: Empleado;
-  idEmpleado?: number;
+}
+
+export interface BonoDescuento {
+  id?: number;
+  empleadoId: number;
+  tipo: 'BONO' | 'DESCUENTO';
+  monto: number;
+  descripcion: string;
+  mes: number;
+  anio: number;
 }
