@@ -87,7 +87,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JJWT - librería JWT -->
+        <!-- JJWT - librerÃ­a JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>

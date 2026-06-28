@@ -1,13 +1,12 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
-import { RoleGuard } from './core/guards/role.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 
 export const routes: Routes = [
   {
     path: 'auth',
-    loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes),
-    title: 'Autenticación - SaaSRRHH'
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
+    title: 'AutenticaciÃ³n - SaaSRRHH',
   },
   {
     path: '',
@@ -16,34 +15,50 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.dashboardRoutes),
-        title: 'Dashboard - SaaSRRHH'
+        loadChildren: () =>
+          import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+        title: 'Dashboard - SaaSRRHH',
       },
       {
         path: 'empleados',
-        loadChildren: () => import('./features/empleados/empleado.routes').then(m => m.empleadoRoutes),
-        title: 'Empleados - SaaSRRHH'
+        loadChildren: () =>
+          import('./features/empleados/empleado.routes').then((m) => m.empleadoRoutes),
+        title: 'Empleados - SaaSRRHH',
       },
       {
         path: 'areas-trabajo',
-        loadChildren: () => import('./features/areas-trabajo/area-trabajo.routes').then(m => m.areaTrabajoRoutes),
-        title: 'Áreas de Trabajo - SaaSRRHH'
+        loadChildren: () =>
+          import('./features/areas-trabajo/area-trabajo.routes').then((m) => m.areaTrabajoRoutes),
+        title: 'Ãreas de Trabajo - SaaSRRHH',
       },
-      // 🚀 AGREGA ESTE NUEVO MÓDULO AQUÍ DEBAJO:
+      {
+        path: 'asistencias',
+        loadChildren: () =>
+          import('./features/asistencias/asistencia.routes').then((m) => m.asistenciaRoutes),
+        title: 'Asistencia - SaaSRRHH',
+      },
       {
         path: 'usuarios',
-        loadChildren: () => import('./features/usuarios/usuario.routes').then(m => m.usuarioRoutes),
-        title: 'Usuarios - SaaSRRHH'
+        loadChildren: () =>
+          import('./features/usuarios/usuario.routes').then((m) => m.usuarioRoutes),
+        title: 'Usuarios - SaaSRRHH',
       },
       {
         path: '',
         redirectTo: 'dashboard',
-        pathMatch: 'full'
-      }
-    ]
+        pathMatch: 'full',
+      },
+      {
+        path: 'reportes-incidentes',
+        loadChildren: () =>
+          import('./features/reportes-incidentes/reporte-incidente.module').then(
+            (m) => m.ReporteIncidenteModule,
+          ),
+      },
+    ],
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
-  }
+    redirectTo: 'dashboard',
+  },
 ];

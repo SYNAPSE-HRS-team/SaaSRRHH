@@ -1,5 +1,9 @@
 package com.SaasRRHH.main.controller;
 
+import com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO;
+import com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO;
+import com.SaasRRHH.main.DTO.AsistenciaQrDTO;
+import com.SaasRRHH.main.DTO.AsistenciaScanRequestDTO;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
 import com.SaasRRHH.main.services.RegistroAsistenciaService;
@@ -20,6 +24,7 @@ import java.util.List;
 @RequestMapping("/api/asistencias")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+
 public class RegistroAsistenciaController {
 
     private final RegistroAsistenciaService service;
@@ -202,5 +207,48 @@ public class RegistroAsistenciaController {
 
         return ResponseEntity.ok(
                 service.listarCompleto());
+    }
+
+    // ===================================
+    // QR Y CALENDARIO DE ASISTENCIA
+    // ===================================
+
+    @GetMapping("/mi-qr")
+    public ResponseEntity<AsistenciaQrDTO> miQr() {
+        return ResponseEntity.ok(service.generarQrEmpleadoActual());
+    }
+
+    @PostMapping("/scan-qr")
+    public ResponseEntity<RegistroAsistenciaResponseDTO> scanQr(
+            @RequestBody AsistenciaScanRequestDTO request) {
+        return ResponseEntity.ok(service.registrarPorQr(request.getPayload()));
+    }
+
+    @GetMapping("/mi-calendario")
+    public ResponseEntity<AsistenciaCalendarioMesDTO> miCalendario(
+            @RequestParam Integer anio,
+            @RequestParam Integer mes) {
+        return ResponseEntity.ok(service.calendarioEmpleadoActual(anio, mes));
+    }
+
+    @GetMapping("/mi-calendario/anual")
+    public ResponseEntity<AsistenciaCalendarioAnualDTO> miCalendarioAnual(
+            @RequestParam Integer anio) {
+        return ResponseEntity.ok(service.calendarioAnualEmpleadoActual(anio));
+    }
+
+    @GetMapping("/calendario/{empleadoId}")
+    public ResponseEntity<AsistenciaCalendarioMesDTO> calendarioEmpleado(
+            @PathVariable Long empleadoId,
+            @RequestParam Integer anio,
+            @RequestParam Integer mes) {
+        return ResponseEntity.ok(service.calendarioEmpleado(empleadoId, anio, mes));
+    }
+
+    @GetMapping("/calendario/{empleadoId}/anual")
+    public ResponseEntity<AsistenciaCalendarioAnualDTO> calendarioAnualEmpleado(
+            @PathVariable Long empleadoId,
+            @RequestParam Integer anio) {
+        return ResponseEntity.ok(service.calendarioAnualEmpleado(empleadoId, anio));
     }
 }

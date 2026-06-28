@@ -57,6 +57,8 @@ public class Empleado {
 
     @Column(name = "activo")
     private Boolean activo = true;
+    @Column(name = "totp_secret", length = 64, unique = true)
+    private String totpSecret;
 
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro = LocalDateTime.now();
@@ -75,7 +77,7 @@ public class Empleado {
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Encuestabienestar> encuestasBienestar = new ArrayList<>();
 
-    // Métodos de conveniencia (muy recomendables)
+    // MÃ©todos de conveniencia (muy recomendables)
     public void agregarMetricaBurnout(MetricaBurnout metrica) {
         metricasBurnout.add(metrica);
         metrica.setEmpleado(this);
