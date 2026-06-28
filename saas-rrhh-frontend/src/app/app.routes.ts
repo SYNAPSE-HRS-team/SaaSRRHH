@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes),
-    title: 'Autenticación - SaaSRRHH'
+    title: 'AutenticaciÃ³n - SaaSRRHH'
   },
   {
     path: '',
@@ -27,7 +27,12 @@ export const routes: Routes = [
       {
         path: 'areas-trabajo',
         loadChildren: () => import('./features/areas-trabajo/area-trabajo.routes').then(m => m.areaTrabajoRoutes),
-        title: 'Áreas de Trabajo - SaaSRRHH'
+        title: 'Ãreas de Trabajo - SaaSRRHH'
+      },
+      {
+        path: 'asistencias',
+        loadChildren: () => import('./features/asistencias/asistencia.routes').then(m => m.asistenciaRoutes),
+        title: 'Asistencia - SaaSRRHH'
       },
       {
         path: '',

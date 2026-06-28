@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
+import com.SaasRRHH.main.security.JwtUtil;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDateTime;
@@ -34,6 +36,12 @@ class RegistroAsistenciaControllerTest {
 
     @MockBean
     private RegistroAsistenciaService service;
+
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -203,5 +211,78 @@ class RegistroAsistenciaControllerTest {
 
         mockMvc.perform(get("/api/asistencias/ranking-tardanzas"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void miQr_debeRetornarAsistenciaQr() throws Exception {
+        com.SaasRRHH.main.DTO.AsistenciaQrDTO qrDTO = new com.SaasRRHH.main.DTO.AsistenciaQrDTO("payload", 1L, "Juan Perez", 30, 123456789L);
+        when(service.generarQrEmpleadoActual()).thenReturn(qrDTO);
+
+        mockMvc.perform(get("/api/asistencias/mi-qr"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload", is("payload")))
+                .andExpect(jsonPath("$.empleadoId", is(1)));
+    }
+
+    @Test
+    void scanQr_debeRetornarRegistroAsistencia() throws Exception {
+        when(service.registrarPorQr("payload")).thenReturn(asistenciaResponse);
+        com.SaasRRHH.main.DTO.AsistenciaScanRequestDTO req = new com.SaasRRHH.main.DTO.AsistenciaScanRequestDTO();
+        req.setPayload("payload");
+
+        mockMvc.perform(post("/api/asistencias/scan-qr")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)));
+    }
+
+    @Test
+    void miCalendario_debeRetornarCalendarioMes() throws Exception {
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO mesDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO(2025, 5, Collections.emptyList());
+        when(service.calendarioEmpleadoActual(2025, 5)).thenReturn(mesDTO);
+
+        mockMvc.perform(get("/api/asistencias/mi-calendario")
+                        .param("anio", "2025")
+                        .param("mes", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.anio", is(2025)))
+                .andExpect(jsonPath("$.mes", is(5)));
+    }
+
+    @Test
+    void miCalendarioAnual_debeRetornarCalendarioAnual() throws Exception {
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO anualDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO(2025, Collections.emptyList());
+        when(service.calendarioAnualEmpleadoActual(2025)).thenReturn(anualDTO);
+
+        mockMvc.perform(get("/api/asistencias/mi-calendario/anual")
+                        .param("anio", "2025"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.anio", is(2025)));
+    }
+
+    @Test
+    void calendarioEmpleado_debeRetornarCalendarioMes() throws Exception {
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO mesDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO(2025, 5, Collections.emptyList());
+        when(service.calendarioEmpleado(1L, 2025, 5)).thenReturn(mesDTO);
+
+        mockMvc.perform(get("/api/asistencias/calendario/1")
+                        .param("anio", "2025")
+                        .param("mes", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.anio", is(2025)))
+                .andExpect(jsonPath("$.mes", is(5)));
+    }
+
+    @Test
+    void calendarioAnualEmpleado_debeRetornarCalendarioAnual() throws Exception {
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO anualDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO(2025, Collections.emptyList());
+        when(service.calendarioAnualEmpleado(1L, 2025)).thenReturn(anualDTO);
+
+        mockMvc.perform(get("/api/asistencias/calendario/1/anual")
+                        .param("anio", "2025"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.anio", is(2025)));
     }
 }

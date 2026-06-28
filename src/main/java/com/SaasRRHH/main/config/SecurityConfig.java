@@ -18,44 +18,30 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity          // habilita @PreAuthorize en controllers
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
 
-    // -------------------------------------------------------
-    // PasswordEncoder — BCrypt
-    // -------------------------------------------------------
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // -------------------------------------------------------
-    // AuthenticationManager — necesario para el AuthController
-    // -------------------------------------------------------
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // -------------------------------------------------------
-    // Cadena de filtros principal
-    // -------------------------------------------------------
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(sess ->
-                    sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-
-                // ── Rutas públicas ─────────────────────────────────────
                 .requestMatchers("/api/auth/**").permitAll()
 
-                // ── Solo ADMIN ─────────────────────────────────────────
                 .requestMatchers(
                     "/api/usuarios/**",
                     "/api/roles/**",
@@ -68,27 +54,24 @@ public class SecurityConfig {
                     "/api/validaciones-seguridad/**"
                 ).hasRole("ADMIN")
 
-                // ── ADMIN o SUPERVISOR ─────────────────────────────────
                 .requestMatchers(
                     "/api/empleados/**",
                     "/api/tareas-asignadas/**",
                     "/api/reportes-incidentes/**",
                     "/api/reportes-diarios/**",
-                    "/api/asistencias/**",
                     "/api/documentos-privados/**",
                     "/api/tipos-documento/**",
                     "/api/areas-trabajo/**",
                     "/api/burnout/**"
                 ).hasAnyRole("ADMIN", "SUPERVISOR")
 
-                // ── Cualquier usuario autenticado ──────────────────────
                 .requestMatchers(
                     "/api/encuestas-bienestar/**",
                     "/api/feedback-anonimo/**",
-                    "/api/familiares/**"
+                    "/api/familiares/**",
+                    "/api/asistencias/**"
                 ).authenticated()
 
-                // ── Todo lo demás requiere autenticación ──────────────
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

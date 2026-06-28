@@ -19,7 +19,7 @@
     <description>Proyecto SaaS para RRHH</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -87,7 +87,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- JJWT - librería JWT -->
+        <!-- JJWT - librerÃ­a JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
