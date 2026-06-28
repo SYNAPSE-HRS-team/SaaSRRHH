@@ -29,7 +29,14 @@ export const routes: Routes = [
         loadChildren: () => import('./features/areas-trabajo/area-trabajo.routes').then(m => m.areaTrabajoRoutes),
         title: 'Áreas de Trabajo - SaaSRRHH'
       },
-      // 🚀 AGREGA ESTE NUEVO MÓDULO AQUÍ DEBAJO:
+      // ========================================================
+      // 🚀 SECCIÓN DE TAREAS ASIGNADAS AGREGADA CON LAZY LOADING
+      // ========================================================
+      {
+        path: 'tareas',
+        loadChildren: () => import('./features/tareas/tarea.routes').then(m => m.tareaRoutes),
+        title: 'Tareas - SaaSRRHH'
+      },
       {
         path: 'usuarios',
         loadChildren: () => import('./features/usuarios/usuario.routes').then(m => m.usuarioRoutes),

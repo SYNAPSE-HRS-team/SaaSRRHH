@@ -1,0 +1,76 @@
+$overlay-color: rgba(15, 23, 42, 0.4);
+$card-white: #ffffff;
+$crimson-error: #f43f5e;
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: $overlay-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  backdrop-filter: blur(2px);
+
+  .modal-card {
+    background: $card-white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    .modal-header {
+      padding: 1.2rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      h3 { margin: 0; font-size: 1.15rem; color: #0f172a; font-weight: 600; }
+      .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
+    }
+  }
+
+  .modal-body {
+    padding: 1.25rem;
+
+    .input-block {
+      margin-bottom: 1.1rem;
+      label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        color: #334155;
+        .required-mark { color: $crimson-error; }
+      }
+      input, select, textarea {
+        width: 100%;
+        padding: 0.6rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 0.88rem;
+        &:focus { outline: none; border-color: #667eea; }
+      }
+      .has-error { border-color: $crimson-error; background-color: #fff1f2; }
+    }
+
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .error-wrapper { margin-top: 0.3rem; .error-text { color: $crimson-error; font-size: 0.74rem; font-weight: 500; } }
+  }
+
+  .actions-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 1.8rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    button { padding: 0.6rem 1.2rem; border-radius: 6px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+    .btn-cancel { background: #f1f5f9; color: #475569; }
+    .btn-save {
+      background: #667eea; color: white;
+      &:disabled { opacity: 0.55; background: #94a3b8; cursor: not-allowed; }
+    }
+  }
+}
