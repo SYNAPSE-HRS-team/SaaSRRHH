@@ -33,6 +33,11 @@ public class EmpleadoController {
                                 service.listar());
         }
 
+        @GetMapping("/supervisores")
+        public ResponseEntity<List<EmpleadoResponseDTO>> listarSupervisores() {
+                return ResponseEntity.ok(service.listarSupervisores());
+        }
+
         @GetMapping("/{id}")
         public ResponseEntity<EmpleadoResponseDTO> obtener(@PathVariable Long id) {
 
@@ -71,6 +76,12 @@ public class EmpleadoController {
 
                 return ResponseEntity.ok(
                                 service.listarActivos());
+        }
+
+
+        @GetMapping("/trabajadores")
+        public ResponseEntity<List<EmpleadoResponseDTO>> listarTrabajadores() {
+                return ResponseEntity.ok(service.listarTrabajadores());
         }
 
         @PostMapping
@@ -165,5 +176,15 @@ public class EmpleadoController {
 
                 return ResponseEntity.ok(
                                 service.contarEmpleadosPorCargo());
+        }
+
+        @GetMapping("/trabajadores-rol")
+        public ResponseEntity<List<EmpleadoResponseDTO>> listarTrabajadoresByRol() {
+                return ResponseEntity.ok(service.listarTrabajadoresByRol());
+        }
+
+        @GetMapping("/supervisores-rol")
+        public ResponseEntity<List<EmpleadoResponseDTO>> listarSupervisoresByRol() {
+                return ResponseEntity.ok(service.listarSupervisoresByRol());
         }
 }

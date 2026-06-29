@@ -1,19 +1,14 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseService } from './base.service';
 import { EmpleadoRequest, EmpleadoResponse } from '../models/empleado.model';
+import { BaseService } from './base.service';
 
 @Injectable({ providedIn: 'root' })
 export class EmpleadoService extends BaseService<EmpleadoRequest, EmpleadoResponse> {
-
   constructor(http: HttpClient) {
     super(http, 'empleados');
   }
-
-  // ===================================
-  // CONSULTAS ESPECIALIZADAS
-  // ===================================
 
   buscarPorDni(dni: string): Observable<EmpleadoResponse> {
     return this.http.get<EmpleadoResponse>(`${this.baseUrl}/dni/${dni}`);
@@ -29,7 +24,7 @@ export class EmpleadoService extends BaseService<EmpleadoRequest, EmpleadoRespon
 
   buscarPorCargoYActivo(cargo: string, activo: boolean): Observable<EmpleadoResponse[]> {
     return this.http.get<EmpleadoResponse[]>(`${this.baseUrl}/cargo-activo`, {
-      params: { cargo, activo }
+      params: { cargo, activo },
     });
   }
 
@@ -43,11 +38,29 @@ export class EmpleadoService extends BaseService<EmpleadoRequest, EmpleadoRespon
 
   contratosPorVencer(fechaLimite: string): Observable<EmpleadoResponse[]> {
     return this.http.get<EmpleadoResponse[]>(`${this.baseUrl}/contratos-por-vencer`, {
-      params: { fechaLimite }
+      params: { fechaLimite },
     });
   }
 
   contarPorCargo(): Observable<{ cargo: string; cantidad: number }[]> {
-    return this.http.get<{ cargo: string; cantidad: number }[]>(`${this.baseUrl}/estadisticas/cargos`);
+    return this.http.get<{ cargo: string; cantidad: number }[]>(
+      `${this.baseUrl}/estadisticas/cargos`,
+    );
+  }
+
+  listarSupervisores(): Observable<EmpleadoResponse[]> {
+    return this.http.get<EmpleadoResponse[]>(`${this.baseUrl}/supervisores`);
+  }
+
+  listarTrabajadores(): Observable<EmpleadoResponse[]> {
+    return this.http.get<EmpleadoResponse[]>(`${this.baseUrl}/trabajadores`);
+  }
+
+  listarTrabajadoresByRol(): Observable<EmpleadoResponse[]> {
+    return this.http.get<EmpleadoResponse[]>(`${this.baseUrl}/trabajadores-rol`);
+  }
+
+  listarSupervisoresByRol(): Observable<EmpleadoResponse[]> {
+    return this.http.get<EmpleadoResponse[]>(`${this.baseUrl}/supervisores-rol`);
   }
 }

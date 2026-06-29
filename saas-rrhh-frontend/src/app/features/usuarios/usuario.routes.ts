@@ -3,6 +3,8 @@ import { Routes } from '@angular/router';
 export const usuarioRoutes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./usuarios.component').then(m => m.UsuariosComponent)
+    loadComponent: () => 
+      import('./pages/usuario-list/usuario-list.component')
+        .then(m => m.UsuarioListComponent)
   }
 ];

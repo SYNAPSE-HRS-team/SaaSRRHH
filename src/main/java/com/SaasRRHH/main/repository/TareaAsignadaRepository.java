@@ -42,4 +42,45 @@ public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Lo
     @Query("SELECT t FROM TareaAsignada t WHERE t.fecha BETWEEN :fechaInicio AND :fechaFin")
     List<TareaAsignada> findTareasByFechaRange(@Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
+
+    @Query("SELECT t FROM TareaAsignada t " +
+            "JOIN FETCH t.empleado e " +
+            "JOIN FETCH t.supervisor s " +
+            "JOIN FETCH t.area a")
+    List<TareaAsignada> findAllWithRelations();
+
+    @Query("SELECT t FROM TareaAsignada t " +
+            "JOIN FETCH t.empleado e " +
+            "JOIN FETCH t.supervisor s " +
+            "JOIN FETCH t.area a " +
+            "WHERE t.empleado.id = :empleadoId")
+    List<TareaAsignada> findByEmpleadoIdWithRelations(@Param("empleadoId") Long empleadoId);
+
+    // ✅ Trae tareas de un supervisor con todos sus datos
+    @Query("SELECT t FROM TareaAsignada t " +
+            "JOIN FETCH t.empleado e " +
+            "JOIN FETCH t.supervisor s " +
+            "JOIN FETCH t.area a " +
+            "WHERE t.supervisor.id = :supervisorId")
+    List<TareaAsignada> findBySupervisorIdWithRelations(@Param("supervisorId") Long supervisorId);
+
+    // ✅ Trae tareas de un área con todos sus datos
+    @Query("SELECT t FROM TareaAsignada t " +
+            "JOIN FETCH t.empleado e " +
+            "JOIN FETCH t.supervisor s " +
+            "JOIN FETCH t.area a " +
+            "WHERE t.area.id = :areaId")
+    List<TareaAsignada> findByAreaIdWithRelations(@Param("areaId") Long areaId);
+
+    // ✅ Trae tareas de un empleado en una fecha específica
+    @Query("SELECT t FROM TareaAsignada t " +
+            "JOIN FETCH t.empleado e " +
+            "JOIN FETCH t.supervisor s " +
+            "JOIN FETCH t.area a " +
+            "WHERE t.empleado.id = :empleadoId AND t.fecha = :fecha")
+    List<TareaAsignada> findByEmpleadoIdAndFechaWithRelations(@Param("empleadoId") Long empleadoId,
+                                                              @Param("fecha") LocalDate fecha);
+
+    List<TareaAsignada> findByFechaBeforeAndEstadoNot(LocalDate fecha, EstadoTarea estado);
+
 }

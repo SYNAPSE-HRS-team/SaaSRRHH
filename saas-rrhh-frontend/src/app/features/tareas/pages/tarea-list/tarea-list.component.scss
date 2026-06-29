@@ -1,0 +1,141 @@
+$bg-active-row: #f8fafc;
+$border-grey: #e2e8f0;
+$navy-dark: #1e293b;
+$purple-main: #667eea;
+
+.tareas-page {
+  padding: 2rem;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .header-text {
+      h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        color: $navy-dark;
+        font-weight: 700;
+      }
+      .subtitle {
+        margin: 0.3rem 0 0;
+        font-size: 0.88rem;
+        color: #64748b;
+      }
+    }
+
+    .btn-create-task {
+      background: $purple-main;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      &:hover {
+        background-color: #5466ca;
+      }
+    }
+  }
+
+  .table-wrapper {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid $border-grey;
+    overflow: hidden;
+
+    .tasks-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th {
+        background: #f1f5f9;
+        padding: 1rem;
+        color: #475569;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-bottom: 2px solid $border-grey;
+      }
+
+      tr:hover {
+        background-color: $bg-active-row;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid $border-grey;
+        color: #334155;
+        .task-title {
+          font-weight: 600;
+          color: $navy-dark;
+        }
+        .task-desc {
+          color: #64748b;
+          font-size: 0.8rem;
+          margin-top: 0.2rem;
+        }
+      }
+    }
+  }
+
+  .badge-priority {
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    &.p-alta {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    &.p-media {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+    &.p-baja {
+      background: #f0fdf4;
+      color: #166534;
+    }
+  }
+  .st-inconcluso {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .badge-status {
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    &.st-complete {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    &.st-process {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    &.st-pending {
+      background: #f1f5f9;
+      color: #475569;
+    }
+  }
+
+  .actions-cell {
+    .action-btn {
+      background: none;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 0.8rem;
+      &.edit {
+        color: $purple-main;
+      }
+      &.delete {
+        color: #ef4444;
+      }
+    }
+  }
+}

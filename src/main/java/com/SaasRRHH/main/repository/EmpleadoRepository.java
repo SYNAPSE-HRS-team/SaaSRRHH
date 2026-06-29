@@ -19,6 +19,14 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
     Optional<Empleado> findByUsuarioId(Long userId);
 
     @Query("""
+    SELECT DISTINCT t.supervisor
+    FROM TareaAsignada t
+    WHERE t.supervisor IS NOT NULL
+    ORDER BY t.supervisor.apellidos ASC
+""")
+    List<Empleado> findSupervisores();
+
+    @Query("""
        SELECT e
        FROM Empleado e
        WHERE e.cargo = :cargo
@@ -81,6 +89,40 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
     List<Object[]> contarEmpleadosPorCargo();
 
 
+    @Query("""
+    SELECT e
+    FROM Empleado e
+    WHERE e.id NOT IN (
+        SELECT DISTINCT t.supervisor.id
+        FROM TareaAsignada t
+        WHERE t.supervisor IS NOT NULL
+    )
+    AND e.activo = true
+    ORDER BY e.apellidos ASC
+""")
+    List<Empleado> findTrabajadores();
 
+    @Query("""
+    SELECT e
+    FROM Empleado e
+    JOIN e.usuario u
+    JOIN u.rol r
+    WHERE r.nombreRol IN ('TRABAJADOR', 'EMPLEADO')
+    AND e.activo = true
+    AND r.nombreRol != 'ADMIN'
+    ORDER BY e.apellidos ASC
+""")
+    List<Empleado> findTrabajadoresByRol();
+
+    @Query("""
+    SELECT e
+    FROM Empleado e
+    JOIN e.usuario u
+    JOIN u.rol r
+    WHERE r.nombreRol = 'SUPERVISOR'
+    AND e.activo = true
+    ORDER BY e.apellidos ASC
+""")
+    List<Empleado> findSupervisoresByRol();
    }
 

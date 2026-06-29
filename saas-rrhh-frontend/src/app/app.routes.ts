@@ -6,7 +6,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
-    title: 'AutenticaciÃ³n - SaaSRRHH',
+    title: 'Autenticación - SaaSRRHH',
   },
   {
     path: '',
@@ -29,7 +29,16 @@ export const routes: Routes = [
         path: 'areas-trabajo',
         loadChildren: () =>
           import('./features/areas-trabajo/area-trabajo.routes').then((m) => m.areaTrabajoRoutes),
-        title: 'Ãreas de Trabajo - SaaSRRHH',
+        title: 'Áreas de Trabajo - SaaSRRHH',
+      },
+
+      // ========================================================
+      // 🚀 SECCIÓN DE TAREAS ASIGNADAS AGREGADA CON LAZY LOADING
+      // ========================================================
+      {
+        path: 'tareas',
+        loadChildren: () => import('./features/tareas/tarea.routes').then((m) => m.tareaRoutes),
+        title: 'Tareas - SaaSRRHH',
       },
       {
         path: 'asistencias',
@@ -44,16 +53,17 @@ export const routes: Routes = [
         title: 'Usuarios - SaaSRRHH',
       },
       {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-      },
-      {
         path: 'reportes-incidentes',
         loadChildren: () =>
           import('./features/reportes-incidentes/reporte-incidente.module').then(
             (m) => m.ReporteIncidenteModule,
           ),
+        title: 'Reportes de Incidentes - SaaSRRHH',
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
       },
     ],
   },
