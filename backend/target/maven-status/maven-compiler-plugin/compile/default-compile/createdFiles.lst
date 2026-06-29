@@ -186,6 +186,7 @@ com\SaasRRHH\main\services\ReporteDiarioService.class
 com\SaasRRHH\main\DTO\BoletaPagoRequestDTO.class
 com\SaasRRHH\main\model\MetricaBurnout$NivelRiesgoBurnout.class
 com\SaasRRHH\main\services\ValidacionSeguridadService.class
+com\SaasRRHH\main\config\TareaScheduler.class
 com\SaasRRHH\main\DTO\UsuarioResponseDTO.class
 com\SaasRRHH\main\repository\ValidacionSeguridadRepository.class
 com\SaasRRHH\main\services\PdfGeneratorService.class

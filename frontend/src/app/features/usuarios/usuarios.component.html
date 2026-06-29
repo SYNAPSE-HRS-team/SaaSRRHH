@@ -26,7 +26,8 @@
           <td>{{ usuario.email }}</td>
           <td>
             <span class="badge badge-blue">
-              {{ usuario.rolNombre || usuario.rol?.nombreRol || 'TRABAJADOR' }}
+              <!-- ✅ CORREGIDO: eliminado el ?. -->
+              {{ usuario.rolNombre || usuario.rol.nombreRol || 'TRABAJADOR' }}
             </span>
           </td>
           <td>

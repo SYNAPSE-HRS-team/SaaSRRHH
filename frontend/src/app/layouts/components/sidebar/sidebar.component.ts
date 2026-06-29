@@ -38,7 +38,7 @@ export class SidebarComponent {
     { label: 'Planillas', icon: '📋', route: '/planillas', roles: ['ADMIN'] },
     { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
     // Ruta unificada a '/incidentes' como en tu versión original
-    { label: 'Incidentes', icon: '⚠️', route: '/incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
+    { label: 'Incidentes', icon: '⚠️', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Bienestar', icon: '💚', route: '/encuestas-bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },

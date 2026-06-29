@@ -1,0 +1,83 @@
+<div class="tareas-page">
+  <div class="dashboard-header">
+    <div class="header-text">
+      <h1>Seguimiento de Tareas</h1>
+      <p class="subtitle">Gestión y asignación de actividades operativas en el SaaS</p>
+    </div>
+    <div class="header-actions">
+      <button (click)="abrirModal()" class="btn-create-task">+ Asignar Tarea</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Cargando tareas...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error-message">
+    <p>❌ Error al cargar las tareas</p>
+    <button (click)="cargarTareas()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- Tabla -->
+  <div *ngIf="!loading && !error" class="table-wrapper">
+    <table class="tasks-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Detalles de Tarea</th>
+          <th>Responsable</th>
+          <th>Función</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th class="actions-header">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="tareas.length === 0">
+          <td colspan="7" class="text-center">No hay tareas asignadas</td>
+        </tr>
+        <tr *ngFor="let t of tareas">
+          <td class="id-cell">#{{ t.id }}</td>
+          <td>
+            <div class="task-title">{{ t.funcion }}</div>
+            <div class="task-desc">{{ t.descripcion || 'Sin descripción' }}</div>
+          </td>
+          <td class="emp-cell">{{ t.empleado?.nombres || 'Sin asignar' }}</td>
+          <td>
+            <span class="badge-function">{{ t.funcion }}</span>
+          </td>
+          <td>
+            <span
+              class="badge-status"
+              [ngClass]="{
+                'st-complete': t.estado === 'COMPLETADO',
+                'st-process': t.estado === 'EN_PROGRESO',
+                'st-pending': t.estado === 'PENDIENTE',
+                'st-canceled': t.estado === 'CANCELADO',
+                'st-inconcluso': t.estado === 'INCONCLUSO',
+              }"
+            >
+              {{ t.estado }}
+            </span>
+          </td>
+          <td class="date-cell">{{ t.fecha | date: 'dd/MM/yyyy' }}</td>
+          <td class="actions-cell">
+            <button (click)="editarTarea(t)" class="action-btn edit">✏️</button>
+            <button (click)="eliminarTarea(t.id)" class="action-btn delete">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <app-tarea-form
+    *ngIf="isModalOpen"
+    [tareaData]="tareaSeleccionada"
+    [editMode]="editMode"
+    (onCerrar)="cerrarModal()"
+    (onExito)="alGuardarExitoso()"
+  ></app-tarea-form>
+</div>
