@@ -1,0 +1,117 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Áreas de Trabajo</h1>
+      <p class="subtitle">Gestión de áreas y cultivos de la empresa</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadAreas()" [disabled]="loading()">
+        <span>🔄</span> Actualizar
+      </button>
+      <a routerLink="/areas-trabajo/nuevo" class="btn-primary">
+        <span>➕</span> Nueva Área
+      </a>
+    </div>
+  </div>
+
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input
+      type="text"
+      placeholder="Buscar por nombre..."
+      (input)="onSearch($event)"
+    />
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>Cargando áreas...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadAreas()">Reintentar</button>
+    </div>
+  }
+
+  @if (!loading() && !error() && filteredAreas().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">🏢</span>
+      <h3>No hay áreas registradas</h3>
+      <p>Crea la primera área de trabajo en el sistema.</p>
+      <a routerLink="/areas-trabajo/nuevo" class="btn-primary">Crear Área</a>
+    </div>
+  }
+
+  @if (!loading() && !error() && filteredAreas().length > 0) {
+    <div class="table-container">
+      <table class="areas-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Tipo de Cultivo</th>
+            <th>Estado</th>
+            <th>Fecha Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (area of filteredAreas(); track area.id) {
+            <tr>
+              <td class="name-cell">{{ area.nombre }}</td>
+              <td>{{ area.cultivoTipo || '—' }}</td>
+              <td>
+                @if (area.activo) {
+                  <span class="status-active">Activo</span>
+                } @else {
+                  <span class="status-inactive">Inactivo</span>
+                }
+              </td>
+              <td class="date-cell">{{ area.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+              <td class="actions-cell">
+                <button class="btn-icon" title="Editar" (click)="editarArea(area)">
+                  ✏️
+                </button>
+                <button class="btn-icon" title="Eliminar" (click)="confirmarEliminar(area)">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span>Mostrando {{ filteredAreas().length }} de {{ areas().length }} áreas</span>
+    </div>
+  }
+
+  <!-- Modal de confirmación -->
+  @if (showDeleteModal()) {
+    <div class="modal-overlay" (click)="showDeleteModal.set(false)">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span class="modal-icon">⚠️</span>
+          <h3>Confirmar Eliminación</h3>
+        </div>
+        <p>¿Estás seguro de eliminar el área <strong>{{ areaToDelete?.nombre }}</strong>?</p>
+        <p class="modal-warning">Esta acción no se puede deshacer.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="showDeleteModal.set(false)">Cancelar</button>
+          <button class="btn-danger" (click)="eliminarArea()" [disabled]="deleting()">
+            @if (deleting()) {
+              <span class="spinner-sm"></span> Eliminando...
+            } @else {
+              Eliminar
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

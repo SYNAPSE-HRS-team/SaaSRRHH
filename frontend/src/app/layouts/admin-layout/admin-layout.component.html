@@ -1,0 +1,48 @@
+<!-- OVERLAY PARA MÓVIL -->
+@if (mobileSidebarOpen()) {
+  <div class="mobile-overlay" (click)="mobileSidebarOpen.set(false)"></div>
+}
+
+<div class="admin-container" [class.sidebar-collapsed]="isSidebarCollapsed()">
+  <app-sidebar
+    [mobileOpen]="mobileSidebarOpen()"
+    (mobileClose)="mobileSidebarOpen.set(false)"
+    (collapseChange)="isSidebarCollapsed.set($event)"
+  />
+
+  <main class="main-content" [class.sidebar-collapsed]="isSidebarCollapsed()">
+    <header class="topbar">
+      <!-- SECCIÓN IZQUIERDA: Hamburguesa + Hora -->
+      <div class="topbar-left">
+        <button 
+          class="hamburger" 
+          (click)="mobileSidebarOpen.set(!mobileSidebarOpen())"
+          aria-label="Menú principal"
+        >
+          <span [class.open]="mobileSidebarOpen()"></span>
+          <span [class.open]="mobileSidebarOpen()"></span>
+          <span [class.open]="mobileSidebarOpen()"></span>
+        </button>
+        
+        <div class="datetime">
+          <span class="time">{{ currentTime }}</span>
+          <span class="date">{{ currentDate }}</span>
+        </div>
+      </div>
+
+      <!-- SECCIÓN CENTRAL: Título -->
+      <div class="topbar-center">
+        <h2>Panel de Administración</h2>
+        <p>Gestión integral de Recursos Humanos</p>
+      </div>
+
+      <div class="topbar-right">
+        <app-user-menu />
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <router-outlet />
+    </div>
+  </main>
+</div>

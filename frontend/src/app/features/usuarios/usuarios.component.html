@@ -1,0 +1,110 @@
+<div class="usuarios-container">
+  <div class="page-header">
+    <div>
+      <h1>Gestión de Usuarios</h1>
+      <p class="subtitle">Módulo de administración - SaaS RRHH</p>
+    </div>
+    <button (click)="abrirModal()" class="btn-primary">+ Nuevo Usuario</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Correo Electrónico</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>#{{ usuario.id }}</td>
+          <td class="font-medium">{{ usuario.email }}</td>
+          <td>
+            <span class="badge badge-blue">
+              {{ usuario.rolNombre || 'TRABAJADOR' }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="usuario.activo ? 'badge-green' : 'badge-red'">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="text-right actions-cell">
+            <button (click)="editarUsuario(usuario)" class="btn-edit">Editar</button>
+            <button (click)="eliminarUsuario(usuario.id)" class="btn-delete">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="usuarios.length === 0">
+          <td colspan="5" class="no-data">
+            No hay usuarios registrados o no se pudo conectar con el servidor.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="isModalOpen" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ editMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h3>
+        <button (click)="cerrarModal()" class="close-btn">&times;</button>
+      </div>
+
+      <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" class="modal-form">
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input type="email" formControlName="email" />
+          <div
+            *ngIf="usuarioForm.get('email')?.touched && usuarioForm.get('email')?.invalid"
+            class="error-msg"
+          >
+            <small *ngIf="usuarioForm.get('email')?.errors?.['required']"
+              >El correo es obligatorio.</small
+            >
+            <small *ngIf="usuarioForm.get('email')?.errors?.['email']"
+              >Formato de correo inválido.</small
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" formControlName="password" placeholder="••••••••" />
+          <div
+            *ngIf="usuarioForm.get('password')?.touched && usuarioForm.get('password')?.invalid"
+            class="error-msg"
+          >
+            <small>La contraseña es obligatoria para nuevos usuarios.</small>
+          </div>
+          <small *ngIf="editMode" style="color: #666; display: block; margin-top: 0.25rem;">
+            * Deja este campo en blanco si no deseas cambiar la contraseña actual.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>Rol de Usuario</label>
+          <select formControlName="rolId">
+            <option [value]="1">ADMIN</option>
+            <option [value]="2">SUPERVISOR</option>
+            <option [value]="3">TRABAJADOR</option>
+          </select>
+        </div>
+
+        <div class="form-checkbox">
+          <input type="checkbox" id="activo" formControlName="activo" />
+          <label for="activo">Cuenta activa / Habilitada</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cerrarModal()" class="btn-cancel">Cancelar</button>
+          <button type="submit" [disabled]="usuarioForm.invalid" class="btn-submit">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

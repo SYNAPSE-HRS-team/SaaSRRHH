@@ -1,0 +1,106 @@
+<div class="attendance-page">
+  <div class="page-header">
+    <div>
+      <h1>Asistencia</h1>
+      <p>{{ isEmployee ? 'Muestra tu QR y revisa tu calendario' : 'Escanea QR, registra y edita asistencias' }}</p>
+    </div>
+    <div class="view-toggle">
+      <button [class.active]="viewMode() === 'mensual'" (click)="setView('mensual')">Mensual</button>
+      <button [class.active]="viewMode() === 'anual'" (click)="setView('anual')">Anual</button>
+    </div>
+  </div>
+
+  @if (message()) { <div class="notice success">{{ message() }}</div> }
+  @if (error()) { <div class="notice error">{{ error() }}</div> }
+
+  <section class="top-grid">
+    @if (isEmployee) {
+      <div class="panel qr-panel">
+        <h2>Mi QR dinamico</h2>
+        <div class="qr-box">
+          @if (qrImage()) { <img [src]="qrImage()" alt="QR de asistencia" /> }
+          @else { <div class="qr-placeholder">QR</div> }
+        </div>
+        <div class="qr-meta">
+          <strong>{{ qrName() }}</strong>
+          <span>Se renueva en {{ secondsLeft() }}s</span>
+        </div>
+        <button class="primary" (click)="loadQr()">Actualizar QR</button>
+      </div>
+    } @else {
+      <div class="panel scanner-panel">
+        <h2>Escanear QR</h2>
+        <div id="qr-reader" class="reader"></div>
+        <textarea [(ngModel)]="manualPayload" placeholder="Pega aqu? el QR si la camara no esta disponible"></textarea>
+        <div class="actions">
+          <button class="primary" (click)="startScanner()" [disabled]="scannerOn()">Iniciar camara</button>
+          <button class="ghost" (click)="stopScanner()" [disabled]="!scannerOn()">Detener</button>
+          <button class="primary" (click)="scanManual()">Registrar</button>
+        </div>
+      </div>
+    }
+
+    @if (!isEmployee) {
+      <div class="panel editor-panel">
+        <h2>Editar asistencia</h2>
+        <label>Empleado</label>
+        <select [(ngModel)]="selectedEmpleadoId" (change)="loadCalendar()">
+          @for (emp of empleados(); track emp.id) {
+            <option [ngValue]="emp.id">{{ emp.apellidos }}, {{ emp.nombres }}</option>
+          }
+        </select>
+        <label>Fecha</label>
+        <input type="date" [(ngModel)]="editFecha" />
+        <label>Estado</label>
+        <select [(ngModel)]="editEstado">
+          <option value="VALIDADO">VALIDADO</option>
+          <option value="OBSERVADO">OBSERVADO</option>
+          <option value="RECHAZADO">RECHAZADO</option>
+        </select>
+        <label>Observaciones</label>
+        <textarea [(ngModel)]="editObservaciones"></textarea>
+        <button class="primary" (click)="saveAttendance()">Guardar asistencia</button>
+      </div>
+    }
+  </section>
+
+  <section class="panel calendar-panel">
+    <div class="calendar-toolbar">
+      <h2>Calendario</h2>
+      <div class="date-controls">
+        @if (viewMode() === 'mensual') {
+          <select [(ngModel)]="selectedMonth" (change)="loadCalendar()">
+            @for (m of months; track m.value) { <option [ngValue]="m.value">{{ m.label }}</option> }
+          </select>
+        }
+        <input type="number" [(ngModel)]="selectedYear" (change)="loadCalendar()" min="2020" max="2100" />
+      </div>
+    </div>
+
+    @if (viewMode() === 'mensual') {
+      <div class="month-grid">
+        @for (name of weekDays; track name) { <div class="weekday">{{ name }}</div> }
+        @for (blank of leadingBlanks(); track $index) { <div class="day empty"></div> }
+        @for (day of monthDays(); track day.fecha) {
+          <button class="day" [class.present]="day.estado === 'ASISTIO'" [class.absent]="day.estado === 'FALTA'" (click)="selectDay(day)">
+            <span>{{ day.fecha | date:'d' }}</span>
+            @if (day.horaEntrada) { <small>{{ day.horaEntrada.slice(0,5) }}</small> }
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="year-grid">
+        @for (month of annual()?.meses; track month.mes) {
+          <div class="mini-month">
+            <h3>{{ monthName(month.mes) }}</h3>
+            <div class="mini-days">
+              @for (day of month.dias; track day.fecha) {
+                <span [class.present]="day.estado === 'ASISTIO'" [class.absent]="day.estado === 'FALTA'"></span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>

@@ -1,0 +1,559 @@
+/* ======================================================
+   DASHBOARD - Estilos integrados con el Sistema Corporativo
+   Compatible con: Móviles, Tablets, Laptops, TVs, Relojes
+====================================================== */
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+
+  @media (min-width: 2560px) { max-width: 1600px; }
+  @media (min-width: 3440px) { max-width: 2000px; }
+}
+
+/* ======================================================
+   PAGE HEADER
+====================================================== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: var(--color-primary); /* Integrado */
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  font-weight: 700;
+  white-space: nowrap;
+
+  @media (min-width: 2560px) { font-size: 2.25rem; }
+  @media (max-width: 360px) { font-size: 1.1rem; }
+}
+
+/* ======================================================
+   WELCOME
+====================================================== */
+.welcome {
+  color: var(--color-text-secondary); /* Integrado */
+  margin: clamp(0.15rem, 0.5vw, 0.25rem) 0 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 1vw, 0.5rem);
+  flex-wrap: wrap;
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  min-width: 0;
+  max-width: 100%;
+
+  @media (min-width: 2560px) { font-size: 1.1rem; }
+  @media (max-width: 640px) { flex-wrap: wrap; gap: 0.375rem; }
+}
+
+.welcome-text {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.welcome-email {
+  font-weight: 500;
+  color: var(--color-text); /* Integrado */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: clamp(150px, 25vw, 250px);
+  flex-shrink: 1;
+  min-width: 0;
+
+  @media (max-width: 640px) { max-width: 200px; }
+  @media (max-width: 360px) { max-width: 140px; }
+}
+
+/* ======================================================
+   ROLE BADGE (Utilizando tus variables)
+====================================================== */
+.role-badge {
+  display: inline-block;
+  padding: clamp(0.15rem, 0.5vw, 0.2rem) clamp(0.5rem, 1.5vw, 0.6rem);
+  border-radius: var(--radius-full);
+  font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+  font-weight: 700;
+  background: var(--color-accent-light);
+  color: var(--color-accent-dark);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  white-space: nowrap;
+
+  @media (min-width: 2560px) {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.8rem;
+  }
+}
+
+/* ======================================================
+   DASHBOARD SECTION
+====================================================== */
+.dashboard-section {
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  &:last-child { margin-bottom: 0; }
+}
+
+.section-title {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  color: var(--color-primary); /* Integrado */
+  margin: 0 0 clamp(0.75rem, 2vw, 1rem);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-primary-light);
+
+  @media (min-width: 2560px) { font-size: 1.5rem; }
+}
+
+/* ======================================================
+   GRIDS
+====================================================== */
+.stats-grid, .metrics-grid {
+  display: grid;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  @media (max-width: 1024px) { grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
+  @media (max-width: 640px) { grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); }
+  @media (max-width: 360px) { grid-template-columns: 1fr; }
+  @media (min-width: 2560px) { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+}
+
+.metrics-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  @media (max-width: 640px) { grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); }
+  @media (max-width: 360px) { grid-template-columns: 1fr; }
+  @media (min-width: 2560px) { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+}
+
+/* ======================================================
+   CARDS (Unificadas con tu sistema base)
+====================================================== */
+.stat-card, .metric-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: clamp(1rem, 2.5vw, 1.25rem);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-focus);
+  }
+
+  @media (min-width: 2560px) {
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+  }
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  min-height: 80px;
+}
+
+/* ======================================================
+   STAT ICON & INFO
+====================================================== */
+.stat-icon {
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.2rem, 3vw, 1.4rem);
+  flex-shrink: 0;
+  transition: transform var(--transition);
+
+  .stat-card:hover & { transform: scale(1.05); }
+
+  /* Mapeado a tus variables corporativas */
+  &.blue { background: var(--color-info-light); color: var(--color-info); }
+  &.green { background: var(--color-success-light); color: var(--color-success); }
+  &.purple { background: var(--color-accent-light); color: var(--color-accent); }
+  &.orange { background: var(--color-warning-light); color: var(--color-warning); }
+  &.red { background: var(--color-danger-light); color: var(--color-danger); }
+
+  @media (min-width: 2560px) { width: 60px; height: 60px; font-size: 1.8rem; }
+  @media (max-width: 360px) { width: 36px; height: 36px; font-size: 1rem; border-radius: var(--radius-sm); }
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.stat-value, .metric-value {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: var(--color-text); /* Integrado */
+  line-height: 1.2;
+  word-break: break-word;
+
+  @media (min-width: 2560px) { font-size: 2rem; }
+}
+
+.metric-value { font-size: clamp(1.3rem, 3.5vw, 1.75rem); margin-bottom: 0.25rem; }
+.metric-value.text-danger { color: var(--color-danger); }
+
+.stat-label, .metric-sub {
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+  color: var(--color-text-secondary); /* Integrado */
+  margin-top: 0.15rem;
+  line-height: 1.3;
+  font-weight: 500;
+
+  @media (min-width: 2560px) { font-size: 1rem; }
+}
+
+/* ======================================================
+   METRICS HEADER
+====================================================== */
+.metric-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+
+.metric-icon {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  flex-shrink: 0;
+  @media (min-width: 2560px) { font-size: 1.5rem; }
+}
+
+.metric-title {
+  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  @media (min-width: 2560px) { font-size: 1rem; }
+}
+
+/* ======================================================
+   RISK BADGE (Integrado con tus variables de alerta)
+====================================================== */
+.risk-badge {
+  display: inline-block;
+  padding: clamp(0.2rem, 0.5vw, 0.25rem) clamp(0.5rem, 1.5vw, 0.75rem);
+  border-radius: var(--radius-full);
+  font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+
+  @media (min-width: 2560px) { font-size: 1rem; padding: 0.35rem 1rem; }
+
+  &.bajo { background: var(--color-success-light); color: var(--color-success); }
+  &.medio { background: var(--color-warning-light); color: var(--color-warning); }
+  &.alto { background: var(--color-danger-light); color: var(--color-danger); }
+  &.critico {
+    background: var(--color-danger);
+    color: white;
+    animation: pulseRisk 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulseRisk {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+}
+
+/* ======================================================
+   WELCOME CARD (Para mantener la jerarquía principal)
+====================================================== */
+.welcome-card {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.5rem);
+  color: white;
+  box-shadow: var(--shadow-md);
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+}
+
+.welcome-icon {
+  font-size: clamp(2rem, 6vw, 3rem);
+  flex-shrink: 0;
+  animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+.welcome-text h3 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  line-height: 1.3;
+}
+
+.welcome-text p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+}
+
+/* ======================================================
+   HEADER ACTIONS & BOTONES (Adaptados al sistema global)
+====================================================== */
+.header-actions {
+  display: flex;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
+  flex-shrink: 0;
+  align-self: flex-start;
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+}
+
+/* Nota: Tu estilo global ya tiene .btn-refresh, pero si 
+   necesitas ajustes específicos para el dashboard, usa esto: */
+.dashboard .btn-refresh {
+  min-height: 44px; /* Touch target ideal para móviles */
+  
+  @media (max-width: 640px) {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* ======================================================
+   LOADING STATE
+====================================================== */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 8vw, 4rem);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  min-height: 200px;
+
+  p {
+    color: var(--color-text-muted); /* Integrado */
+    margin-top: 1rem;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+    font-weight: 500;
+  }
+
+  @media (min-width: 2560px) { min-height: 300px; }
+}
+
+/* ======================================================
+   SPINNER
+====================================================== */
+.spinner-lg {
+  width: clamp(32px, 6vw, 40px);
+  height: clamp(32px, 6vw, 40px);
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent); /* Integrado con el azul de tu marca */
+  border-radius: var(--radius-full);
+  animation: spin 0.6s linear infinite;
+
+  @media (min-width: 2560px) {
+    width: 56px;
+    height: 56px;
+    border-width: 4px;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ======================================================
+   ACTIONS GRID
+====================================================== */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: clamp(0.625rem, 1.5vw, 0.85rem);
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+  @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
+  @media (max-width: 360px) { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  @media (max-width: 280px) { grid-template-columns: 1fr; }
+  @media (min-width: 2560px) { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; }
+}
+
+/* ======================================================
+   ACTION CARD (Botones grandes de acción)
+====================================================== */
+.action-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: clamp(1rem, 2.5vw, 1.25rem) clamp(0.75rem, 2vw, 1rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.4rem, 1vw, 0.6rem);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+  cursor: pointer;
+  min-height: 100px;
+  justify-content: center;
+
+  /* Efecto Hover Corporativo */
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
+    background: var(--color-primary-light); /* Toque sutil de color al pasar el mouse */
+  }
+
+  &:active { transform: translateY(-1px); }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 2560px) {
+    padding: 1.75rem;
+    border-radius: var(--radius-lg);
+    min-height: 130px;
+  }
+
+  @media (max-width: 360px) {
+    min-height: 80px;
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Dispositivos Táctiles (Evitar efecto hover pegado) */
+  @media (hover: none) and (pointer: coarse) {
+    &:hover {
+      transform: none;
+      box-shadow: var(--shadow-sm);
+      background: var(--color-surface);
+      border-color: var(--color-border);
+    }
+    &:active {
+      transform: scale(0.97);
+      border-color: var(--color-accent);
+    }
+  }
+}
+
+.action-icon {
+  font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+  color: var(--color-primary); /* Integrado */
+  transition: transform var(--transition);
+
+  .action-card:hover & {
+    transform: scale(1.1);
+    color: var(--color-accent);
+  }
+
+  @media (min-width: 2560px) { font-size: 2.2rem; }
+
+  @media (hover: none) and (pointer: coarse) {
+    .action-card:hover & { transform: none; color: var(--color-primary); }
+    .action-card:active & { transform: scale(1.1); }
+  }
+}
+
+.action-label {
+  font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+  font-weight: 600;
+  color: var(--color-text); /* Integrado */
+  text-align: center;
+  line-height: 1.3;
+
+  @media (min-width: 2560px) { font-size: 1rem; }
+}
+
+/* ======================================================
+   MEDIA QUERIES ADICIONALES
+====================================================== */
+
+/* ======== MODO LANDSCAPE EN MÓVILES ======== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .metrics-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .actions-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  
+  .stat-card, .metric-card { padding: 0.75rem; }
+  .stat-value { font-size: 1.1rem; }
+  .metric-value { font-size: 1.3rem; }
+}
+
+/* ======== IMPRESIÓN ======== */
+@media print {
+  .dashboard { max-width: 100%; }
+  .btn-refresh, .header-actions { display: none !important; }
+  
+  .stat-card, .metric-card {
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+    break-inside: avoid;
+  }
+  
+  .action-card { display: none !important; } /* No imprimir acciones */
+  
+  .welcome-card {
+    background: var(--color-bg-secondary) !important;
+    color: var(--color-text) !important;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+}
+
+/* ======== REDUCIR ANIMACIONES (Preferencias del sistema) ======== */
+@media (prefers-reduced-motion: reduce) {
+  .spinner-lg { animation: spin 1.5s linear infinite; }
+  .welcome-icon { animation: none; }
+  .risk-badge.critico { animation: none; }
+  
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
