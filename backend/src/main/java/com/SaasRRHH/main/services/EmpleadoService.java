@@ -25,7 +25,7 @@ public interface EmpleadoService {
     // =========================
     // CONSULTAS JPQL
     // =========================
-
+    List<EmpleadoResponseDTO> listarSupervisores();
     List<EmpleadoResponseDTO> buscarPorCargo(String cargo);
 
     List<EmpleadoResponseDTO> buscarPorCargoYActivo(
@@ -40,6 +40,7 @@ public interface EmpleadoService {
             LocalDate fechaLimite);
 
     List<Object[]> contarEmpleadosPorCargo();
-
-
+    List<EmpleadoResponseDTO> listarTrabajadores();
+    List<EmpleadoResponseDTO> listarTrabajadoresByRol();
+    List<EmpleadoResponseDTO> listarSupervisoresByRol();
 }

@@ -1,0 +1,164 @@
+<div class="reporte-incidente-list">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>📋 Reportes de Incidentes</h1>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="nuevoReporte()">
+        <i class="fas fa-plus"></i> Nuevo Reporte
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <span class="stat-label">Total Reportes</span>
+        <span class="stat-value">{{ totalReportes }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card critical">
+      <div class="stat-icon">⚠️</div>
+      <div class="stat-info">
+        <span class="stat-label">Críticos</span>
+        <span class="stat-value">{{ totalCriticos }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card today">
+      <div class="stat-icon">📅</div>
+      <div class="stat-info">
+        <span class="stat-label">De Hoy</span>
+        <span class="stat-value">{{ totalHoy }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="nivelRiesgo">Nivel de Riesgo</label>
+        <select id="nivelRiesgo" [(ngModel)]="filtros.nivelRiesgo" (change)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option *ngFor="let nivel of nivelesRiesgo" [value]="nivel">{{ nivel }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="estado">Estado</label>
+        <select id="estado" [(ngModel)]="filtros.estado" (change)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option *ngFor="let estado of estadosIncidente" [value]="estado">{{ estado }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="tipo">Tipo</label>
+        <select id="tipo" [(ngModel)]="filtros.tipo" (change)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option *ngFor="let tipo of tiposIncidente" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="fechaInicio">Fecha Inicio</label>
+        <input
+          type="date"
+          id="fechaInicio"
+          [(ngModel)]="filtros.fechaInicio"
+          (change)="aplicarFiltros()"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="fechaFin">Fecha Fin</label>
+        <input
+          type="date"
+          id="fechaFin"
+          [(ngModel)]="filtros.fechaFin"
+          (change)="aplicarFiltros()"
+        />
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Cargando reportes...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error-message">
+    <p>❌ Error al cargar los reportes</p>
+    <button class="btn btn-primary" (click)="cargarReportes()">Reintentar</button>
+  </div>
+
+  <!-- Tabla -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Empleado</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Nivel Riesgo</th>
+          <th>Estado</th>
+          <th>Fecha Incidente</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="reportesFiltrados.length === 0">
+          <td colspan="8" class="text-center">No hay reportes para mostrar</td>
+        </tr>
+        <tr *ngFor="let reporte of reportesFiltrados">
+          <td>{{ reporte.id }}</td>
+          <td>{{ reporte.empleadoId }}</td>
+          <td>
+            <span class="badge badge-info">{{ reporte.tipo }}</span>
+          </td>
+          <td class="descripcion-cell">{{ reporte.descripcion | slice: 0 : 50 }}...</td>
+          <td>
+            <span class="badge" [ngClass]="'badge-' + getColorRiesgo(reporte.nivelRiesgo)">
+              {{ reporte.nivelRiesgo }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="'badge-' + getBadgeEstado(reporte.estado)">
+              {{ reporte.estado }}
+            </span>
+          </td>
+          <td>{{ reporte.fechaIncidente | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td class="actions-cell">
+            <button class="btn btn-sm btn-info" (click)="verReporte(reporte.id)" title="Ver">
+              👁️
+            </button>
+            <button
+              class="btn btn-sm btn-warning"
+              (click)="editarReporte(reporte.id)"
+              title="Editar"
+            >
+              ✏️
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="eliminarReporte(reporte.id)"
+              title="Eliminar"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

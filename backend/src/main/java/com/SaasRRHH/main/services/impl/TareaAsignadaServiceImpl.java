@@ -28,7 +28,7 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
 
     @Override
     public List<TareaAsignadaResponseDTO> listar() {
-        return repository.findAll()
+        return repository.findAllWithRelations()
                 .stream()
                 .map(TareaAsignadaMapper::toDTO)
                 .toList();
@@ -104,7 +104,7 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
 
     @Override
     public List<TareaAsignadaResponseDTO> buscarPorEmpleado(Long empleadoId) {
-        return repository.findByEmpleadoId(empleadoId)
+        return repository.findByEmpleadoIdWithRelations(empleadoId)
                 .stream()
                 .map(TareaAsignadaMapper::toDTO)
                 .toList();
@@ -112,7 +112,7 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
 
     @Override
     public List<TareaAsignadaResponseDTO> buscarPorSupervisor(Long supervisorId) {
-        return repository.findBySupervisorId(supervisorId)
+        return repository.findBySupervisorIdWithRelations(supervisorId)
                 .stream()
                 .map(TareaAsignadaMapper::toDTO)
                 .toList();
@@ -128,7 +128,7 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
 
     @Override
     public List<TareaAsignadaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha) {
-        return repository.findByEmpleadoIdAndFecha(empleadoId, fecha)
+        return repository.findByEmpleadoIdAndFechaWithRelations(empleadoId, fecha)
                 .stream()
                 .map(TareaAsignadaMapper::toDTO)
                 .toList();
@@ -151,4 +151,14 @@ public class TareaAsignadaServiceImpl implements TareaAsignadaService {
                 .map(TareaAsignadaMapper::toDTO)
                 .toList();
     }
+
+    @Transactional
+    public void marcarTareasVencidas() {
+        LocalDate hoy = LocalDate.now();
+        List<TareaAsignada> tareasVencidas = repository.findByFechaBeforeAndEstadoNot(hoy, EstadoTarea.COMPLETADO);
+        for (TareaAsignada tarea : tareasVencidas) {
+            tarea.setEstado(EstadoTarea.INCONCLUSO);
+            repository.save(tarea);
+        }
+}
 }

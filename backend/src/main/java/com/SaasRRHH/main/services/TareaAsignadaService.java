@@ -29,4 +29,7 @@ public interface TareaAsignadaService {
     TareaAsignadaResponseDTO cambiarEstado(Long id, EstadoTarea nuevoEstado);
 
     List<TareaAsignadaResponseDTO> buscarPorAreaYEstado(Long areaId, EstadoTarea estado);
+    void marcarTareasVencidas();
+
+
 }

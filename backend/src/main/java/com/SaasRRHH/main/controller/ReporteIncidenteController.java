@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/reportes-incidentes")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ReporteIncidenteController {
 
     private final ReporteIncidenteService service;
@@ -21,6 +22,7 @@ public class ReporteIncidenteController {
 
     @GetMapping
     public List<ReporteIncidenteResponseDTO> listar() {
+        System.out.println("========== CONTROLLER.listar()==========");
         return service.listar();
     }
 

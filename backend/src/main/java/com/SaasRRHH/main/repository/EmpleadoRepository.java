@@ -12,14 +12,62 @@ import java.util.Optional;
 
 @Repository
 public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
-   
+
    Optional<Empleado> findByDni(String dni);
 
    List<Empleado> findByActivoTrue();
 
-   // ✅ CORREGIDO: Solo una vez, con la anotación @Query
+   // ✅ TU VERSIÓN (Nancy) - con @Query explícita
    @Query("SELECT e FROM Empleado e WHERE e.usuario.id = :usuarioId")
    Optional<Empleado> findByUsuarioId(@Param("usuarioId") Long usuarioId);
+
+   // ✅ AGREGADO POR MIGUEL - Supervisores
+   @Query("""
+       SELECT DISTINCT t.supervisor
+       FROM TareaAsignada t
+       WHERE t.supervisor IS NOT NULL
+       ORDER BY t.supervisor.apellidos ASC
+   """)
+   List<Empleado> findSupervisores();
+
+   // ✅ AGREGADO POR MIGUEL - Trabajadores (no supervisores)
+   @Query("""
+       SELECT e
+       FROM Empleado e
+       WHERE e.id NOT IN (
+           SELECT DISTINCT t.supervisor.id
+           FROM TareaAsignada t
+           WHERE t.supervisor IS NOT NULL
+       )
+       AND e.activo = true
+       ORDER BY e.apellidos ASC
+   """)
+   List<Empleado> findTrabajadores();
+
+   // ✅ AGREGADO POR MIGUEL - Trabajadores por rol
+   @Query("""
+       SELECT e
+       FROM Empleado e
+       JOIN e.usuario u
+       JOIN u.rol r
+       WHERE r.nombreRol IN ('TRABAJADOR', 'EMPLEADO')
+       AND e.activo = true
+       AND r.nombreRol != 'ADMIN'
+       ORDER BY e.apellidos ASC
+   """)
+   List<Empleado> findTrabajadoresByRol();
+
+   // ✅ AGREGADO POR MIGUEL - Supervisores por rol
+   @Query("""
+       SELECT e
+       FROM Empleado e
+       JOIN e.usuario u
+       JOIN u.rol r
+       WHERE r.nombreRol = 'SUPERVISOR'
+       AND e.activo = true
+       ORDER BY e.apellidos ASC
+   """)
+   List<Empleado> findSupervisoresByRol();
 
    @Query("""
          SELECT e
@@ -27,8 +75,7 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
          WHERE e.cargo = :cargo
          ORDER BY e.apellidos ASC
          """)
-   List<Empleado> buscarPorCargo(
-         @Param("cargo") String cargo);
+   List<Empleado> buscarPorCargo(@Param("cargo") String cargo);
 
    @Query("""
          SELECT e
@@ -66,8 +113,7 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
          BETWEEN CURRENT_DATE AND :fechaLimite
          ORDER BY e.fechaFinContrato ASC
          """)
-   List<Empleado> contratosPorVencer(
-         @Param("fechaLimite") LocalDate fechaLimite);
+   List<Empleado> contratosPorVencer(@Param("fechaLimite") LocalDate fechaLimite);
 
    @Query("""
          SELECT e.cargo, COUNT(e)

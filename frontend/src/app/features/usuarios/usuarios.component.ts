@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UsuarioService } from '../../core/services/usuario.service';
+import { UsuarioResponse } from '../../core/models/usuario.model';
 
 @Component({
   selector: 'app-usuarios',
@@ -14,7 +15,7 @@ export class UsuariosComponent implements OnInit {
   private usuarioService = inject(UsuarioService);
   private fb = inject(FormBuilder);
 
-  usuarios: any[] = [];
+  usuarios: UsuarioResponse[] = [];
   usuarioForm!: FormGroup;
   isModalOpen = false;
   editMode = false;
@@ -29,9 +30,9 @@ export class UsuariosComponent implements OnInit {
       id: [null],
       email: ['', [Validators.required, Validators.email]],
       password: [''],
-      nombre: [''],        // ← AGREGADO
-      apellido: [''],      // ← AGREGADO
-      telefono: [''],      // ← AGREGADO
+      nombre: [''],
+      apellido: [''],
+      telefono: [''],
       rolId: [3, Validators.required],
       activo: [true],
     });
@@ -39,10 +40,10 @@ export class UsuariosComponent implements OnInit {
 
   cargarUsuarios(): void {
     this.usuarioService.listar().subscribe({
-      next: (data) => {
+      next: (data: UsuarioResponse[]) => {
         this.usuarios = data;
       },
-      error: (err) => console.error('Error al cargar la lista de usuarios', err),
+      error: (err: any) => console.error('Error al cargar la lista de usuarios', err),
     });
   }
 
@@ -54,22 +55,21 @@ export class UsuariosComponent implements OnInit {
     this.isModalOpen = true;
   }
 
-  editarUsuario(usuario: any): void {
+  editarUsuario(usuario: UsuarioResponse): void {
     this.editMode = true;
 
-    // Al editar la contraseña pasa a ser un campo opcional
     this.usuarioForm.get('password')?.clearValidators();
     this.usuarioForm.get('password')?.updateValueAndValidity();
 
     this.usuarioForm.patchValue({
       id: usuario.id,
       email: usuario.email,
-      nombre: usuario.nombre || '',        // ← AGREGADO
-      apellido: usuario.apellido || '',    // ← AGREGADO
-      telefono: usuario.telefono || '',    // ← AGREGADO
+      nombre: usuario.nombre || '',
+      apellido: usuario.apellido || '',
+      telefono: usuario.telefono || '',
       activo: usuario.activo ?? true,
-      rolId: usuario.rol?.idRol || usuario.rol?.id || usuario.rolId || 3,
-      password: '', // Inicializa vacío por seguridad
+      rolId: usuario.rol?.idRol || 3,
+      password: '',
     });
     this.isModalOpen = true;
   }
@@ -83,17 +83,15 @@ export class UsuariosComponent implements OnInit {
 
     const formValue = this.usuarioForm.value;
 
-    // ✅ Datos completos que espera el backend
     const data: any = {
       email: formValue.email,
-      nombre: formValue.nombre || null,        // ← AGREGADO
-      apellido: formValue.apellido || null,    // ← AGREGADO
-      telefono: formValue.telefono || null,    // ← AGREGADO
+      nombre: formValue.nombre || null,
+      apellido: formValue.apellido || null,
+      telefono: formValue.telefono || null,
       activo: formValue.activo,
       rolId: Number(formValue.rolId),
     };
 
-    // Solo incluir password si tiene valor
     if (formValue.password) {
       data.password = formValue.password;
     }
@@ -106,13 +104,12 @@ export class UsuariosComponent implements OnInit {
           this.cargarUsuarios();
           this.cerrarModal();
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error al actualizar:', err);
           alert('Error al actualizar el usuario.');
         },
       });
     } else {
-      // Para crear, la contraseña es obligatoria
       if (!data.password) {
         alert('La contraseña es obligatoria para nuevos usuarios');
         return;
@@ -123,7 +120,7 @@ export class UsuariosComponent implements OnInit {
           this.cargarUsuarios();
           this.cerrarModal();
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error al crear:', err);
           alert('Error al crear el usuario.');
         },
@@ -136,7 +133,7 @@ export class UsuariosComponent implements OnInit {
     if (confirm('¿Seguro que deseas eliminar este usuario?')) {
       this.usuarioService.eliminar(id).subscribe({
         next: () => this.cargarUsuarios(),
-        error: (err) => console.error(err),
+        error: (err: any) => console.error(err),
       });
     }
   }

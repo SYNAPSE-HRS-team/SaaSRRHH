@@ -29,10 +29,18 @@ public class ReporteIncidenteServiceImpl implements ReporteIncidenteService {
     @Override
     @Transactional(readOnly = true)
     public List<ReporteIncidenteResponseDTO> listar() {
-        return repository.findAllWithRelaciones()
-                .stream()
-                .map(ReporteIncidenteMapper::toDTO)
-                .collect(Collectors.toList());
+        System.out.println("========== ⚠️ Service.listar() LLAMADO ==========");
+        try {
+            List<ReporteIncidente> incidentes = repository.findAllWithRelaciones();
+            System.out.println("✅ Incidentes encontrados: " + incidentes.size());
+            return incidentes.stream()
+                    .map(ReporteIncidenteMapper::toDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println("❌ ERROR en Service.listar(): " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

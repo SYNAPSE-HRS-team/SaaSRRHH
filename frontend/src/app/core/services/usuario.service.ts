@@ -11,6 +11,8 @@ export class UsuarioService {
   private apiUrl = 'http://localhost:8080/api/usuarios';
 
   listar(): Observable<UsuarioResponse[]> {
+    console.log('🔍 Frontend: Llamando a listar()');
+    console.log('🔍 URL:', this.apiUrl);
     return this.http.get<UsuarioResponse[]>(this.apiUrl);
   }
 

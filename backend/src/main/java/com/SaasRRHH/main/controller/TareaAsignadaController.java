@@ -119,4 +119,15 @@ public class TareaAsignadaController {
         // Lógica para listar tareas en progreso en un área específica
         return ResponseEntity.ok(service.buscarPorAreaYEstado(areaId, EstadoTarea.EN_PROGRESO));
     }
+
+    @PostMapping("/marcar-vencidas")
+    public ResponseEntity<String> marcarTareasVencidas() {
+        try {
+            service.marcarTareasVencidas();
+            return ResponseEntity.ok("Tareas vencidas marcadas como INCONCLUSO");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al marcar tareas vencidas: " + e.getMessage());
+        }
+    }
 }

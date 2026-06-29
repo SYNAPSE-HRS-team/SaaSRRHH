@@ -24,7 +24,7 @@ public class TareaAsignada {
     }
 
     public enum EstadoTarea {
-        PENDIENTE, EN_PROGRESO, COMPLETADO, CANCELADO
+        PENDIENTE, EN_PROGRESO, COMPLETADO, CANCELADO, INCONCLUSO
     }
 
     @Id

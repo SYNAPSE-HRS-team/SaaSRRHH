@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -167,5 +168,37 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         public List<Object[]> contarEmpleadosPorCargo() {
 
                 return repository.contarEmpleadosPorCargo();
+        }
+
+        @Override
+        public List<EmpleadoResponseDTO> listarSupervisores() {
+                return repository.findSupervisores()
+                        .stream()
+                        .map(EmpleadoMapper::toDTO)
+                        .collect(Collectors.toList());
+        }
+
+        @Override
+        public List<EmpleadoResponseDTO> listarTrabajadores() {
+                return repository.findTrabajadores()
+                        .stream()
+                        .map(EmpleadoMapper::toDTO)
+                        .collect(Collectors.toList());
+        }
+
+        @Override
+        public List<EmpleadoResponseDTO> listarTrabajadoresByRol() {
+                return repository.findTrabajadoresByRol()
+                        .stream()
+                        .map(EmpleadoMapper::toDTO)
+                        .collect(Collectors.toList());
+        }
+
+        @Override
+        public List<EmpleadoResponseDTO> listarSupervisoresByRol() {
+                return repository.findSupervisoresByRol()
+                        .stream()
+                        .map(EmpleadoMapper::toDTO)
+                        .collect(Collectors.toList());
         }
 }

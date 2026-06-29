@@ -25,14 +25,19 @@ export class SidebarComponent {
   collapsed = signal(false);
   currentUser: ReturnType<AuthService['getCurrentUser']>;
 
+  // Menú fusionado: Se añadieron 'Tareas' y se unificaron las rutas y roles
+  // Mantiene tu estructura base y añade los items de la otra persona.
   menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: '📊', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Empleados', icon: '👥', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Áreas de Trabajo', icon: '🏢', route: '/areas-trabajo', roles: ['ADMIN'] },
+    // Item añadido de la otra versión
+    { label: 'Tareas', icon: '✅', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Asistencia', icon: '⏰', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Nómina', icon: '💰', route: '/nomina', roles: ['ADMIN'] },
     { label: 'Planillas', icon: '📋', route: '/planillas', roles: ['ADMIN'] },
     { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
+    // Ruta unificada a '/incidentes' como en tu versión original
     { label: 'Incidentes', icon: '⚠️', route: '/incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
