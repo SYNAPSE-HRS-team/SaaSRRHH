@@ -120,7 +120,6 @@ public class TareaAsignadaController {
         return ResponseEntity.ok(service.buscarPorAreaYEstado(areaId, EstadoTarea.EN_PROGRESO));
     }
 
-    // ✅ Agregar este método en TareaAsignadaController.java
     @PostMapping("/marcar-vencidas")
     public ResponseEntity<String> marcarTareasVencidas() {
         try {
