@@ -64,7 +64,6 @@ public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Lo
             "WHERE t.supervisor.id = :supervisorId")
     List<TareaAsignada> findBySupervisorIdWithRelations(@Param("supervisorId") Long supervisorId);
 
-    // ✅ Trae tareas de un área con todos sus datos
     @Query("SELECT t FROM TareaAsignada t " +
             "JOIN FETCH t.empleado e " +
             "JOIN FETCH t.supervisor s " +
@@ -72,7 +71,6 @@ public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Lo
             "WHERE t.area.id = :areaId")
     List<TareaAsignada> findByAreaIdWithRelations(@Param("areaId") Long areaId);
 
-    // ✅ Trae tareas de un empleado en una fecha específica
     @Query("SELECT t FROM TareaAsignada t " +
             "JOIN FETCH t.empleado e " +
             "JOIN FETCH t.supervisor s " +
