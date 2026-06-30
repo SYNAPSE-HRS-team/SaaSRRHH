@@ -56,7 +56,6 @@ public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Lo
             "WHERE t.empleado.id = :empleadoId")
     List<TareaAsignada> findByEmpleadoIdWithRelations(@Param("empleadoId") Long empleadoId);
 
-    // ✅ Trae tareas de un supervisor con todos sus datos
     @Query("SELECT t FROM TareaAsignada t " +
             "JOIN FETCH t.empleado e " +
             "JOIN FETCH t.supervisor s " +

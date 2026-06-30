@@ -40,7 +40,7 @@ export class TareaListComponent implements OnInit {
   estadosFiltro = ['', ...Object.values(EstadoTarea)];
   funcionesDisponibles: string[] = [];
 
-  // ✅ LISTAS DE EMPLEADOS Y SUPERVISORES (se llenan desde las tareas)
+  // ✅ LISTAS DE EMPLEADOS Y SUPERVISORES (cargadas desde el backend)
   empleadosDisponibles: any[] = [];
   supervisoresDisponibles: any[] = [];
 
@@ -53,8 +53,10 @@ export class TareaListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarTareas();
+    // ✅ Cargar todo en paralelo
     this.cargarEmpleados();
+    this.cargarSupervisores();
+    this.cargarTareas();
   }
 
   // ===================================
@@ -63,16 +65,12 @@ export class TareaListComponent implements OnInit {
 
   cargarTareas(): void {
     this.loading = true;
+    // ✅ Usar el método correcto del servicio de tareas
     this.tareaService.listar().subscribe({
       next: (data: TareaAsignadaResponse[]) => {
         this.tareas = data;
-
         // ✅ Extraer funciones únicas para el filtro
         this.funcionesDisponibles = [...new Set(data.map((t) => t.funcion).filter(Boolean))];
-
-        // ✅ Extraer empleados y supervisores de las tareas
-        this.extraerEmpleadosYSupervisores(data);
-
         this.aplicarFiltros();
         this.loading = false;
       },
@@ -84,67 +82,52 @@ export class TareaListComponent implements OnInit {
     });
   }
 
-  // ✅ EXTRAER EMPLEADOS Y SUPERVISORES DESDE LAS TAREAS
-  extraerEmpleadosYSupervisores(tareas: TareaAsignadaResponse[]): void {
-    // Mapa para empleados (evitar duplicados)
-    const empleadosMap = new Map<number, any>();
-    const supervisoresMap = new Map<number, any>();
-
-    tareas.forEach((t) => {
-      // ✅ Extraer empleado
-      if (t.empleado && t.empleado.id && !empleadosMap.has(t.empleado.id)) {
-        empleadosMap.set(t.empleado.id, {
-          id: t.empleado.id,
-          nombres: t.empleado.nombres || '',
-          apellidos: t.empleado.apellidos || '',
-          dni: t.empleado.dni || '',
+  // ✅ CARGAR EMPLEADOS DESDE EL BACKEND
+  cargarEmpleados(): void {
+    // ✅ Usar listarActivos() que ya existe en el servicio
+    this.empleadoService.listarActivos().subscribe({
+      next: (data: any[]) => {
+        this.empleadosDisponibles = data;
+        console.log('✅ Empleados cargados:', this.empleadosDisponibles);
+      },
+      error: (err: any) => {
+        console.error('❌ Error al cargar empleados:', err);
+        // ✅ Fallback: usar listarTrabajadores()
+        this.empleadoService.listarTrabajadores().subscribe({
+          next: (data: any[]) => {
+            this.empleadosDisponibles = data;
+            console.log('✅ Empleados cargados (fallback):', this.empleadosDisponibles);
+          },
+          error: (err2: any) => {
+            console.error('❌ Error al cargar empleados (fallback):', err2);
+          },
         });
-      }
-
-      // ✅ Extraer supervisor
-      if (t.supervisor && t.supervisor.id && !supervisoresMap.has(t.supervisor.id)) {
-        supervisoresMap.set(t.supervisor.id, {
-          id: t.supervisor.id,
-          nombres: t.supervisor.nombres || '',
-          apellidos: t.supervisor.apellidos || '',
-        });
-      }
+      },
     });
-
-    this.empleadosDisponibles = Array.from(empleadosMap.values());
-    this.supervisoresDisponibles = Array.from(supervisoresMap.values());
-
-    console.log('✅ Empleados extraídos:', this.empleadosDisponibles);
-    console.log('✅ Supervisores extraídos:', this.supervisoresDisponibles);
   }
 
-  // ✅ CARGAR EMPLEADOS DESDE EL BACKEND (como fallback)
-  cargarEmpleados(): void {
-    // Solo si no hay empleados en las tareas, cargar desde el backend
-    if (this.empleadosDisponibles.length === 0) {
-      this.empleadoService.listarActivos().subscribe({
-        next: (data: any[]) => {
-          this.empleadosDisponibles = data;
-          console.log('✅ Empleados cargados desde backend:', this.empleadosDisponibles);
-        },
-        error: (err: any) => {
-          console.error('❌ Error al cargar empleados:', err);
-        },
-      });
-    }
-
-    // Solo si no hay supervisores en las tareas, cargar desde el backend
-    if (this.supervisoresDisponibles.length === 0) {
-      this.empleadoService.listarSupervisoresByRol().subscribe({
-        next: (data: any[]) => {
-          this.supervisoresDisponibles = data;
-          console.log('✅ Supervisores cargados desde backend:', this.supervisoresDisponibles);
-        },
-        error: (err: any) => {
-          console.error('❌ Error al cargar supervisores:', err);
-        },
-      });
-    }
+  // ✅ CARGAR SUPERVISORES DESDE EL BACKEND
+  cargarSupervisores(): void {
+    // ✅ Usar listarSupervisoresByRol() que ya existe en el servicio
+    this.empleadoService.listarSupervisoresByRol().subscribe({
+      next: (data: any[]) => {
+        this.supervisoresDisponibles = data;
+        console.log('✅ Supervisores cargados:', this.supervisoresDisponibles);
+      },
+      error: (err: any) => {
+        console.error('❌ Error al cargar supervisores:', err);
+        // ✅ Fallback: usar listarSupervisores()
+        this.empleadoService.listarSupervisores().subscribe({
+          next: (data: any[]) => {
+            this.supervisoresDisponibles = data;
+            console.log('✅ Supervisores cargados (fallback):', this.supervisoresDisponibles);
+          },
+          error: (err2: any) => {
+            console.error('❌ Error al cargar supervisores (fallback):', err2);
+          },
+        });
+      },
+    });
   }
 
   abrirModal(): void {
