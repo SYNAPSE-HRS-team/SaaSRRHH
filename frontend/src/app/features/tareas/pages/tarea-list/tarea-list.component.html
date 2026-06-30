@@ -1,0 +1,225 @@
+<div class="tareas-page">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-text">
+      <h1>Seguimiento de Tareas</h1>
+      <p class="subtitle">Gestión y asignación de actividades operativas en el SaaS</p>
+    </div>
+    <div class="header-actions">
+      <button (click)="abrirModal()" class="btn-create-task">+ Asignar Tarea</button>
+    </div>
+  </div>
+
+  <!-- =================================== -->
+  <!-- CARDS DE ESTADÍSTICAS -->
+  <!-- =================================== -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <span class="stat-number">{{ totalTareas }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card pendiente">
+      <span class="stat-number">{{ tareasPendientes }}</span>
+      <span class="stat-label">Pendientes</span>
+    </div>
+    <div class="stat-card progreso">
+      <span class="stat-number">{{ tareasEnProgreso }}</span>
+      <span class="stat-label">En Progreso</span>
+    </div>
+    <div class="stat-card completado">
+      <span class="stat-number">{{ tareasCompletadas }}</span>
+      <span class="stat-label">Completadas</span>
+    </div>
+    <div class="stat-card cancelado">
+      <span class="stat-number">{{ tareasCanceladas }}</span>
+      <span class="stat-label">Canceladas</span>
+    </div>
+    <div class="stat-card inconcluso">
+      <span class="stat-number">{{ tareasInconclusas }}</span>
+      <span class="stat-label">Inconclusas</span>
+    </div>
+  </div>
+
+  <!-- =================================== -->
+  <!-- FILTROS -->
+  <!-- =================================== -->
+  <div class="filtros-bar">
+    <div class="filtro-group">
+      <label>Estado:</label>
+      <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()">
+        <option *ngFor="let est of estadosFiltro" [value]="est">
+          {{ est || 'Todos' }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filtro-group">
+      <label>Empleado:</label>
+      <select [(ngModel)]="filtroEmpleadoId" (ngModelChange)="aplicarFiltros()">
+        <option [value]="null">Todos los empleados</option>
+        <option *ngFor="let emp of empleadosDisponibles" [value]="emp.id">
+          {{ emp.nombres }} {{ emp.apellidos }} ({{ emp.dni }})
+        </option>
+      </select>
+    </div>
+
+    <div class="filtro-group">
+      <label>Supervisor:</label>
+      <select [(ngModel)]="filtroSupervisorId" (ngModelChange)="aplicarFiltros()">
+        <option [value]="null">Todos los supervisores</option>
+        <option *ngFor="let sup of supervisoresDisponibles" [value]="sup.id">
+          {{ sup.nombres }} {{ sup.apellidos }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filtro-group">
+      <label>Actividad:</label>
+      <select [(ngModel)]="filtroFuncion" (ngModelChange)="aplicarFiltros()">
+        <option value="">Todas</option>
+        <option *ngFor="let fn of funcionesDisponibles" [value]="fn">{{ fn }}</option>
+      </select>
+    </div>
+
+    <div class="filtro-group">
+      <label>Fecha:</label>
+      <input type="date" [(ngModel)]="filtroFecha" (ngModelChange)="aplicarFiltros()" />
+    </div>
+
+    <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
+
+  <!-- =================================== -->
+  <!-- ESTADOS DE CARGA -->
+  <!-- =================================== -->
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Cargando tareas...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error-message">
+    <p>❌ Error al cargar las tareas</p>
+    <button (click)="cargarTareas()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- =================================== -->
+  <!-- TABLA DE TAREAS (SOLO UNA) -->
+  <!-- =================================== -->
+  <div *ngIf="!loading && !error" class="table-wrapper">
+    <!-- Sin resultados -->
+    <div *ngIf="tareasFiltradas.length === 0" class="empty-state">
+      <span class="empty-icon">📋</span>
+      <h3>No hay tareas</h3>
+      <p *ngIf="tareas.length === 0">No hay tareas asignadas en el sistema.</p>
+      <p *ngIf="tareas.length > 0">No hay tareas que coincidan con los filtros aplicados.</p>
+      <button *ngIf="tareas.length > 0" class="btn-limpiar" (click)="limpiarFiltros()">
+        Limpiar filtros
+      </button>
+    </div>
+
+    <!-- ✅ TABLA ÚNICA -->
+    <table *ngIf="tareasFiltradas.length > 0" class="tasks-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Actividad</th>
+          <th>Descripción</th>
+          <th>Empleado Responsable</th>
+          <th>Supervisor</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th class="actions-header">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of tareasFiltradas">
+          <td class="id-cell">#{{ t.id }}</td>
+          <td>
+            <span class="badge-function">{{ t.funcion }}</span>
+          </td>
+          <td class="task-desc">{{ t.descripcion || 'Sin descripción' }}</td>
+          <td class="emp-cell">
+            <strong>{{ t.empleado?.nombres || 'Sin asignar' }}</strong>
+            <span class="emp-dni" *ngIf="t.empleado?.dni">({{ t.empleado?.dni }})</span>
+          </td>
+          <td>
+            {{ t.supervisor?.nombres || 'Sin supervisor' }}
+            <span class="emp-dni" *ngIf="t.supervisor?.apellidos">{{
+              t.supervisor?.apellidos
+            }}</span>
+          </td>
+          <td>
+            <span
+              class="badge-status"
+              [ngClass]="{
+                'st-complete': t.estado === 'COMPLETADO',
+                'st-process': t.estado === 'EN_PROGRESO',
+                'st-pending': t.estado === 'PENDIENTE',
+                'st-canceled': t.estado === 'CANCELADO',
+                'st-inconcluso': t.estado === 'INCONCLUSO',
+              }"
+            >
+              {{ t.estado }}
+            </span>
+          </td>
+          <td class="date-cell">{{ t.fecha | date: 'dd/MM/yyyy' }}</td>
+          <td class="actions-cell">
+            <!-- Ver (siempre visible) -->
+            <button (click)="verTarea(t)" class="action-btn view" title="Ver tarea">👁️</button>
+
+            <!-- Editar (solo si NO está bloqueado) -->
+            <button
+              *ngIf="puedeEditar(t.estado)"
+              (click)="editarTarea(t)"
+              class="action-btn edit"
+              title="Editar tarea"
+            >
+              ✏️
+            </button>
+
+            <!-- Candado (cuando NO se puede editar) -->
+            <span
+              *ngIf="!puedeEditar(t.estado)"
+              class="action-btn locked"
+              title="Tarea finalizada ({{ t.estado }}) - No se puede editar"
+            >
+              🔒
+            </span>
+
+            <!-- Eliminar (siempre visible) -->
+            <button (click)="eliminarTarea(t.id)" class="action-btn delete" title="Eliminar tarea">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Contador -->
+    <div *ngIf="tareasFiltradas.length > 0" class="table-footer">
+      <span>
+        Mostrando {{ tareasFiltradas.length }} de {{ tareas.length }} tareas
+        <span
+          *ngIf="
+            filtroEstado || filtroEmpleadoId || filtroSupervisorId || filtroFecha || filtroFuncion
+          "
+        >
+          (filtrados)
+        </span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <app-tarea-form
+    *ngIf="isModalOpen"
+    [tareaData]="tareaSeleccionada"
+    [editMode]="editMode"
+    [soloLectura]="soloLectura"
+    (onCerrar)="cerrarModal()"
+    (onExito)="alGuardarExitoso()"
+  ></app-tarea-form>
+</div>

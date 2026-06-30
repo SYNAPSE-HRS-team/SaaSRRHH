@@ -1,0 +1,33 @@
+package com.SaasRRHH.main.services;
+import com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO;
+import com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO;
+import com.SaasRRHH.main.DTO.AsistenciaQrDTO;
+import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
+import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+public interface RegistroAsistenciaService {
+    List<RegistroAsistenciaResponseDTO> listar();
+    RegistroAsistenciaResponseDTO buscarPorId(Long id);
+    RegistroAsistenciaResponseDTO guardar(RegistroAsistenciaRequestDTO dto);
+    RegistroAsistenciaResponseDTO actualizar(Long id, RegistroAsistenciaRequestDTO dto);
+    RegistroAsistenciaResponseDTO registrarEntrada(Long empleadoId, String metodo);
+    RegistroAsistenciaResponseDTO registrarSalida(Long empleadoId, String metodo);
+    RegistroAsistenciaResponseDTO registrarPorQr(String payload);
+    AsistenciaQrDTO generarQrEmpleadoActual();
+    AsistenciaCalendarioMesDTO calendarioEmpleadoActual(Integer anio, Integer mes);
+    AsistenciaCalendarioAnualDTO calendarioAnualEmpleadoActual(Integer anio);
+    AsistenciaCalendarioMesDTO calendarioEmpleado(Long empleadoId, Integer anio, Integer mes);
+    AsistenciaCalendarioAnualDTO calendarioAnualEmpleado(Long empleadoId, Integer anio);
+    void eliminar(Long id);
+    List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId);
+    List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
+    List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado);
+    List<RegistroAsistenciaResponseDTO> asistenciasHoy();
+    List<RegistroAsistenciaResponseDTO> incidenciasAsistencia();
+    Long contarAsistenciasMensuales(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
+    List<Object[]> rankingTardanzas();
+    boolean yaMarcoHoy(Long empleadoId, String tipo);
+    List<RegistroAsistenciaResponseDTO> listarCompleto();
+}

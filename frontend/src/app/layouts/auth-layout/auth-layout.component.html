@@ -1,0 +1,22 @@
+<div class="auth-container">
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo-icon">RR.HH</div>
+        <h1>Sistema de Gestión de Recursos Humanos y Asistencia</h1>
+        <p class="subtitle">UTP - 2026 </p>
+      </div>
+      
+      <router-outlet></router-outlet>
+      
+    </div>
+  </div>
+
+  <div class="auth-visual" [style.backgroundImage]="'url(' + images[currentImageIndex] + ')'">
+    <div class="carousel-indicators">
+      <span class="indicator" [class.active]="currentImageIndex === 0"></span>
+      <span class="indicator" [class.active]="currentImageIndex === 1"></span>
+      <span class="indicator" [class.active]="currentImageIndex === 2"></span>
+    </div>
+  </div>
+</div>

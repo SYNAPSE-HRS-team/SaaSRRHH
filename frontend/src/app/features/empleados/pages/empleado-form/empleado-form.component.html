@@ -1,0 +1,208 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <div class="breadcrumb">
+        <a routerLink="/empleados">Empleados</a>
+        <span class="separator">/</span>
+        <span>Nuevo Empleado</span>
+      </div>
+      <h1>Registrar Nuevo Empleado</h1>
+      <p class="subtitle">Ingresa los datos del nuevo empleado en el sistema</p>
+    </div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="empleado-form">
+    @if (error()) {
+      <div class="error-banner">
+        <span>⚠️</span>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="success-banner">
+        <span>✅</span>
+        <span>{{ successMessage() }}</span>
+      </div>
+    }
+
+    <!-- ============================================================ -->
+    <!-- SELECCIONAR USUARIO                                           -->
+    <!-- ============================================================ -->
+    <div class="form-section">
+      <h2 class="section-title">Usuario Asociado <span class="required">*</span></h2>
+      <div class="form-group">
+        <label for="usuarioId">Seleccionar Usuario <span class="required">*</span></label>
+
+        @if (!usuariosCargados()) {
+          <div class="loading-message">⏳ Cargando usuarios disponibles...</div>
+        } @else if (usuarios.length === 0) {
+          <div class="warning-message">
+            ⚠️ No hay usuarios disponibles para asignar como empleados.
+            <a routerLink="/usuarios/nuevo" target="_blank">Crear un usuario primero</a>
+          </div>
+        } @else {
+          <select
+            id="usuarioId"
+            name="usuarioId"
+            [(ngModel)]="formData.usuarioId"
+            required
+            class="form-select"
+          >
+            <option value="0">-- Selecciona un usuario --</option>
+            @for (usuario of usuarios; track usuario.id) {
+              <option [value]="usuario.id">
+                {{ usuario.email }} ({{ usuario.rolNombre || 'USER' }})
+              </option>
+            }
+          </select>
+        }
+
+        <p class="field-hint">
+          Solo aparecen usuarios que no tienen un empleado asociado.
+          <a routerLink="/usuarios/nuevo" target="_blank">Crear nuevo usuario</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Información Personal -->
+    <div class="form-section">
+      <h2 class="section-title">Información Personal</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nombres">Nombres <span class="required">*</span></label>
+          <input
+            type="text"
+            id="nombres"
+            name="nombres"
+            [(ngModel)]="formData.nombres"
+            required
+            placeholder="Nombres del empleado"
+          />
+        </div>
+        <div class="form-group">
+          <label for="apellidos">Apellidos <span class="required">*</span></label>
+          <input
+            type="text"
+            id="apellidos"
+            name="apellidos"
+            [(ngModel)]="formData.apellidos"
+            required
+            placeholder="Apellidos del empleado"
+          />
+        </div>
+        <div class="form-group">
+          <label for="dni">DNI <span class="required">*</span></label>
+          <input
+            type="text"
+            id="dni"
+            name="dni"
+            [(ngModel)]="formData.dni"
+            required
+            maxlength="8"
+            minlength="8"
+            placeholder="12345678"
+          />
+        </div>
+        <div class="form-group">
+          <label for="cargo">Cargo</label>
+          <input
+            type="text"
+            id="cargo"
+            name="cargo"
+            [(ngModel)]="formData.cargo"
+            placeholder="Ej: Desarrollador Senior"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del Contrato -->
+    <div class="form-section">
+      <h2 class="section-title">Información del Contrato</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="sueldoBase">Sueldo Base (S/)</label>
+          <input
+            type="number"
+            id="sueldoBase"
+            name="sueldoBase"
+            step="0.01"
+            min="0"
+            [(ngModel)]="formData.sueldoBase"
+            placeholder="0.00"
+          />
+        </div>
+        <div class="form-group">
+          <label for="fechaInicioContrato">Fecha Inicio Contrato</label>
+          <input
+            type="date"
+            id="fechaInicioContrato"
+            name="fechaInicioContrato"
+            [(ngModel)]="formData.fechaInicioContrato"
+          />
+        </div>
+        <div class="form-group">
+          <label for="fechaFinContrato">Fecha Fin Contrato</label>
+          <input
+            type="date"
+            id="fechaFinContrato"
+            name="fechaFinContrato"
+            [(ngModel)]="formData.fechaFinContrato"
+          />
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              id="asignacionFamiliar"
+              name="asignacionFamiliar"
+              [(ngModel)]="formData.asignacionFamiliar"
+            />
+            Asignación Familiar
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado -->
+    <div class="form-section">
+      <h2 class="section-title">Estado</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="activo" name="activo" [(ngModel)]="formData.activo" />
+            Empleado Activo
+          </label>
+          <p class="field-hint">
+            Los empleados inactivos no aparecerán en las consultas por defecto
+          </p>
+        </div>
+        <div class="form-group">
+          <label for="fotoPerfilUrl">URL de Foto de Perfil</label>
+          <input
+            type="url"
+            id="fotoPerfilUrl"
+            name="fotoPerfilUrl"
+            [(ngModel)]="formData.fotoPerfilUrl"
+            placeholder="https://ejemplo.com/foto.jpg"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="form-actions">
+      <a routerLink="/empleados" class="btn-cancel">Cancelar</a>
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        @if (saving()) {
+          <span class="spinner"></span>
+          Guardando...
+        } @else {
+          <span>💾</span>
+          Guardar Empleado
+        }
+      </button>
+    </div>
+  </form>
+</div>

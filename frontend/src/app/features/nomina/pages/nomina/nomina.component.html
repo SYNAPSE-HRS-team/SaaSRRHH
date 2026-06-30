@@ -1,0 +1,272 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>💰 Nómina</h1>
+      <p class="subtitle">Generación y gestión de planillas de pago</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadPlanillas()" [disabled]="loadingPlanillas()">
+        {{ loadingPlanillas() ? '⏳' : '🔄' }} Actualizar
+      </button>
+      <button class="btn-primary" (click)="showGenerarModal.set(true)" id="btn-generar-planilla">
+        ➕ Generar Planilla
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">📋</span>
+      <span class="stat-label">Total Planillas</span>
+      <span class="stat-value">{{ planillas().length }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">✅</span>
+      <span class="stat-label">Procesadas</span>
+      <span class="stat-value">{{ countByEstado('PROCESADO') }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🔒</span>
+      <span class="stat-label">Cerradas</span>
+      <span class="stat-value">{{ countByEstado('CERRADO') }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">💵</span>
+      <span class="stat-label">Última Nómina</span>
+      <span class="stat-value">{{ getUltimaNomina() }}</span>
+    </div>
+  </div>
+
+  <!-- Notices -->
+  @if (error()) {
+    <div class="error-banner">⚠️ {{ error() }}</div>
+  }
+  @if (success()) {
+    <div class="success-banner">✅ {{ success() }}</div>
+  }
+
+  <!-- Planillas Table -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Historial de Planillas</h2>
+      <div class="filter-group">
+        <select class="filter-select" (change)="onFiltroEstado($event)" id="filtro-estado-nomina">
+          <option value="">Todos los estados</option>
+          <option value="PROCESADO">Procesado</option>
+          <option value="CERRADO">Cerrado</option>
+        </select>
+      </div>
+    </div>
+
+    @if (loadingPlanillas()) {
+      <div class="loading-state">
+        <div class="spinner-dark"></div>
+        <p>Cargando planillas...</p>
+      </div>
+    } @else if (filteredPlanillas().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>No hay planillas registradas</h3>
+        <p>Genera tu primera planilla de nómina usando el botón de arriba.</p>
+      </div>
+    } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Mes / Año</th>
+              <th>Total Pagado</th>
+              <th>Estado</th>
+              <th>Fecha Cierre</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (planilla of filteredPlanillas(); track planilla.id) {
+              <tr>
+                <td>
+                  <strong>{{ getMesNombre(planilla.mes) }} {{ planilla.anio }}</strong>
+                </td>
+                <td>{{ planilla.mes }}/{{ planilla.anio }}</td>
+                <td>
+                  @if (planilla.totalPagado != null) {
+                    <span class="money">S/ {{ planilla.totalPagado | number:'1.2-2' }}</span>
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+                <td>
+                  <span class="badge" [class]="getEstadoBadge(planilla.estado)">
+                    {{ planilla.estado ?? 'PROCESADO' }}
+                  </span>
+                </td>
+                <td>
+                  @if (planilla.fechaCierre) {
+                    {{ planilla.fechaCierre | date:'dd/MM/yyyy' }}
+                  } @else {
+                    <span class="text-muted">—</span>
+                  }
+                </td>
+                <td>
+                  <div class="table-actions">
+                    <button
+                      class="btn-info"
+                      (click)="verBoletas(planilla)"
+                      [disabled]="loadingBoletas()"
+                      id="btn-ver-boletas-{{ planilla.id }}"
+                    >
+                      🧾 Ver Boletas
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ===== MODAL: GENERAR PLANILLA ===== -->
+@if (showGenerarModal()) {
+  <div class="modal-overlay" (click)="closeGenerarModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>📋 Generar Nueva Planilla</h3>
+        <button class="modal-close" (click)="closeGenerarModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Selecciona el período para generar la planilla de nómina. El sistema calculará
+          automáticamente los sueldos, bonos y descuentos de todos los empleados activos.
+        </p>
+
+        @if (generarError()) {
+          <div class="error-banner">⚠️ {{ generarError() }}</div>
+        }
+
+        <div class="modal-form">
+          <div class="form-group">
+            <label for="select-mes">Mes</label>
+            <select id="select-mes" [(ngModel)]="generarMes" class="form-select">
+              @for (mes of meses; track $index) {
+                <option [value]="$index + 1">{{ mes }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="select-anio">Año</label>
+            <input
+              type="number"
+              id="select-anio"
+              [(ngModel)]="generarAnio"
+              [min]="2020"
+              [max]="2030"
+              class="form-select"
+            />
+          </div>
+        </div>
+
+        <div class="info-banner" style="margin-top: 1rem; margin-bottom: 0;">
+          💡 Si ya existe una planilla para este período, el sistema retornará la existente.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeGenerarModal()">Cancelar</button>
+        <button class="btn-primary" (click)="generarPlanilla()" [disabled]="generando()">
+          @if (generando()) {
+            <span class="spinner"></span> Generando...
+          } @else {
+            ⚡ Generar Planilla
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ===== MODAL: VER BOLETAS ===== -->
+@if (showBoletasModal()) {
+  <div class="modal-overlay" (click)="showBoletasModal.set(false)">
+    <div class="modal-card modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🧾 Boletas — {{ planillaSeleccionada ? getMesNombre(planillaSeleccionada.mes) + ' ' + planillaSeleccionada.anio : '' }}</h3>
+        <button class="modal-close" (click)="showBoletasModal.set(false)">✕</button>
+      </div>
+      <div class="modal-body">
+        @if (loadingBoletas()) {
+          <div class="loading-state">
+            <div class="spinner-dark"></div>
+            <p>Cargando boletas...</p>
+          </div>
+        } @else if (boletas().length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">🧾</div>
+            <h3>Sin boletas</h3>
+            <p>No se encontraron boletas para esta planilla.</p>
+          </div>
+        } @else {
+          <div class="boletas-summary">
+            <span>{{ boletas().length }} boleta(s) encontradas</span>
+            <span class="money-positive">Total: S/ {{ getTotalBoletas() | number:'1.2-2' }}</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Empleado ID</th>
+                  <th>Sueldo Base</th>
+                  <th>Días Trab.</th>
+                  <th>Total Ingr.</th>
+                  <th>Total Desc.</th>
+                  <th class="highlight-col">Neto Pagar</th>
+                  <th>PDF</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (boleta of boletas(); track boleta.id) {
+                  <tr>
+                    <td>{{ boleta.id }}</td>
+                    <td>
+                      <span class="badge badge-primary">Emp. #{{ boleta.empleadoId }}</span>
+                    </td>
+                    <td>S/ {{ boleta.sueldoBase | number:'1.2-2' }}</td>
+                    <td>{{ boleta.diasTrabajados }}</td>
+                    <td class="money-positive">S/ {{ boleta.totalIngresos | number:'1.2-2' }}</td>
+                    <td class="money-negative">S/ {{ boleta.totalDescuentos | number:'1.2-2' }}</td>
+                    <td>
+                      <strong class="neto-badge">S/ {{ boleta.netoPagar | number:'1.2-2' }}</strong>
+                    </td>
+                    <td>
+                      <button
+                        class="btn-pdf"
+                        (click)="descargarPdf(boleta.id!)"
+                        [disabled]="descargandoPdf() === boleta.id"
+                        title="Descargar PDF"
+                        id="btn-pdf-{{ boleta.id }}"
+                      >
+                        @if (descargandoPdf() === boleta.id) {
+                          <span class="spinner-sm"></span>
+                        } @else {
+                          📄
+                        }
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="showBoletasModal.set(false)">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}
