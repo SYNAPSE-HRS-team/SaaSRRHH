@@ -80,7 +80,6 @@
               <th>Mes / Año</th>
               <th>Total Pagado</th>
               <th>Estado</th>
-              <th>Fecha Cierre</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -102,13 +101,6 @@
                   <span class="badge" [class]="getEstadoBadge(planilla.estado)">
                     {{ planilla.estado ?? 'PROCESADO' }}
                   </span>
-                </td>
-                <td>
-                  @if (planilla.fechaCierre) {
-                    {{ planilla.fechaCierre | date:'dd/MM/yyyy' }}
-                  } @else {
-                    <span class="text-muted">—</span>
-                  }
                 </td>
                 <td>
                   <div class="table-actions">
@@ -219,7 +211,7 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Empleado ID</th>
+                  <th>Empleado</th>
                   <th>Sueldo Base</th>
                   <th>Días Trab.</th>
                   <th>Total Ingr.</th>
@@ -233,7 +225,12 @@
                   <tr>
                     <td>{{ boleta.id }}</td>
                     <td>
-                      <span class="badge badge-primary">Emp. #{{ boleta.empleadoId }}</span>
+                      <div class="employee-info">
+                        <span class="badge badge-primary">#{{ boleta.empleadoId }}</span>
+                        @if (boleta.empleadoNombre) {
+                          <span class="employee-name">{{ boleta.empleadoNombre }}</span>
+                        }
+                      </div>
                     </td>
                     <td>S/ {{ boleta.sueldoBase | number:'1.2-2' }}</td>
                     <td>{{ boleta.diasTrabajados }}</td>

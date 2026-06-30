@@ -20,6 +20,9 @@ import java.util.Set;
 @Service
 public class NominaServiceImpl implements NominaService {
 
+    /** Monto de Asignación Familiar: 10% de la RMV (S/ 1,025.00) */
+    private static final BigDecimal ASIGNACION_FAMILIAR_MONTO = new BigDecimal("102.50");
+
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
@@ -61,9 +64,13 @@ public class NominaServiceImpl implements NominaService {
         }
 
         BigDecimal descuentoInasistencia = dailyRate.multiply(BigDecimal.valueOf(diasNoTrabajados)).setScale(2, RoundingMode.HALF_UP);
+        // Evitar que el descuento supere el sueldo base por redondeo
+        if (descuentoInasistencia.compareTo(sueldoBase) > 0) {
+            descuentoInasistencia = sueldoBase;
+        }
 
         BigDecimal asignacionFamiliar = empleado.getAsignacionFamiliar() != null && empleado.getAsignacionFamiliar()
-                ? BigDecimal.ZERO
+                ? ASIGNACION_FAMILIAR_MONTO
                 : BigDecimal.ZERO;
 
         BigDecimal bonoBeta = BigDecimal.ZERO;

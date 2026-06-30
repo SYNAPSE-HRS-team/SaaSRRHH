@@ -50,7 +50,14 @@ public class BoletaPagoMapper {
         BoletaPagoResponseDTO dto = new BoletaPagoResponseDTO();
         dto.setId(boleta.getId());
         dto.setEmpleadoId(boleta.getEmpleado() != null ? boleta.getEmpleado().getId() : null);
+        if (boleta.getEmpleado() != null) {
+            String nombre = (boleta.getEmpleado().getNombres() != null ? boleta.getEmpleado().getNombres() : "")
+                    + " " + (boleta.getEmpleado().getApellidos() != null ? boleta.getEmpleado().getApellidos() : "");
+            dto.setEmpleadoNombre(nombre.isBlank() ? null : nombre.trim());
+        }
         dto.setPlanillaId(boleta.getPlanilla() != null ? boleta.getPlanilla().getId() : null);
+        dto.setPlanillaMes(boleta.getPlanilla() != null ? boleta.getPlanilla().getMes() : null);
+        dto.setPlanillaAnio(boleta.getPlanilla() != null ? boleta.getPlanilla().getAnio() : null);
         dto.setSueldoBase(boleta.getSueldoBase());
         dto.setDiasTrabajados(boleta.getDiasTrabajados());
         dto.setDiasNoTrabajados(boleta.getDiasNoTrabajados());
