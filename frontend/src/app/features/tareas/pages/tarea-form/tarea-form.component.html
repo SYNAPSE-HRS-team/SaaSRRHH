@@ -5,6 +5,13 @@
       <button (click)="cerrar()" class="btn-close">&times;</button>
     </div>
 
+    <!-- ✅ Mensaje de bloqueo -->
+    @if (isFormLocked) {
+      <div class="lock-message">
+        🔒 Esta tarea está <strong>{{ tareaData?.estado }}</strong> y no puede ser modificada.
+      </div>
+    }
+
     <form [formGroup]="tareaForm" (ngSubmit)="onSubmit()" class="modal-body">
       <!-- Empleado (solo trabajadores) -->
       <div class="input-block">
@@ -14,6 +21,7 @@
           [class.has-error]="
             tareaForm.get('empleadoId')?.touched && tareaForm.get('empleadoId')?.invalid
           "
+          [disabled]="isFormLocked"
         >
           <option [ngValue]="null" disabled>Selecciona un empleado...</option>
           <option *ngFor="let emp of empleados" [value]="emp.id">
@@ -36,6 +44,7 @@
           [class.has-error]="
             tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid
           "
+          [disabled]="isFormLocked"
         >
           <option [ngValue]="null" disabled>Selecciona un supervisor...</option>
           <option *ngFor="let sup of supervisores" [value]="sup.id">
@@ -43,9 +52,7 @@
           </option>
         </select>
         <div
-          *ngIf="
-            tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid
-          "
+          *ngIf="tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid"
           class="error-text"
         >
           ⚠️ El supervisor es obligatorio
@@ -57,9 +64,8 @@
         <label>Área <span class="required-mark">*</span></label>
         <select
           formControlName="areaId"
-          [class.has-error]="
-            tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid
-          "
+          [class.has-error]="tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid"
+          [disabled]="isFormLocked"
         >
           <option [ngValue]="null" disabled>Selecciona un área...</option>
           <option *ngFor="let area of areas" [value]="area.id">{{ area.nombre }}</option>
@@ -77,9 +83,8 @@
         <label>Función <span class="required-mark">*</span></label>
         <select
           formControlName="funcion"
-          [class.has-error]="
-            tareaForm.get('funcion')?.touched && tareaForm.get('funcion')?.invalid
-          "
+          [class.has-error]="tareaForm.get('funcion')?.touched && tareaForm.get('funcion')?.invalid"
+          [disabled]="isFormLocked"
         >
           <option value="" disabled>Selecciona una función...</option>
           <option *ngFor="let func of funciones" [value]="func">{{ func }}</option>
@@ -99,21 +104,18 @@
           type="date"
           formControlName="fecha"
           [class.has-error]="tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid"
+          [disabled]="isFormLocked"
         />
-        <div
-          *ngIf="
-            tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.errors?.['required']
-          "
-          class="error-text"
-        >
-          ⚠️ La fecha es obligatoria
-        </div>
-        <div
-          *ngIf="tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid"
-          class="error-text"
-        >
-          ⚠️ La fecha es obligatoria
-        </div>
+
+        @if (tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid) {
+          <div class="error-text">
+            @if (tareaForm.get('fecha')?.errors?.['required']) {
+              ⚠️ La fecha es obligatoria
+            } @else if (tareaForm.get('fecha')?.errors?.['fechaPasada']) {
+              ⚠️ No se pueden crear tareas con fecha pasada. La fecha debe ser hoy o futura.
+            }
+          </div>
+        }
       </div>
 
       <!-- Descripción -->
@@ -126,6 +128,7 @@
           [class.has-error]="
             tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid
           "
+          [disabled]="isFormLocked"
         ></textarea>
         <div
           *ngIf="tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid"
@@ -138,14 +141,30 @@
       <!-- Estado -->
       <div class="input-block">
         <label>Estado <span class="required-mark">*</span></label>
-        <select formControlName="estado">
-          <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+        <select formControlName="estado" [disabled]="isFormLocked">
+          <option *ngFor="let est of estadosDisponibles" [value]="est">{{ est }}</option>
         </select>
+
+        <!-- ✅ Mensaje informativo -->
+        @if (isFormLocked) {
+          <small class="info-text lock">
+            🔒 Tarea finalizada como <strong>{{ tareaData?.estado }}</strong
+            >. No se pueden realizar cambios.
+          </small>
+        } @else if (!editMode) {
+          <small class="info-text">
+            ℹ️ Las tareas nuevas solo pueden crearse como PENDIENTE o EN_PROGRESO.
+          </small>
+        } @else {
+          <small class="info-text">
+            ℹ️ Al marcar como COMPLETADO, CANCELADO o INCONCLUSO, la tarea quedará bloqueada.
+          </small>
+        }
       </div>
 
       <div class="actions-wrapper">
         <button type="button" (click)="cerrar()" class="btn-cancel">Cancelar</button>
-        <button type="submit" [disabled]="tareaForm.invalid" class="btn-save">
+        <button type="submit" [disabled]="tareaForm.invalid || isFormLocked" class="btn-save">
           {{ editMode ? 'Actualizar' : 'Guardar' }}
         </button>
       </div>
