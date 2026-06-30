@@ -40,6 +40,10 @@ export const routes: Routes = [
         loadChildren: () => import('./features/tareas/tarea.routes').then((m) => m.tareaRoutes),
         title: 'Tareas - SaaSRRHH',
       },
+      {
+        path: 'documentos',
+        loadChildren: () => import('./features/documento/documento.routes').then(m => m.documentoRoutes)
+      },
 
       {
         path: 'asistencias',
