@@ -112,6 +112,16 @@
                     >
                       🧾 Ver Boletas
                     </button>
+                    @if (planilla.estado !== 'CERRADO') {
+                      <button
+                        class="btn-danger-sm"
+                        (click)="confirmarCerrar(planilla)"
+                        title="Cerrar planilla"
+                        id="btn-cerrar-{{ planilla.id }}"
+                      >
+                        🔒 Cerrar
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>
@@ -122,6 +132,32 @@
     }
   </div>
 </div>
+
+<!-- ===== MODAL: CONFIRMAR CIERRE ===== -->
+@if (showCerrarModal()) {
+  <div class="modal-overlay" (click)="showCerrarModal.set(false)">
+    <div class="modal-card modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🔒 Confirmar Cierre</h3>
+        <button class="modal-close" (click)="showCerrarModal.set(false)">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+          ¿Estás seguro de cerrar la planilla de
+          <strong>{{ planillaACerrar ? getMesNombre(planillaACerrar.mes) + ' ' + planillaACerrar.anio : '' }}</strong>?
+          Una vez cerrada, ya no se podrá modificar.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="showCerrarModal.set(false)">Cancelar</button>
+        <button class="btn-primary" style="background: var(--color-danger);" (click)="cerrarPlanilla()" [disabled]="cerrando()">
+          @if (cerrando()) { <span class="spinner"></span> Cerrando... }
+          @else { 🔒 Cerrar Planilla }
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 <!-- ===== MODAL: GENERAR PLANILLA ===== -->
 @if (showGenerarModal()) {

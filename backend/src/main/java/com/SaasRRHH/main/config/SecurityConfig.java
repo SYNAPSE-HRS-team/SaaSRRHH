@@ -67,6 +67,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/boletas_pago/mis-boletas")
                         .authenticated()
 
+                        .requestMatchers("/api/nomina/boleta/*/pdf")
+                        .authenticated()
+
                         .requestMatchers(
                                 "/api/usuarios/**",
                                 "/api/roles/**",
