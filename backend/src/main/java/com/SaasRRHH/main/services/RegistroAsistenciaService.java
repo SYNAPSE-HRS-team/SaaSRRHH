@@ -20,6 +20,7 @@ public interface RegistroAsistenciaService {
     AsistenciaCalendarioAnualDTO calendarioAnualEmpleadoActual(Integer anio);
     AsistenciaCalendarioMesDTO calendarioEmpleado(Long empleadoId, Integer anio, Integer mes);
     AsistenciaCalendarioAnualDTO calendarioAnualEmpleado(Long empleadoId, Integer anio);
+    List<RegistroAsistenciaResponseDTO> historialEmpleadoActual();
     void eliminar(Long id);
     List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId);
     List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);

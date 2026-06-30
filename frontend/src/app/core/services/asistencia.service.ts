@@ -37,6 +37,30 @@ export class AsistenciaService {
     return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/hoy`);
   }
 
+  /** Historial de asistencias del empleado autenticado */
+  miHistorial(): Observable<RegistroAsistencia[]> {
+    return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/mi-historial`);
+  }
+
+  /** Historial de un empleado específico (admin) */
+  historialEmpleado(empleadoId: number): Observable<RegistroAsistencia[]> {
+    return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/empleado/${empleadoId}`);
+  }
+
+  /** Registrar entrada manual (admin) */
+  registrarEntrada(empleadoId: number, metodo?: string): Observable<RegistroAsistencia> {
+    const params: any = {};
+    if (metodo) params.metodo = metodo;
+    return this.http.post<RegistroAsistencia>(`${this.baseUrl}/entrada/${empleadoId}`, null, { params });
+  }
+
+  /** Registrar salida manual (admin) */
+  registrarSalida(empleadoId: number, metodo?: string): Observable<RegistroAsistencia> {
+    const params: any = {};
+    if (metodo) params.metodo = metodo;
+    return this.http.post<RegistroAsistencia>(`${this.baseUrl}/salida/${empleadoId}`, null, { params });
+  }
+
   crear(data: RegistroAsistencia): Observable<RegistroAsistencia> {
     return this.http.post<RegistroAsistencia>(this.baseUrl, data);
   }

@@ -17,6 +17,7 @@ import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 })
 export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   isEmployee = false;
+  isAdmin = false;
   qrImage = signal('');
   qrName = signal('');
   secondsLeft = signal(0);
@@ -24,9 +25,17 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   message = signal('');
   error = signal('');
   viewMode = signal<'mensual' | 'anual'>('mensual');
+  activeTab = signal<'calendario' | 'historial'>('calendario');
   month = signal<CalendarioMes | null>(null);
   annual = signal<CalendarioAnual | null>(null);
   empleados = signal<EmpleadoResponse[]>([]);
+  historial = signal<RegistroAsistencia[]>([]);
+  loadingHistorial = signal(false);
+
+  // Marcado de salida
+  yaMarcoEntrada = signal(false);
+  yaMarcoSalida = signal(false);
+  loadingMarcado = signal(false);
 
   manualPayload = '';
   selectedEmpleadoId?: number;
@@ -41,13 +50,23 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   weekDays = ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'];
   months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((label, i) => ({ label, value: i + 1 }));
 
-  constructor(private auth: AuthService, private asistencia: AsistenciaService, private empleadoService: EmpleadoService) {}
+  constructor(
+    private auth: AuthService,
+    private asistencia: AsistenciaService,
+    private empleadoService: EmpleadoService
+  ) {}
 
   ngOnInit(): void {
     const role = this.auth.getCurrentUser()?.rol;
     this.isEmployee = role === 'EMPLEADO' || role === 'TRABAJADOR';
-    if (this.isEmployee) this.loadQr();
-    else this.loadEmployees();
+    this.isAdmin = role === 'ADMIN';
+
+    if (this.isEmployee) {
+      this.loadQr();
+      this.checkMarcadoHoy();
+    } else {
+      this.loadEmployees();
+    }
     this.loadCalendar();
   }
 
@@ -61,6 +80,13 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.loadCalendar();
   }
 
+  setTab(tab: 'calendario' | 'historial'): void {
+    this.activeTab.set(tab);
+    if (tab === 'historial') this.loadHistorial();
+  }
+
+  // ---- QR ----
+
   loadQr(): void {
     this.asistencia.miQr().subscribe({
       next: async qr => {
@@ -71,7 +97,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
           this.qrImage.set(await QRCode.toDataURL(qr.payload, { width: 235, margin: 1 }));
         } catch {
           this.qrImage.set('');
-          this.error.set('No se pudo renderizar el QR. Revisa que la dependencia qrcode esta instalada.');
+          this.error.set('No se pudo renderizar el QR.');
         }
         if (this.qrTimer) window.clearTimeout(this.qrTimer);
         this.qrTimer = window.setTimeout(() => this.loadQr(), Math.max(qr.segundosRestantes, 1) * 1000);
@@ -79,6 +105,22 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el QR')
     });
   }
+
+  // ---- Marcado de salida (empleado) ----
+
+  checkMarcadoHoy(): void {
+    // Verificar si ya marco entrada y/o salida hoy
+    this.asistencia.miHistorial().subscribe({
+      next: (registros) => {
+        const hoy = new Date().toISOString().slice(0, 10);
+        const hoyRegistros = registros.filter(r => r.fechaHora?.startsWith(hoy));
+        this.yaMarcoEntrada.set(hoyRegistros.some(r => r.tipoMarcacion === 'ENTRADA'));
+        this.yaMarcoSalida.set(hoyRegistros.some(r => r.tipoMarcacion === 'SALIDA'));
+      }
+    });
+  }
+
+  // ---- Employees (admin) ----
 
   loadEmployees(): void {
     this.empleadoService.listarActivos().subscribe({
@@ -90,6 +132,8 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       error: err => this.error.set(err.error?.message || 'No se pudo cargar empleados')
     });
   }
+
+  // ---- Calendario ----
 
   loadCalendar(): void {
     if (!this.isEmployee && !this.selectedEmpleadoId) return;
@@ -114,10 +158,31 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   monthName(mes: number): string { return this.months[mes - 1]?.label || ''; }
 
   selectDay(day: CalendarioDia): void {
-    if (this.isEmployee) return;
+    if (!this.isAdmin) return; // Solo admin puede editar
     this.editFecha = day.fecha;
     this.editEstado = day.estado === 'ASISTIO' ? 'VALIDADO' : this.editEstado;
   }
+
+  // ---- Historial ----
+
+  loadHistorial(): void {
+    this.loadingHistorial.set(true);
+    const req = this.isEmployee
+      ? this.asistencia.miHistorial()
+      : (this.selectedEmpleadoId ? this.asistencia.historialEmpleado(this.selectedEmpleadoId) : this.asistencia.miHistorial());
+    req.subscribe({
+      next: data => {
+        this.historial.set(data);
+        this.loadingHistorial.set(false);
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'No se pudo cargar historial');
+        this.loadingHistorial.set(false);
+      }
+    });
+  }
+
+  // ---- Scanner ----
 
   async startScanner(): Promise<void> {
     this.error.set('');
@@ -145,7 +210,8 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     if (!payload) return;
     this.asistencia.scanQr(payload).subscribe({
       next: r => {
-        this.message.set(`Asistencia registrada para empleado #${r.empleadoId}`);
+        const tipo = r.tipoMarcacion || 'asistencia';
+        this.message.set(`${tipo} registrada para empleado #${r.empleadoId}`);
         this.error.set('');
         this.manualPayload = '';
         this.loadCalendar();
@@ -155,7 +221,13 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ---- Edición manual (SOLO ADMIN) ----
+
   saveAttendance(): void {
+    if (!this.isAdmin) {
+      this.error.set('Solo los administradores pueden editar asistencias.');
+      return;
+    }
     if (!this.selectedEmpleadoId) return;
     const existing = this.monthDays().find(d => d.fecha === this.editFecha && d.asistenciaId);
     const payload: RegistroAsistencia = {
@@ -170,6 +242,41 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     req.subscribe({
       next: () => { this.message.set('Asistencia guardada'); this.error.set(''); this.loadCalendar(); },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo guardar')
+    });
+  }
+
+  // Admin: marcar entrada/salida manual para un empleado
+  marcarEntradaAdmin(): void {
+    if (!this.isAdmin || !this.selectedEmpleadoId) return;
+    this.loadingMarcado.set(true);
+    this.asistencia.registrarEntrada(this.selectedEmpleadoId, 'MANUAL').subscribe({
+      next: () => {
+        this.message.set('Entrada registrada correctamente');
+        this.error.set('');
+        this.loadingMarcado.set(false);
+        this.loadCalendar();
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'Error al registrar entrada');
+        this.loadingMarcado.set(false);
+      }
+    });
+  }
+
+  marcarSalidaAdmin(): void {
+    if (!this.isAdmin || !this.selectedEmpleadoId) return;
+    this.loadingMarcado.set(true);
+    this.asistencia.registrarSalida(this.selectedEmpleadoId, 'MANUAL').subscribe({
+      next: () => {
+        this.message.set('Salida registrada correctamente');
+        this.error.set('');
+        this.loadingMarcado.set(false);
+        this.loadCalendar();
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'Error al registrar salida');
+        this.loadingMarcado.set(false);
+      }
     });
   }
 }

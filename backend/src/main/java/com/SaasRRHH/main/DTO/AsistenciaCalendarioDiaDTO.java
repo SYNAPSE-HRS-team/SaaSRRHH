@@ -10,4 +10,5 @@ public class AsistenciaCalendarioDiaDTO {
     private String estado;
     private Long asistenciaId;
     private String horaEntrada;
+    private String horaSalida;
 }
