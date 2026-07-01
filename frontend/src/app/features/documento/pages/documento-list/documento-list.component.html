@@ -1,74 +1,63 @@
-<div class="page-container">
-  <div class="page-header">
-    <div class="header-left">
-      <h1>Gestión de Documentos Privados</h1>
-      <p class="subtitle">Expedientes digitales vinculados en tiempo real con la API</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn-primary" routerLink="nuevo">
-        <span>➕</span> Subir Documento
-      </button>
-    </div>
+<div class="documento-list">
+  <div class="header">
+    <h1>📄 Documentos</h1>
+    <a routerLink="/documentos/nuevo" class="btn-primary">+ Nuevo documento</a>
   </div>
 
   @if (cargando) {
-    <div class="loading-container">
-      <div class="spinner-blue"></div>
-      <p>🔄 Obteniendo registros desde la base de datos...</p>
-    </div>
+    <p class="estado">Cargando documentos...</p>
   }
 
   @if (errorHttp) {
-    <div class="error-banner">
-      <span>❌</span>
-      <span>Hubo un error al comunicarse con el servidor. Por favor, verifica el estado del Backend.</span>
-    </div>
+    <p class="estado error">
+      No se pudo conectar con la API de documentos. Verifica que el backend esté corriendo.
+    </p>
   }
 
   @if (!cargando && !errorHttp) {
-    <div class="table-card">
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
+    @if (documentos.length === 0) {
+      <p class="estado">Todavía no hay documentos registrados.</p>
+    } @else {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Empleado</th>
+            <th>Tipo</th>
+            <th>Fecha de carga</th>
+            <th>Vencimiento</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of documentos; track doc.id) {
             <tr>
-              <th>ID</th>
-              <th>Nombre del Archivo</th>
-              <th>Tipo</th>
-              <th>Colaborador</th>
-              <th>Fecha de Carga</th>
-              <th class="text-center">Acciones</th>
+              <td class="mono">#{{ doc.id }}</td>
+              <td class="font-semibold">{{ doc.empleadoNombre }}</td>
+              <td>
+                <span class="badge">{{ doc.tipoNombre }}</span>
+              </td>
+              <td>{{ doc.fechaCarga | date: 'dd/MM/yyyy' }}</td>
+              <td [class.vencido]="estaVencido(doc)">
+                {{ doc.fechaVencimiento ? (doc.fechaVencimiento | date: 'dd/MM/yyyy') : '—' }}
+                @if (estaVencido(doc)) {
+                  <span class="tag-vencido">Vencido</span>
+                }
+              </td>
+              <td>
+                <span [class]="doc.activo ? 'tag-activo' : 'tag-inactivo'">
+                  {{ doc.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="acciones">
+                <button (click)="verDocumento(doc)" class="btn-icon" title="Ver archivo">👁️</button>
+                <button (click)="eliminar(doc)" class="btn-icon danger" title="Eliminar">🗑️</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            @for (doc of documentos; track doc.idDocumento) {
-              <tr>
-                <td class="font-mono text-xs text-muted">#{{ doc.idDocumento }}</td>
-                <td class="font-semibold">{{ doc.nombre }}</td>
-                <td>
-                  <span class="badge badge-info">
-                    {{ doc.tipoDocumento || 'General' }}
-                  </span>
-                </td>
-                <td class="colaborador-cell">
-                  {{ doc.empleado ? (doc.empleado.nombres + ' ' + doc.empleado.apellidos) : ('ID Empleado: ' + (doc.idEmpleado || 'N/A')) }}
-                </td>
-                <td class="text-muted text-xs">{{ doc.fechaSubida || 'No registrada' }}</td>
-                <td class="text-center">
-                  <button (click)="verDocumento(doc)" class="btn-action">
-                    👁️ Visualizar
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6" class="empty-row">
-                  📁 No se encontraron documentos registrados en el sistema.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
+          }
+        </tbody>
+      </table>
+    }
   }
 </div>
