@@ -34,14 +34,12 @@ export class DashboardComponent implements OnInit {
     { icon: '⏰', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { icon: '💰', label: 'Nómina', route: '/nomina', roles: ['ADMIN'] },
     { icon: '🧾', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
-    { icon: '📋', label: 'Planillas', route: '/planillas', roles: ['ADMIN'] },
     { icon: '⚠️', label: 'Reportar Incidente', route: '/incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     { icon: '📝', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { icon: '📄', label: 'Documentos', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { icon: '💚', label: 'Encuesta Bienestar', route: '/encuestas-bienestar', roles: ['EMPLEADO', 'TRABAJADOR'] },
     { icon: '💬', label: 'Feedback Anónimo', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
-    { icon: '🔐', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] },
-    { icon: '🎯', label: 'Roles', route: '/roles', roles: ['ADMIN'] },
+    { icon: '🔐', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] }
   ];
 
   get filteredActions(): ActionItem[] {
