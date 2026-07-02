@@ -20,19 +20,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * REQUISITOS PREVIOS:
  * - Base de datos de test activa (ver application-test.properties)
- * - Usuario con email "admin@test.com", password BCrypt de "admin123", rol ADMIN
- * - Usuario con email "supervisor@test.com", password BCrypt de "sup123", rol SUPERVISOR
- * - Usuario con email "empleado@test.com", password BCrypt de "emp123", rol EMPLEADO
+ * - Usuario con email "admin@test.com", password BCrypt de "admin123", rol
+ * ADMIN
+ * - Usuario con email "supervisor@test.com", password BCrypt de "sup123", rol
+ * SUPERVISOR
+ * - Usuario con email "empleado@test.com", password BCrypt de "emp123", rol
+ * EMPLEADO
  *
  * Cómo insertar los usuarios de prueba en tu BD:
  * -- Insertar rol ADMIN (si no existe)
- * INSERT INTO roles (nombre_rol, descripcion) VALUES ('ADMIN', 'Administrador') ON CONFLICT DO NOTHING;
- * INSERT INTO roles (nombre_rol, descripcion) VALUES ('SUPERVISOR', 'Supervisor') ON CONFLICT DO NOTHING;
- * INSERT INTO roles (nombre_rol, descripcion) VALUES ('EMPLEADO', 'Empleado') ON CONFLICT DO NOTHING;
+ * INSERT INTO roles (nombre_rol, descripcion) VALUES ('ADMIN', 'Administrador')
+ * ON CONFLICT DO NOTHING;
+ * INSERT INTO roles (nombre_rol, descripcion) VALUES ('SUPERVISOR',
+ * 'Supervisor') ON CONFLICT DO NOTHING;
+ * INSERT INTO roles (nombre_rol, descripcion) VALUES ('EMPLEADO', 'Empleado')
+ * ON CONFLICT DO NOTHING;
  *
  * -- Contraseña BCrypt de "admin123"
  * INSERT INTO usuarios (email, password, rol_id, activo)
- * VALUES ('admin@test.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, true);
+ * VALUES ('admin@test.com',
+ * '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, true);
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -60,7 +67,7 @@ class AuthControllerTest {
                 .content("""
                         {
                             "email": "admin@test.com",
-                            "password": "admin123"
+                            "password": "password"
                         }
                         """))
                 .andExpect(status().isOk())
@@ -77,11 +84,12 @@ class AuthControllerTest {
                 .content("""
                         {
                             "email": "supervisor@test.com",
-                            "password": "sup123"
+                            "password": "password"
                         }
                         """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(jsonPath("$.email").value("supervisor@test.com"))
                 .andExpect(jsonPath("$.roles[0]").value("ROLE_SUPERVISOR"));
     }
 
@@ -227,7 +235,7 @@ class AuthControllerTest {
                 .content("""
                         {
                             "email": "admin@test.com",
-                            "password": "admin123"
+                            "password": "password"
                         }
                         """))
                 .andExpect(status().isOk());

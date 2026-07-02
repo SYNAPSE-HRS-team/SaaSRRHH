@@ -79,7 +79,7 @@
             <tr>
               <th>ID</th>
               <th>Empleado</th>
-              <th>Planilla</th>
+              <th>Período</th>
               <th>Sueldo Base</th>
               <th>Días Trab.</th>
               <th>Bonos</th>
@@ -96,10 +96,17 @@
               <tr [class.row-highlight]="descargandoPdf() === b.id">
                 <td><span class="id-chip">#{{ b.id }}</span></td>
                 <td>
-                  <span class="badge badge-primary">Emp. #{{ b.empleadoId }}</span>
+                  <div class="employee-info">
+                    <span class="badge badge-primary">#{{ b.empleadoId }}</span>
+                    @if (b.empleadoNombre) {
+                      <span class="employee-name">{{ b.empleadoNombre }}</span>
+                    }
+                  </div>
                 </td>
                 <td>
-                  @if (b.planillaId) {
+                  @if (b.planillaMes && b.planillaAnio) {
+                    <span class="period-badge">{{ getMesNombre(b.planillaMes) }} {{ b.planillaAnio }}</span>
+                  } @else if (b.planillaId) {
                     <span class="badge badge-secondary">#{{ b.planillaId }}</span>
                   } @else { — }
                 </td>

@@ -1,6 +1,7 @@
 package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.DashboardDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.AnaliticaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.hamcrest.Matchers.*;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.mockito.Mockito.when;
@@ -25,6 +27,11 @@ class AnaliticaControllerTest {
 
     @MockBean
     private AnaliticaService analiticaService;
+            @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @BeforeEach
     void setUp() {

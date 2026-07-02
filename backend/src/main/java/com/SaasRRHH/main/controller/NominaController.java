@@ -33,6 +33,16 @@ public class NominaController {
         return ResponseEntity.ok(planillaService.listar());
     }
 
+    @PostMapping("/planillas/{id}/cerrar")
+    public ResponseEntity<Planilla> cerrarPlanilla(@PathVariable Long id) {
+        try {
+            Planilla cerrada = planillaService.cerrar(id);
+            return ResponseEntity.ok(cerrada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PostMapping("/bonos")
     public ResponseEntity<BonoDescuento> crearBono(@RequestBody BonoDescuento bono) {
         BonoDescuento creado = bonoService.crear(bono);

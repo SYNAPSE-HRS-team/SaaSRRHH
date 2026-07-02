@@ -17,4 +17,7 @@ public interface BoletaPagoRepository extends JpaRepository<BoletaPago, Long> {
 
     @Query("SELECT b FROM BoletaPago b JOIN FETCH b.empleado e JOIN FETCH e.usuario JOIN FETCH b.planilla WHERE b.id = :id")
     Optional<BoletaPago> findByIdWithRelaciones(@Param("id") Long id);
+
+    @Query("SELECT b FROM BoletaPago b JOIN FETCH b.empleado e JOIN FETCH e.usuario JOIN FETCH b.planilla WHERE e.id = :empleadoId")
+    List<BoletaPago> findByEmpleadoIdWithRelaciones(@Param("empleadoId") Long empleadoId);
 }

@@ -9,6 +9,8 @@ public interface BoletaPagoService {
 
     List<BoletaPago> listar();
 
+    List<BoletaPago> listarPorEmpleadoId(Long empleadoId);
+
     Optional<BoletaPago> buscarPorId(Long id);
 
     BoletaPago guardar(BoletaPago boleta);

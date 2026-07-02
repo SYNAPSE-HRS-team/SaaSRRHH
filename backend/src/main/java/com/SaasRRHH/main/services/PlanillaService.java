@@ -14,6 +14,8 @@ public interface PlanillaService {
 
     Planilla actualizar(Long id, Planilla planilla);
 
+    Planilla cerrar(Long id);
+
     void eliminar(Long id);
 
 }

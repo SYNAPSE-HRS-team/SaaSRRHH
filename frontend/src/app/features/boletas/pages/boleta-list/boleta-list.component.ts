@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BoletaPagoService } from '../../../../core/services/boleta-pago.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { BoletaPago } from '../../../../core/models/boleta-pago.model';
 import { getMesNombre, MESES_NOMBRE } from '../../../../core/models/planilla.model';
 
@@ -23,15 +24,25 @@ export class BoletaListComponent implements OnInit {
   searchTerm = '';
   filterPlanilla = '';
   getMesNombre = getMesNombre;
+  esAdmin = false;
 
-  constructor(private boletaService: BoletaPagoService) {}
+  constructor(
+    private boletaService: BoletaPagoService,
+    private authService: AuthService
+  ) {}
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.esAdmin = this.authService.hasRole('ADMIN');
+    this.load();
+  }
 
   load(): void {
     this.loading.set(true);
     this.error.set('');
-    this.boletaService.listar().subscribe({
+    const obs = this.esAdmin
+      ? this.boletaService.listar()
+      : this.boletaService.listarMisBoletas();
+    obs.subscribe({
       next: data => {
         this.boletas.set(data);
         this.applyFilter();

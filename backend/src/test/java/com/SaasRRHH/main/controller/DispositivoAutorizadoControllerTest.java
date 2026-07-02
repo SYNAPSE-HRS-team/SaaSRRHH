@@ -2,6 +2,7 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.DispositivoAutorizadoRequestDTO;
 import com.SaasRRHH.main.DTO.DispositivoAutorizadoResponseDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.DispositivoAutorizadoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
@@ -31,6 +33,11 @@ class DispositivoAutorizadoControllerTest {
 
     @MockBean
     private DispositivoAutorizadoService service;
+            @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
