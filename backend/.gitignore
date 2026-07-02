@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 node_modules
+.gitignore
 
 # Maven
 target/
@@ -34,6 +35,7 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+/target/
 
 ### VS Code ###
 .vscode/
