@@ -45,7 +45,7 @@ export class EmpleadoFormComponent implements OnInit {
     this.cargarUsuarios();
   }
 
-  // ✅ AHORA USA listarSinEmpleado()
+  // ✅ Cargar usuarios sin empleado
   cargarUsuarios(): void {
     console.log('🔄 Cargando usuarios sin empleado...');
 
@@ -67,7 +67,45 @@ export class EmpleadoFormComponent implements OnInit {
     });
   }
 
+  // ✅ Método corregido - Recibe el evento y extrae el valor con tipado seguro
+  onUsuarioChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const id = Number(select.value);
+    
+    this.formData.usuarioId = id;
+
+    // Si selecciona "Seleccionar usuario..." (valor 0)
+    if (!id || id === 0) {
+      this.formData.nombres = '';
+      this.formData.apellidos = '';
+      return;
+    }
+
+    this.error.set('');
+
+    // ✅ Obtener datos del usuario seleccionado para autocompletar
+    this.usuarioService.obtener(id).subscribe({
+      next: (usuario) => {
+        // ✅ Autocompletar nombres y apellidos
+        this.formData.nombres = usuario.nombre || '';
+        this.formData.apellidos = usuario.apellido || '';
+        console.log('✅ Datos autocompletados:', {
+          nombres: this.formData.nombres,
+          apellidos: this.formData.apellidos
+        });
+      },
+      error: (err) => {
+        console.error('❌ Error obteniendo datos del usuario seleccionado:', err);
+        this.error.set('No se pudo cargar los datos del usuario seleccionado');
+        // Limpiar campos en caso de error
+        this.formData.nombres = '';
+        this.formData.apellidos = '';
+      },
+    });
+  }
+
   onSubmit(): void {
+    // Validaciones
     if (!this.formData.usuarioId || this.formData.usuarioId === 0) {
       this.error.set('Debes seleccionar un usuario');
       return;
