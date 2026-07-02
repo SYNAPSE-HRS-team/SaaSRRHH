@@ -1,10 +1,14 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+#Angular
+.angular
+
 # Compiled output
 /dist
 /tmp
 /out-tsc
 /bazel-out
+/target
 
 # Node
 /node_modules

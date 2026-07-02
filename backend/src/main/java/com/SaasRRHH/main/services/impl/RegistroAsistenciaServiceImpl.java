@@ -146,10 +146,13 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
                 if (empleado.getTotpSecret() == null || !totpService.verify(empleado.getTotpSecret(), window, parts[3])) {
                         throw new RuntimeException("QR vencido o invalido");
                 }
-                if (repository.yaMarcoHoy(empleadoId, inicioDelDia(LocalDate.now()), finDelDia(LocalDate.now()), "ENTRADA")) {
-                        throw new RuntimeException("El empleado ya registro entrada hoy");
+                boolean yaEntrada = repository.yaMarcoHoy(empleadoId, inicioDelDia(LocalDate.now()), finDelDia(LocalDate.now()), "ENTRADA");
+                boolean yaSalida = repository.yaMarcoHoy(empleadoId, inicioDelDia(LocalDate.now()), finDelDia(LocalDate.now()), "SALIDA");
+                if (yaEntrada && yaSalida) {
+                        throw new RuntimeException("El empleado ya registro entrada y salida hoy");
                 }
-                return crearMarcacion(empleadoId, "ENTRADA", "QR_TOTP");
+                String tipo = yaEntrada ? "SALIDA" : "ENTRADA";
+                return crearMarcacion(empleadoId, tipo, "QR_TOTP");
         }
 
         private RegistroAsistenciaResponseDTO crearMarcacion(Long empleadoId, String tipo, String metodo) {
@@ -217,23 +220,29 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
                 YearMonth ym = YearMonth.of(anio, mes);
                 LocalDate inicio = ym.atDay(1);
                 LocalDate fin = ym.plusMonths(1).atDay(1);
-                Map<LocalDate, RegistroAsistencia> entradas = repository
-                                .findByEmpleadoIdAndFechaHoraBetween(empleadoId, inicio.atStartOfDay(), fin.atStartOfDay())
-                                .stream()
+                List<RegistroAsistencia> registros = repository
+                                .findByEmpleadoIdAndFechaHoraBetween(empleadoId, inicio.atStartOfDay(), fin.atStartOfDay());
+                Map<LocalDate, RegistroAsistencia> entradas = registros.stream()
                                 .filter(r -> "ENTRADA".equals(r.getTipoMarcacion()))
                                 .sorted(Comparator.comparing(RegistroAsistencia::getFechaHora))
                                 .collect(Collectors.toMap(r -> r.getFechaHora().toLocalDate(), Function.identity(), (a, b) -> a));
+                Map<LocalDate, RegistroAsistencia> salidas = registros.stream()
+                                .filter(r -> "SALIDA".equals(r.getTipoMarcacion()))
+                                .sorted(Comparator.comparing(RegistroAsistencia::getFechaHora))
+                                .collect(Collectors.toMap(r -> r.getFechaHora().toLocalDate(), Function.identity(), (a, b) -> b));
                 List<AsistenciaCalendarioDiaDTO> dias = new ArrayList<>();
                 LocalDate hoy = LocalDate.now();
                 for (int day = 1; day <= ym.lengthOfMonth(); day++) {
                         LocalDate fecha = ym.atDay(day);
-                        RegistroAsistencia asistencia = entradas.get(fecha);
-                        String estado = estadoDia(fecha, hoy, asistencia != null);
+                        RegistroAsistencia entrada = entradas.get(fecha);
+                        RegistroAsistencia salida = salidas.get(fecha);
+                        String estado = estadoDia(fecha, hoy, entrada != null);
                         dias.add(new AsistenciaCalendarioDiaDTO(
                                         fecha.toString(),
                                         estado,
-                                        asistencia != null ? asistencia.getId() : null,
-                                        asistencia != null ? asistencia.getFechaHora().toLocalTime().toString() : null));
+                                        entrada != null ? entrada.getId() : null,
+                                        entrada != null ? entrada.getFechaHora().toLocalTime().toString() : null,
+                                        salida != null ? salida.getFechaHora().toLocalTime().toString() : null));
                 }
                 return new AsistenciaCalendarioMesDTO(anio, mes, dias);
         }
@@ -253,6 +262,16 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
                 return new AsistenciaCalendarioAnualDTO(anio, meses);
         }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<RegistroAsistenciaResponseDTO> historialEmpleadoActual() {
+        Empleado empleado = empleadoActual();
+        return repository.findByEmpleadoId(empleado.getId()).stream()
+                .sorted(Comparator.comparing(RegistroAsistencia::getFechaHora).reversed())
+                .map(RegistroAsistenciaMapper::toDTO)
+                .toList();
+    }
+
         @Override
         @Transactional(readOnly = true)
         public List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId) {
@@ -270,6 +289,12 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
         @Transactional(readOnly = true)
         public List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado) {
                 return repository.findByEstado(estado).stream().map(RegistroAsistenciaMapper::toDTO).toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> asistenciasPorFecha(LocalDate fecha) {
+                return repository.asistenciasHoy(inicioDelDia(fecha), finDelDia(fecha)).stream().map(RegistroAsistenciaMapper::toDTO).toList();
         }
 
         @Override

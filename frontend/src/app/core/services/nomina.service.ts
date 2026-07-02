@@ -30,6 +30,14 @@ export class NominaService {
   }
 
   /**
+   * POST /api/nomina/planillas/{id}/cerrar
+   * Cierra una planilla (cambia estado a CERRADO y asigna fecha de cierre).
+   */
+  cerrarPlanilla(id: number): Observable<Planilla> {
+    return this.http.post<Planilla>(`${this.baseUrl}/planillas/${id}/cerrar`, null);
+  }
+
+  /**
    * POST /api/nomina/bonos
    * Crea un bono o descuento para un empleado.
    */

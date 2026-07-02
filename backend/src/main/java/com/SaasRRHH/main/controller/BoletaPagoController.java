@@ -1,8 +1,15 @@
 package com.SaasRRHH.main.controller;
 
+import com.SaasRRHH.main.DTO.BoletaPagoResponseDTO;
+import com.SaasRRHH.main.mapper.BoletaPagoMapper;
 import com.SaasRRHH.main.model.BoletaPago;
+import com.SaasRRHH.main.model.Empleado;
+import com.SaasRRHH.main.model.Usuario;
+import com.SaasRRHH.main.repository.EmpleadoRepository;
+import com.SaasRRHH.main.repository.UsuarioRepository;
 import com.SaasRRHH.main.services.BoletaPagoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,14 +19,34 @@ import java.util.List;
 public class BoletaPagoController {
 
     private final BoletaPagoService service;
+    private final UsuarioRepository usuarioRepository;
+    private final EmpleadoRepository empleadoRepository;
 
-    public BoletaPagoController(BoletaPagoService service) {
+    public BoletaPagoController(BoletaPagoService service,
+                                 UsuarioRepository usuarioRepository,
+                                 EmpleadoRepository empleadoRepository) {
         this.service = service;
+        this.usuarioRepository = usuarioRepository;
+        this.empleadoRepository = empleadoRepository;
     }
 
     @GetMapping
-    public List<BoletaPago> listar() {
-        return service.listar();
+    public List<BoletaPagoResponseDTO> listar() {
+        return service.listar().stream()
+                .map(BoletaPagoMapper::toDTO)
+                .toList();
+    }
+
+    @GetMapping("/mis-boletas")
+    public List<BoletaPagoResponseDTO> listarMisBoletas() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email));
+        Empleado empleado = empleadoRepository.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("No hay un empleado asociado a este usuario"));
+        return service.listarPorEmpleadoId(empleado.getId()).stream()
+                .map(BoletaPagoMapper::toDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")

@@ -17,9 +17,15 @@ public class BoletaPagoServiceImpl implements BoletaPagoService {
     private final BoletaPagoRepository repository;
 
     @Override
-    @Transactional(readOnly = true) // ← agregar
+    @Transactional(readOnly = true)
     public List<BoletaPago> listar() {
         return repository.findAllWithRelaciones();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BoletaPago> listarPorEmpleadoId(Long empleadoId) {
+        return repository.findByEmpleadoIdWithRelaciones(empleadoId);
     }
 
 

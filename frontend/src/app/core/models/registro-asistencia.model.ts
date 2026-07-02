@@ -21,6 +21,7 @@ export interface CalendarioDia {
   estado: 'ASISTIO' | 'FALTA' | 'NEUTRO' | string;
   asistenciaId?: number | null;
   horaEntrada?: string | null;
+  horaSalida?: string | null;
 }
 export interface CalendarioMes {
   anio: number;

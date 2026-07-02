@@ -14,7 +14,13 @@ public class BoletaPagoResponseDTO {
 
     private Long empleadoId;
 
+    private String empleadoNombre;
+
     private Long planillaId;
+
+    private Integer planillaMes;
+
+    private Integer planillaAnio;
 
     private BigDecimal sueldoBase;
 

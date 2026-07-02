@@ -1,3 +1,26 @@
+.period-badge {
+  display: inline-block;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.employee-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.employee-name {
+  font-size: 0.85rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
 .id-chip {
   background: var(--color-bg);
   color: var(--color-text-muted);

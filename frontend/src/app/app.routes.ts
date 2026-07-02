@@ -73,8 +73,8 @@ export const routes: Routes = [
       },
       {
         path: 'planillas',
-        loadChildren: () => import('./features/planillas/planilla.routes').then((m) => m.planillaRoutes),
-        title: 'Planillas - SaaSRRHH',
+        redirectTo: 'nomina',
+        pathMatch: 'full',
       },
       {
         path: 'boletas',

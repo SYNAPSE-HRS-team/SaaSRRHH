@@ -20,6 +20,7 @@ export class NominaComponent implements OnInit {
   loadingPlanillas = signal(false);
   loadingBoletas = signal(false);
   generando = signal(false);
+  cerrando = signal(false);
   descargandoPdf = signal<number | null>(null);
   error = signal('');
   success = signal('');
@@ -27,7 +28,9 @@ export class NominaComponent implements OnInit {
 
   showGenerarModal = signal(false);
   showBoletasModal = signal(false);
+  showCerrarModal = signal(false);
   planillaSeleccionada: Planilla | null = null;
+  planillaACerrar: Planilla | null = null;
 
   generarMes = new Date().getMonth() + 1;
   generarAnio = new Date().getFullYear();
@@ -107,6 +110,32 @@ export class NominaComponent implements OnInit {
       },
       error: () => {
         this.loadingBoletas.set(false);
+      }
+    });
+  }
+
+  confirmarCerrar(p: Planilla): void {
+    this.planillaACerrar = p;
+    this.showCerrarModal.set(true);
+  }
+
+  cerrarPlanilla(): void {
+    if (!this.planillaACerrar?.id) return;
+    this.cerrando.set(true);
+    this.error.set('');
+    this.nominaService.cerrarPlanilla(this.planillaACerrar.id).subscribe({
+      next: () => {
+        this.cerrando.set(false);
+        this.showCerrarModal.set(false);
+        this.planillaACerrar = null;
+        this.success.set('✅ Planilla cerrada correctamente.');
+        setTimeout(() => this.success.set(''), 4000);
+        this.loadPlanillas();
+      },
+      error: () => {
+        this.cerrando.set(false);
+        this.error.set('Error al cerrar la planilla');
+        this.showCerrarModal.set(false);
       }
     });
   }

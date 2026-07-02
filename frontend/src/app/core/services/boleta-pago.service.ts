@@ -14,6 +14,11 @@ export class BoletaPagoService {
     return this.http.get<BoletaPago[]>(this.baseUrl);
   }
 
+  /** GET /api/boletas_pago/mis-boletas — solo las boletas del empleado autenticado */
+  listarMisBoletas(): Observable<BoletaPago[]> {
+    return this.http.get<BoletaPago[]>(`${this.baseUrl}/mis-boletas`);
+  }
+
   buscarPorId(id: number): Observable<BoletaPago> {
     return this.http.get<BoletaPago>(`${this.baseUrl}/${id}`);
   }

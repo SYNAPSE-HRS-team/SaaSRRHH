@@ -22,7 +22,15 @@ export const documentoRoutes: Routes = [
         loadComponent: () =>
           import('./pages/documento-form/documento-form.component').then(m => m.DocumentoFormComponent),
         title: 'Nuevo Documento - SaaSRRHH'
-      }
+      },
+      {
+  path: 'tipos-documento',
+  canActivate: [RoleGuard],
+  data: { roles: ['ADMIN', 'SUPERVISOR'] },
+  loadComponent: () =>
+    import('./pages/tipo-documento-list/tipo-documento-list.component').then(m => m.TipoDocumentoListComponent),
+  title: 'Tipos de Documento - SaaSRRHH'
+},
     ]
   }
 ];

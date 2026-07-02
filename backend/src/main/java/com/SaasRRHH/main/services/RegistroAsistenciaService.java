@@ -20,10 +20,12 @@ public interface RegistroAsistenciaService {
     AsistenciaCalendarioAnualDTO calendarioAnualEmpleadoActual(Integer anio);
     AsistenciaCalendarioMesDTO calendarioEmpleado(Long empleadoId, Integer anio, Integer mes);
     AsistenciaCalendarioAnualDTO calendarioAnualEmpleado(Long empleadoId, Integer anio);
+    List<RegistroAsistenciaResponseDTO> historialEmpleadoActual();
     void eliminar(Long id);
     List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId);
     List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
     List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado);
+    List<RegistroAsistenciaResponseDTO> asistenciasPorFecha(java.time.LocalDate fecha);
     List<RegistroAsistenciaResponseDTO> asistenciasHoy();
     List<RegistroAsistenciaResponseDTO> incidenciasAsistencia();
     Long contarAsistenciasMensuales(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
