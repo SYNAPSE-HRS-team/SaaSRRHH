@@ -1,0 +1,81 @@
+-------------------------------------------------------------------------------
+Test set: com.SaasRRHH.main.controller.AuthControllerTest
+-------------------------------------------------------------------------------
+Tests run: 14, Failures: 3, Errors: 4, Skipped: 0, Time elapsed: 12.05 s <<< FAILURE! -- in com.SaasRRHH.main.controller.AuthControllerTest
+com.SaasRRHH.main.controller.AuthControllerTest.loginEsRutaPublica -- Time elapsed: 0.409 s <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<401>
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:637)
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+	at com.SaasRRHH.main.controller.AuthControllerTest.loginEsRutaPublica(AuthControllerTest.java:241)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenSupervisor_aRutaPermitida_retorna200 -- Time elapsed: 0.009 s <<< ERROR!
+org.springframework.security.core.userdetails.UsernameNotFoundException: Usuario no encontrado con email: supervisor@test.com
+	at com.SaasRRHH.main.security.CustomUserDetailsService.lambda$loadUserByUsername$0(CustomUserDetailsService.java:31)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.SaasRRHH.main.security.CustomUserDetailsService.loadUserByUsername(CustomUserDetailsService.java:31)
+	at com.SaasRRHH.main.controller.AuthControllerTest.obtenerTokenSupervisor(AuthControllerTest.java:259)
+	at com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenSupervisor_aRutaPermitida_retorna200(AuthControllerTest.java:155)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenAdmin_aRutaProtegida_retorna200 -- Time elapsed: 0.009 s <<< ERROR!
+org.springframework.security.core.userdetails.UsernameNotFoundException: Usuario no encontrado con email: admin@test.com
+	at com.SaasRRHH.main.security.CustomUserDetailsService.lambda$loadUserByUsername$0(CustomUserDetailsService.java:31)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.SaasRRHH.main.security.CustomUserDetailsService.loadUserByUsername(CustomUserDetailsService.java:31)
+	at com.SaasRRHH.main.controller.AuthControllerTest.obtenerTokenAdmin(AuthControllerTest.java:254)
+	at com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenAdmin_aRutaProtegida_retorna200(AuthControllerTest.java:145)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.SaasRRHH.main.controller.AuthControllerTest.login_conCredencialesValidas_devuelveToken -- Time elapsed: 0.114 s <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<401>
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:637)
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+	at com.SaasRRHH.main.controller.AuthControllerTest.login_conCredencialesValidas_devuelveToken(AuthControllerTest.java:73)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.SaasRRHH.main.controller.AuthControllerTest.login_conCredencialesSupervisor_devuelveToken -- Time elapsed: 0.124 s <<< FAILURE!
+java.lang.AssertionError: Status expected:<200> but was:<401>
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:59)
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:122)
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:637)
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)
+	at com.SaasRRHH.main.controller.AuthControllerTest.login_conCredencialesSupervisor_devuelveToken(AuthControllerTest.java:90)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenSupervisor_aRutaSoloAdmin_retorna403 -- Time elapsed: 0.008 s <<< ERROR!
+org.springframework.security.core.userdetails.UsernameNotFoundException: Usuario no encontrado con email: supervisor@test.com
+	at com.SaasRRHH.main.security.CustomUserDetailsService.lambda$loadUserByUsername$0(CustomUserDetailsService.java:31)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.SaasRRHH.main.security.CustomUserDetailsService.loadUserByUsername(CustomUserDetailsService.java:31)
+	at com.SaasRRHH.main.controller.AuthControllerTest.obtenerTokenSupervisor(AuthControllerTest.java:259)
+	at com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenSupervisor_aRutaSoloAdmin_retorna403(AuthControllerTest.java:169)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenSupervisor_aNomina_retorna403 -- Time elapsed: 0.008 s <<< ERROR!
+org.springframework.security.core.userdetails.UsernameNotFoundException: Usuario no encontrado con email: supervisor@test.com
+	at com.SaasRRHH.main.security.CustomUserDetailsService.lambda$loadUserByUsername$0(CustomUserDetailsService.java:31)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at com.SaasRRHH.main.security.CustomUserDetailsService.loadUserByUsername(CustomUserDetailsService.java:31)
+	at com.SaasRRHH.main.controller.AuthControllerTest.obtenerTokenSupervisor(AuthControllerTest.java:259)
+	at com.SaasRRHH.main.controller.AuthControllerTest.accesoConTokenSupervisor_aNomina_retorna403(AuthControllerTest.java:179)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
