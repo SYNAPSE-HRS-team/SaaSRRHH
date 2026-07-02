@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EmpleadoRequest } from '../../../../core/models/empleado.model';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
@@ -31,6 +31,9 @@ export class EmpleadoFormComponent implements OnInit {
   usuarios: any[] = [];
   usuariosCargados = signal(false);
 
+  isEditMode = false;
+  empleadoId?: number;
+
   saving = signal(false);
   error = signal('');
   successMessage = signal('');
@@ -39,14 +42,22 @@ export class EmpleadoFormComponent implements OnInit {
     private empleadoService: EmpleadoService,
     private usuarioService: UsuarioService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.cargarUsuarios();
+    const paramId = Number(this.route.snapshot.paramMap.get('id'));
+    if (paramId && !Number.isNaN(paramId)) {
+      this.isEditMode = true;
+      this.empleadoId = paramId;
+      this.cargarEmpleado(paramId);
+    } else {
+      this.cargarUsuarios();
+    }
   }
 
-  // ✅ AHORA USA listarSinEmpleado()
-  cargarUsuarios(): void {
+  // ✅ Cargar usuarios sin empleado
+  cargarUsuarios(currentUsuarioId?: number): void {
     console.log('🔄 Cargando usuarios sin empleado...');
 
     this.usuarioService.listarSinEmpleado().subscribe({
@@ -55,7 +66,20 @@ export class EmpleadoFormComponent implements OnInit {
         this.usuarios = data;
         this.usuariosCargados.set(true);
 
-        if (data.length === 0) {
+        if (currentUsuarioId) {
+          this.usuarioService.obtener(currentUsuarioId).subscribe({
+            next: (currentUser) => {
+              if (!this.usuarios.some((u) => u.id === currentUser.id)) {
+                this.usuarios.unshift(currentUser);
+              }
+            },
+            error: (err) => {
+              console.error('❌ Error cargando usuario actual de empleado:', err);
+            },
+          });
+        }
+
+        if (data.length === 0 && !currentUsuarioId) {
           this.error.set('No hay usuarios disponibles. Crea un usuario primero.');
         }
       },
@@ -67,7 +91,70 @@ export class EmpleadoFormComponent implements OnInit {
     });
   }
 
+  cargarEmpleado(id: number): void {
+    this.empleadoService.getById(id).subscribe({
+      next: (empleado) => {
+        this.formData = {
+          usuarioId: empleado.usuarioId || 0,
+          nombres: empleado.nombres || '',
+          apellidos: empleado.apellidos || '',
+          dni: empleado.dni || '',
+          cargo: empleado.cargo || '',
+          sueldoBase: empleado.sueldoBase,
+          fechaInicioContrato: empleado.fechaInicioContrato || '',
+          fechaFinContrato: empleado.fechaFinContrato || '',
+          asignacionFamiliar: empleado.asignacionFamiliar || false,
+          activo: empleado.activo ?? true,
+          fotoPerfilUrl: empleado.fotoPerfilUrl || '',
+        };
+        this.cargarUsuarios(empleado.usuarioId || undefined);
+      },
+      error: (err) => {
+        console.error('❌ Error al cargar empleado para edición:', err);
+        this.error.set('No se pudo cargar el empleado para edición');
+      },
+    });
+  }
+
+  // ✅ Método corregido - Recibe el evento y extrae el valor con tipado seguro
+  onUsuarioChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const id = Number(select.value);
+    
+    this.formData.usuarioId = id;
+
+    // Si selecciona "Seleccionar usuario..." (valor 0)
+    if (!id || id === 0) {
+      this.formData.nombres = '';
+      this.formData.apellidos = '';
+      return;
+    }
+
+    this.error.set('');
+
+    // ✅ Obtener datos del usuario seleccionado para autocompletar
+    this.usuarioService.obtener(id).subscribe({
+      next: (usuario) => {
+        // ✅ Autocompletar nombres y apellidos
+        this.formData.nombres = usuario.nombre || '';
+        this.formData.apellidos = usuario.apellido || '';
+        console.log('✅ Datos autocompletados:', {
+          nombres: this.formData.nombres,
+          apellidos: this.formData.apellidos
+        });
+      },
+      error: (err) => {
+        console.error('❌ Error obteniendo datos del usuario seleccionado:', err);
+        this.error.set('No se pudo cargar los datos del usuario seleccionado');
+        // Limpiar campos en caso de error
+        this.formData.nombres = '';
+        this.formData.apellidos = '';
+      },
+    });
+  }
+
   onSubmit(): void {
+    // Validaciones
     if (!this.formData.usuarioId || this.formData.usuarioId === 0) {
       this.error.set('Debes seleccionar un usuario');
       return;
@@ -89,18 +176,24 @@ export class EmpleadoFormComponent implements OnInit {
 
     console.log('📤 Enviando empleado:', this.formData);
 
-    this.empleadoService.create(this.formData).subscribe({
+    const operation = this.isEditMode && this.empleadoId
+      ? this.empleadoService.update(this.empleadoId, this.formData)
+      : this.empleadoService.create(this.formData);
+
+    operation.subscribe({
       next: (response) => {
         this.saving.set(false);
         this.successMessage.set(
-          `Empleado "${response.nombres} ${response.apellidos}" creado exitosamente`,
+          this.isEditMode
+            ? `Empleado "${response.nombres} ${response.apellidos}" actualizado exitosamente`
+            : `Empleado "${response.nombres} ${response.apellidos}" creado exitosamente`,
         );
         setTimeout(() => this.router.navigate(['/empleados']), 1500);
       },
       error: (err) => {
         this.saving.set(false);
         console.error('❌ Error:', err);
-        this.error.set(err.error?.message || 'Error al crear el empleado');
+        this.error.set(err.error?.message || (this.isEditMode ? 'Error al actualizar el empleado' : 'Error al crear el empleado'));
       },
     });
   }
