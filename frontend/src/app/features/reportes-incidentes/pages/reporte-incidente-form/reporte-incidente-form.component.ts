@@ -6,11 +6,14 @@ import {
     EstadoIncidente,
     NivelRiesgo,
     ReporteIncidenteRequest,
+    ReporteIncidenteResponse,
     TipoIncidente,
 } from '../../../../core/models/reporte-incidente.model';
 import { ReporteIncidenteService } from '../../../../core/services/reporte-incidente.service';
 import { TareaAsignadaService } from '../../../../core/services/tarea-asignada.service';
 import { TareaAsignadaResponse } from '../../../../core/models/tarea-asignada.model';
+import { EmpleadoService } from '../../../../core/services/empleado.service';
+import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 
 @Component({
   selector: 'app-reporte-incidente-form',
@@ -29,10 +32,43 @@ export class ReporteIncidenteFormComponent implements OnInit {
   error = false;
   errorMessage = '';
 
-  tareas: TareaAsignadaResponse[] = [];
+  // ============================================
+  // DATOS DE TAREAS
+  // ============================================
+  tareasOriginales: TareaAsignadaResponse[] = [];
+  tareasFiltradas: TareaAsignadaResponse[] = [];
+  
   tiposIncidente = Object.values(TipoIncidente);
   nivelesRiesgo = Object.values(NivelRiesgo);
   estadosIncidente = Object.values(EstadoIncidente);
+
+  // ============================================
+  // FILTROS
+  // ============================================
+  filtros = {
+    fecha: 'hoy',
+    estado: '',
+    empleadoId: null as number | null,
+    searchTerm: '',
+  };
+
+  opcionesFecha = [
+    { value: 'hoy', label: '📅 Hoy' },
+    { value: 'semana', label: '📅 Esta semana' },
+    { value: 'mes', label: '📅 Este mes' },
+    { value: 'todas', label: '📅 Todas' },
+  ];
+
+  opcionesEstado = [
+    { value: '', label: '📊 Todos los estados' },
+    { value: 'PENDIENTE', label: '⏳ Pendientes' },
+    { value: 'EN_PROGRESO', label: '🔄 En progreso' },
+    { value: 'COMPLETADO', label: '✅ Completadas' },
+    { value: 'CANCELADO', label: '❌ Canceladas' },
+    { value: 'INCONCLUSO', label: '⚠️ Inconclusas' },
+  ];
+
+  empleados: EmpleadoResponse[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -40,10 +76,12 @@ export class ReporteIncidenteFormComponent implements OnInit {
     private router: Router,
     private reporteService: ReporteIncidenteService,
     private tareaService: TareaAsignadaService,
+    private empleadoService: EmpleadoService,
   ) {}
 
   ngOnInit(): void {
     this.inicializarFormulario();
+    this.cargarEmpleados();
     this.cargarTareas();
   }
 
@@ -56,6 +94,40 @@ export class ReporteIncidenteFormComponent implements OnInit {
       nivelRiesgo: [''],
       estado: [''],
       fechaIncidente: ['', [Validators.required]],
+    });
+  }
+
+  // ============================================
+  // CARGA DE DATOS
+  // ============================================
+  cargarEmpleados(): void {
+    this.empleadoService.listarActivos().subscribe({
+      next: (data) => {
+        this.empleados = data;
+        console.log('✅ Empleados cargados:', data.length);
+      },
+      error: (err) => {
+        console.error('❌ Error cargando empleados:', err);
+      },
+    });
+  }
+
+  cargarTareas(): void {
+    this.loading = true;
+    this.tareaService.listar().subscribe({
+      next: (data) => {
+        console.log('📋 Tareas recibidas:', data.length);
+        this.tareasOriginales = data;
+        this.aplicarFiltros();
+        this.verificarParametros();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('❌ Error al cargar tareas:', err);
+        this.error = true;
+        this.errorMessage = 'Error al cargar las tareas';
+        this.loading = false;
+      },
     });
   }
 
@@ -83,9 +155,7 @@ export class ReporteIncidenteFormComponent implements OnInit {
   cargarReporte(id: number, soloLectura: boolean): void {
     this.loading = true;
     this.reporteService.obtenerPorId(id).subscribe({
-      next: (data: any) => {
-        const tarea = this.tareas.find((t) => t.id === data.tareaId);
-
+      next: (data: ReporteIncidenteResponse) => {
         this.form.patchValue({
           tareaId: data.tareaId || '',
           tipo: data.tipo,
@@ -111,27 +181,174 @@ export class ReporteIncidenteFormComponent implements OnInit {
     });
   }
 
+  // ============================================
+  // FILTROS
+  // ============================================
+  aplicarFiltros(): void {
+    let resultado = [...this.tareasOriginales];
+
+    // Filtro por fecha
+    if (this.filtros.fecha !== 'todas') {
+      const hoy = new Date();
+      const hoyStr = hoy.toISOString().split('T')[0];
+      
+      if (this.filtros.fecha === 'hoy') {
+        resultado = resultado.filter(t => {
+          const fechaTarea = new Date(t.fecha).toISOString().split('T')[0];
+          return fechaTarea === hoyStr;
+        });
+      } else if (this.filtros.fecha === 'semana') {
+        const inicioSemana = new Date(hoy);
+        inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+        const finSemana = new Date(inicioSemana);
+        finSemana.setDate(inicioSemana.getDate() + 6);
+        
+        resultado = resultado.filter(t => {
+          const fechaTarea = new Date(t.fecha);
+          return fechaTarea >= inicioSemana && fechaTarea <= finSemana;
+        });
+      } else if (this.filtros.fecha === 'mes') {
+        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+        
+        resultado = resultado.filter(t => {
+          const fechaTarea = new Date(t.fecha);
+          return fechaTarea >= inicioMes && fechaTarea <= finMes;
+        });
+      }
+    }
+
+    // Filtro por estado
+    if (this.filtros.estado) {
+      resultado = resultado.filter(t => t.estado === this.filtros.estado);
+    }
+
+    // Filtro por empleado
+    if (this.filtros.empleadoId) {
+      resultado = resultado.filter(t => 
+        t.empleado?.id === this.filtros.empleadoId ||
+        t.empleadoId === this.filtros.empleadoId
+      );
+    }
+
+    // Filtro por búsqueda
+    if (this.filtros.searchTerm.trim()) {
+      const term = this.filtros.searchTerm.toLowerCase().trim();
+      resultado = resultado.filter(t =>
+        t.funcion?.toLowerCase().includes(term) ||
+        t.descripcion?.toLowerCase().includes(term) ||
+        t.empleado?.nombres?.toLowerCase().includes(term) ||
+        t.empleado?.apellidos?.toLowerCase().includes(term) ||
+        t.supervisor?.nombres?.toLowerCase().includes(term) ||
+        t.supervisor?.apellidos?.toLowerCase().includes(term) ||
+        t.area?.nombre?.toLowerCase().includes(term)
+      );
+    }
+
+    this.tareasFiltradas = resultado;
+    console.log('📊 Tareas filtradas:', this.tareasFiltradas.length);
+    
+    // Si la tarea seleccionada ya no está en los filtros, limpiar selección
+    const tareaSeleccionada = this.form.get('tareaId')?.value;
+    if (tareaSeleccionada) {
+      const existe = this.tareasFiltradas.some(t => t.id === Number(tareaSeleccionada));
+      if (!existe) {
+        this.form.patchValue({ tareaId: '' });
+      }
+    }
+  }
+
+  // ============================================
+  // MANEJADORES DE FILTROS
+  // ============================================
+  onFiltroFechaChange(event: Event): void {
+    this.filtros.fecha = (event.target as HTMLSelectElement).value;
+    this.aplicarFiltros();
+  }
+
+  onFiltroEstadoChange(event: Event): void {
+    this.filtros.estado = (event.target as HTMLSelectElement).value;
+    this.aplicarFiltros();
+  }
+
+  onFiltroEmpleadoChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.filtros.empleadoId = value ? Number(value) : null;
+    this.aplicarFiltros();
+  }
+
+  onSearchChange(event: Event): void {
+    this.filtros.searchTerm = (event.target as HTMLInputElement).value;
+    this.aplicarFiltros();
+  }
+
+  limpiarFiltros(): void {
+    this.filtros = {
+      fecha: 'hoy',
+      estado: '',
+      empleadoId: null,
+      searchTerm: '',
+    };
+    this.aplicarFiltros();
+  }
+
+  // ============================================
+  // GETTERS
+  // ============================================
   get f() {
     return this.form.controls;
   }
 
   get selectedTarea(): TareaAsignadaResponse | undefined {
     const tareaId = this.form.get('tareaId')?.value;
-    return this.tareas.find((t) => t.id === Number(tareaId));
+    return this.tareasFiltradas.find((t) => t.id === Number(tareaId));
   }
 
-  cargarTareas(): void {
-    this.tareaService.listar().subscribe({
-      next: (data) => {
-        this.tareas = data;
-        this.verificarParametros();
-      },
-      error: (err) => {
-        console.error('Error al cargar tareas:', err);
-      },
-    });
+  get hayTareasFiltradas(): boolean {
+    return this.tareasFiltradas.length > 0;
   }
 
+  get totalTareasFiltradas(): number {
+    return this.tareasFiltradas.length;
+  }
+
+  get totalTareasOriginales(): number {
+    return this.tareasOriginales.length;
+  }
+
+  // ============================================
+  // UTILIDADES
+  // ============================================
+  getNombreCompleto(emp: any): string {
+    if (!emp) return '';
+    return `${emp.nombres || ''} ${emp.apellidos || ''}`.trim();
+  }
+
+  getColorEstado(estado: string): string {
+    const colores: { [key: string]: string } = {
+      'PENDIENTE': '#ff9800',
+      'EN_PROGRESO': '#2196f3',
+      'COMPLETADO': '#4caf50',
+      'CANCELADO': '#f44336',
+      'INCONCLUSO': '#9e9e9e',
+    };
+    return colores[estado] || '#9e9e9e';
+  }
+
+  getIconoEstado(estado: string): string {
+    const iconos: { [key: string]: string } = {
+      'PENDIENTE': '⏳',
+      'EN_PROGRESO': '🔄',
+      'COMPLETADO': '✅',
+      'CANCELADO': '❌',
+      'INCONCLUSO': '⚠️',
+    };
+    return iconos[estado] || '📋';
+  }
+
+  // ============================================
+  // ACCIONES DEL FORMULARIO
+  // ============================================
   onSubmit(): void {
     this.submitted = true;
     this.error = false;
@@ -143,21 +360,21 @@ export class ReporteIncidenteFormComponent implements OnInit {
     const selectedTarea = this.selectedTarea;
     if (!selectedTarea) {
       this.error = true;
-      this.errorMessage = 'Debe seleccionar una tarea válida para crear el incidente';
+      this.errorMessage = 'Debe seleccionar una tarea válida';
       return;
     }
 
     this.loading = true;
     const dto: ReporteIncidenteRequest = {
       tareaId: selectedTarea.id,
-      areaId: selectedTarea.areaId || selectedTarea.area?.id,
-      empleadoId: selectedTarea.empleadoId || selectedTarea.empleado?.id!,
-      supervisorId: selectedTarea.supervisorId || selectedTarea.supervisor?.id,
+      areaId: selectedTarea.area?.id || selectedTarea.areaId,
+      empleadoId: selectedTarea.empleado?.id || selectedTarea.empleadoId || 0,
+      supervisorId: selectedTarea.supervisor?.id || selectedTarea.supervisorId,
       tipo: this.form.value.tipo,
       descripcion: this.form.value.descripcion,
       evidenciaUrl: this.form.value.evidenciaUrl,
-      nivelRiesgo: this.form.value.nivelRiesgo,
-      estado: this.form.value.estado,
+      nivelRiesgo: this.form.value.nivelRiesgo || 'BAJO',
+      estado: this.form.value.estado || 'REPORTADO',
       fechaIncidente: this.form.value.fechaIncidente,
     };
 

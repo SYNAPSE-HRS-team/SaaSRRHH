@@ -20,121 +20,260 @@
 
   <!-- Formulario -->
   <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-    <div class="form-grid">
-      <!-- Campo: Empleado ID -->
+    
+    <!-- ============================================ -->
+    <!-- SECCIÓN: SELECCIÓN DE TAREA CON FILTROS      -->
+    <!-- ============================================ -->
+    <div class="form-section">
+      <h3 class="section-title">📋 Seleccionar Tarea</h3>
+      
+      <!-- ✅ BARRA DE FILTROS -->
+      <div class="filtros-container">
+        <!-- Búsqueda -->
+        <div class="filtro-group search-group">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Buscar tarea..."
+            (input)="onSearchChange($event)"
+            class="filtro-input"
+          />
+        </div>
+
+        <!-- Filtro por fecha -->
+        <div class="filtro-group">
+          <label>📅 Fecha</label>
+          <select (change)="onFiltroFechaChange($event)" class="filtro-select">
+            <option *ngFor="let opt of opcionesFecha" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro por estado -->
+        <div class="filtro-group">
+          <label>📊 Estado</label>
+          <select (change)="onFiltroEstadoChange($event)" class="filtro-select">
+            <option *ngFor="let opt of opcionesEstado" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro por empleado -->
+        <div class="filtro-group">
+          <label>👤 Empleado</label>
+          <select (change)="onFiltroEmpleadoChange($event)" class="filtro-select">
+            <option value="">Todos</option>
+            <option *ngFor="let emp of empleados" [value]="emp.id">
+              {{ getNombreCompleto(emp) }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Limpiar filtros -->
+        <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">
+          🧹 Limpiar
+        </button>
+      </div>
+
+      <!-- Contador de tareas -->
+      <div class="tareas-counter">
+        <span>
+          Mostrando <strong>{{ totalTareasFiltradas }}</strong> de 
+          <strong>{{ totalTareasOriginales }}</strong> tareas
+        </span>
+        <span *ngIf="!hayTareasFiltradas" class="no-tareas-msg">
+          ⚠️ No hay tareas que coincidan con los filtros
+        </span>
+      </div>
+
+      <!-- Selector de tarea -->
       <div class="form-group">
-        <label for="empleadoId">Empleado *</label>
-        <input
-          type="number"
-          id="empleadoId"
-          formControlName="empleadoId"
-          placeholder="ID del empleado"
-          [class.invalid]="f['empleadoId'].invalid && submitted"
-        />
-        <div class="error-text" *ngIf="f['empleadoId'].invalid && submitted">
-          <span *ngIf="f['empleadoId'].errors?.['required']">El empleado es obligatorio</span>
+        <label for="tareaId">Tarea Asignada *</label>
+        <select 
+          id="tareaId" 
+          formControlName="tareaId" 
+          [class.invalid]="f['tareaId'].invalid && submitted"
+          class="form-select"
+          [disabled]="!hayTareasFiltradas"
+        >
+          <option value="">-- Seleccione una tarea --</option>
+          <option *ngFor="let tarea of tareasFiltradas" [value]="tarea.id">
+            #{{ tarea.id }} - {{ tarea.funcion }}
+            <span *ngIf="tarea.empleado" class="tarea-empleado">
+              👤 {{ getNombreCompleto(tarea.empleado) }}
+            </span>
+            <span *ngIf="tarea.estado" class="tarea-estado" [style.color]="getColorEstado(tarea.estado)">
+              {{ getIconoEstado(tarea.estado) }} {{ tarea.estado }}
+            </span>
+          </option>
+        </select>
+        
+        <small class="field-note">
+          💡 Seleccione una tarea para autocompletar empleado, supervisor y área
+        </small>
+        
+        <div class="error-text" *ngIf="f['tareaId'].invalid && submitted">
+          <span *ngIf="f['tareaId'].errors?.['required']">Debe seleccionar una tarea</span>
         </div>
       </div>
 
-      <!-- Campo: Supervisor ID -->
-      <div class="form-group">
-        <label for="supervisorId">Supervisor</label>
-        <input
-          type="number"
-          id="supervisorId"
-          formControlName="supervisorId"
-          placeholder="ID del supervisor"
-        />
-      </div>
-
-      <!-- Campo: Tarea ID -->
-      <div class="form-group">
-        <label for="tareaId">Tarea Asignada</label>
-        <input type="number" id="tareaId" formControlName="tareaId" placeholder="ID de la tarea" />
-      </div>
-
-      <!-- Campo: Área ID -->
-      <div class="form-group">
-        <label for="areaId">Área de Trabajo</label>
-        <input type="number" id="areaId" formControlName="areaId" placeholder="ID del área" />
-      </div>
-
-      <!-- Campo: Tipo de Incidente -->
-      <div class="form-group">
-        <label for="tipo">Tipo de Incidente *</label>
-        <select id="tipo" formControlName="tipo" [class.invalid]="f['tipo'].invalid && submitted">
-          <option value="">Seleccione un tipo</option>
-          <option *ngFor="let tipo of tiposIncidente" [value]="tipo">{{ tipo }}</option>
-        </select>
-        <div class="error-text" *ngIf="f['tipo'].invalid && submitted">
-          <span *ngIf="f['tipo'].errors?.['required']">El tipo es obligatorio</span>
-        </div>
-      </div>
-
-      <!-- Campo: Nivel de Riesgo -->
-      <div class="form-group">
-        <label for="nivelRiesgo">Nivel de Riesgo</label>
-        <select id="nivelRiesgo" formControlName="nivelRiesgo">
-          <option value="">Seleccione un nivel</option>
-          <option *ngFor="let nivel of nivelesRiesgo" [value]="nivel">{{ nivel }}</option>
-        </select>
-      </div>
-
-      <!-- Campo: Estado -->
-      <div class="form-group">
-        <label for="estado">Estado</label>
-        <select id="estado" formControlName="estado">
-          <option value="">Seleccione un estado</option>
-          <option *ngFor="let estado of estadosIncidente" [value]="estado">{{ estado }}</option>
-        </select>
-      </div>
-
-      <!-- Campo: Fecha del Incidente -->
-      <div class="form-group">
-        <label for="fechaIncidente">Fecha del Incidente *</label>
-        <input
-          type="datetime-local"
-          id="fechaIncidente"
-          formControlName="fechaIncidente"
-          [class.invalid]="f['fechaIncidente'].invalid && submitted"
-        />
-        <div class="error-text" *ngIf="f['fechaIncidente'].invalid && submitted">
-          <span *ngIf="f['fechaIncidente'].errors?.['required']">La fecha es obligatoria</span>
+      <!-- Resumen de la tarea seleccionada -->
+      <div *ngIf="selectedTarea" class="tarea-resumen">
+        <h4>📌 Tarea seleccionada</h4>
+        <div class="resumen-grid">
+          <div class="resumen-item">
+            <span class="label">ID:</span>
+            <span class="value">#{{ selectedTarea.id }}</span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Función:</span>
+            <span class="value">{{ selectedTarea.funcion }}</span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Estado:</span>
+            <span class="value" [style.color]="getColorEstado(selectedTarea.estado)">
+              {{ getIconoEstado(selectedTarea.estado) }} {{ selectedTarea.estado }}
+            </span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Fecha:</span>
+            <span class="value">{{ selectedTarea.fecha | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="resumen-item full-width">
+            <span class="label">Descripción:</span>
+            <span class="value">{{ selectedTarea.descripcion || 'Sin descripción' }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Campo: Descripción (ocupa toda la fila) -->
-    <div class="form-group full-width">
-      <label for="descripcion">Descripción *</label>
-      <textarea
-        id="descripcion"
-        formControlName="descripcion"
-        rows="4"
-        placeholder="Describa detalladamente el incidente"
-        [class.invalid]="f['descripcion'].invalid && submitted"
-      ></textarea>
-      <div class="field-info">
-        <span class="char-count">{{ f['descripcion'].value?.length || 0 }}/1000</span>
-        <div class="error-text" *ngIf="f['descripcion'].invalid && submitted">
-          <span *ngIf="f['descripcion'].errors?.['required']">La descripción es obligatoria</span>
-          <span *ngIf="f['descripcion'].errors?.['maxlength']">Máximo 1000 caracteres</span>
+    <!-- ============================================ -->
+    <!-- SECCIÓN: DATOS DE EMPLEADO, SUPERVISOR, ÁREA  -->
+    <!-- ============================================ -->
+    <div class="form-section">
+      <h3 class="section-title">👥 Datos Asociados</h3>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Empleado *</label>
+          <div class="readonly-field" [class.empty]="!selectedTarea?.empleado">
+            <span *ngIf="selectedTarea?.empleado">
+              {{ getNombreCompleto(selectedTarea.empleado) }}
+            </span>
+            <span *ngIf="!selectedTarea?.empleado" class="empty-text">
+              ⚠️ Seleccione una tarea
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Supervisor</label>
+          <div class="readonly-field" [class.empty]="!selectedTarea?.supervisor">
+            <span *ngIf="selectedTarea?.supervisor">
+              {{ getNombreCompleto(selectedTarea.supervisor) }}
+            </span>
+            <span *ngIf="!selectedTarea?.supervisor" class="empty-text">
+              ⚠️ Seleccione una tarea
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Área de Trabajo</label>
+          <div class="readonly-field" [class.empty]="!selectedTarea?.area">
+            <span *ngIf="selectedTarea?.area">
+              {{ selectedTarea.area.nombre }}
+            </span>
+            <span *ngIf="!selectedTarea?.area" class="empty-text">
+              ⚠️ Seleccione una tarea
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Campo: URL de Evidencia -->
-    <div class="form-group full-width">
-      <label for="evidenciaUrl">URL de Evidencia</label>
-      <input
-        type="url"
-        id="evidenciaUrl"
-        formControlName="evidenciaUrl"
-        placeholder="https://ejemplo.com/evidencia.jpg"
-        [class.invalid]="f['evidenciaUrl'].invalid && submitted"
-      />
-      <div class="error-text" *ngIf="f['evidenciaUrl'].invalid && submitted">
-        <span *ngIf="f['evidenciaUrl'].errors?.['maxlength']">Máximo 500 caracteres</span>
+    <!-- ============================================ -->
+    <!-- SECCIÓN: DATOS DEL INCIDENTE                 -->
+    <!-- ============================================ -->
+    <div class="form-section">
+      <h3 class="section-title">⚠️ Datos del Incidente</h3>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="tipo">Tipo de Incidente *</label>
+          <select id="tipo" formControlName="tipo" [class.invalid]="f['tipo'].invalid && submitted">
+            <option value="">Seleccione un tipo</option>
+            <option *ngFor="let tipo of tiposIncidente" [value]="tipo">{{ tipo }}</option>
+          </select>
+          <div class="error-text" *ngIf="f['tipo'].invalid && submitted">
+            <span *ngIf="f['tipo'].errors?.['required']">El tipo es obligatorio</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="nivelRiesgo">Nivel de Riesgo</label>
+          <select id="nivelRiesgo" formControlName="nivelRiesgo">
+            <option value="">Seleccione un nivel</option>
+            <option *ngFor="let nivel of nivelesRiesgo" [value]="nivel">{{ nivel }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select id="estado" formControlName="estado">
+            <option value="">Seleccione un estado</option>
+            <option *ngFor="let estado of estadosIncidente" [value]="estado">{{ estado }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="fechaIncidente">Fecha del Incidente *</label>
+          <input
+            type="datetime-local"
+            id="fechaIncidente"
+            formControlName="fechaIncidente"
+            [class.invalid]="f['fechaIncidente'].invalid && submitted"
+          />
+          <div class="error-text" *ngIf="f['fechaIncidente'].invalid && submitted">
+            <span *ngIf="f['fechaIncidente'].errors?.['required']">La fecha es obligatoria</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo: Descripción -->
+      <div class="form-group full-width">
+        <label for="descripcion">Descripción *</label>
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
+          rows="4"
+          placeholder="Describa detalladamente el incidente"
+          [class.invalid]="f['descripcion'].invalid && submitted"
+        ></textarea>
+        <div class="field-info">
+          <span class="char-count">{{ f['descripcion'].value?.length || 0 }}/1000</span>
+          <div class="error-text" *ngIf="f['descripcion'].invalid && submitted">
+            <span *ngIf="f['descripcion'].errors?.['required']">La descripción es obligatoria</span>
+            <span *ngIf="f['descripcion'].errors?.['maxlength']">Máximo 1000 caracteres</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo: URL de Evidencia -->
+      <div class="form-group full-width">
+        <label for="evidenciaUrl">URL de Evidencia</label>
+        <input
+          type="url"
+          id="evidenciaUrl"
+          formControlName="evidenciaUrl"
+          placeholder="https://ejemplo.com/evidencia.jpg"
+          [class.invalid]="f['evidenciaUrl'].invalid && submitted"
+        />
+        <div class="error-text" *ngIf="f['evidenciaUrl'].invalid && submitted">
+          <span *ngIf="f['evidenciaUrl'].errors?.['maxlength']">Máximo 500 caracteres</span>
+        </div>
       </div>
     </div>
 
