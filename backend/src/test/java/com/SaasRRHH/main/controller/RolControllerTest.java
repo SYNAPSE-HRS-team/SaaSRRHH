@@ -1,15 +1,18 @@
 package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.model.Rol;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.RolService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Arrays;
@@ -24,6 +27,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RolController.class)
+@AutoConfigureMockMvc(addFilters = false)
+
 @WithMockUser
 class RolControllerTest {
 
@@ -32,6 +37,11 @@ class RolControllerTest {
 
     @MockBean
     private RolService service;
+                @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

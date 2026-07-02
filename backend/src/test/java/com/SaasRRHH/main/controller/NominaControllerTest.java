@@ -2,6 +2,7 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.model.BonoDescuento;
 import com.SaasRRHH.main.model.Planilla;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.BonoDescuentoService;
 import com.SaasRRHH.main.services.NominaProcessorService;
 import com.SaasRRHH.main.services.PlanillaService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
@@ -47,6 +49,11 @@ class NominaControllerTest {
 
     @MockBean
     private PdfGeneratorService pdfGenerator;
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -84,7 +91,8 @@ class NominaControllerTest {
     void generarPlanilla_cuandoServicioFalla_debeRetornar5xx() throws Exception {
         when(nominaProcessor.generarPlanilla(anyInt(), anyInt())).thenThrow(new RuntimeException("fallo"));
         org.junit.jupiter.api.Assertions.assertThrows(jakarta.servlet.ServletException.class,
-            () -> mockMvc.perform(post("/api/nomina/generar").param("mes", "1").param("anio", "2025").with(csrf())).andReturn());
+                () -> mockMvc.perform(post("/api/nomina/generar").param("mes", "1").param("anio", "2025").with(csrf()))
+                        .andReturn());
     }
 
     @Test
@@ -111,8 +119,8 @@ class NominaControllerTest {
         String json = objectMapper.writeValueAsString(ejemploBono);
 
         mockMvc.perform(post("/api/nomina/bonos").with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(5)))
                 .andExpect(jsonPath("$.motivo", is("Bono extraordinario")));
@@ -120,7 +128,7 @@ class NominaControllerTest {
 
     @Test
     void descargarBoletaPdf_debeRetornarPdfYHeaders() throws Exception {
-        byte[] contenido = new byte[]{1, 2, 3, 4};
+        byte[] contenido = new byte[] { 1, 2, 3, 4 };
         when(pdfGenerator.generarBoletaPdf(1L)).thenReturn(contenido);
 
         mockMvc.perform(get("/api/nomina/boleta/1/pdf"))

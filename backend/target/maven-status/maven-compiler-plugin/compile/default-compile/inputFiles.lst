@@ -1,182 +1,182 @@
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\DataSeeder.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\SecurityConfig.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\TareaScheduler.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AccesoUsuarioController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AnaliticaController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AreaTrabajoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AuthController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\BoletaPagoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\DispositivoAutorizadoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\DocumentoPrivadoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\EmpleadoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\EncuestaBienestarController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\FamiliarController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\FeedbackAnonimoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\MetricaBurnoutController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\NominaController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\PlanillaController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\RegistroAsistenciaController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\ReporteDiarioController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\ReporteIncidenteController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\RolController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\TareaAsignadaController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\TipoDocumentoController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\UsuarioController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\ValidacionSeguridadController.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AccesoUsuarioRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AccesoUsuarioResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AreaTrabajoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AreaTrabajoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaCalendarioAnualDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaCalendarioDiaDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaCalendarioMesDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaQrDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaScanRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\BoletaPagoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\BoletaPagoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DashboardDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DispositivoAutorizadoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DispositivoAutorizadoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DocumentoPrivadoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DocumentoPrivadoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EmpleadoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EmpleadoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EncuestaBienestarRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EncuestaBienestarResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FamiliarRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FamiliarResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FeedbackAnonimoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FeedbackAnonimoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\MetricaBurnoutRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\MetricaBurnoutResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\PlanillaRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\PlanillaResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\RegistroAsistenciaRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\RegistroAsistenciaResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteDiarioRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteDiarioResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteIncidenteRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteIncidenteResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ResumenBienestarDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\RolResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TareaAsignadaRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TareaAsignadaResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TipoDocumentoRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TipoDocumentoResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\UsuarioRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\UsuarioResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ValidacionSeguridadRequestDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ValidacionSeguridadResponseDTO.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\MainApplication.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\AccesoUsuarioMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\AreaTrabajoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\BoletaPagoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\DispositivoAutorizadoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\DocumentoPrivadoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\EmpleadoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\EncuestaBienestarMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\FamiliarMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\FeedbackAnonimoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\MetricaBurnoutMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\PlanillaMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\RegistroAsistenciaMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\ReporteDiarioMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\ReporteIncidenteMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\RolMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\TareaAsignadaMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\TipoDocumentoMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\UsuarioMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\ValidacionSeguridadMapper.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\AccesoUsuario.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\AreaTrabajo.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\BoletaPago.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\BonoDescuento.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\DispositivoAutorizado.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\DocumentoPrivado.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Empleado.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Encuestabienestar.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Familiar.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\FeedbackAnonimo.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\MetadatoEmpleado.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\MetricaBurnout.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Planilla.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\RegistroAsistencia.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\ReporteDiario.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\ReporteIncidente.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Rol.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\TareaAsignada.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\TipoDocumento.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Usuario.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\ValidacionSeguridad.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\AccesoUsuarioRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\AreaTrabajoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\BoletaPagoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\BonoDescuentoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\DispositivoAutorizadoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\DocumentoPrivadoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\EmpleadoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\EncuestaBienestarRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\FamiliarRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\FeedbackAnonimoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\MetricaBurnoutRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\PlanillaRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\RegistroAsistenciaRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\ReporteDiarioRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\ReporteIncidenteRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\RolRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\TareaAsignadaRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\TipoDocumentoRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\UsuarioRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\ValidacionSeguridadRepository.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\security\CustomUserDetailsService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\security\JwtAuthenticationFilter.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\security\JwtUtil.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\AccesoUsuarioService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\AnaliticaService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\AreaTrabajoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\BoletaPagoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\BonoDescuentoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\DispositivoAutorizadoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\DocumentoPrivadoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\EmpleadoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\EncuestaBienestarService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FamiliarService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FeedbackAnonimoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AccesoUsuarioServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AnaliticaServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AreaTrabajoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\BoletaPagoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\BonoDescuentoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\DispositivoAutorizadoImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\DocumentoPrivadoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\EmpleadoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\EncuestaBienestarServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\FamiliarServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\FeedbackAnonimoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\MetricaBurnoutServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\NominaProcessorServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\NominaServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\PdfGeneratorServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\PlanillaServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\RegistroAsistenciaServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\ReporteDiarioServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\ReporteIncidenteServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\RolServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\TareaAsignadaServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\TipoDocumentoServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\UsuarioServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\ValidacionSeguridadServiceImpl.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\MetricaBurnoutService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\NominaProcessorService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\NominaService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\PdfGeneratorService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\PlanillaService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\RegistroAsistenciaService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\ReporteDiarioService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\ReporteIncidenteService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\RolService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\TareaAsignadaService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\TipoDocumentoService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\TotpService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\UsuarioService.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\ValidacionSeguridadService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\DataSeeder.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\SecurityConfig.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\TareaScheduler.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AccesoUsuarioController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AnaliticaController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AreaTrabajoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AuthController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\BoletaPagoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\DispositivoAutorizadoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\DocumentoPrivadoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\EmpleadoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\EncuestaBienestarController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\FamiliarController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\FeedbackAnonimoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\MetricaBurnoutController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\NominaController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\PlanillaController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\RegistroAsistenciaController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\ReporteDiarioController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\ReporteIncidenteController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\RolController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\TareaAsignadaController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\TipoDocumentoController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\UsuarioController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\ValidacionSeguridadController.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AccesoUsuarioRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AccesoUsuarioResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AreaTrabajoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AreaTrabajoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaCalendarioAnualDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaCalendarioDiaDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaCalendarioMesDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaQrDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\AsistenciaScanRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\BoletaPagoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\BoletaPagoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DashboardDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DispositivoAutorizadoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DispositivoAutorizadoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DocumentoPrivadoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\DocumentoPrivadoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EmpleadoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EmpleadoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EncuestaBienestarRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\EncuestaBienestarResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FamiliarRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FamiliarResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FeedbackAnonimoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\FeedbackAnonimoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\MetricaBurnoutRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\MetricaBurnoutResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\PlanillaRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\PlanillaResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\RegistroAsistenciaRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\RegistroAsistenciaResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteDiarioRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteDiarioResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteIncidenteRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ReporteIncidenteResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ResumenBienestarDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\RolResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TareaAsignadaRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TareaAsignadaResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TipoDocumentoRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\TipoDocumentoResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\UsuarioRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\UsuarioResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ValidacionSeguridadRequestDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\DTO\ValidacionSeguridadResponseDTO.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\MainApplication.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\AccesoUsuarioMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\AreaTrabajoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\BoletaPagoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\DispositivoAutorizadoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\DocumentoPrivadoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\EmpleadoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\EncuestaBienestarMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\FamiliarMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\FeedbackAnonimoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\MetricaBurnoutMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\PlanillaMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\RegistroAsistenciaMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\ReporteDiarioMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\ReporteIncidenteMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\RolMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\TareaAsignadaMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\TipoDocumentoMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\UsuarioMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\mapper\ValidacionSeguridadMapper.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\AccesoUsuario.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\AreaTrabajo.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\BoletaPago.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\BonoDescuento.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\DispositivoAutorizado.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\DocumentoPrivado.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Empleado.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Encuestabienestar.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Familiar.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\FeedbackAnonimo.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\MetadatoEmpleado.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\MetricaBurnout.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Planilla.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\RegistroAsistencia.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\ReporteDiario.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\ReporteIncidente.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Rol.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\TareaAsignada.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\TipoDocumento.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\Usuario.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\model\ValidacionSeguridad.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\AccesoUsuarioRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\AreaTrabajoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\BoletaPagoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\BonoDescuentoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\DispositivoAutorizadoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\DocumentoPrivadoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\EmpleadoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\EncuestaBienestarRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\FamiliarRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\FeedbackAnonimoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\MetricaBurnoutRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\PlanillaRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\RegistroAsistenciaRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\ReporteDiarioRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\ReporteIncidenteRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\RolRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\TareaAsignadaRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\TipoDocumentoRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\UsuarioRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\repository\ValidacionSeguridadRepository.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\security\CustomUserDetailsService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\security\JwtAuthenticationFilter.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\security\JwtUtil.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\AccesoUsuarioService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\AnaliticaService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\AreaTrabajoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\BoletaPagoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\BonoDescuentoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\DispositivoAutorizadoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\DocumentoPrivadoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\EmpleadoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\EncuestaBienestarService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FamiliarService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FeedbackAnonimoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AccesoUsuarioServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AnaliticaServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AreaTrabajoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\BoletaPagoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\BonoDescuentoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\DispositivoAutorizadoImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\DocumentoPrivadoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\EmpleadoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\EncuestaBienestarServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\FamiliarServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\FeedbackAnonimoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\MetricaBurnoutServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\NominaProcessorServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\NominaServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\PdfGeneratorServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\PlanillaServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\RegistroAsistenciaServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\ReporteDiarioServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\ReporteIncidenteServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\RolServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\TareaAsignadaServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\TipoDocumentoServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\UsuarioServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\ValidacionSeguridadServiceImpl.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\MetricaBurnoutService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\NominaProcessorService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\NominaService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\PdfGeneratorService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\PlanillaService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\RegistroAsistenciaService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\ReporteDiarioService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\ReporteIncidenteService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\RolService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\TareaAsignadaService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\TipoDocumentoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\TotpService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\UsuarioService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\ValidacionSeguridadService.java

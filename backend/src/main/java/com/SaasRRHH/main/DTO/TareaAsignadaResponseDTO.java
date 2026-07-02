@@ -26,4 +26,8 @@ public class TareaAsignadaResponseDTO {
     private String estado;
 
     private LocalDateTime fechaRegistro;
+
+    private EmpleadoResponseDTO empleado;
+    private EmpleadoResponseDTO supervisor;
+    private AreaTrabajoResponseDTO area;
 }

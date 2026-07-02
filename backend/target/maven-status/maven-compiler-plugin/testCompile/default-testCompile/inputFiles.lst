@@ -1,26 +1,26 @@
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AccesoUsuarioControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AnaliticaControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AreaTrabajoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AuthControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\BoletaPagoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\DispositivoAutorizadoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\DocumentoPrivadoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\EmpleadoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\EncuestaBienestarControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\FamiliarControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\FeedbackAnonimoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\MetricaBurnoutControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\NominaControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\PlanillaControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\RegistroAsistenciaControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\ReporteDiarioControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\ReporteIncidenteControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\RolControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\TareaAsignadaControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\TipoDocumentoControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\UsuarioControllerTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\security\CustomUserDetailsServiceTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\security\JwtUtilTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\services\impl\NominaServiceImplTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\services\impl\PdfGeneratorServiceImplTest.java
-C:\Users\ricar\OneDrive\Documentos\ProyectoDesarrollo\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\services\impl\RegistroAsistenciaServiceImplTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AccesoUsuarioControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AnaliticaControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AreaTrabajoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\AuthControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\BoletaPagoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\DispositivoAutorizadoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\DocumentoPrivadoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\EmpleadoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\EncuestaBienestarControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\FamiliarControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\FeedbackAnonimoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\MetricaBurnoutControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\NominaControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\PlanillaControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\RegistroAsistenciaControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\ReporteDiarioControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\ReporteIncidenteControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\RolControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\TareaAsignadaControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\TipoDocumentoControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\controller\UsuarioControllerTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\security\CustomUserDetailsServiceTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\security\JwtUtilTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\services\impl\NominaServiceImplTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\services\impl\PdfGeneratorServiceImplTest.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\test\java\com\SaasRRHH\main\services\impl\RegistroAsistenciaServiceImplTest.java
