@@ -34,18 +34,45 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioResponseDTO> listar() {
-        return usuarioRepository.findAll()
-                .stream()
-                .map(UsuarioMapper::toDTO)
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<com.SaasRRHH.main.model.Empleado> empleados = empleadoRepository.findAll();
+        
+        Map<Long, com.SaasRRHH.main.model.Empleado> empleadoMap = empleados.stream()
+                .filter(e -> e.getUsuario() != null)
+                .collect(Collectors.toMap(e -> e.getUsuario().getId(), e -> e, (a, b) -> a));
+
+        return usuarios.stream()
+                .map(u -> {
+                    UsuarioResponseDTO dto = UsuarioMapper.toDTO(u);
+                    com.SaasRRHH.main.model.Empleado emp = empleadoMap.get(u.getId());
+                    if (emp != null) {
+                        if (dto.getNombre() == null || dto.getNombre().isBlank()) {
+                            dto.setNombre(emp.getNombres());
+                        }
+                        if (dto.getApellido() == null || dto.getApellido().isBlank()) {
+                            dto.setApellido(emp.getApellidos());
+                        }
+                    }
+                    return dto;
+                })
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public UsuarioResponseDTO buscarPorId(Long id) {
-        return usuarioRepository.findById(id)
-                .map(UsuarioMapper::toDTO)
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        UsuarioResponseDTO dto = UsuarioMapper.toDTO(usuario);
+        empleadoRepository.findByUsuarioId(id).ifPresent(emp -> {
+            if (dto.getNombre() == null || dto.getNombre().isBlank()) {
+                dto.setNombre(emp.getNombres());
+            }
+            if (dto.getApellido() == null || dto.getApellido().isBlank()) {
+                dto.setApellido(emp.getApellidos());
+            }
+        });
+        return dto;
     }
 
     @Override
@@ -75,9 +102,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public UsuarioResponseDTO buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email)
-                .map(UsuarioMapper::toDTO)
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        UsuarioResponseDTO dto = UsuarioMapper.toDTO(usuario);
+        empleadoRepository.findByUsuarioId(usuario.getId()).ifPresent(emp -> {
+            if (dto.getNombre() == null || dto.getNombre().isBlank()) {
+                dto.setNombre(emp.getNombres());
+            }
+            if (dto.getApellido() == null || dto.getApellido().isBlank()) {
+                dto.setApellido(emp.getApellidos());
+            }
+        });
+        return dto;
     }
 
     @Override
@@ -100,9 +136,27 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioResponseDTO> listarUsuariosActivos() {
-        return usuarioRepository.findByActivoTrue()
-                .stream()
-                .map(UsuarioMapper::toDTO)
+        List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
+        List<com.SaasRRHH.main.model.Empleado> empleados = empleadoRepository.findAll();
+        
+        Map<Long, com.SaasRRHH.main.model.Empleado> empleadoMap = empleados.stream()
+                .filter(e -> e.getUsuario() != null)
+                .collect(Collectors.toMap(e -> e.getUsuario().getId(), e -> e, (a, b) -> a));
+
+        return usuarios.stream()
+                .map(u -> {
+                    UsuarioResponseDTO dto = UsuarioMapper.toDTO(u);
+                    com.SaasRRHH.main.model.Empleado emp = empleadoMap.get(u.getId());
+                    if (emp != null) {
+                        if (dto.getNombre() == null || dto.getNombre().isBlank()) {
+                            dto.setNombre(emp.getNombres());
+                        }
+                        if (dto.getApellido() == null || dto.getApellido().isBlank()) {
+                            dto.setApellido(emp.getApellidos());
+                        }
+                    }
+                    return dto;
+                })
                 .toList();
     }
 
