@@ -45,6 +45,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   editEstado = 'VALIDADO';
   editObservaciones = '';
   private qrTimer?: number;
+  private countdownInterval?: any;
   private scanner: any;
 
   weekDays = ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'];
@@ -72,6 +73,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.qrTimer) window.clearTimeout(this.qrTimer);
+    if (this.countdownInterval) window.clearInterval(this.countdownInterval);
     this.stopScanner();
   }
 
@@ -99,8 +101,20 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
           this.qrImage.set('');
           this.error.set('No se pudo renderizar el QR.');
         }
+
         if (this.qrTimer) window.clearTimeout(this.qrTimer);
-        this.qrTimer = window.setTimeout(() => this.loadQr(), Math.max(qr.segundosRestantes, 1) * 1000);
+        if (this.countdownInterval) window.clearInterval(this.countdownInterval);
+
+        this.countdownInterval = window.setInterval(() => {
+          this.secondsLeft.update(s => {
+            if (s <= 1) {
+              window.clearInterval(this.countdownInterval);
+              this.loadQr();
+              return 0;
+            }
+            return s - 1;
+          });
+        }, 1000);
       },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el QR')
     });

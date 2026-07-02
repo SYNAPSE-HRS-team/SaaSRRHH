@@ -1,0 +1,74 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Gestión de Documentos Privados</h1>
+      <p class="subtitle">Expedientes digitales vinculados en tiempo real con la API</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" routerLink="nuevo">
+        <span>➕</span> Subir Documento
+      </button>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="loading-container">
+      <div class="spinner-blue"></div>
+      <p>🔄 Obteniendo registros desde la base de datos...</p>
+    </div>
+  }
+
+  @if (errorHttp) {
+    <div class="error-banner">
+      <span>❌</span>
+      <span>Hubo un error al comunicarse con el servidor. Por favor, verifica el estado del Backend.</span>
+    </div>
+  }
+
+  @if (!cargando && !errorHttp) {
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre del Archivo</th>
+              <th>Tipo</th>
+              <th>Colaborador</th>
+              <th>Fecha de Carga</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (doc of documentos; track doc.idDocumento) {
+              <tr>
+                <td class="font-mono text-xs text-muted">#{{ doc.idDocumento }}</td>
+                <td class="font-semibold">{{ doc.nombre }}</td>
+                <td>
+                  <span class="badge badge-info">
+                    {{ doc.tipoDocumento || 'General' }}
+                  </span>
+                </td>
+                <td class="colaborador-cell">
+                  {{ doc.empleado ? (doc.empleado.nombres + ' ' + doc.empleado.apellidos) : ('ID Empleado: ' + (doc.idEmpleado || 'N/A')) }}
+                </td>
+                <td class="text-muted text-xs">{{ doc.fechaSubida || 'No registrada' }}</td>
+                <td class="text-center">
+                  <button (click)="verDocumento(doc)" class="btn-action">
+                    👁️ Visualizar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="empty-row">
+                  📁 No se encontraron documentos registrados en el sistema.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
