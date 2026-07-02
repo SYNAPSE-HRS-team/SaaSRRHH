@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DocumentoService } from '../../../../core/services/documento.service';
-import { DocumentoPrivado } from '../../../../core/models/documento-privado.model';
+import { DocumentoPrivadoResponse } from '../../../../core/models/documento-privado.model';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-documento-list',
@@ -12,11 +13,11 @@ import { DocumentoPrivado } from '../../../../core/models/documento-privado.mode
   styleUrls: ['./documento-list.component.scss']
 })
 export class DocumentoListComponent implements OnInit {
-  documentos: DocumentoPrivado[] = [];
-  cargando: boolean = true;
-  errorHttp: boolean = false;
+  documentos: DocumentoPrivadoResponse[] = [];
+  cargando = true;
+  errorHttp = false;
 
-  constructor(private documentoService: DocumentoService) { }
+  constructor(private documentoService: DocumentoService) {}
 
   ngOnInit(): void {
     this.cargarDocumentos();
@@ -24,6 +25,8 @@ export class DocumentoListComponent implements OnInit {
 
   cargarDocumentos(): void {
     this.cargando = true;
+    this.errorHttp = false;
+
     this.documentoService.getAll().subscribe({
       next: (data) => {
         this.documentos = data;
@@ -37,12 +40,38 @@ export class DocumentoListComponent implements OnInit {
     });
   }
 
-  verDocumento(doc: DocumentoPrivado): void {
-    if (doc.contenido) {
-      const win = window.open();
-      win?.document.write(`<iframe src="${doc.contenido}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+  urlCompleta(doc: DocumentoPrivadoResponse): string {
+  // Si ya viene como URL absoluta (http/https), se usa tal cual.
+  // Si es una ruta relativa (/uploads/documentos/xxx.pdf), se le antepone el backend.
+  if (!doc.archivoUrl) return '';
+  if (doc.archivoUrl.startsWith('http://') || doc.archivoUrl.startsWith('https://')) {
+    return doc.archivoUrl;
+  }
+  return `${environment.apiUrl}${doc.archivoUrl}`;
+}
+
+  verDocumento(doc: DocumentoPrivadoResponse): void {
+    if (doc.archivoUrl) {
+      window.open(this.urlCompleta(doc), '_blank');
     } else {
-      alert('Contenido no disponible.');
+      alert('Archivo no disponible.');
     }
+  }
+
+  eliminar(doc: DocumentoPrivadoResponse): void {
+    if (!confirm(`¿Eliminar el documento de ${doc.empleadoNombre}?`)) return;
+
+    this.documentoService.delete(doc.id).subscribe({
+      next: () => this.cargarDocumentos(),
+      error: (err) => {
+        console.error('Error al eliminar documento:', err);
+        alert('No se pudo eliminar el documento.');
+      }
+    });
+  }
+
+  estaVencido(doc: DocumentoPrivadoResponse): boolean {
+    if (!doc.fechaVencimiento) return false;
+    return new Date(doc.fechaVencimiento) < new Date();
   }
 }

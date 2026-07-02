@@ -1,17 +1,21 @@
-import { Empleado } from './empleado.model';
-
-export interface DocumentoPrivado {
-  idDocumento?: number;
-  nombre: string;
-  tipoDocumento?: string;
-  contenido?: string;
-  fechaSubida?: string;
-  empleado?: Empleado;
-  idEmpleado?: number;
+// Coincide con DocumentoPrivadoRequestDTO.java
+export interface DocumentoPrivadoRequest {
+  empleadoId: number;
+  tipoId: number;
+  archivoUrl: string;
+  fechaVencimiento?: string | null; // yyyy-MM-dd
+  activo?: boolean;
 }
 
-export interface TipoDocumento {
-  idTipo?: number;
-  nombreTipo: string;
-  descripcion?: string;
+// Coincide con DocumentoPrivadoResponseDTO.java
+export interface DocumentoPrivadoResponse {
+  id: number;
+  empleadoId: number;
+  empleadoNombre: string;
+  tipoId: number;
+  tipoNombre: string;
+  archivoUrl: string;
+  fechaVencimiento?: string | null;
+  fechaCarga: string;
+  activo: boolean;
 }

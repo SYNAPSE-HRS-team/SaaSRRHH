@@ -1,122 +1,82 @@
-<div class="page-container">
-  <div class="page-header">
-    <div class="header-left">
-      <div class="breadcrumb">
-        <a routerLink="/documentos">Documentos</a>
-        <span class="separator">/</span>
-        <span>Nuevo Documento</span>
-      </div>
-      <h1>Subir Documento Privado</h1>
-      <p class="subtitle">Indexa y vincula archivos digitales al expediente de un colaborador</p>
-    </div>
+<div class="documento-form">
+  <div class="header">
+    <h1>📄 Nuevo Documento</h1>
+    <a routerLink="/documentos" class="btn-secondary">← Volver</a>
   </div>
 
-  <form (ngSubmit)="onSubmit()" class="empleado-form">
-    @if (error()) {
-      <div class="error-banner">
-        <span>⚠️</span>
-        <span>{{ error() }}</span>
+  @if (cargandoCatalogos()) {
+    <p class="estado">Cargando empleados y tipos de documento...</p>
+  } @else {
+    <form (ngSubmit)="onSubmit()" class="form-card">
+
+      @if (error()) {
+        <div class="alerta error">{{ error() }}</div>
+      }
+      @if (successMessage()) {
+        <div class="alerta success">{{ successMessage() }}</div>
+      }
+
+      <div class="campo">
+        <label>Empleado *</label>
+        <select [(ngModel)]="empleadoId" name="empleadoId" required>
+          <option [ngValue]="null" disabled>Selecciona un empleado</option>
+          @for (emp of empleados; track emp.id) {
+            <option [ngValue]="emp.id">{{ emp.nombres }} {{ emp.apellidos }}</option>
+          }
+        </select>
       </div>
-    }
 
-    @if (successMessage()) {
-      <div class="success-banner">
-        <span>✅</span>
-        <span>{{ successMessage() }}</span>
+      <div class="campo">
+        <label>Tipo de documento *</label>
+        <select [(ngModel)]="tipoId" name="tipoId" (ngModelChange)="onTipoChange()" required>
+          <option [ngValue]="null" disabled>Selecciona un tipo</option>
+          @for (tipo of tipos; track tipo.idTipo) {
+            <option [ngValue]="tipo.idTipo">{{ tipo.nombre }}</option>
+          }
+          <option [ngValue]="OPCION_NUEVO_TIPO">➕ Crear nuevo tipo...</option>
+        </select>
       </div>
-    }
 
-    <div class="form-section">
-      <h2 class="section-title">Colaborador Destinatario <span class="required">*</span></h2>
-      <div class="form-group">
-        <label for="idEmpleado">Seleccionar Empleado <span class="required">*</span></label>
-
-        @if (!empleadosCargados()) {
-          <div class="loading-message">⏳ Buscando personal activo en el sistema...</div>
-        } @else if (empleados.length === 0) {
-          <div class="warning-message">
-            ⚠️ No se encontraron empleados registrados o activos para recibir archivos.
-            <a routerLink="/empleados/nuevo" target="_blank">Registrar un empleado primero</a>
+      @if (mostrandoNuevoTipo) {
+        <div class="nuevo-tipo-box">
+          <div class="campo">
+            <label>Nombre del nuevo tipo *</label>
+            <input type="text" [(ngModel)]="nuevoTipoNombre" name="nuevoTipoNombre"
+                   placeholder="Ej: Constancia de trabajo" />
           </div>
-        } @else {
-          <select
-            id="idEmpleado"
-            name="idEmpleado"
-            [(ngModel)]="formData.idEmpleado"
-            required
-            class="form-select"
-          >
-            <option value="0">-- Selecciona un colaborador --</option>
-            @for (emp of empleados; track emp.id) {
-              <option [value]="emp.id">
-                {{ emp.nombres }} {{ emp.apellidos }} (DNI: {{ emp.dni }})
-              </option>
-            }
-          </select>
+
+          <div class="nuevo-tipo-acciones">
+            <button type="button" class="btn-secondary-btn" (click)="cancelarNuevoTipo()">
+              Cancelar
+            </button>
+            <button type="button" class="btn-primary-small" (click)="crearNuevoTipo()" [disabled]="creandoTipo()">
+              {{ creandoTipo() ? 'Creando...' : 'Crear tipo' }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="campo">
+        <label>Fecha de vencimiento (opcional)</label>
+        <input type="date" [(ngModel)]="fechaVencimiento" name="fechaVencimiento" />
+      </div>
+
+      <div class="campo">
+        <label>Archivo *</label>
+        <input type="file" (change)="onFileChange($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
+        @if (nombreArchivo) {
+          <p class="archivo-info">Seleccionado: {{ nombreArchivo }}</p>
         }
-        <p class="field-hint">El documento se indexará permanentemente en el perfil privado de este usuario.</p>
       </div>
-    </div>
 
-    <div class="form-section">
-      <h2 class="section-title">Detalles del Archivo</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="tipoDocumento">Categoría / Tipo de Documento</label>
-          <select
-            id="tipoDocumento"
-            name="tipoDocumento"
-            [(ngModel)]="formData.tipoDocumento"
-            class="form-select"
-          >
-            <option value="">-- Selecciona una categoría --</option>
-            @for (tipo of tiposDocumento; track tipo) {
-              <option [value]="tipo">{{ tipo }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="nombre">Nombre Descriptivo <span class="required">*</span></label>
-          <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            [(ngModel)]="formData.nombre"
-            required
-            placeholder="Ej: Contrato_Trabajo_2026.pdf"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <h2 class="section-title">Archivo Digital <span class="required">*</span></h2>
-      <div class="form-group">
-        <label for="fileUpload">Adjuntar Archivo (PDF, PNG, JPG)</label>
-        <input
-          type="file"
-          id="fileUpload"
-          (change)="onFileChange($event)"
-          accept=".pdf, .png, .jpg, .jpeg"
-          class="form-control-file"
-          style="padding: 0.5rem 0;"
-        />
-        <p class="field-hint">Al seleccionar un archivo, se autocompletará el campo del nombre superior de forma automática.</p>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <a routerLink="/documentos" class="btn-cancel">Cancelar</a>
-      <button type="submit" class="btn-primary" [disabled]="saving() || !empleadosCargados() || empleados.length === 0">
-        @if (saving()) {
-          <span class="spinner"></span>
-          Subiendo Archivo...
+      <button type="submit" class="btn-primary" [disabled]="subiendoArchivo() || guardando()">
+        @if (subiendoArchivo()) {
+          Subiendo archivo...
+        } @else if (guardando()) {
+          Guardando...
         } @else {
-          <span>💾</span>
-          Indexar Documento
+          Guardar documento
         }
       </button>
-    </div>
-  </form>
-</div>
+    </form>
+  }

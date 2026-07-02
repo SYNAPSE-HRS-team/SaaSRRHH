@@ -40,7 +40,7 @@ export class SidebarComponent {
     // Ruta unificada a '/incidentes' como en tu versión original
     { label: 'Incidentes', icon: '⚠️', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
+    { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Bienestar', icon: '💚', route: '/encuestas-bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },
     { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
     { label: 'Usuarios', icon: '🔐', route: '/usuarios', roles: ['ADMIN'] },

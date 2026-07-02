@@ -40,10 +40,6 @@ export const routes: Routes = [
         loadChildren: () => import('./features/tareas/tarea.routes').then((m) => m.tareaRoutes),
         title: 'Tareas - SaaSRRHH',
       },
-      {
-        path: 'documentos',
-        loadChildren: () => import('./features/documento/documento.routes').then(m => m.documentoRoutes)
-      },
 
       {
         path: 'asistencias',
@@ -84,6 +80,11 @@ export const routes: Routes = [
         path: 'boletas',
         loadChildren: () => import('./features/boletas/boleta.routes').then((m) => m.boletaRoutes),
         title: 'Boletas de Pago - SaaSRRHH',
+      },
+      {
+        path: 'documentos',
+        loadChildren: () => import('./features/documento/documento.routes').then((m) => m.documentoRoutes),
+        title: 'Documentos - SaaSRRHH',
       },
 
       // ========================================================
