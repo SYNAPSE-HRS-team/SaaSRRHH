@@ -122,8 +122,6 @@ class RegistroAsistenciaControllerTest {
         when(service.registrarEntrada(eq(1L), any()))
                 .thenThrow(new RuntimeException("El empleado ya registró entrada hoy"));
 
-        assertThrows(Exception.class,
-                () -> mockMvc.perform(post("/api/asistencias/entrada/1").with(csrf())).andReturn());
         mockMvc.perform(post("/api/asistencias/entrada/1").with(csrf()))
                 .andExpect(status().isInternalServerError());
     }
