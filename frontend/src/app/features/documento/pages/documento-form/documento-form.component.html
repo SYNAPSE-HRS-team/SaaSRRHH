@@ -28,13 +28,33 @@
 
       <div class="campo">
         <label>Tipo de documento *</label>
-        <select [(ngModel)]="tipoId" name="tipoId" required>
+        <select [(ngModel)]="tipoId" name="tipoId" (ngModelChange)="onTipoChange()" required>
           <option [ngValue]="null" disabled>Selecciona un tipo</option>
           @for (tipo of tipos; track tipo.idTipo) {
             <option [ngValue]="tipo.idTipo">{{ tipo.nombre }}</option>
           }
+          <option [ngValue]="OPCION_NUEVO_TIPO">➕ Crear nuevo tipo...</option>
         </select>
       </div>
+
+      @if (mostrandoNuevoTipo) {
+        <div class="nuevo-tipo-box">
+          <div class="campo">
+            <label>Nombre del nuevo tipo *</label>
+            <input type="text" [(ngModel)]="nuevoTipoNombre" name="nuevoTipoNombre"
+                   placeholder="Ej: Constancia de trabajo" />
+          </div>
+
+          <div class="nuevo-tipo-acciones">
+            <button type="button" class="btn-secondary-btn" (click)="cancelarNuevoTipo()">
+              Cancelar
+            </button>
+            <button type="button" class="btn-primary-small" (click)="crearNuevoTipo()" [disabled]="creandoTipo()">
+              {{ creandoTipo() ? 'Creando...' : 'Crear tipo' }}
+            </button>
+          </div>
+        </div>
+      }
 
       <div class="campo">
         <label>Fecha de vencimiento (opcional)</label>
@@ -60,4 +80,3 @@
       </button>
     </form>
   }
-</div>

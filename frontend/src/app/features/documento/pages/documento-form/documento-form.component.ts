@@ -3,11 +3,14 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DocumentoPrivadoRequest } from '../../../../core/models/documento-privado.model';
+import { TipoDocumentoRequest } from '../../../../core/models/tipo-documento.model';
 import { TipoDocumentoResponse } from '../../../../core/models/tipo-documento.model';
 import { DocumentoService } from '../../../../core/services/documento.service';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
+
+const OPCION_NUEVO_TIPO = -1; // valor especial para "+ Crear nuevo tipo"
 
 @Component({
   selector: 'app-documento-form',
@@ -26,6 +29,12 @@ export class DocumentoFormComponent implements OnInit {
 
   empleados: EmpleadoResponse[] = [];
   tipos: TipoDocumentoResponse[] = [];
+
+  // --- estado para crear un tipo nuevo (solo nombre) ---
+  readonly OPCION_NUEVO_TIPO = OPCION_NUEVO_TIPO;
+  mostrandoNuevoTipo = false;
+  nuevoTipoNombre = '';
+  creandoTipo = signal(false);
 
   cargandoCatalogos = signal(true);
   subiendoArchivo = signal(false);
@@ -64,6 +73,50 @@ export class DocumentoFormComponent implements OnInit {
     });
   }
 
+  // Se dispara cuando cambia el <select> de tipo
+  onTipoChange(): void {
+    this.mostrandoNuevoTipo = this.tipoId === OPCION_NUEVO_TIPO;
+  }
+
+  cancelarNuevoTipo(): void {
+    this.mostrandoNuevoTipo = false;
+    this.tipoId = null;
+    this.nuevoTipoNombre = '';
+  }
+
+  crearNuevoTipo(): void {
+  this.error.set('');
+
+  if (!this.nuevoTipoNombre.trim()) {
+    this.error.set('Escribe el nombre del nuevo tipo de documento.');
+    return;
+  }
+
+  this.creandoTipo.set(true);
+
+  const payload: TipoDocumentoRequest = {
+    nombre: this.nuevoTipoNombre.trim(),
+    obligatorio: false,
+    requiereRenovacion: false,
+    diasVigencia: null,
+  };
+
+  this.tipoDocumentoService.create(payload).subscribe({
+    next: (tipoCreado) => {
+      this.creandoTipo.set(false);
+      this.tipos.push(tipoCreado);
+      this.tipoId = tipoCreado.idTipo;
+      this.mostrandoNuevoTipo = false;
+      this.nuevoTipoNombre = '';
+    },
+    error: (err) => {
+      console.error('Error al crear tipo de documento:', err);
+      this.creandoTipo.set(false);
+      this.error.set('No se pudo crear el tipo de documento.');
+    },
+  });
+}
+
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -80,8 +133,8 @@ export class DocumentoFormComponent implements OnInit {
       this.error.set('Debes seleccionar un empleado.');
       return;
     }
-    if (!this.tipoId) {
-      this.error.set('Debes seleccionar un tipo de documento.');
+    if (!this.tipoId || this.tipoId === OPCION_NUEVO_TIPO) {
+      this.error.set('Debes seleccionar (o crear) un tipo de documento.');
       return;
     }
     if (!this.archivoSeleccionado) {
