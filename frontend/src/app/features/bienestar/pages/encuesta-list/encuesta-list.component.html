@@ -1,0 +1,156 @@
+<div class="page-container">
+    <div class="page-header">
+        <div class="header-left">
+            <h1>🌿 Encuestas de Bienestar</h1>
+            <p class="subtitle">Gestiona las encuestas de bienestar de los empleados</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-primary" (click)="nuevaEncuesta()">
+                <span>➕</span> Nueva Encuesta
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ESTADÍSTICAS                                  -->
+    <!-- ============================================ -->
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <span class="stat-number">{{ totalEncuestas }}</span>
+            <span class="stat-label">Total Encuestas</span>
+        </div>
+        <div class="stat-card promedio">
+            <span class="stat-number">{{ promedioGeneral }}</span>
+            <span class="stat-label">Promedio General</span>
+        </div>
+        <div class="stat-card buenas">
+            <span class="stat-number">{{ encuestasBuenas }}</span>
+            <span class="stat-label">Buenas (Bajo/Medio)</span>
+        </div>
+        <div class="stat-card criticas">
+            <span class="stat-number">{{ encuestasCriticas }}</span>
+            <span class="stat-label">Críticas (Alto/Crítico)</span>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- FILTROS                                       -->
+    <!-- ============================================ -->
+    <div class="filtros-container">
+        <div class="filtro-group">
+            <label>👤 Empleado</label>
+            <select [(ngModel)]="filtros.empleadoId" (ngModelChange)="aplicarFiltros()">
+                <option [ngValue]="null">Todos</option>
+                <option *ngFor="let emp of empleados" [ngValue]="emp.id">
+                    {{ emp.nombres }} {{ emp.apellidos }}
+                </option>
+            </select>
+        </div>
+
+        <div class="filtro-group">
+            <label>📅 Desde</label>
+            <input type="date" [(ngModel)]="filtros.fechaInicio" (ngModelChange)="aplicarFiltros()" />
+        </div>
+
+        <div class="filtro-group">
+            <label>📅 Hasta</label>
+            <input type="date" [(ngModel)]="filtros.fechaFin" (ngModelChange)="aplicarFiltros()" />
+        </div>
+
+        <div class="filtro-group">
+            <label>📊 Nivel</label>
+            <select [(ngModel)]="filtros.nivelBienestar" (ngModelChange)="aplicarFiltros()">
+                <option value="">Todos</option>
+                <option *ngFor="let nivel of opcionesNivel" [value]="nivel">{{ nivel }}</option>
+            </select>
+        </div>
+
+        <button class="btn-limpiar" (click)="limpiarFiltros()">🧹 Limpiar</button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando encuestas...</p>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="error-message">
+        <span>❌</span>
+        <span>{{ error }}</span>
+        <button class="btn-retry" (click)="cargarEncuestas()">Reintentar</button>
+    </div>
+
+    <!-- Tabla -->
+    <div *ngIf="!loading && !error" class="table-container">
+        <div class="table-header">
+            <span>Mostrando <strong>{{ encuestasFiltradas.length }}</strong> de <strong>{{ encuestasOriginales.length }}</strong> encuestas</span>
+        </div>
+
+        <table *ngIf="encuestasFiltradas.length > 0" class="bienestar-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Empleado</th>
+                    <th>Fecha</th>
+                    <th>Carga Laboral</th>
+                    <th>Apoyo Equipo</th>
+                    <th>Proyección</th>
+                    <th>Promedio</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let encuesta of encuestasFiltradas">
+                    <td>#{{ encuesta.id }}</td>
+                    <td>
+                        <div class="empleado-info">
+                            <span class="empleado-nombre">{{ getNombreEmpleado(encuesta) }}</span>
+                        </div>
+                    </td>
+                    <td>{{ encuesta.fecha | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                        <span class="badge" [style.background]="getColorPromedio(encuesta.cargaLaboral)">
+                            {{ encuesta.cargaLaboral }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" [style.background]="getColorPromedio(encuesta.apoyoEquipo)">
+                            {{ encuesta.apoyoEquipo }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" [style.background]="getColorPromedio(encuesta.proyeccion)">
+                            {{ encuesta.proyeccion }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge promedio" [style.background]="getColorPromedio(encuesta.promedioGeneral)">
+                            {{ encuesta.promedioGeneral }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge nivel" [style.background]="getColorNivel(encuesta.nivelBienestar)">
+                            {{ getIconoNivel(encuesta.nivelBienestar) }} {{ encuesta.nivelBienestar }}
+                        </span>
+                    </td>
+                    <td class="actions-cell">
+                        <button class="btn-icon view" (click)="verDetalle(encuesta.id)" title="Ver">👁️</button>
+                        <button class="btn-icon edit" (click)="editar(encuesta.id)" title="Editar">✏️</button>
+                        <button class="btn-icon delete" (click)="eliminar(encuesta.id)" title="Eliminar">🗑️</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div *ngIf="encuestasFiltradas.length === 0" class="empty-state">
+            <span class="empty-icon">📋</span>
+            <h3>No hay encuestas que coincidan con los filtros</h3>
+            <p *ngIf="encuestasOriginales.length === 0">Comienza creando una nueva encuesta de bienestar.</p>
+            <p *ngIf="encuestasOriginales.length > 0">Prueba ajustando los filtros para ver más resultados.</p>
+            <button class="btn-primary" (click)="nuevaEncuesta()">Crear Encuesta</button>
+        </div>
+    </div>
+</div>

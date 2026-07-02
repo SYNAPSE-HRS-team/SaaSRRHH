@@ -13,6 +13,9 @@ public class MetricaBurnoutResponseDTO {
 
     private Long empleadoId;
 
+
+        private String nombreEmpleado;         
+
     private String nivelRiesgo;
 
     private Integer horasExtraAcumuladas;
@@ -20,4 +23,6 @@ public class MetricaBurnoutResponseDTO {
     private Boolean tendenciaTardanza;
 
     private LocalDateTime fechaEvaluacion;
+
+     private String recomendaciones;
 }

@@ -1,19 +1,33 @@
 package com.SaasRRHH.main.services;
 
-import com.SaasRRHH.main.model.MetricaBurnout;
+import com.SaasRRHH.main.DTO.MetricaBurnoutResponseDTO;
+
 import java.util.List;
 
 public interface MetricaBurnoutService {
 
-    List<MetricaBurnout> listar();
+    // ============================================
+    // CRUD BÁSICO
+    // ============================================
+    
+    List<MetricaBurnoutResponseDTO> listar();
 
-    MetricaBurnout guardar(MetricaBurnout metrica);
+    MetricaBurnoutResponseDTO obtenerPorId(Long id);
 
-    MetricaBurnout obtenerPorId(Long id);
-
-    List<MetricaBurnout> buscarPorEmpleado(Long empleadoId);
-
-    MetricaBurnout actualizar(Long id, MetricaBurnout metrica);
+    List<MetricaBurnoutResponseDTO> buscarPorEmpleado(Long empleadoId);
 
     void eliminar(Long id);
+
+    // ============================================
+    //  CÁLCULO AUTOMÁTICO
+    // ============================================
+    
+    MetricaBurnoutResponseDTO calcularMetrica(Long empleadoId);
+
+    List<MetricaBurnoutResponseDTO> recalcularTodas();
+
+  
+    List<MetricaBurnoutResponseDTO> obtenerHistorialCompleto(Long empleadoId);
+
+    String obtenerUltimoNivelRiesgo(Long empleadoId);
 }

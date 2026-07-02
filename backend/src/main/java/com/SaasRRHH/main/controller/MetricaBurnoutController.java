@@ -1,109 +1,91 @@
 package com.SaasRRHH.main.controller;
-import com.SaasRRHH.main.model.MetricaBurnout;
+
+import com.SaasRRHH.main.DTO.MetricaBurnoutResponseDTO;
 import com.SaasRRHH.main.services.MetricaBurnoutService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/burnout")
+@PreAuthorize("isAuthenticated()")
 public class MetricaBurnoutController {
 
     private final MetricaBurnoutService metricaBurnoutService;
 
-
-    // Dependency Injection por constructor
-    public MetricaBurnoutController(
-            MetricaBurnoutService metricaBurnoutService) {
+    public MetricaBurnoutController(MetricaBurnoutService metricaBurnoutService) {
         this.metricaBurnoutService = metricaBurnoutService;
     }
 
-
     // ==========================
-    // GET ALL
+    // ✅ GET ALL - Retorna DTOs
     // ==========================
     @GetMapping
-    public ResponseEntity<List<MetricaBurnout>> listarMetricas() {
-
-        return ResponseEntity.ok(
-                metricaBurnoutService.listar()
-        );
+    public ResponseEntity<List<MetricaBurnoutResponseDTO>> listarMetricas() {
+        return ResponseEntity.ok(metricaBurnoutService.listar());
     }
 
-
     // ==========================
-    // GET BY ID
+    // ✅ GET BY ID - Retorna DTO
     // ==========================
     @GetMapping("/{id}")
-    public ResponseEntity<MetricaBurnout> obtenerPorId(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                metricaBurnoutService.obtenerPorId(id)
-        );
+    public ResponseEntity<MetricaBurnoutResponseDTO> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(metricaBurnoutService.obtenerPorId(id));
     }
 
-
     // ==========================
-    // GET BY EMPLEADO
+    // ✅ GET BY EMPLEADO - Retorna DTOs
     // ==========================
     @GetMapping("/empleado/{empleadoId}")
-    public ResponseEntity<List<MetricaBurnout>> buscarPorEmpleado(
-            @PathVariable Long empleadoId) {
-
-        return ResponseEntity.ok(
-                metricaBurnoutService.buscarPorEmpleado(empleadoId)
-        );
+    public ResponseEntity<List<MetricaBurnoutResponseDTO>> buscarPorEmpleado(@PathVariable Long empleadoId) {
+        return ResponseEntity.ok(metricaBurnoutService.buscarPorEmpleado(empleadoId));
     }
 
-
     // ==========================
-    // POST
+    // ✅ GET ÚLTIMO NIVEL DE RIESGO
     // ==========================
-    @PostMapping
-    public ResponseEntity<MetricaBurnout> crearMetrica(
-            @RequestBody MetricaBurnout metrica) {
-
-        MetricaBurnout nueva =
-                metricaBurnoutService.guardar(metrica);
-
-        return new ResponseEntity<>(
-                nueva,
-                HttpStatus.CREATED
-        );
+    @GetMapping("/empleado/{empleadoId}/ultimo")
+    public ResponseEntity<String> obtenerUltimoNivelRiesgo(@PathVariable Long empleadoId) {
+        String nivel = metricaBurnoutService.obtenerUltimoNivelRiesgo(empleadoId);
+        return ResponseEntity.ok(nivel);
     }
 
-
     // ==========================
-    // PUT
+    // ✅ GET HISTORIAL COMPLETO
     // ==========================
-    @PutMapping("/{id}")
-    public ResponseEntity<MetricaBurnout> actualizar(
-            @PathVariable Long id,
-            @RequestBody MetricaBurnout metrica) {
-
-        return ResponseEntity.ok(
-                metricaBurnoutService.actualizar(
-                        id,
-                        metrica
-                )
-        );
+    @GetMapping("/empleado/{empleadoId}/historial")
+    public ResponseEntity<List<MetricaBurnoutResponseDTO>> obtenerHistorial(@PathVariable Long empleadoId) {
+        return ResponseEntity.ok(metricaBurnoutService.obtenerHistorialCompleto(empleadoId));
     }
 
+    // ==========================
+    // ✅ CALCULAR AUTOMÁTICAMENTE
+    // ==========================
+    @PostMapping("/calcular/{empleadoId}")
+    public ResponseEntity<MetricaBurnoutResponseDTO> calcular(@PathVariable Long empleadoId) {
+        MetricaBurnoutResponseDTO resultado = metricaBurnoutService.calcularMetrica(empleadoId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
+    }
 
     // ==========================
-    // DELETE
+    // ✅ RECALCULAR TODOS
+    // ==========================
+    @PostMapping("/recalcular-todas")
+    public ResponseEntity<List<MetricaBurnoutResponseDTO>> recalcularTodas() {
+        List<MetricaBurnoutResponseDTO> resultados = metricaBurnoutService.recalcularTodas();
+        return ResponseEntity.ok(resultados);
+    }
+
+    // ==========================
+    // ✅ DELETE
     // ==========================
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable Long id) {
-
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         metricaBurnoutService.eliminar(id);
-
         return ResponseEntity.noContent().build();
     }
-
 }

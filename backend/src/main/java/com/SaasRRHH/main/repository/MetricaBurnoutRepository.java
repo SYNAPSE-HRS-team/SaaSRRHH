@@ -1,17 +1,27 @@
 package com.SaasRRHH.main.repository;
 
 import com.SaasRRHH.main.model.MetricaBurnout;
+import com.SaasRRHH.main.model.TareaAsignada;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface MetricaBurnoutRepository
         extends JpaRepository<MetricaBurnout, Long> {
+
+                @Query("SELECT t FROM TareaAsignada t WHERE t.empleado.id = :empleadoId AND t.fecha BETWEEN :inicio AND :fin")
+    List<TareaAsignada> findByEmpleadoIdAndFechaBetween(
+            @Param("empleadoId") Long empleadoId,
+            @Param("inicio") LocalDate inicio,
+            @Param("fin") LocalDate fin
+    );
 
     @Query("SELECT m FROM MetricaBurnout m JOIN FETCH m.empleado e JOIN FETCH e.usuario")
     List<MetricaBurnout> findAllWithRelaciones();

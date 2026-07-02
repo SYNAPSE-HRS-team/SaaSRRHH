@@ -80,4 +80,11 @@ public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Lo
                                                @Param("fechaFin") LocalDate fechaFin);
 
     List<TareaAsignada> findByFechaBeforeAndEstadoNot(LocalDate fecha, EstadoTarea estado);
+
+     @Query("SELECT t FROM TareaAsignada t WHERE t.empleado.id = :empleadoId AND t.fecha BETWEEN :inicio AND :fin")
+    List<TareaAsignada> findByEmpleadoIdAndFechaBetween(
+            @Param("empleadoId") Long empleadoId,
+            @Param("inicio") LocalDate inicio,
+            @Param("fin") LocalDate fin
+    );
 }
