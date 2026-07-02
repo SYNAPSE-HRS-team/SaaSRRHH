@@ -26,7 +26,7 @@
     <!-- ============================================ -->
     <div class="form-section">
       <h3 class="section-title">📋 Seleccionar Tarea</h3>
-      
+
       <!-- ✅ BARRA DE FILTROS -->
       <div class="filtros-container">
         <!-- Búsqueda -->
@@ -43,7 +43,12 @@
         <!-- Filtro por fecha -->
         <div class="filtro-group">
           <label>📅 Fecha</label>
-          <select (change)="onFiltroFechaChange($event)" class="filtro-select">
+          <select
+            [value]="filtros.fecha"
+            (change)="onFiltroFechaChange($event)"
+            class="filtro-select"
+          >
+            <option value="">-- Seleccionar --</option>
             <option *ngFor="let opt of opcionesFecha" [value]="opt.value">
               {{ opt.label }}
             </option>
@@ -53,7 +58,12 @@
         <!-- Filtro por estado -->
         <div class="filtro-group">
           <label>📊 Estado</label>
-          <select (change)="onFiltroEstadoChange($event)" class="filtro-select">
+          <select
+            [value]="filtros.estado"
+            (change)="onFiltroEstadoChange($event)"
+            class="filtro-select"
+          >
+            <option value="">-- Seleccionar --</option>
             <option *ngFor="let opt of opcionesEstado" [value]="opt.value">
               {{ opt.label }}
             </option>
@@ -63,7 +73,11 @@
         <!-- Filtro por empleado -->
         <div class="filtro-group">
           <label>👤 Empleado</label>
-          <select (change)="onFiltroEmpleadoChange($event)" class="filtro-select">
+          <select
+            [value]="filtros.empleadoId ?? ''"
+            (change)="onFiltroEmpleadoChange($event)"
+            class="filtro-select"
+          >
             <option value="">Todos</option>
             <option *ngFor="let emp of empleados" [value]="emp.id">
               {{ getNombreCompleto(emp) }}
@@ -72,15 +86,13 @@
         </div>
 
         <!-- Limpiar filtros -->
-        <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">
-          🧹 Limpiar
-        </button>
+        <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">🧹 Limpiar</button>
       </div>
 
       <!-- Contador de tareas -->
       <div class="tareas-counter">
         <span>
-          Mostrando <strong>{{ totalTareasFiltradas }}</strong> de 
+          Mostrando <strong>{{ totalTareasFiltradas }}</strong> de
           <strong>{{ totalTareasOriginales }}</strong> tareas
         </span>
         <span *ngIf="!hayTareasFiltradas" class="no-tareas-msg">
@@ -91,9 +103,9 @@
       <!-- Selector de tarea -->
       <div class="form-group">
         <label for="tareaId">Tarea Asignada *</label>
-        <select 
-          id="tareaId" 
-          formControlName="tareaId" 
+        <select
+          id="tareaId"
+          formControlName="tareaId"
           [class.invalid]="f['tareaId'].invalid && submitted"
           class="form-select"
           [disabled]="!hayTareasFiltradas"
@@ -104,16 +116,20 @@
             <span *ngIf="tarea.empleado" class="tarea-empleado">
               👤 {{ getNombreCompleto(tarea.empleado) }}
             </span>
-            <span *ngIf="tarea.estado" class="tarea-estado" [style.color]="getColorEstado(tarea.estado)">
+            <span
+              *ngIf="tarea.estado"
+              class="tarea-estado"
+              [style.color]="getColorEstado(tarea.estado)"
+            >
               {{ getIconoEstado(tarea.estado) }} {{ tarea.estado }}
             </span>
           </option>
         </select>
-        
+
         <small class="field-note">
           💡 Seleccione una tarea para autocompletar empleado, supervisor y área
         </small>
-        
+
         <div class="error-text" *ngIf="f['tareaId'].invalid && submitted">
           <span *ngIf="f['tareaId'].errors?.['required']">Debe seleccionar una tarea</span>
         </div>
@@ -154,13 +170,13 @@
     <!-- ============================================ -->
     <div class="form-section">
       <h3 class="section-title">👥 Datos Asociados</h3>
-      
+
       <div class="form-grid">
         <div class="form-group">
           <label>Empleado *</label>
           <div class="readonly-field" [class.empty]="!selectedTarea?.empleado">
             <span *ngIf="selectedTarea?.empleado">
-              {{ getNombreCompleto(selectedTarea.empleado) }}
+              {{ getNombreCompleto(selectedTarea?.empleado) }}
             </span>
             <span *ngIf="!selectedTarea?.empleado" class="empty-text">
               ⚠️ Seleccione una tarea
@@ -172,7 +188,7 @@
           <label>Supervisor</label>
           <div class="readonly-field" [class.empty]="!selectedTarea?.supervisor">
             <span *ngIf="selectedTarea?.supervisor">
-              {{ getNombreCompleto(selectedTarea.supervisor) }}
+              {{ getNombreCompleto(selectedTarea?.supervisor) }}
             </span>
             <span *ngIf="!selectedTarea?.supervisor" class="empty-text">
               ⚠️ Seleccione una tarea
@@ -184,11 +200,9 @@
           <label>Área de Trabajo</label>
           <div class="readonly-field" [class.empty]="!selectedTarea?.area">
             <span *ngIf="selectedTarea?.area">
-              {{ selectedTarea.area.nombre }}
+              {{ selectedTarea?.area?.nombre || 'No disponible' }}
             </span>
-            <span *ngIf="!selectedTarea?.area" class="empty-text">
-              ⚠️ Seleccione una tarea
-            </span>
+            <span *ngIf="!selectedTarea?.area" class="empty-text"> ⚠️ Seleccione una tarea </span>
           </div>
         </div>
       </div>
@@ -199,7 +213,7 @@
     <!-- ============================================ -->
     <div class="form-section">
       <h3 class="section-title">⚠️ Datos del Incidente</h3>
-      
+
       <div class="form-grid">
         <div class="form-group">
           <label for="tipo">Tipo de Incidente *</label>

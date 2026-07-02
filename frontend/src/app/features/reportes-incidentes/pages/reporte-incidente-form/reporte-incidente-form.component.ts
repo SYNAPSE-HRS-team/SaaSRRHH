@@ -46,7 +46,7 @@ export class ReporteIncidenteFormComponent implements OnInit {
   // FILTROS
   // ============================================
   filtros = {
-    fecha: 'hoy',
+    fecha: '',
     estado: '',
     empleadoId: null as number | null,
     searchTerm: '',
@@ -104,7 +104,6 @@ export class ReporteIncidenteFormComponent implements OnInit {
     this.empleadoService.listarActivos().subscribe({
       next: (data) => {
         this.empleados = data;
-        console.log('✅ Empleados cargados:', data.length);
       },
       error: (err) => {
         console.error('❌ Error cargando empleados:', err);
@@ -116,7 +115,6 @@ export class ReporteIncidenteFormComponent implements OnInit {
     this.loading = true;
     this.tareaService.listar().subscribe({
       next: (data) => {
-        console.log('📋 Tareas recibidas:', data.length);
         this.tareasOriginales = data;
         this.aplicarFiltros();
         this.verificarParametros();
@@ -246,7 +244,6 @@ export class ReporteIncidenteFormComponent implements OnInit {
     }
 
     this.tareasFiltradas = resultado;
-    console.log('📊 Tareas filtradas:', this.tareasFiltradas.length);
     
     // Si la tarea seleccionada ya no está en los filtros, limpiar selección
     const tareaSeleccionada = this.form.get('tareaId')?.value;
@@ -262,12 +259,14 @@ export class ReporteIncidenteFormComponent implements OnInit {
   // MANEJADORES DE FILTROS
   // ============================================
   onFiltroFechaChange(event: Event): void {
-    this.filtros.fecha = (event.target as HTMLSelectElement).value;
+    const value = (event.target as HTMLSelectElement).value;
+    this.filtros.fecha = value;
     this.aplicarFiltros();
   }
 
   onFiltroEstadoChange(event: Event): void {
-    this.filtros.estado = (event.target as HTMLSelectElement).value;
+    const value = (event.target as HTMLSelectElement).value;
+    this.filtros.estado = value;
     this.aplicarFiltros();
   }
 
@@ -283,13 +282,51 @@ export class ReporteIncidenteFormComponent implements OnInit {
   }
 
   limpiarFiltros(): void {
+    // Resetear todos los filtros a su valor por defecto
     this.filtros = {
-      fecha: 'hoy',
+      fecha: '',
       estado: '',
       empleadoId: null,
       searchTerm: '',
     };
+    
+    // Limpiar el input de búsqueda visualmente
+    const searchInput = document.querySelector('.filtro-input') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.value = '';
+    }
+    
+    // Forzar actualización de los selects
+    this.actualizarSelectsVisualmente();
     this.aplicarFiltros();
+  }
+
+  /**
+   * Método auxiliar para actualizar los selects visualmente
+   */
+  private actualizarSelectsVisualmente(): void {
+    // Select de fecha
+    const fechaSelect = document.querySelector('.filtro-group select') as HTMLSelectElement;
+    if (fechaSelect) {
+      fechaSelect.value = this.filtros.fecha;
+    }
+    
+    // Select de estado (buscamos el segundo select)
+    const selects = document.querySelectorAll('.filtro-group select');
+    if (selects.length >= 2) {
+      const estadoSelect = selects[1] as HTMLSelectElement;
+      if (estadoSelect) {
+        estadoSelect.value = this.filtros.estado;
+      }
+    }
+    
+    // Select de empleado (buscamos el tercer select)
+    if (selects.length >= 3) {
+      const empleadoSelect = selects[2] as HTMLSelectElement;
+      if (empleadoSelect) {
+        empleadoSelect.value = this.filtros.empleadoId?.toString() || '';
+      }
+    }
   }
 
   // ============================================
@@ -320,8 +357,8 @@ export class ReporteIncidenteFormComponent implements OnInit {
   // UTILIDADES
   // ============================================
   getNombreCompleto(emp: any): string {
-    if (!emp) return '';
-    return `${emp.nombres || ''} ${emp.apellidos || ''}`.trim();
+    if (!emp) return 'No asignado';
+    return `${emp.nombres || ''} ${emp.apellidos || ''}`.trim() || 'No asignado';
   }
 
   getColorEstado(estado: string): string {
