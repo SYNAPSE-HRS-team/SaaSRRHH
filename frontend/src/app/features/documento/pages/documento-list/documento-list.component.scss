@@ -4,13 +4,34 @@
   .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 20px;
 
     h1 {
       color: #2563eb;
       font-size: 22px;
-      margin: 0;
+      margin: 0 0 8px;
+    }
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+
+    .tab {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      text-decoration: none;
+
+      &:hover { background: #f1f5f9; }
+
+      &.active {
+        background: #2563eb;
+        color: #fff;
+      }
     }
   }
 
@@ -22,6 +43,7 @@
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
+    height: fit-content;
 
     &:hover {
       background: #1d4ed8;
