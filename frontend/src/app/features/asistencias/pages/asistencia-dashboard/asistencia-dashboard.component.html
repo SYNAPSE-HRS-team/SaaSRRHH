@@ -248,39 +248,48 @@
             <p>📋 No hay registros de asistencia para el día seleccionado.</p>
           </div>
         } @else {
-          <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} registro(s)</div>
+          <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} empleado(s)</div>
           <div class="table-container">
             <table>
               <thead>
                 <tr>
-                  <th>Hora</th>
                   <th>DNI</th>
                   <th>Empleado</th>
-                  <th>Tipo</th>
-                  <th>Método</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
                   <th>Estado</th>
-                  <th>Observaciones</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (reg of getFilteredAsistenciasHoy(); track reg.id) {
-                  <tr [class.virtual-row]="reg.isVirtual">
-                    <td class="hora">{{ reg.fechaHora ? (reg.fechaHora | date:'HH:mm:ss') : '—' }}</td>
-                    <td><span class="dni-badge">{{ getEmpleadoDni(reg.empleadoId) }}</span></td>
-                    <td class="empleado-nombre">{{ getEmpleadoNombre(reg.empleadoId) }}</td>
+                  <tr [class.virtual-row]="!reg.entrada && !reg.salida">
+                    <td><span class="dni-badge">{{ reg.dni }}</span></td>
+                    <td class="empleado-nombre">{{ reg.nombre }}</td>
                     <td>
-                      <span class="tipo-badge" 
-                            [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" 
-                            [class.salida]="reg.tipoMarcacion === 'SALIDA'"
-                            [class.pendiente]="reg.tipoMarcacion === 'Pendiente'"
-                            [class.no-registrado]="reg.tipoMarcacion === 'No registrado'">
-                        @if (reg.tipoMarcacion === 'ENTRADA') { 📥 Entrada }
-                        @else if (reg.tipoMarcacion === 'SALIDA') { 📤 Salida }
-                        @else if (reg.tipoMarcacion === 'Pendiente') { ⏳ Pendiente }
-                        @else { ❌ No registrado }
-                      </span>
+                      @if (reg.entrada) {
+                        <div class="check-time-cell">
+                          <span class="hora">{{ reg.entrada.fechaHora | date:'HH:mm:ss' }}</span>
+                          <span class="metodo-chip">{{ reg.entrada.metodo }}</span>
+                        </div>
+                      } @else {
+                        <span class="tipo-badge" [class.pendiente]="!reg.isPastDay" [class.no-registrado]="reg.isPastDay">
+                          {{ reg.isPastDay ? '❌ No registrado' : '⏳ Pendiente' }}
+                        </span>
+                      }
                     </td>
-                    <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
+                    <td>
+                      @if (reg.salida) {
+                        <div class="check-time-cell">
+                          <span class="hora">{{ reg.salida.fechaHora | date:'HH:mm:ss' }}</span>
+                          <span class="metodo-chip">{{ reg.salida.metodo }}</span>
+                        </div>
+                      } @else {
+                        <span class="tipo-badge" [class.pendiente]="!reg.isPastDay" [class.no-registrado]="reg.isPastDay">
+                          {{ reg.isPastDay ? '❌ No registrado' : '⏳ Pendiente' }}
+                        </span>
+                      }
+                    </td>
                     <td>
                       <span class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
@@ -290,7 +299,11 @@
                         [class.invalido]="reg.estado === 'INVALIDO'"
                       >{{ reg.estado }}</span>
                     </td>
-                    <td class="obs">{{ reg.observaciones || '—' }}</td>
+                    <td>
+                      <button class="btn btn-sm ghost compact" (click)="openAsistenciaModal(reg)">
+                        👁️ Ver / Editar
+                      </button>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -351,5 +364,96 @@
         }
       }
     </section>
+  }
+
+  <!-- MODAL DE DETALLE/EDICION UNIFICADO -->
+  @if (showDetailModal()) {
+    <div class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>👁️ Detalle de Asistencia</h3>
+          <button class="close-btn" (click)="showDetailModal.set(false)">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="employee-meta">
+            <span class="meta-label">Empleado:</span>
+            <span class="meta-value">{{ selectedEmployeeNameForModal }}</span>
+          </div>
+          <div class="employee-meta">
+            <span class="meta-label">Fecha:</span>
+            <span class="meta-value">{{ selectedDateForModal | date:'dd/MM/yyyy' }}</span>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- SECCION ENTRADA -->
+          <div class="attendance-section">
+            <h4>📥 Entrada</h4>
+            <div class="section-form-grid">
+              <div>
+                <label>Hora de Entrada</label>
+                <input type="time" [(ngModel)]="modalEntradaHora" [disabled]="!isAdmin" placeholder="HH:MM" />
+              </div>
+              <div>
+                <label>Estado</label>
+                <select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin">
+                  <option value="VALIDADO">VALIDADO</option>
+                  <option value="OBSERVADO">OBSERVADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
+                </select>
+              </div>
+              <div class="full-width">
+                <label>Observaciones de Entrada</label>
+                <input type="text" [(ngModel)]="modalEntradaObs" [disabled]="!isAdmin" placeholder="Ninguna" />
+              </div>
+            </div>
+            @if (modalEntradaExiste) {
+              <div class="badge-row">
+                <span class="info-badge">Registrado por Sistema</span>
+              </div>
+            }
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- SECCION SALIDA -->
+          <div class="attendance-section">
+            <h4>📤 Salida</h4>
+            <div class="section-form-grid">
+              <div>
+                <label>Hora de Salida</label>
+                <input type="time" [(ngModel)]="modalSalidaHora" [disabled]="!isAdmin" placeholder="HH:MM" />
+              </div>
+              <div>
+                <label>Estado</label>
+                <select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin">
+                  <option value="VALIDADO">VALIDADO</option>
+                  <option value="OBSERVADO">OBSERVADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
+                </select>
+              </div>
+              <div class="full-width">
+                <label>Observaciones de Salida</label>
+                <input type="text" [(ngModel)]="modalSalidaObs" [disabled]="!isAdmin" placeholder="Ninguna" />
+              </div>
+            </div>
+            @if (modalSalidaExiste) {
+              <div class="badge-row">
+                <span class="info-badge">Registrado por Sistema</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          @if (isAdmin) {
+            <button class="btn ghost" (click)="showDetailModal.set(false)">Cancelar</button>
+            <button class="btn primary" (click)="saveModalAsistencia()">Guardar Cambios</button>
+          } @else {
+            <button class="btn primary" (click)="showDetailModal.set(false)">Cerrar</button>
+          }
+        </div>
+      </div>
+    </div>
   }
 </div>

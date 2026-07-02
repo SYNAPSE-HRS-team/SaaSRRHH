@@ -591,6 +591,150 @@ tbody tr:hover { background: #F8FAFF; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+.check-time-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.check-time-cell .hora {
+  font-family: 'Inter', monospace;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text, #1A202C);
+}
+.check-time-cell .metodo-chip {
+  align-self: flex-start;
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: var(--color-surface, #ffffff);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+  border: 1px solid var(--color-border, #e2e8f0);
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg, #f8fafc);
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary, #1E3A5F);
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--color-text-muted, #718096);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.close-btn:hover {
+  color: var(--color-text, #1A202C);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.employee-meta {
+  display: flex;
+  margin-bottom: 0.5rem;
+  font-size: 0.88rem;
+}
+.meta-label {
+  font-weight: 700;
+  color: var(--color-text-secondary, #4A5568);
+  width: 100px;
+}
+.meta-value {
+  color: var(--color-text, #1A202C);
+  font-weight: 600;
+}
+
+.attendance-section {
+  margin: 1rem 0;
+}
+.attendance-section h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary, #1E3A5F);
+}
+
+.section-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+.section-form-grid .full-width {
+  grid-column: span 2;
+}
+.section-form-grid label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #718096);
+  margin-bottom: 0.25rem;
+}
+.section-form-grid input, .section-form-grid select {
+  margin-top: 0;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border, #cbd5e0);
+  width: 100%;
+}
+
+.badge-row {
+  margin-top: 0.5rem;
+}
+.info-badge {
+  display: inline-block;
+  background: var(--color-success-light, #DCFCE7);
+  color: var(--color-success, #16A34A);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.modal-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: var(--color-bg, #f8fafc);
+}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width: 900px) {
   .top-grid,

@@ -47,6 +47,24 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   yaMarcoSalida = signal(false);
   loadingMarcado = signal(false);
 
+  // Modal de Detalle/Edición Unificado
+  showDetailModal = signal(false);
+  selectedEmployeeNameForModal = '';
+  selectedEmployeeIdForModal?: number;
+  selectedDateForModal = '';
+
+  modalEntradaId?: number;
+  modalEntradaHora = '';
+  modalEntradaEstado = 'VALIDADO';
+  modalEntradaObs = '';
+  modalEntradaExiste = false;
+
+  modalSalidaId?: number;
+  modalSalidaHora = '';
+  modalSalidaEstado = 'VALIDADO';
+  modalSalidaObs = '';
+  modalSalidaExiste = false;
+
   manualPayload = '';
   selectedEmpleadoId?: number;
   selectedMonth = new Date().getMonth() + 1;
@@ -376,47 +394,129 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
     for (const emp of emps) {
       const empRecords = allRegistered.filter(r => r.empleadoId === emp.id);
-      const entradaRecords = empRecords.filter(r => r.tipoMarcacion === 'ENTRADA');
-      const salidaRecords = empRecords.filter(r => r.tipoMarcacion === 'SALIDA');
+      const entrada = empRecords.find(r => r.tipoMarcacion === 'ENTRADA');
+      const salida = empRecords.find(r => r.tipoMarcacion === 'SALIDA');
 
-      // 1. ENTRADA
-      if (entradaRecords.length > 0) {
-        resultList.push(...entradaRecords);
-      } else {
-        resultList.push({
-          id: -emp.id * 10 - 1, // virtual unique id
-          isVirtual: true,
-          empleadoId: emp.id,
-          tipoMarcacion: isPastDay ? 'No registrado' : 'Pendiente',
-          fechaHora: null,
-          metodo: '—',
-          estado: isPastDay ? 'INVALIDO' : 'PENDIENTE',
-          observaciones: '—'
-        });
-      }
+      const estadoGeneral = (() => {
+        if (entrada && salida) return entrada.estado;
+        if (entrada) return entrada.estado;
+        if (salida) return salida.estado;
+        return isPastDay ? 'INVALIDO' : 'PENDIENTE';
+      })();
 
-      // 2. SALIDA
-      if (salidaRecords.length > 0) {
-        resultList.push(...salidaRecords);
-      } else {
-        resultList.push({
-          id: -emp.id * 10 - 2, // virtual unique id
-          isVirtual: true,
-          empleadoId: emp.id,
-          tipoMarcacion: isPastDay ? 'No registrado' : 'Pendiente',
-          fechaHora: null,
-          metodo: '—',
-          estado: isPastDay ? 'INVALIDO' : 'PENDIENTE',
-          observaciones: '—'
-        });
-      }
+      resultList.push({
+        id: emp.id,
+        empleadoId: emp.id,
+        dni: emp.dni,
+        nombre: `${emp.apellidos}, ${emp.nombres}`,
+        entrada: entrada || null,
+        salida: salida || null,
+        estado: estadoGeneral,
+        isPastDay: isPastDay
+      });
     }
 
     if (!term) return resultList;
     return resultList.filter(r => {
-      const nombre = this.getEmpleadoNombre(r.empleadoId).toLowerCase();
-      const dni = this.getEmpleadoDni(r.empleadoId).toLowerCase();
-      return nombre.includes(term) || dni.includes(term);
+      return r.nombre.toLowerCase().includes(term) || r.dni.toLowerCase().includes(term);
+    });
+  }
+
+  openAsistenciaModal(row: any): void {
+    this.selectedEmployeeIdForModal = row.empleadoId;
+    this.selectedEmployeeNameForModal = row.nombre;
+    this.selectedDateForModal = this.fechaConsultaHoy;
+
+    // Reset forms
+    this.modalEntradaId = undefined;
+    this.modalEntradaHora = '';
+    this.modalEntradaEstado = 'VALIDADO';
+    this.modalEntradaObs = '';
+    this.modalEntradaExiste = false;
+
+    this.modalSalidaId = undefined;
+    this.modalSalidaHora = '';
+    this.modalSalidaEstado = 'VALIDADO';
+    this.modalSalidaObs = '';
+    this.modalSalidaExiste = false;
+
+    if (row.entrada) {
+      this.modalEntradaId = row.entrada.id;
+      // Extrae la hora en formato HH:MM
+      this.modalEntradaHora = row.entrada.fechaHora ? row.entrada.fechaHora.slice(11, 16) : '';
+      this.modalEntradaEstado = row.entrada.estado;
+      this.modalEntradaObs = row.entrada.observaciones || '';
+      this.modalEntradaExiste = true;
+    }
+    if (row.salida) {
+      this.modalSalidaId = row.salida.id;
+      this.modalSalidaHora = row.salida.fechaHora ? row.salida.fechaHora.slice(11, 16) : '';
+      this.modalSalidaEstado = row.salida.estado;
+      this.modalSalidaObs = row.salida.observaciones || '';
+      this.modalSalidaExiste = true;
+    }
+
+    this.showDetailModal.set(true);
+  }
+
+  saveModalAsistencia(): void {
+    if (!this.isAdmin) return;
+    if (!this.selectedEmployeeIdForModal) return;
+
+    const promises: Observable<any>[] = [];
+
+    // 1. Guardar Entrada
+    if (this.modalEntradaHora) {
+      const payload: RegistroAsistencia = {
+        empleadoId: this.selectedEmployeeIdForModal,
+        fechaHora: `${this.selectedDateForModal}T${this.modalEntradaHora}:00`,
+        tipoMarcacion: 'ENTRADA',
+        metodo: this.modalEntradaExiste ? undefined : 'MANUAL',
+        estado: this.modalEntradaEstado,
+        observaciones: this.modalEntradaObs
+      };
+      if (this.modalEntradaId) {
+        promises.push(this.asistencia.actualizar(this.modalEntradaId, payload));
+      } else {
+        promises.push(this.asistencia.crear(payload));
+      }
+    }
+
+    // 2. Guardar Salida
+    if (this.modalSalidaHora) {
+      const payload: RegistroAsistencia = {
+        empleadoId: this.selectedEmployeeIdForModal,
+        fechaHora: `${this.selectedDateForModal}T${this.modalSalidaHora}:00`,
+        tipoMarcacion: 'SALIDA',
+        metodo: this.modalSalidaExiste ? undefined : 'MANUAL',
+        estado: this.modalSalidaEstado,
+        observaciones: this.modalSalidaObs
+      };
+      if (this.modalSalidaId) {
+        promises.push(this.asistencia.actualizar(this.modalSalidaId, payload));
+      } else {
+        promises.push(this.asistencia.crear(payload));
+      }
+    }
+
+    if (promises.length === 0) {
+      this.showDetailModal.set(false);
+      return;
+    }
+
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin(promises).subscribe({
+        next: () => {
+          this.message.set('Asistencias guardadas correctamente');
+          this.error.set('');
+          this.showDetailModal.set(false);
+          this.loadCalendar();
+          this.loadAsistenciasHoy();
+        },
+        error: err => {
+          this.error.set(err.error?.message || 'Error al guardar los cambios');
+        }
+      });
     });
   }
 }
