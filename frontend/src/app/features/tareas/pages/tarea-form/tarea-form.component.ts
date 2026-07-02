@@ -9,6 +9,7 @@ import {
 import { AreaTrabajoService } from '../../../../core/services/area-trabajo.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { TareaAsignadaService } from '../../../../core/services/tarea-asignada.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-tarea-form',
@@ -22,6 +23,7 @@ export class TareaFormComponent implements OnInit {
   private tareaService = inject(TareaAsignadaService);
   private empleadoService = inject(EmpleadoService);
   private areaService = inject(AreaTrabajoService);
+  private authService = inject(AuthService);
 
   @Input() tareaData: TareaAsignadaResponse | null = null;
   @Input() editMode = false;
@@ -51,8 +53,12 @@ export class TareaFormComponent implements OnInit {
 
   // ✅ Verificar si el formulario está bloqueado
   get isFormLocked(): boolean {
-    // Si es solo lectura, siempre bloqueado
     if (this.soloLectura) return true;
+    
+    // Si es ADMIN o SUPERVISOR, no se bloquea la edición del estado
+    const role = this.authService.getCurrentUser()?.rol;
+    if (role === 'ADMIN' || role === 'SUPERVISOR') return false;
+
     if (!this.editMode) return false;
     if (!this.tareaData) return false;
     const estado = this.tareaData.estado;
@@ -91,6 +97,9 @@ export class TareaFormComponent implements OnInit {
   }
 
   fechaNoPasada(control: any) {
+    if (this.editMode) {
+      return null;
+    }
     if (!control.value) {
       return null;
     }

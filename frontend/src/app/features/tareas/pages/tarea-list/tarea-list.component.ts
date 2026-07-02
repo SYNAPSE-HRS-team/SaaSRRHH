@@ -5,6 +5,7 @@ import { EstadoTarea, TareaAsignadaResponse } from '../../../../core/models/tare
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { TareaAsignadaService } from '../../../../core/services/tarea-asignada.service';
 import { TareaFormComponent } from '../tarea-form/tarea-form.component';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-tarea-list',
@@ -23,6 +24,9 @@ export class TareaListComponent implements OnInit {
   isModalOpen = false;
   editMode = false;
   soloLectura = false;
+  isEmployee = false;
+  isAdmin = false;
+  currentEmpleadoId?: number;
   tareaSeleccionada: TareaAsignadaResponse | null = null;
 
   loading = false;
@@ -48,13 +52,35 @@ export class TareaListComponent implements OnInit {
   estadosBloqueados = ['COMPLETADO', 'CANCELADO', 'INCONCLUSO'];
 
   constructor(
+    private authService: AuthService,
     private tareaService: TareaAsignadaService,
     private empleadoService: EmpleadoService,
   ) {}
 
   ngOnInit(): void {
-    // ✅ Cargar empleados y supervisores primero, luego cargar tareas
-    this.cargarEmpleados(() => this.cargarSupervisores(() => this.cargarTareas()));
+    const role = this.authService.getCurrentUser()?.rol;
+    this.isEmployee = role === 'EMPLEADO' || role === 'TRABAJADOR';
+    this.isAdmin = role === 'ADMIN';
+
+    if (this.isEmployee) {
+      const userId = this.authService.getCurrentUser()?.idUsuario;
+      if (userId) {
+        this.empleadoService.buscarPorUsuarioId(userId).subscribe({
+          next: emp => {
+            this.currentEmpleadoId = emp.id;
+            this.cargarTareas();
+          },
+          error: err => {
+            console.error('Error al cargar datos del empleado:', err);
+            this.cargarTareas();
+          }
+        });
+      } else {
+        this.cargarTareas();
+      }
+    } else {
+      this.cargarEmpleados(() => this.cargarSupervisores(() => this.cargarTareas()));
+    }
   }
 
   // ===================================
@@ -63,8 +89,11 @@ export class TareaListComponent implements OnInit {
 
   cargarTareas(): void {
     this.loading = true;
-    // ✅ Usar el método correcto del servicio de tareas
-    this.tareaService.listar().subscribe({
+    const req = (this.isEmployee && this.currentEmpleadoId)
+      ? this.tareaService.getTareasByEmpleado(this.currentEmpleadoId)
+      : this.tareaService.listar();
+
+    req.subscribe({
       next: (data: TareaAsignadaResponse[]) => {
         console.log('Tareas recibidas del backend:', data);
         this.tareas = data;
@@ -298,5 +327,18 @@ export class TareaListComponent implements OnInit {
 
   get tareasInconclusas(): number {
     return this.tareas.filter((t) => t.estado === 'INCONCLUSO').length;
+  }
+
+  actualizarEstado(id: number | undefined, nuevoEstado: string): void {
+    if (!id) return;
+    this.tareaService.cambiarEstado(id, nuevoEstado).subscribe({
+      next: () => {
+        this.cargarTareas();
+      },
+      error: (err: any) => {
+        console.error('Error al cambiar estado:', err);
+        alert('Error al actualizar el estado de la tarea.');
+      }
+    });
   }
 }

@@ -415,6 +415,30 @@
       background: #e2e8f0;
     }
   }
+
+  &.play {
+    color: #047857;
+    background: #d1fae5;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 4px 10px;
+
+    &:hover {
+      background: #a7f3d0;
+    }
+  }
+
+  &.check {
+    color: #1d4ed8;
+    background: #dbeafe;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 4px 10px;
+
+    &:hover {
+      background: #bfdbfe;
+    }
+  }
 }
 
 .table-footer {

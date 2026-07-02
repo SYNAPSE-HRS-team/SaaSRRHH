@@ -88,6 +88,12 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.PUT, "/api/empleados/**")
                         .hasRole("ADMIN")
+
+                        // Permitir a usuarios autenticados consultar sus propios datos de empleado y tareas
+                        .requestMatchers(HttpMethod.GET, "/api/empleados/usuario/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/empleado/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/*").authenticated()
+
                         .requestMatchers(
                                 "/api/empleados/**",
                                 "/api/tareas-asignadas/**",

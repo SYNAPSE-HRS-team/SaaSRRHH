@@ -5,7 +5,7 @@
       <h1>Seguimiento de Tareas</h1>
       <p class="subtitle">Gestión y asignación de actividades operativas en el SaaS</p>
     </div>
-    <div class="header-actions">
+    <div class="header-actions" *ngIf="!isEmployee">
       <button (click)="abrirModal()" class="btn-create-task">+ Asignar Tarea</button>
     </div>
   </div>
@@ -53,7 +53,7 @@
       </select>
     </div>
 
-    <div class="filtro-group">
+    <div class="filtro-group" *ngIf="!isEmployee">
       <label>Empleado:</label>
       <select [(ngModel)]="filtroEmpleadoId" (ngModelChange)="aplicarFiltros()">
         <option [ngValue]="null">Todos los empleados</option>
@@ -176,29 +176,37 @@
             <!-- Ver (siempre visible) -->
             <button (click)="verTarea(t)" class="action-btn view" title="Ver tarea">👁️</button>
 
-            <!-- Editar (solo si NO está bloqueado) -->
-            <button
-              *ngIf="puedeEditar(t.estado)"
-              (click)="editarTarea(t)"
-              class="action-btn edit"
-              title="Editar tarea"
-            >
-              ✏️
-            </button>
+            <!-- Para empleados, las tareas son estrictamente de solo lectura (solo ver detalle) -->
+            <ng-container *ngIf="isEmployee">
+              <!-- No se muestran botones de acción adicionales -->
+            </ng-container>
 
-            <!-- Candado (cuando NO se puede editar) -->
-            <span
-              *ngIf="!puedeEditar(t.estado)"
-              class="action-btn locked"
-              title="Tarea finalizada ({{ t.estado }}) - No se puede editar"
-            >
-              🔒
-            </span>
+            <!-- Acciones de edición/eliminación para Admin y Supervisor -->
+            <ng-container *ngIf="!isEmployee">
+              <!-- Editar (solo si NO está bloqueado) -->
+              <button
+                *ngIf="puedeEditar(t.estado)"
+                (click)="editarTarea(t)"
+                class="action-btn edit"
+                title="Editar tarea"
+              >
+                ✏️
+              </button>
 
-            <!-- Eliminar (siempre visible) -->
-            <button (click)="eliminarTarea(t.id)" class="action-btn delete" title="Eliminar tarea">
-              🗑️
-            </button>
+              <!-- Candado (cuando NO se puede editar) -->
+              <span
+                *ngIf="!puedeEditar(t.estado)"
+                class="action-btn locked"
+                title="Tarea finalizada ({{ t.estado }}) - No se puede editar"
+              >
+                🔒
+              </span>
+
+              <!-- Eliminar -->
+              <button (click)="eliminarTarea(t.id)" class="action-btn delete" title="Eliminar tarea">
+                🗑️
+              </button>
+            </ng-container>
           </td>
         </tr>
       </tbody>
