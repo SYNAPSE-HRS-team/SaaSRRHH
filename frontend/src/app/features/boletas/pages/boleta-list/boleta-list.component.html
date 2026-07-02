@@ -1,0 +1,225 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>🧾 Boletas de Pago</h1>
+      <p class="subtitle">Consulta y descarga tus boletas de pago</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="load()" [disabled]="loading()">
+        {{ loading() ? '⏳' : '🔄' }} Actualizar
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">🧾</span>
+      <span class="stat-label">Total Boletas</span>
+      <span class="stat-value">{{ boletas().length }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">💵</span>
+      <span class="stat-label">Total Neto</span>
+      <span class="stat-value" style="font-size: 1.4rem;">S/{{ getTotalNeto() | number:'1.0-0' }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">📈</span>
+      <span class="stat-label">Prom. Neto</span>
+      <span class="stat-value" style="font-size: 1.4rem;">S/{{ getPromedioNeto() | number:'1.0-0' }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">👥</span>
+      <span class="stat-label">Empleados</span>
+      <span class="stat-value">{{ getEmpleadosUnicos() }}</span>
+    </div>
+  </div>
+
+  <!-- Notices -->
+  @if (error()) { <div class="error-banner">⚠️ {{ error() }}</div> }
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <i class="search-icon">🔍</i>
+      <input
+        type="text"
+        placeholder="Buscar por ID de empleado o planilla..."
+        (input)="onSearch($event)"
+      />
+    </div>
+    <div class="filter-group">
+      <select class="filter-select" (change)="onFilterPlanilla($event)" id="filtro-planilla-boleta">
+        <option value="">Todas las planillas</option>
+        @for (pid of planillasDisponibles(); track pid) {
+          <option [value]="pid">Planilla #{{ pid }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner-dark"></div>
+        <p>Cargando boletas...</p>
+      </div>
+    } @else if (filtered().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🧾</div>
+        <h3>No hay boletas disponibles</h3>
+        <p>Las boletas se generan automáticamente al procesar la nómina.</p>
+      </div>
+    } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Empleado</th>
+              <th>Período</th>
+              <th>Sueldo Base</th>
+              <th>Días Trab.</th>
+              <th>Bonos</th>
+              <th>Descuentos</th>
+              <th>Total Ingr.</th>
+              <th>Total Desc.</th>
+              <th class="col-neto">NETO PAGAR</th>
+              <th>Fecha</th>
+              <th>PDF</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of filtered(); track b.id) {
+              <tr [class.row-highlight]="descargandoPdf() === b.id">
+                <td><span class="id-chip">#{{ b.id }}</span></td>
+                <td>
+                  <div class="employee-info">
+                    <span class="badge badge-primary">#{{ b.empleadoId }}</span>
+                    @if (b.empleadoNombre) {
+                      <span class="employee-name">{{ b.empleadoNombre }}</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  @if (b.planillaMes && b.planillaAnio) {
+                    <span class="period-badge">{{ getMesNombre(b.planillaMes) }} {{ b.planillaAnio }}</span>
+                  } @else if (b.planillaId) {
+                    <span class="badge badge-secondary">#{{ b.planillaId }}</span>
+                  } @else { — }
+                </td>
+                <td class="num-cell">S/ {{ b.sueldoBase | number:'1.2-2' }}</td>
+                <td class="num-cell center">{{ b.diasTrabajados }}</td>
+                <td class="num-cell money-positive">
+                  S/ {{ getTotalBonos(b) | number:'1.2-2' }}
+                </td>
+                <td class="num-cell money-negative">
+                  S/ {{ getTotalDescuentos(b) | number:'1.2-2' }}
+                </td>
+                <td class="num-cell money-positive">S/ {{ b.totalIngresos | number:'1.2-2' }}</td>
+                <td class="num-cell money-negative">S/ {{ b.totalDescuentos | number:'1.2-2' }}</td>
+                <td class="col-neto">
+                  <div class="neto-pill">S/ {{ b.netoPagar | number:'1.2-2' }}</div>
+                </td>
+                <td class="date-cell">
+                  @if (b.fechaEmision) {
+                    {{ b.fechaEmision | slice:0:10 }}
+                  } @else { — }
+                </td>
+                <td>
+                  <button
+                    class="pdf-btn"
+                    (click)="descargarPdf(b.id!)"
+                    [disabled]="descargandoPdf() === b.id"
+                    title="Descargar PDF"
+                    id="btn-boleta-pdf-{{ b.id }}"
+                  >
+                    @if (descargandoPdf() === b.id) {
+                      <span class="loading-dot"></span>
+                    } @else {
+                      📄
+                    }
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span>Mostrando {{ filtered().length }} de {{ boletas().length }} boletas</span>
+      </div>
+    }
+  </div>
+
+  <!-- Detalle Modal -->
+  @if (boletaDetalle()) {
+    <div class="modal-overlay" (click)="boletaDetalle.set(null)">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>🧾 Detalle Boleta #{{ boletaDetalle()!.id }}</h3>
+          <button class="modal-close" (click)="boletaDetalle.set(null)">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="boleta-detail">
+            <div class="detail-section">
+              <h4>Ingresos</h4>
+              <div class="detail-row">
+                <span>Sueldo Base</span>
+                <span class="money-positive">S/ {{ boletaDetalle()!.sueldoBase | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Asignación Familiar</span>
+                <span class="money-positive">S/ {{ boletaDetalle()!.asignacionFamiliar | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Bono Beta</span>
+                <span class="money-positive">S/ {{ boletaDetalle()!.bonoBeta | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Horas Extra</span>
+                <span class="money-positive">S/ {{ boletaDetalle()!.horasExtraPago | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Otros Bonos</span>
+                <span class="money-positive">S/ {{ boletaDetalle()!.otrosBonos | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row total-row">
+                <span>Total Ingresos</span>
+                <span class="money-positive">S/ {{ boletaDetalle()!.totalIngresos | number:'1.2-2' }}</span>
+              </div>
+            </div>
+            <div class="detail-section">
+              <h4>Descuentos</h4>
+              <div class="detail-row">
+                <span>Desc. Inasistencia</span>
+                <span class="money-negative">- S/ {{ boletaDetalle()!.descuentoInasistencia | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row">
+                <span>Otros Descuentos</span>
+                <span class="money-negative">- S/ {{ boletaDetalle()!.otrosDescuentos | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row total-row">
+                <span>Total Descuentos</span>
+                <span class="money-negative">- S/ {{ boletaDetalle()!.totalDescuentos | number:'1.2-2' }}</span>
+              </div>
+            </div>
+            <div class="neto-section">
+              <span>Neto a Pagar</span>
+              <span>S/ {{ boletaDetalle()!.netoPagar | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="boletaDetalle.set(null)">Cerrar</button>
+          <button class="btn-primary" (click)="descargarPdf(boletaDetalle()!.id!)">
+            📄 Descargar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,151 @@
+.documento-list {
+  padding: 24px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+
+    h1 {
+      color: #2563eb;
+      font-size: 22px;
+      margin: 0 0 8px;
+    }
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+
+    .tab {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      text-decoration: none;
+
+      &:hover { background: #f1f5f9; }
+
+      &.active {
+        background: #2563eb;
+        color: #fff;
+      }
+    }
+  }
+
+  .btn-primary {
+    background: #2563eb;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    height: fit-content;
+
+    &:hover {
+      background: #1d4ed8;
+    }
+  }
+
+  .estado {
+    color: #64748b;
+    padding: 16px 0;
+
+    &.error {
+      color: #dc2626;
+    }
+  }
+
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+  }
+
+  .mono {
+    font-family: monospace;
+    color: #64748b;
+    font-size: 12px;
+  }
+
+  .font-semibold {
+    font-weight: 600;
+  }
+
+  .badge {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .vencido {
+    color: #dc2626;
+  }
+
+  .tag-vencido {
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+
+  .tag-activo {
+    color: #16a34a;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .tag-inactivo {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .acciones {
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn-icon {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+      background: #e2e8f0;
+    }
+
+    &.danger:hover {
+      background: #fee2e2;
+    }
+  }
+}

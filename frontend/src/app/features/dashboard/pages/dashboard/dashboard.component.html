@@ -1,0 +1,166 @@
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <h1>Dashboard</h1>
+      <div class="welcome">
+        <span class="welcome-text">Bienvenido,</span>
+        <span class="welcome-email">{{ user?.email }}</span>
+        <span class="role-badge">{{ rolLabel }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadDashboard()" [disabled]="loading()">
+        <span>🔄</span> Actualizar
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>Cargando dashboard...</p>
+    </div>
+  } @else {
+    <!-- ADMIN Dashboard -->
+    @if (isAdmin) {
+      <section class="dashboard-section">
+        <h2 class="section-title">📊 Panorama General</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">👥</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.totalEmpleados ?? '—' }}</span>
+              <span class="stat-label">Total Empleados</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">🔐</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.totalUsuarios ?? '—' }}</span>
+              <span class="stat-label">Usuarios del Sistema</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">📝</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.reportesDiarios ?? '—' }}</span>
+              <span class="stat-label">Reportes Diarios</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">⚠️</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.incidentes ?? '—' }}</span>
+              <span class="stat-label">Incidentes Reportados</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-section">
+        <h2 class="section-title">📈 Métricas de Riesgo</h2>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-icon">⏳</span>
+              <span class="metric-title">Ausentismo</span>
+            </div>
+            <div class="metric-value">{{ dashboardData()?.ausencias ?? 0 }}</div>
+            <div class="metric-sub">Total ausencias registradas</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-icon">📊</span>
+              <span class="metric-title">% Ausentismo</span>
+            </div>
+            <div
+              class="metric-value"
+              [class.text-danger]="(dashboardData()?.porcentajeAusentismo ?? 0) > 10"
+            >
+              {{ dashboardData()?.porcentajeAusentismo?.toFixed(1) ?? '0.0' }}%
+            </div>
+            <div class="metric-sub">Porcentaje del período</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-icon">🛡️</span>
+              <span class="metric-title">Nivel de Riesgo</span>
+            </div>
+            <div class="metric-value">
+              <span class="risk-badge" [class]="getRiskClass(dashboardData()?.nivelRiesgo)">
+                {{ dashboardData()?.nivelRiesgo ?? '—' }}
+              </span>
+            </div>
+            <div class="metric-sub">Riesgo organizacional</div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- SUPERVISOR Dashboard -->
+    @if (isSupervisor) {
+      <section class="dashboard-section">
+        <h2 class="section-title">📋 Resumen de Equipo</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">👥</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.totalEmpleados ?? '—' }}</span>
+              <span class="stat-label">Empleados a Cargo</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">📝</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.reportesDiarios ?? '—' }}</span>
+              <span class="stat-label">Reportes del Equipo</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">⚠️</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.incidentes ?? '—' }}</span>
+              <span class="stat-label">Incidentes</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon red">⏳</div>
+            <div class="stat-info">
+              <span class="stat-value">{{ dashboardData()?.ausencias ?? '—' }}</span>
+              <span class="stat-label">Ausencias Hoy</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- EMPLEADO Dashboard -->
+    @if (isEmpleado) {
+      <section class="dashboard-section">
+        <h2 class="section-title">👤 Mi Espacio</h2>
+        <div class="welcome-card">
+          <div class="welcome-icon">👋</div>
+          <div class="welcome-text">
+            <h3>¡Bienvenido, {{ user?.email }}!</h3>
+            <p>Accede a tus tareas, registra tu asistencia y revisa tus boletas desde aquí.</p>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Quick Actions (filtradas por rol) -->
+    <section class="dashboard-section">
+      <h2 class="section-title">⚡ Acciones Rápidas</h2>
+      <div class="actions-grid">
+        @for (action of filteredActions; track action.route) {
+          <a [routerLink]="action.route" class="action-card">
+            <span class="action-icon">{{ action.icon }}</span>
+            <span class="action-label">{{ action.label }}</span>
+          </a>
+        }
+      </div>
+    </section>
+  }
+</div>

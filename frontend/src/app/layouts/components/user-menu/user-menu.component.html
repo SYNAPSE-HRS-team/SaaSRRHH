@@ -1,0 +1,38 @@
+<div class="user-menu-container" (click)="$event.stopPropagation()">
+  <button class="user-menu-trigger" (click)="toggleMenu($event)">
+    
+    <div class="user-avatar">
+      <span class="initials">{{ getInitials() }}</span>
+    </div>
+
+    <div class="user-info">
+      <span class="user-email">{{ currentUser?.email }}</span>
+      <span class="user-role">{{ currentUser?.rol }}</span>
+    </div>
+
+    <i class="chevron" [class.open]="isOpen()">▼</i>
+
+  </button>
+
+  @if (isOpen()) {
+    <div class="user-dropdown">
+      <div class="dropdown-header">
+        <div class="user-avatar-large">
+          <span class="initials">{{ getInitials() }}</span>
+        </div>
+
+        <div class="user-details">
+          <span class="user-email">{{ currentUser?.email }}</span>
+          <span class="user-role">{{ currentUser?.rol }}</span>
+        </div>
+      </div>
+
+      <ul class="dropdown-menu">
+        <li (click)="goToProfile()"><i>👤</i><span>Mi Perfil</span></li>
+        <li (click)="switchAccount()"><i>🔄</i><span>Cambiar Cuenta</span></li>
+        <li class="divider"></li>
+        <li (click)="logout()" class="logout-item"><i>🚪</i><span>Cerrar Sesión</span></li>
+      </ul>
+    </div>
+  }
+</div>

@@ -1,0 +1,220 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Empleados</h1>
+      <p class="subtitle">Gestión de empleados de la empresa</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadEmpleados()" [disabled]="loading()">
+        <span>🔄</span> Actualizar
+      </button>
+      <a routerLink="/empleados/nuevo" class="btn-primary"> <span>➕</span> Nuevo Empleado </a>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Buscar por nombre, apellido, DNI o cargo..."
+        (input)="onSearch($event)"
+      />
+    </div>
+    <div class="filter-group">
+      <select (change)="onFilterEstado($event)" class="filter-select">
+        <option value="">Todos los estados</option>
+        <option value="true">Activos</option>
+        <option value="false">Inactivos</option>
+      </select>
+      <select (change)="onFilterCargo($event)" class="filter-select">
+        <option value="">Todos los cargos</option>
+        @for (cargo of cargosDisponibles; track cargo) {
+          <option [value]="cargo">{{ cargo }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>Cargando empleados...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadEmpleados()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Empty -->
+  @if (!loading() && !error() && filteredEmpleados().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">👥</span>
+      <h3>No hay empleados registrados</h3>
+      <p>Comienza registrando un nuevo empleado en el sistema.</p>
+      <a routerLink="/empleados/nuevo" class="btn-primary">Registrar Empleado</a>
+    </div>
+  }
+
+  <!-- Tabla -->
+  @if (!loading() && !error() && filteredEmpleados().length > 0) {
+    <div class="table-container">
+      <table class="empleados-table">
+        <thead>
+          <tr>
+            <th>DNI</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Email</th>
+            <th>Cargo</th>
+            <th>Sueldo Base</th>
+            <th>Inicio Contrato</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (emp of filteredEmpleados(); track emp.id) {
+            <tr>
+              <td>
+                <span class="dni-badge">{{ emp.dni }}</span>
+              </td>
+              <td class="name-cell">{{ emp.nombres }}</td>
+              <td>{{ emp.apellidos }}</td>
+              <td class="email-cell">{{ emp.email || '—' }}</td>
+              <td>
+                <span class="cargo-badge">{{ emp.cargo || '—' }}</span>
+              </td>
+              <td class="moneda">S/ {{ emp.sueldoBase?.toFixed(2) || '0.00' }}</td>
+              <td>{{ emp.fechaInicioContrato | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                @if (emp.activo) {
+                  <span class="status-active">Activo</span>
+                } @else {
+                  <span class="status-inactive">Inactivo</span>
+                }
+              </td>
+              <td class="actions-cell">
+                <button class="btn-icon" title="Ver detalle" (click)="verDetalle(emp)">👁️</button>
+                <a *ngIf="isAdmin" [routerLink]="['/empleados', emp.id]" class="btn-icon" title="Editar empleado">✏️</a>
+                <button class="btn-icon" title="Eliminar" (click)="confirmarEliminar(emp)">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Contador -->
+    <div class="table-footer">
+      <span>Mostrando {{ filteredEmpleados().length }} de {{ empleados().length }} empleados</span>
+    </div>
+  }
+
+  <!-- Modal de confirmación -->
+  @if (showDeleteModal()) {
+    <div class="modal-overlay" (click)="showDeleteModal.set(false)">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span class="modal-icon">⚠️</span>
+          <h3>Confirmar Eliminación</h3>
+        </div>
+        <p>
+          ¿Estás seguro de eliminar a
+          <strong>{{ empleadoToDelete?.nombres }} {{ empleadoToDelete?.apellidos }}</strong
+          >?
+        </p>
+        <p class="modal-warning">Esta acción no se puede deshacer.</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="showDeleteModal.set(false)">Cancelar</button>
+          <button class="btn-danger" (click)="eliminarEmpleado()" [disabled]="deleting()">
+            @if (deleting()) {
+              <span class="spinner-sm"></span> Eliminando...
+            } @else {
+              Eliminar
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal de detalle -->
+  @if (showDetailModal() && empleadoDetalle) {
+    <div class="modal-overlay" (click)="showDetailModal.set(false)">
+      <div class="modal-content modal-detail" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span class="modal-icon">👤</span>
+          <h3>Detalle del Empleado</h3>
+          <button class="btn-close" (click)="showDetailModal.set(false)">✕</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>DNI</label>
+            <span>{{ empleadoDetalle.dni }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Nombres</label>
+            <span>{{ empleadoDetalle.nombres }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Apellidos</label>
+            <span>{{ empleadoDetalle.apellidos }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Email</label>
+            <span>{{ empleadoDetalle.email || '—' }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Cargo</label>
+            <span>{{ empleadoDetalle.cargo || '—' }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Sueldo Base</label>
+            <span>S/ {{ empleadoDetalle.sueldoBase?.toFixed(2) || '0.00' }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Inicio Contrato</label>
+            <span>{{ empleadoDetalle.fechaInicioContrato | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Fin Contrato</label>
+            <span>{{
+              empleadoDetalle.fechaFinContrato
+                ? (empleadoDetalle.fechaFinContrato | date: 'dd/MM/yyyy')
+                : 'Indefinido'
+            }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Asignación Familiar</label>
+            <span>{{ empleadoDetalle.asignacionFamiliar ? 'Sí' : 'No' }}</span>
+          </div>
+          <div class="detail-field">
+            <label>Estado</label>
+            <span>
+              @if (empleadoDetalle.activo) {
+                <span class="status-active">Activo</span>
+              } @else {
+                <span class="status-inactive">Inactivo</span>
+              }
+            </span>
+          </div>
+          <div class="detail-field full-width">
+            <label>Fecha de Registro</label>
+            <span>{{ empleadoDetalle.fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

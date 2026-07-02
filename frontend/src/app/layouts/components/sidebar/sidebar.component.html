@@ -1,0 +1,53 @@
+<aside class="sidebar" [class.collapsed]="collapsed()" [class.mobile-open]="mobileOpen">
+  <div class="sidebar-header">
+    <div class="logo-section" (click)="toggleCollapse()">
+      <div class="logo-icon">HR</div>
+      @if (!collapsed()) {
+        <span class="logo-text">SaaSRRHH</span>
+        <button 
+          class="mobile-close-btn" 
+          (click)="$event.stopPropagation(); mobileClose.emit()" 
+          aria-label="Cerrar menú"
+        >
+          ✕
+        </button>
+      }
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (item of getFilteredMenuItems(); track item.route) {
+      <a
+        class="nav-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+        (click)="onNavClick()"
+        [title]="collapsed() ? item.label : ''"
+      >
+        <span class="nav-icon">{{ item.icon }}</span>
+        @if (!collapsed()) {
+          <span class="nav-label">{{ item.label }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    @if (!collapsed()) {
+      <div class="user-mini">
+        <div class="user-avatar-mini">{{ getInitials() }}</div>
+        <div class="user-info-mini">
+          <span class="user-email-mini">{{ currentUser?.email }}</span>
+          <span class="user-role-mini">{{ currentUser?.rol }}</span>
+        </div>
+      </div>
+    }
+    <button class="nav-item logout-btn" (click)="logout()">
+      <span class="nav-icon">🚪</span>
+      @if (!collapsed()) {
+        <span class="nav-label">Cerrar Sesión</span>
+      }
+    </button>
+  </div>
+</aside>

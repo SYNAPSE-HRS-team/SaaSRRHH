@@ -1,0 +1,167 @@
+<div class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ editMode ? 'Editar Tarea' : 'Asignar Nueva Tarea' }}</h3>
+      <button (click)="cerrar()" class="btn-close">&times;</button>
+    </div>
+
+    <!-- ✅ Mensaje de bloqueo -->
+    @if (isFormLocked) {
+      <div class="lock-message">
+        🔒 Esta tarea está <strong>{{ tareaData?.estado }}</strong> y no puede ser modificada.
+      </div>
+    }
+
+    <form [formGroup]="tareaForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <!-- Empleado (solo trabajadores) -->
+      <div class="input-block">
+        <label>Empleado <span class="required-mark">*</span></label>
+        <select
+          formControlName="empleadoId"
+          [class.has-error]="
+            tareaForm.get('empleadoId')?.touched && tareaForm.get('empleadoId')?.invalid
+          "
+        >
+          <option [ngValue]="null" disabled>Selecciona un empleado...</option>
+          <option *ngFor="let emp of empleados" [ngValue]="emp.id">
+            {{ emp.nombres }} {{ emp.apellidos }}
+          </option>
+        </select>
+        <div
+          *ngIf="tareaForm.get('empleadoId')?.touched && tareaForm.get('empleadoId')?.invalid"
+          class="error-text"
+        >
+          ⚠️ El empleado es obligatorio
+        </div>
+      </div>
+
+      <!-- Supervisor (solo supervisores) -->
+      <div class="input-block">
+        <label>Supervisor <span class="required-mark">*</span></label>
+        <select
+          formControlName="supervisorId"
+          [class.has-error]="
+            tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid
+          "
+        >
+          <option [ngValue]="null" disabled>Selecciona un supervisor...</option>
+          <option *ngFor="let sup of supervisores" [ngValue]="sup.id">
+            {{ sup.nombres }} {{ sup.apellidos }}
+          </option>
+        </select>
+        <div
+          *ngIf="tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid"
+          class="error-text"
+        >
+          ⚠️ El supervisor es obligatorio
+        </div>
+      </div>
+
+      <!-- Área -->
+      <div class="input-block">
+        <label>Área <span class="required-mark">*</span></label>
+        <select
+          formControlName="areaId"
+          [class.has-error]="tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid"
+        >
+          <option [ngValue]="null" disabled>Selecciona un área...</option>
+          <option *ngFor="let area of areas" [ngValue]="area.id">{{ area.nombre }}</option>
+        </select>
+        <div
+          *ngIf="tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid"
+          class="error-text"
+        >
+          ⚠️ El área es obligatoria
+        </div>
+      </div>
+
+      <!-- Función -->
+      <div class="input-block">
+        <label>Función <span class="required-mark">*</span></label>
+        <select
+          formControlName="funcion"
+          [class.has-error]="tareaForm.get('funcion')?.touched && tareaForm.get('funcion')?.invalid"
+        >
+          <option value="" disabled>Selecciona una función...</option>
+          <option *ngFor="let func of funciones" [value]="func">{{ func }}</option>
+        </select>
+        <div
+          *ngIf="tareaForm.get('funcion')?.touched && tareaForm.get('funcion')?.invalid"
+          class="error-text"
+        >
+          ⚠️ La función es obligatoria
+        </div>
+      </div>
+
+      <!-- Fecha -->
+      <div class="input-block">
+        <label>Fecha <span class="required-mark">*</span></label>
+        <input
+          type="date"
+          formControlName="fecha"
+          [class.has-error]="tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid"
+        />
+
+        @if (tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid) {
+          <div class="error-text">
+            @if (tareaForm.get('fecha')?.errors?.['required']) {
+              ⚠️ La fecha es obligatoria
+            } @else if (tareaForm.get('fecha')?.errors?.['fechaPasada']) {
+              ⚠️ No se pueden crear tareas con fecha pasada. La fecha debe ser hoy o futura.
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Descripción -->
+      <div class="input-block">
+        <label>Descripción</label>
+        <textarea
+          formControlName="descripcion"
+          rows="2"
+          placeholder="Describa la tarea..."
+          [class.has-error]="
+            tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid
+          "
+        ></textarea>
+        <div
+          *ngIf="tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid"
+          class="error-text"
+        >
+          ⚠️ Máximo 500 caracteres
+        </div>
+      </div>
+
+      <!-- Estado -->
+      <div class="input-block">
+        <label>Estado <span class="required-mark">*</span></label>
+        <select formControlName="estado">
+          <option *ngFor="let est of estadosDisponibles" [value]="est">{{ est }}</option>
+        </select>
+
+        <!-- ✅ Mensaje informativo -->
+        @if (isFormLocked) {
+          <small class="info-text lock">
+            🔒 Tarea finalizada como <strong>{{ tareaData?.estado }}</strong
+            >. No se pueden realizar cambios.
+          </small>
+        } @else if (!editMode) {
+          <small class="info-text">
+            ℹ️ Las tareas nuevas solo pueden crearse como PENDIENTE o EN_PROGRESO.
+          </small>
+        } @else {
+          <small class="info-text">
+            ℹ️ Al marcar como COMPLETADO, CANCELADO o INCONCLUSO, la tarea quedará bloqueada.
+          </small>
+        }
+      </div>
+
+      <div class="actions-wrapper">
+        <button type="button" (click)="cerrar()" class="btn-cancel">Cancelar</button>
+        <button type="submit" [disabled]="tareaForm.invalid || isFormLocked" class="btn-save">
+          {{ editMode ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

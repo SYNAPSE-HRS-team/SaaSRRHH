@@ -1,0 +1,279 @@
+.user-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 1000;
+  min-width: 0;
+}
+
+/* ===========================================
+   TRIGGER
+=========================================== */
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  min-width: 0;
+  max-width: 100%;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* ===========================================
+   AVATAR
+=========================================== */
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ===========================================
+   INFO
+=========================================== */
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+  min-width: 0;
+
+  .user-email {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .user-role {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* ===========================================
+   CHEVRON
+=========================================== */
+
+.chevron {
+  font-size: 10px;
+  color: #888;
+  margin-left: 4px;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+/* ===========================================
+   DROPDOWN (DESKTOP DEFAULT)
+=========================================== */
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 280px;
+  max-width: 90vw;
+
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  overflow: hidden;
+
+  animation: slideDown 0.2s ease;
+}
+
+/* ===========================================
+   HEADER DROPDOWN
+=========================================== */
+
+.dropdown-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.user-avatar-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+
+  .user-email {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .user-role {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+  }
+}
+
+/* ===========================================
+   MENU ITEMS
+=========================================== */
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.15s ease;
+
+    i {
+      width: 20px;
+      text-align: center;
+      font-style: normal;
+    }
+
+    &:hover {
+      background: #f8f9fa;
+    }
+  }
+
+  .divider {
+    height: 1px;
+    margin: 6px 12px;
+    background: #e9ecef;
+    cursor: default;
+  }
+
+  .logout-item {
+    color: #dc3545;
+
+    &:hover {
+      background: #fff5f5;
+    }
+  }
+}
+
+/* ===========================================
+   ANIMATION
+=========================================== */
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================================
+   RESPONSIVE SYSTEM REAL SAAS
+=========================================== */
+
+/* TABLET */
+@media (max-width: 1024px) {
+  .user-role {
+    display: none;
+  }
+
+  .user-email {
+    max-width: 110px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  /* 🔥 SOLO AVATAR EN HEADER */
+  .user-info,
+  .chevron {
+    display: none !important;
+  }
+
+  .user-menu-trigger {
+    padding: 6px;
+    gap: 0;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* 🔥 DROPDOWN FIX REAL (NO SE ROMPE) */
+  .user-dropdown {
+    position: fixed;
+    top: 64px;
+    left: 8px;
+    right: 8px;
+
+    width: auto;
+    max-width: none;
+
+    border-radius: 14px;
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 480px) {
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .user-dropdown {
+    top: 56px;
+  }
+}
