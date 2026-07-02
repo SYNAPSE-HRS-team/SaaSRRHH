@@ -44,7 +44,6 @@ export class SidebarComponent {
     { label: 'Bienestar', icon: '💚', route: '/encuestas-bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },
     { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
     { label: 'Usuarios', icon: '🔐', route: '/usuarios', roles: ['ADMIN'] },
-    { label: 'Roles', icon: '🎯', route: '/roles', roles: ['ADMIN'] },
   ];
 
   constructor(private authService: AuthService) {

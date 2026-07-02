@@ -41,7 +41,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   selectedEmpleadoId?: number;
   selectedMonth = new Date().getMonth() + 1;
   selectedYear = new Date().getFullYear();
-  editFecha = new Date().toISOString().slice(0, 10);
+  editFecha = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
   editEstado = 'VALIDADO';
   editObservaciones = '';
   private qrTimer?: number;
@@ -64,7 +67,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
     if (this.isEmployee) {
       this.loadQr();
-      this.checkMarcadoHoy();
     } else {
       this.loadEmployees();
     }
@@ -115,6 +117,8 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
             return s - 1;
           });
         }, 1000);
+
+        this.checkMarcadoHoy();
       },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el QR')
     });
@@ -123,10 +127,11 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   // ---- Marcado de salida (empleado) ----
 
   checkMarcadoHoy(): void {
-    // Verificar si ya marco entrada y/o salida hoy
+    // Verificar si ya marco entrada y/o salida hoy utilizando fecha local del navegador
     this.asistencia.miHistorial().subscribe({
       next: (registros) => {
-        const hoy = new Date().toISOString().slice(0, 10);
+        const d = new Date();
+        const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         const hoyRegistros = registros.filter(r => r.fechaHora?.startsWith(hoy));
         this.yaMarcoEntrada.set(hoyRegistros.some(r => r.tipoMarcacion === 'ENTRADA'));
         this.yaMarcoSalida.set(hoyRegistros.some(r => r.tipoMarcacion === 'SALIDA'));
@@ -229,6 +234,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.error.set('');
         this.manualPayload = '';
         this.loadCalendar();
+        this.checkMarcadoHoy();
         this.stopScanner();
       },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo registrar la asistencia')
