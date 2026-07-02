@@ -283,6 +283,68 @@ textarea { min-height: 70px; resize: vertical; }
   gap: 1rem;
   align-items: center;
   margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.sub-tab-toggle {
+  display: flex;
+  border: 1px solid var(--color-border, #d9e1ec);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-surface, #fff);
+}
+
+.sub-tab-toggle button {
+  border: 0;
+  background: transparent;
+  padding: .45rem .9rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary, #4A5568);
+  transition: all 0.2s;
+}
+
+.sub-tab-toggle .active {
+  background: var(--color-primary, #1E3A5F);
+  color: white;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-bar {
+  margin-bottom: 1rem;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrapper .search-icon {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #718096);
+}
+
+.search-wrapper input {
+  padding-left: 2.2rem;
+  margin-top: 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+.empleado-nombre {
+  font-weight: 600;
+  color: var(--color-text, #1A202C);
 }
 
 .date-controls {

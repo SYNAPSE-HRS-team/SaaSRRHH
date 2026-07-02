@@ -32,6 +32,12 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   historial = signal<RegistroAsistencia[]>([]);
   loadingHistorial = signal(false);
 
+  // Asistencias de hoy (Admin/Supervisor)
+  activeSubTab = signal<'hoy' | 'por_empleado'>('hoy');
+  searchTerm = signal('');
+  asistenciasHoyList = signal<RegistroAsistencia[]>([]);
+  loadingHoy = signal(false);
+
   // Marcado de salida
   yaMarcoEntrada = signal(false);
   yaMarcoSalida = signal(false);
@@ -86,7 +92,42 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   setTab(tab: 'calendario' | 'historial'): void {
     this.activeTab.set(tab);
-    if (tab === 'historial') this.loadHistorial();
+    if (tab === 'historial') {
+      if (!this.isEmployee && this.activeSubTab() === 'hoy') {
+        this.loadAsistenciasHoy();
+      } else {
+        this.loadHistorial();
+      }
+    }
+  }
+
+  setSubTab(subTab: 'hoy' | 'por_empleado'): void {
+    this.activeSubTab.set(subTab);
+    if (subTab === 'hoy') {
+      this.loadAsistenciasHoy();
+    } else {
+      this.loadHistorial();
+    }
+  }
+
+  loadAsistenciasHoy(): void {
+    this.loadingHoy.set(true);
+    this.asistencia.asistenciasHoy().subscribe({
+      next: data => {
+        // Ordenar asistencias por fecha/hora descendente (la más reciente primero)
+        const sorted = data.sort((a, b) => {
+          const tA = a.fechaHora ? new Date(a.fechaHora).getTime() : 0;
+          const tB = b.fechaHora ? new Date(b.fechaHora).getTime() : 0;
+          return tB - tA;
+        });
+        this.asistenciasHoyList.set(sorted);
+        this.loadingHoy.set(false);
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'No se pudo cargar las asistencias de hoy');
+        this.loadingHoy.set(false);
+      }
+    });
   }
 
   // ---- QR ----
@@ -235,6 +276,9 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.manualPayload = '';
         this.loadCalendar();
         this.checkMarcadoHoy();
+        if (!this.isEmployee) {
+          this.loadAsistenciasHoy();
+        }
         this.stopScanner();
       },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo registrar la asistencia')
@@ -297,6 +341,29 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.error.set(err.error?.message || 'Error al registrar salida');
         this.loadingMarcado.set(false);
       }
+    });
+  }
+
+  getEmpleadoNombre(id?: number): string {
+    if (!id) return '—';
+    const emp = this.empleados().find(e => e.id === id);
+    return emp ? `${emp.apellidos}, ${emp.nombres}` : `Empleado #${id}`;
+  }
+
+  getEmpleadoDni(id?: number): string {
+    if (!id) return '—';
+    const emp = this.empleados().find(e => e.id === id);
+    return emp ? emp.dni : '—';
+  }
+
+  getFilteredAsistenciasHoy(): RegistroAsistencia[] {
+    const term = this.searchTerm().toLowerCase().trim();
+    const all = this.asistenciasHoyList();
+    if (!term) return all;
+    return all.filter(r => {
+      const nombre = this.getEmpleadoNombre(r.empleadoId).toLowerCase();
+      const dni = this.getEmpleadoDni(r.empleadoId).toLowerCase();
+      return nombre.includes(term) || dni.includes(term);
     });
   }
 }

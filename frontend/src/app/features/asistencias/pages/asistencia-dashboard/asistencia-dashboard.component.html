@@ -196,8 +196,19 @@
     <!-- HISTORIAL -->
     <section class="panel historial-panel">
       <div class="calendar-toolbar">
-        <h2>📋 Historial de Asistencias</h2>
-        @if (!isEmployee) {
+        <div class="toolbar-left">
+          <h2>📋 Historial de Asistencias</h2>
+          
+          <!-- Sub-toggles para Admin y Supervisor -->
+          @if (!isEmployee) {
+            <div class="sub-tab-toggle">
+              <button [class.active]="activeSubTab() === 'hoy'" (click)="setSubTab('hoy')">📅 Asistencias de Hoy</button>
+              <button [class.active]="activeSubTab() === 'por_empleado'" (click)="setSubTab('por_empleado')">👥 Por Empleado</button>
+            </div>
+          }
+        </div>
+
+        @if (!isEmployee && activeSubTab() === 'por_empleado') {
           <div class="date-controls">
             <select [(ngModel)]="selectedEmpleadoId" (change)="loadHistorial()">
               @for (emp of empleados(); track emp.id) {
@@ -208,53 +219,120 @@
         }
       </div>
 
-      @if (loadingHistorial()) {
-        <div class="loading-state">
-          <div class="spinner-dark"></div>
-          <p>Cargando historial...</p>
+      <!-- VISTA 1: ASISTENCIAS DE HOY (Admin / Supervisor) -->
+      @if (!isEmployee && activeSubTab() === 'hoy') {
+        <div class="search-bar">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" 
+                   [ngModel]="searchTerm()" 
+                   (ngModelChange)="searchTerm.set($event)" 
+                   placeholder="Buscar empleado por nombre o DNI..." />
+          </div>
         </div>
-      } @else if (historial().length === 0) {
-        <div class="empty-historial">
-          <p>📋 No hay registros de asistencia aún.</p>
-        </div>
-      } @else {
-        <div class="historial-count">{{ historial().length }} registro(s)</div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Tipo</th>
-                <th>Método</th>
-                <th>Estado</th>
-                <th>Observaciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (reg of historial(); track reg.id) {
+
+        @if (loadingHoy()) {
+          <div class="loading-state">
+            <div class="spinner-dark"></div>
+            <p>Cargando asistencias de hoy...</p>
+          </div>
+        } @else if (getFilteredAsistenciasHoy().length === 0) {
+          <div class="empty-historial">
+            <p>📋 No hay registros de asistencia para el día de hoy.</p>
+          </div>
+        } @else {
+          <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} registro(s) hoy</div>
+          <div class="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <td>{{ reg.fechaHora | date:'dd/MM/yyyy' }}</td>
-                  <td class="hora">{{ reg.fechaHora | date:'HH:mm:ss' }}</td>
-                  <td>
-                    <span class="tipo-badge" [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" [class.salida]="reg.tipoMarcacion === 'SALIDA'">
-                      {{ reg.tipoMarcacion === 'ENTRADA' ? '📥 Entrada' : '📤 Salida' }}
-                    </span>
-                  </td>
-                  <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
-                  <td>
-                    <span class="estado-badge"
-                      [class.validado]="reg.estado === 'VALIDADO'"
-                      [class.observado]="reg.estado === 'OBSERVADO'"
-                      [class.rechazado]="reg.estado === 'RECHAZADO'"
-                    >{{ reg.estado }}</span>
-                  </td>
-                  <td class="obs">{{ reg.observaciones || '—' }}</td>
+                  <th>Hora</th>
+                  <th>DNI</th>
+                  <th>Empleado</th>
+                  <th>Tipo</th>
+                  <th>Método</th>
+                  <th>Estado</th>
+                  <th>Observaciones</th>
                 </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                @for (reg of getFilteredAsistenciasHoy(); track reg.id) {
+                  <tr>
+                    <td class="hora">{{ reg.fechaHora | date:'HH:mm:ss' }}</td>
+                    <td><span class="dni-badge">{{ getEmpleadoDni(reg.empleadoId) }}</span></td>
+                    <td class="empleado-nombre">{{ getEmpleadoNombre(reg.empleadoId) }}</td>
+                    <td>
+                      <span class="tipo-badge" [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" [class.salida]="reg.tipoMarcacion === 'SALIDA'">
+                        {{ reg.tipoMarcacion === 'ENTRADA' ? '📥 Entrada' : '📤 Salida' }}
+                      </span>
+                    </td>
+                    <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
+                    <td>
+                      <span class="estado-badge"
+                        [class.validado]="reg.estado === 'VALIDADO'"
+                        [class.observado]="reg.estado === 'OBSERVADO'"
+                        [class.rechazado]="reg.estado === 'RECHAZADO'"
+                      >{{ reg.estado }}</span>
+                    </td>
+                    <td class="obs">{{ reg.observaciones || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+
+      <!-- VISTA 2: HISTORIAL INDIVIDUAL (Empleado o Admin -> Por Empleado) -->
+      @if (isEmployee || activeSubTab() === 'por_empleado') {
+        @if (loadingHistorial()) {
+          <div class="loading-state">
+            <div class="spinner-dark"></div>
+            <p>Cargando historial...</p>
+          </div>
+        } @else if (historial().length === 0) {
+          <div class="empty-historial">
+            <p>📋 No hay registros de asistencia aún.</p>
+          </div>
+        } @else {
+          <div class="historial-count">{{ historial().length }} registro(s)</div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Tipo</th>
+                  <th>Método</th>
+                  <th>Estado</th>
+                  <th>Observaciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (reg of historial(); track reg.id) {
+                  <tr>
+                    <td>{{ reg.fechaHora | date:'dd/MM/yyyy' }}</td>
+                    <td class="hora">{{ reg.fechaHora | date:'HH:mm:ss' }}</td>
+                    <td>
+                      <span class="tipo-badge" [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" [class.salida]="reg.tipoMarcacion === 'SALIDA'">
+                        {{ reg.tipoMarcacion === 'ENTRADA' ? '📥 Entrada' : '📤 Salida' }}
+                      </span>
+                    </td>
+                    <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
+                    <td>
+                      <span class="estado-badge"
+                        [class.validado]="reg.estado === 'VALIDADO'"
+                        [class.observado]="reg.estado === 'OBSERVADO'"
+                        [class.rechazado]="reg.estado === 'RECHAZADO'"
+                      >{{ reg.estado }}</span>
+                    </td>
+                    <td class="obs">{{ reg.observaciones || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
       }
     </section>
   }
