@@ -9,6 +9,8 @@ import {
     TipoIncidente,
 } from '../../../../core/models/reporte-incidente.model';
 import { ReporteIncidenteService } from '../../../../core/services/reporte-incidente.service';
+import { TareaAsignadaService } from '../../../../core/services/tarea-asignada.service';
+import { TareaAsignadaResponse } from '../../../../core/models/tarea-asignada.model';
 
 @Component({
   selector: 'app-reporte-incidente-form',
@@ -27,6 +29,7 @@ export class ReporteIncidenteFormComponent implements OnInit {
   error = false;
   errorMessage = '';
 
+  tareas: TareaAsignadaResponse[] = [];
   tiposIncidente = Object.values(TipoIncidente);
   nivelesRiesgo = Object.values(NivelRiesgo);
   estadosIncidente = Object.values(EstadoIncidente);
@@ -36,19 +39,17 @@ export class ReporteIncidenteFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private reporteService: ReporteIncidenteService,
+    private tareaService: TareaAsignadaService,
   ) {}
 
   ngOnInit(): void {
     this.inicializarFormulario();
-    this.verificarParametros();
+    this.cargarTareas();
   }
 
   inicializarFormulario(): void {
     this.form = this.fb.group({
-      empleadoId: ['', [Validators.required]],
-      supervisorId: [''],
-      tareaId: [''],
-      areaId: [''],
+      tareaId: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
       descripcion: ['', [Validators.required, Validators.maxLength(1000)]],
       evidenciaUrl: ['', [Validators.maxLength(500)]],
@@ -83,11 +84,10 @@ export class ReporteIncidenteFormComponent implements OnInit {
     this.loading = true;
     this.reporteService.obtenerPorId(id).subscribe({
       next: (data: any) => {
+        const tarea = this.tareas.find((t) => t.id === data.tareaId);
+
         this.form.patchValue({
-          empleadoId: data.empleadoId,
-          supervisorId: data.supervisorId || '',
           tareaId: data.tareaId || '',
-          areaId: data.areaId || '',
           tipo: data.tipo,
           descripcion: data.descripcion,
           evidenciaUrl: data.evidenciaUrl || '',
@@ -115,6 +115,23 @@ export class ReporteIncidenteFormComponent implements OnInit {
     return this.form.controls;
   }
 
+  get selectedTarea(): TareaAsignadaResponse | undefined {
+    const tareaId = this.form.get('tareaId')?.value;
+    return this.tareas.find((t) => t.id === Number(tareaId));
+  }
+
+  cargarTareas(): void {
+    this.tareaService.listar().subscribe({
+      next: (data) => {
+        this.tareas = data;
+        this.verificarParametros();
+      },
+      error: (err) => {
+        console.error('Error al cargar tareas:', err);
+      },
+    });
+  }
+
   onSubmit(): void {
     this.submitted = true;
     this.error = false;
@@ -123,8 +140,26 @@ export class ReporteIncidenteFormComponent implements OnInit {
       return;
     }
 
+    const selectedTarea = this.selectedTarea;
+    if (!selectedTarea) {
+      this.error = true;
+      this.errorMessage = 'Debe seleccionar una tarea válida para crear el incidente';
+      return;
+    }
+
     this.loading = true;
-    const dto: ReporteIncidenteRequest = this.form.value;
+    const dto: ReporteIncidenteRequest = {
+      tareaId: selectedTarea.id,
+      areaId: selectedTarea.areaId || selectedTarea.area?.id,
+      empleadoId: selectedTarea.empleadoId || selectedTarea.empleado?.id!,
+      supervisorId: selectedTarea.supervisorId || selectedTarea.supervisor?.id,
+      tipo: this.form.value.tipo,
+      descripcion: this.form.value.descripcion,
+      evidenciaUrl: this.form.value.evidenciaUrl,
+      nivelRiesgo: this.form.value.nivelRiesgo,
+      estado: this.form.value.estado,
+      fechaIncidente: this.form.value.fechaIncidente,
+    };
 
     if (this.esEdicion && this.idIncidente) {
       this.actualizarReporte(this.idIncidente, dto);
