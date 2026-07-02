@@ -1,5 +1,6 @@
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\DataSeeder.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\SecurityConfig.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\StaticResourceConfig.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\config\TareaScheduler.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AccesoUsuarioController.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\controller\AnaliticaController.java
@@ -142,6 +143,7 @@ C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\back
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\EncuestaBienestarService.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FamiliarService.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FeedbackAnonimoService.java
+C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\FileStorageService.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AccesoUsuarioServiceImpl.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AnaliticaServiceImpl.java
 C:\Users\alons\Documents\Ciclo 7\Desarrollo web Integrado\SaaSRRHH\SaaSRRHH\backend\src\main\java\com\SaasRRHH\main\services\impl\AreaTrabajoServiceImpl.java
