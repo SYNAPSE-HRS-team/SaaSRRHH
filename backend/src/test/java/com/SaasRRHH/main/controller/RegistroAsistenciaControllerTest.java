@@ -16,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
-import com.SaasRRHH.main.security.JwtUtil;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDateTime;
@@ -33,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(RegistroAsistenciaController.class)
 @AutoConfigureMockMvc(addFilters = false)
-
 @WithMockUser
 class RegistroAsistenciaControllerTest {
 
@@ -42,11 +39,6 @@ class RegistroAsistenciaControllerTest {
 
     @MockBean
     private RegistroAsistenciaService service;
-            @MockBean
-        private JwtUtil jwtUtil;
-
-        @MockBean
-        private UserDetailsService userDetailsService;
 
     @MockBean
     private JwtUtil jwtUtil;
@@ -128,14 +120,13 @@ class RegistroAsistenciaControllerTest {
     }
 
     @Test
-        void registrarEntrada_cuandoYaMarcó_debeRetornar500() throws Exception {
+    void registrarEntrada_cuandoYaMarcó_debeRetornar500() throws Exception {
         when(service.registrarEntrada(eq(1L), any()))
-            .thenThrow(new RuntimeException("El empleado ya registró entrada hoy"));
+                .thenThrow(new RuntimeException("El empleado ya registró entrada hoy"));
 
-        assertThrows(Exception.class, () ->
-            mockMvc.perform(post("/api/asistencias/entrada/1").with(csrf())).andReturn()
-        );
-        }
+        assertThrows(Exception.class,
+                () -> mockMvc.perform(post("/api/asistencias/entrada/1").with(csrf())).andReturn());
+    }
 
     @Test
     void registrarSalida_debeRetornar200() throws Exception {
@@ -162,7 +153,7 @@ class RegistroAsistenciaControllerTest {
         when(service.buscarPorEmpleadoYFecha(eq(1L), any())).thenReturn(Arrays.asList(asistenciaResponse));
 
         mockMvc.perform(get("/api/asistencias/empleado/1/fecha")
-                        .param("fecha", "2025-05-20"))
+                .param("fecha", "2025-05-20"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }
@@ -199,8 +190,8 @@ class RegistroAsistenciaControllerTest {
         when(service.contarAsistenciasMensuales(eq(1L), any(), any())).thenReturn(20L);
 
         mockMvc.perform(get("/api/asistencias/mensual/1")
-                        .param("inicio", "2025-05-01T00:00:00")
-                        .param("fin", "2025-05-31T23:59:59"))
+                .param("inicio", "2025-05-01T00:00:00")
+                .param("fin", "2025-05-31T23:59:59"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("20"));
     }
@@ -210,15 +201,15 @@ class RegistroAsistenciaControllerTest {
         when(service.yaMarcoHoy(1L, "ENTRADA")).thenReturn(true);
 
         mockMvc.perform(get("/api/asistencias/ya-marco")
-                        .param("empleadoId", "1")
-                        .param("tipo", "ENTRADA"))
+                .param("empleadoId", "1")
+                .param("tipo", "ENTRADA"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
     }
 
     @Test
     void rankingTardanzas_debeRetornarRanking() throws Exception {
-        when(service.rankingTardanzas()).thenReturn(Collections.singletonList(new Object[]{1L, "Juan", 3L}));
+        when(service.rankingTardanzas()).thenReturn(Collections.singletonList(new Object[] { 1L, "Juan", 3L }));
 
         mockMvc.perform(get("/api/asistencias/ranking-tardanzas"))
                 .andExpect(status().isOk());
@@ -226,7 +217,8 @@ class RegistroAsistenciaControllerTest {
 
     @Test
     void miQr_debeRetornarAsistenciaQr() throws Exception {
-        com.SaasRRHH.main.DTO.AsistenciaQrDTO qrDTO = new com.SaasRRHH.main.DTO.AsistenciaQrDTO("payload", 1L, "Juan Perez", 30, 123456789L);
+        com.SaasRRHH.main.DTO.AsistenciaQrDTO qrDTO = new com.SaasRRHH.main.DTO.AsistenciaQrDTO("payload", 1L,
+                "Juan Perez", 30, 123456789L);
         when(service.generarQrEmpleadoActual()).thenReturn(qrDTO);
 
         mockMvc.perform(get("/api/asistencias/mi-qr"))
@@ -242,21 +234,22 @@ class RegistroAsistenciaControllerTest {
         req.setPayload("payload");
 
         mockMvc.perform(post("/api/asistencias/scan-qr")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)));
     }
 
     @Test
     void miCalendario_debeRetornarCalendarioMes() throws Exception {
-        com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO mesDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO(2025, 5, Collections.emptyList());
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO mesDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO(
+                2025, 5, Collections.emptyList());
         when(service.calendarioEmpleadoActual(2025, 5)).thenReturn(mesDTO);
 
         mockMvc.perform(get("/api/asistencias/mi-calendario")
-                        .param("anio", "2025")
-                        .param("mes", "5"))
+                .param("anio", "2025")
+                .param("mes", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.anio", is(2025)))
                 .andExpect(jsonPath("$.mes", is(5)));
@@ -264,23 +257,25 @@ class RegistroAsistenciaControllerTest {
 
     @Test
     void miCalendarioAnual_debeRetornarCalendarioAnual() throws Exception {
-        com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO anualDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO(2025, Collections.emptyList());
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO anualDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO(
+                2025, Collections.emptyList());
         when(service.calendarioAnualEmpleadoActual(2025)).thenReturn(anualDTO);
 
         mockMvc.perform(get("/api/asistencias/mi-calendario/anual")
-                        .param("anio", "2025"))
+                .param("anio", "2025"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.anio", is(2025)));
     }
 
     @Test
     void calendarioEmpleado_debeRetornarCalendarioMes() throws Exception {
-        com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO mesDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO(2025, 5, Collections.emptyList());
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO mesDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioMesDTO(
+                2025, 5, Collections.emptyList());
         when(service.calendarioEmpleado(1L, 2025, 5)).thenReturn(mesDTO);
 
         mockMvc.perform(get("/api/asistencias/calendario/1")
-                        .param("anio", "2025")
-                        .param("mes", "5"))
+                .param("anio", "2025")
+                .param("mes", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.anio", is(2025)))
                 .andExpect(jsonPath("$.mes", is(5)));
@@ -288,11 +283,12 @@ class RegistroAsistenciaControllerTest {
 
     @Test
     void calendarioAnualEmpleado_debeRetornarCalendarioAnual() throws Exception {
-        com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO anualDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO(2025, Collections.emptyList());
+        com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO anualDTO = new com.SaasRRHH.main.DTO.AsistenciaCalendarioAnualDTO(
+                2025, Collections.emptyList());
         when(service.calendarioAnualEmpleado(1L, 2025)).thenReturn(anualDTO);
 
         mockMvc.perform(get("/api/asistencias/calendario/1/anual")
-                        .param("anio", "2025"))
+                .param("anio", "2025"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.anio", is(2025)));
     }
