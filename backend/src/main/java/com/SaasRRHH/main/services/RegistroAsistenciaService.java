@@ -25,6 +25,7 @@ public interface RegistroAsistenciaService {
     List<RegistroAsistenciaResponseDTO> buscarPorEmpleado(Long empleadoId);
     List<RegistroAsistenciaResponseDTO> buscarPorEmpleadoYFecha(Long empleadoId, LocalDate fecha);
     List<RegistroAsistenciaResponseDTO> buscarPorEstado(String estado);
+    List<RegistroAsistenciaResponseDTO> asistenciasPorFecha(java.time.LocalDate fecha);
     List<RegistroAsistenciaResponseDTO> asistenciasHoy();
     List<RegistroAsistenciaResponseDTO> incidenciasAsistencia();
     Long contarAsistenciasMensuales(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);

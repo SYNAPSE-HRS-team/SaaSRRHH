@@ -33,8 +33,10 @@ export class AsistenciaService {
     return this.http.get<CalendarioAnual>(`${this.baseUrl}/calendario/${empleadoId}/anual`, { params: { anio } });
   }
 
-  asistenciasHoy(): Observable<RegistroAsistencia[]> {
-    return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/hoy`);
+  asistenciasHoy(fecha?: string): Observable<RegistroAsistencia[]> {
+    const params: any = {};
+    if (fecha) params.fecha = fecha;
+    return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/hoy`, { params });
   }
 
   /** Historial de asistencias del empleado autenticado */

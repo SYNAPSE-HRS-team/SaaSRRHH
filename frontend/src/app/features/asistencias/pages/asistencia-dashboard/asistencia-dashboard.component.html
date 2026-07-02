@@ -229,19 +229,26 @@
                    (ngModelChange)="searchTerm.set($event)" 
                    placeholder="Buscar empleado por nombre o DNI..." />
           </div>
+          <div class="date-wrapper">
+            <span class="date-label">📅 Fecha:</span>
+            <input type="date" 
+                   [(ngModel)]="fechaConsultaHoy" 
+                   (change)="loadAsistenciasHoy()" 
+                   class="date-input" />
+          </div>
         </div>
 
         @if (loadingHoy()) {
           <div class="loading-state">
             <div class="spinner-dark"></div>
-            <p>Cargando asistencias de hoy...</p>
+            <p>Cargando asistencias...</p>
           </div>
         } @else if (getFilteredAsistenciasHoy().length === 0) {
           <div class="empty-historial">
-            <p>📋 No hay registros de asistencia para el día de hoy.</p>
+            <p>📋 No hay registros de asistencia para el día seleccionado.</p>
           </div>
         } @else {
-          <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} registro(s) hoy</div>
+          <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} registro(s)</div>
           <div class="table-container">
             <table>
               <thead>
@@ -257,13 +264,20 @@
               </thead>
               <tbody>
                 @for (reg of getFilteredAsistenciasHoy(); track reg.id) {
-                  <tr>
-                    <td class="hora">{{ reg.fechaHora | date:'HH:mm:ss' }}</td>
+                  <tr [class.virtual-row]="reg.isVirtual">
+                    <td class="hora">{{ reg.fechaHora ? (reg.fechaHora | date:'HH:mm:ss') : '—' }}</td>
                     <td><span class="dni-badge">{{ getEmpleadoDni(reg.empleadoId) }}</span></td>
                     <td class="empleado-nombre">{{ getEmpleadoNombre(reg.empleadoId) }}</td>
                     <td>
-                      <span class="tipo-badge" [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" [class.salida]="reg.tipoMarcacion === 'SALIDA'">
-                        {{ reg.tipoMarcacion === 'ENTRADA' ? '📥 Entrada' : '📤 Salida' }}
+                      <span class="tipo-badge" 
+                            [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" 
+                            [class.salida]="reg.tipoMarcacion === 'SALIDA'"
+                            [class.pendiente]="reg.tipoMarcacion === 'Pendiente'"
+                            [class.no-registrado]="reg.tipoMarcacion === 'No registrado'">
+                        @if (reg.tipoMarcacion === 'ENTRADA') { 📥 Entrada }
+                        @else if (reg.tipoMarcacion === 'SALIDA') { 📤 Salida }
+                        @else if (reg.tipoMarcacion === 'Pendiente') { ⏳ Pendiente }
+                        @else { ❌ No registrado }
                       </span>
                     </td>
                     <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
@@ -272,6 +286,8 @@
                         [class.validado]="reg.estado === 'VALIDADO'"
                         [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
+                        [class.pendiente]="reg.estado === 'PENDIENTE'"
+                        [class.invalido]="reg.estado === 'INVALIDO'"
                       >{{ reg.estado }}</span>
                     </td>
                     <td class="obs">{{ reg.observaciones || '—' }}</td>

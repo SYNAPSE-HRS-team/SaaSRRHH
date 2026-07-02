@@ -293,6 +293,12 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
 
         @Override
         @Transactional(readOnly = true)
+        public List<RegistroAsistenciaResponseDTO> asistenciasPorFecha(LocalDate fecha) {
+                return repository.asistenciasHoy(inicioDelDia(fecha), finDelDia(fecha)).stream().map(RegistroAsistenciaMapper::toDTO).toList();
+        }
+
+        @Override
+        @Transactional(readOnly = true)
         public List<RegistroAsistenciaResponseDTO> asistenciasHoy() {
                 LocalDate hoy = LocalDate.now();
                 return repository.asistenciasHoy(inicioDelDia(hoy), finDelDia(hoy)).stream().map(RegistroAsistenciaMapper::toDTO).toList();

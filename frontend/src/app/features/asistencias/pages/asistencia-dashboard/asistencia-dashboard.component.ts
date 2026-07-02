@@ -37,6 +37,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   searchTerm = signal('');
   asistenciasHoyList = signal<RegistroAsistencia[]>([]);
   loadingHoy = signal(false);
+  fechaConsultaHoy = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
 
   // Marcado de salida
   yaMarcoEntrada = signal(false);
@@ -112,9 +116,8 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   loadAsistenciasHoy(): void {
     this.loadingHoy.set(true);
-    this.asistencia.asistenciasHoy().subscribe({
+    this.asistencia.asistenciasHoy(this.fechaConsultaHoy).subscribe({
       next: data => {
-        // Ordenar asistencias por fecha/hora descendente (la más reciente primero)
         const sorted = data.sort((a, b) => {
           const tA = a.fechaHora ? new Date(a.fechaHora).getTime() : 0;
           const tB = b.fechaHora ? new Date(b.fechaHora).getTime() : 0;
@@ -356,11 +359,61 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     return emp ? emp.dni : '—';
   }
 
-  getFilteredAsistenciasHoy(): RegistroAsistencia[] {
+  getFilteredAsistenciasHoy(): any[] {
     const term = this.searchTerm().toLowerCase().trim();
-    const all = this.asistenciasHoyList();
-    if (!term) return all;
-    return all.filter(r => {
+    const allRegistered = this.asistenciasHoyList();
+    const emps = this.empleados();
+    const selectedDateStr = this.fechaConsultaHoy;
+
+    const todayStr = (() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })();
+
+    const isPastDay = selectedDateStr < todayStr;
+
+    const resultList: any[] = [];
+
+    for (const emp of emps) {
+      const empRecords = allRegistered.filter(r => r.empleadoId === emp.id);
+      const entradaRecords = empRecords.filter(r => r.tipoMarcacion === 'ENTRADA');
+      const salidaRecords = empRecords.filter(r => r.tipoMarcacion === 'SALIDA');
+
+      // 1. ENTRADA
+      if (entradaRecords.length > 0) {
+        resultList.push(...entradaRecords);
+      } else {
+        resultList.push({
+          id: -emp.id * 10 - 1, // virtual unique id
+          isVirtual: true,
+          empleadoId: emp.id,
+          tipoMarcacion: isPastDay ? 'No registrado' : 'Pendiente',
+          fechaHora: null,
+          metodo: '—',
+          estado: isPastDay ? 'INVALIDO' : 'PENDIENTE',
+          observaciones: '—'
+        });
+      }
+
+      // 2. SALIDA
+      if (salidaRecords.length > 0) {
+        resultList.push(...salidaRecords);
+      } else {
+        resultList.push({
+          id: -emp.id * 10 - 2, // virtual unique id
+          isVirtual: true,
+          empleadoId: emp.id,
+          tipoMarcacion: isPastDay ? 'No registrado' : 'Pendiente',
+          fechaHora: null,
+          metodo: '—',
+          estado: isPastDay ? 'INVALIDO' : 'PENDIENTE',
+          observaciones: '—'
+        });
+      }
+    }
+
+    if (!term) return resultList;
+    return resultList.filter(r => {
       const nombre = this.getEmpleadoNombre(r.empleadoId).toLowerCase();
       const dni = this.getEmpleadoDni(r.empleadoId).toLowerCase();
       return nombre.includes(term) || dni.includes(term);

@@ -319,13 +319,23 @@ textarea { min-height: 70px; resize: vertical; }
 
 /* ===== SEARCH BAR ===== */
 .search-bar {
-  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  background: var(--color-bg, #F0F4F8);
+  padding: 0.85rem;
+  border-radius: var(--radius-md, 10px);
 }
 
 .search-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 250px;
 }
 
 .search-wrapper .search-icon {
@@ -339,12 +349,40 @@ textarea { min-height: 70px; resize: vertical; }
   padding-left: 2.2rem;
   margin-top: 0;
   width: 100%;
-  max-width: 400px;
+}
+
+.date-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.date-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-secondary, #4A5568);
+  white-space: nowrap;
+}
+.date-input {
+  margin-top: 0;
+  width: auto;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
 }
 
 .empleado-nombre {
   font-weight: 600;
   color: var(--color-text, #1A202C);
+}
+
+/* Virtual rows (pending/unregistered rows styling) */
+.virtual-row {
+  background: #fafbfc;
+}
+.virtual-row td {
+  color: #718096;
+}
+.virtual-row:hover {
+  background: #f4f6f8;
 }
 
 .date-controls {
@@ -499,6 +537,8 @@ tbody tr:hover { background: #F8FAFF; }
 }
 .tipo-badge.entrada { background: var(--color-success-light, #DCFCE7); color: var(--color-success, #16A34A); }
 .tipo-badge.salida { background: var(--color-accent-light, #DBEAFE); color: var(--color-accent, #2563EB); }
+.tipo-badge.pendiente { background: var(--color-warning-light, #FEF3C7); color: var(--color-warning, #D97706); }
+.tipo-badge.no-registrado { background: var(--color-bg, #E2E8F0); color: var(--color-text-secondary, #4A5568); }
 
 .metodo-chip {
   background: var(--color-bg, #F0F4F8);
@@ -521,6 +561,8 @@ tbody tr:hover { background: #F8FAFF; }
 .estado-badge.validado { background: var(--color-success-light, #DCFCE7); color: var(--color-success, #16A34A); }
 .estado-badge.observado { background: var(--color-warning-light, #FEF3C7); color: var(--color-warning, #D97706); }
 .estado-badge.rechazado { background: var(--color-danger-light, #FEE2E2); color: var(--color-danger, #DC2626); }
+.estado-badge.pendiente { background: var(--color-warning-light, #FEF3C7); color: var(--color-warning, #D97706); }
+.estado-badge.invalido { background: var(--color-danger-light, #FEE2E2); color: var(--color-danger, #DC2626); }
 
 .obs { font-size: 0.8rem; color: var(--color-text-muted, #718096); max-width: 200px; }
 

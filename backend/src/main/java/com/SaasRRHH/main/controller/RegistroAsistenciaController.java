@@ -148,11 +148,10 @@ public class RegistroAsistenciaController {
     // ===================================
 
     @GetMapping("/hoy")
-    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
-    asistenciasHoy() {
-
-        return ResponseEntity.ok(
-                service.asistenciasHoy());
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>> asistenciasHoy(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate fecha) {
+        java.time.LocalDate consulta = fecha != null ? fecha : java.time.LocalDate.now();
+        return ResponseEntity.ok(service.asistenciasPorFecha(consulta));
     }
 
     @GetMapping("/incidencias")
