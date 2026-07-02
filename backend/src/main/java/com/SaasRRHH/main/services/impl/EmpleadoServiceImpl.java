@@ -96,6 +96,52 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         }
 
         @Override
+        public EmpleadoResponseDTO actualizar(Long id, EmpleadoRequestDTO dto) {
+                Empleado existente = repository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+                if (dto.getDni() != null && !dto.getDni().equals(existente.getDni())) {
+                        repository.findByDni(dto.getDni()).ifPresent(other -> {
+                                if (!other.getId().equals(id)) {
+                                        throw new RuntimeException("El DNI ya está registrado");
+                                }
+                        });
+                }
+
+                if (dto.getUsuarioId() != null && existente.getUsuario() != null
+                                && !dto.getUsuarioId().equals(existente.getUsuario().getId())) {
+                        repository.findByUsuarioId(dto.getUsuarioId()).ifPresent(other -> {
+                                if (!other.getId().equals(id)) {
+                                        throw new RuntimeException("El usuario seleccionado ya tiene un empleado");
+                                }
+                        });
+                        Usuario usuarioNuevo = usuarioRepository.findById(dto.getUsuarioId())
+                                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                        existente.setUsuario(usuarioNuevo);
+                }
+
+                existente.setNombres(dto.getNombres());
+                existente.setApellidos(dto.getApellidos());
+                existente.setDni(dto.getDni());
+                existente.setFotoPerfilUrl(dto.getFotoPerfilUrl());
+                existente.setSueldoBase(dto.getSueldoBase());
+                existente.setAsignacionFamiliar(dto.getAsignacionFamiliar());
+                existente.setFechaInicioContrato(dto.getFechaInicioContrato());
+                existente.setFechaFinContrato(dto.getFechaFinContrato());
+                existente.setCargo(dto.getCargo());
+                existente.setActivo(dto.getActivo());
+
+                if (existente.getUsuario() != null) {
+                        Usuario usuario = existente.getUsuario();
+                        usuario.setNombre(dto.getNombres());
+                        usuario.setApellido(dto.getApellidos());
+                        usuarioRepository.save(usuario);
+                }
+
+                return EmpleadoMapper.toDTO(repository.save(existente));
+        }
+
+        @Override
         public void eliminar(Long id) {
 
                 Empleado empleado = repository.findById(id)

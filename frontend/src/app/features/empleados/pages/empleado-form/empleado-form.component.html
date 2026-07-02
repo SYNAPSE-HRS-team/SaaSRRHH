@@ -4,10 +4,12 @@
       <div class="breadcrumb">
         <a routerLink="/empleados">Empleados</a>
         <span class="separator">/</span>
-        <span>Nuevo Empleado</span>
+        <span>{{ isEditMode ? 'Editar Empleado' : 'Nuevo Empleado' }}</span>
       </div>
-      <h1>Registrar Nuevo Empleado</h1>
-      <p class="subtitle">Ingresa los datos del nuevo empleado en el sistema</p>
+      <h1>{{ isEditMode ? 'Editar Empleado' : 'Registrar Nuevo Empleado' }}</h1>
+      <p class="subtitle">
+        {{ isEditMode ? 'Actualiza los datos del empleado y sincroniza el nombre con el usuario.' : 'Ingresa los datos del nuevo empleado en el sistema' }}
+      </p>
     </div>
   </div>
 
@@ -208,7 +210,7 @@
           Guardando...
         } @else {
           <span>💾</span>
-          Guardar Empleado
+          {{ isEditMode ? 'Actualizar Empleado' : 'Guardar Empleado' }}
         }
       </button>
     </div>
