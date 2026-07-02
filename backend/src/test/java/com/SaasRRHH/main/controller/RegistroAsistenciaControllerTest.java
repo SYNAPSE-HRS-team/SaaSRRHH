@@ -2,32 +2,33 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.RegistroAsistenciaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.test.context.support.WithMockUser;
-import com.SaasRRHH.main.security.JwtUtil;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RegistroAsistenciaController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @WithMockUser
 class RegistroAsistenciaControllerTest {
 
@@ -87,7 +88,7 @@ class RegistroAsistenciaControllerTest {
 
     @Test
     void guardar_conDatosValidos_debeRetornar201() throws Exception {
-        when(service.guardar(any(RegistroAsistenciaRequestDTO.class))).thenReturn(asistenciaResponse);
+        when(service.guardar(org.mockito.ArgumentMatchers.any(RegistroAsistenciaRequestDTO.class))).thenReturn(asistenciaResponse);
 
         mockMvc.perform(post("/api/asistencias")
                 .with(csrf())
@@ -107,7 +108,7 @@ class RegistroAsistenciaControllerTest {
 
     @Test
     void registrarEntrada_debeRetornar200() throws Exception {
-        when(service.registrarEntrada(eq(1L), any())).thenReturn(asistenciaResponse);
+        when(service.registrarEntrada(eq(1L), org.mockito.ArgumentMatchers.any())).thenReturn(asistenciaResponse);
 
         mockMvc.perform(post("/api/asistencias/entrada/1")
                 .with(csrf())
@@ -117,14 +118,13 @@ class RegistroAsistenciaControllerTest {
     }
 
     @Test
-        void registrarEntrada_cuandoYaMarcó_debeRetornar500() throws Exception {
+    void registrarEntrada_cuandoYaMarco_debeRetornar500() throws Exception {
         when(service.registrarEntrada(eq(1L), any()))
             .thenThrow(new RuntimeException("El empleado ya registró entrada hoy"));
 
-        assertThrows(Exception.class, () ->
-            mockMvc.perform(post("/api/asistencias/entrada/1").with(csrf())).andReturn()
-        );
-        }
+        mockMvc.perform(post("/api/asistencias/entrada/1").with(csrf()))
+                .andExpect(status().isInternalServerError());
+    }
 
     @Test
     void registrarSalida_debeRetornar200() throws Exception {
@@ -148,7 +148,7 @@ class RegistroAsistenciaControllerTest {
 
     @Test
     void buscarPorEmpleadoYFecha_debeRetornarFiltrado() throws Exception {
-        when(service.buscarPorEmpleadoYFecha(eq(1L), any())).thenReturn(Arrays.asList(asistenciaResponse));
+        when(service.buscarPorEmpleadoYFecha(eq(1L), org.mockito.ArgumentMatchers.any())).thenReturn(Arrays.asList(asistenciaResponse));
 
         mockMvc.perform(get("/api/asistencias/empleado/1/fecha")
                         .param("fecha", "2025-05-20"))

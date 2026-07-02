@@ -21,11 +21,10 @@
           [class.has-error]="
             tareaForm.get('empleadoId')?.touched && tareaForm.get('empleadoId')?.invalid
           "
-          [disabled]="isFormLocked"
         >
           <option [ngValue]="null" disabled>Selecciona un empleado...</option>
-          <option *ngFor="let emp of empleados" [value]="emp.id">
-            {{ emp.nombres }} {{ emp.apellidos }} - {{ emp.dni }}
+          <option *ngFor="let emp of empleados" [ngValue]="emp.id">
+            {{ emp.nombres }} {{ emp.apellidos }}
           </option>
         </select>
         <div
@@ -44,10 +43,9 @@
           [class.has-error]="
             tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid
           "
-          [disabled]="isFormLocked"
         >
           <option [ngValue]="null" disabled>Selecciona un supervisor...</option>
-          <option *ngFor="let sup of supervisores" [value]="sup.id">
+          <option *ngFor="let sup of supervisores" [ngValue]="sup.id">
             {{ sup.nombres }} {{ sup.apellidos }}
           </option>
         </select>
@@ -65,10 +63,9 @@
         <select
           formControlName="areaId"
           [class.has-error]="tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid"
-          [disabled]="isFormLocked"
         >
           <option [ngValue]="null" disabled>Selecciona un área...</option>
-          <option *ngFor="let area of areas" [value]="area.id">{{ area.nombre }}</option>
+          <option *ngFor="let area of areas" [ngValue]="area.id">{{ area.nombre }}</option>
         </select>
         <div
           *ngIf="tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid"
@@ -84,7 +81,6 @@
         <select
           formControlName="funcion"
           [class.has-error]="tareaForm.get('funcion')?.touched && tareaForm.get('funcion')?.invalid"
-          [disabled]="isFormLocked"
         >
           <option value="" disabled>Selecciona una función...</option>
           <option *ngFor="let func of funciones" [value]="func">{{ func }}</option>
@@ -104,7 +100,6 @@
           type="date"
           formControlName="fecha"
           [class.has-error]="tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid"
-          [disabled]="isFormLocked"
         />
 
         @if (tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid) {
@@ -128,7 +123,6 @@
           [class.has-error]="
             tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid
           "
-          [disabled]="isFormLocked"
         ></textarea>
         <div
           *ngIf="tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid"
@@ -141,7 +135,7 @@
       <!-- Estado -->
       <div class="input-block">
         <label>Estado <span class="required-mark">*</span></label>
-        <select formControlName="estado" [disabled]="isFormLocked">
+        <select formControlName="estado">
           <option *ngFor="let est of estadosDisponibles" [value]="est">{{ est }}</option>
         </select>
 

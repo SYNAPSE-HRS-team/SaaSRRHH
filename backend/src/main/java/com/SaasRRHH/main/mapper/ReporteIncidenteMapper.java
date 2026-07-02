@@ -63,10 +63,27 @@ public class ReporteIncidenteMapper {
 
         ReporteIncidenteResponseDTO dto = new ReporteIncidenteResponseDTO();
         dto.setId(reporte.getId());
+
+        // ✅ IDs (por compatibilidad)
         dto.setEmpleadoId(reporte.getEmpleado() != null ? reporte.getEmpleado().getId() : null);
         dto.setSupervisorId(reporte.getSupervisor() != null ? reporte.getSupervisor().getId() : null);
         dto.setTareaId(reporte.getTarea() != null ? reporte.getTarea().getId() : null);
         dto.setAreaId(reporte.getArea() != null ? reporte.getArea().getId() : null);
+
+        // ✅ MAPEAR OBJETOS COMPLETOS
+        if (reporte.getEmpleado() != null) {
+            dto.setEmpleado(EmpleadoMapper.toDTO(reporte.getEmpleado()));
+        }
+        if (reporte.getSupervisor() != null) {
+            dto.setSupervisor(EmpleadoMapper.toDTO(reporte.getSupervisor()));
+        }
+        if (reporte.getTarea() != null) {
+            dto.setTarea(TareaAsignadaMapper.toDTO(reporte.getTarea()));
+        }
+        if (reporte.getArea() != null) {
+            dto.setArea(AreaTrabajoMapper.toDTO(reporte.getArea()));
+        }
+
         dto.setTipo(reporte.getTipo() != null ? reporte.getTipo().name() : null);
         dto.setDescripcion(reporte.getDescripcion());
         dto.setEvidenciaUrl(reporte.getEvidenciaUrl());
@@ -74,6 +91,7 @@ public class ReporteIncidenteMapper {
         dto.setEstado(reporte.getEstado() != null ? reporte.getEstado().name() : null);
         dto.setFechaIncidente(reporte.getFechaIncidente());
         dto.setFechaRegistro(reporte.getFechaRegistro());
+
         return dto;
     }
 }

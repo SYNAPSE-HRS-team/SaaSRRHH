@@ -20,6 +20,8 @@ public interface EmpleadoService {
 
     EmpleadoResponseDTO guardar(EmpleadoRequestDTO dto);
 
+    EmpleadoResponseDTO actualizar(Long id, EmpleadoRequestDTO dto);
+
     void eliminar(Long id);
 
     // =========================

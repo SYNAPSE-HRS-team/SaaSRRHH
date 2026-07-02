@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -90,6 +91,19 @@ public class EmpleadoController {
                 try {
                         EmpleadoResponseDTO empleado = service.guardar(dto);
                         return ResponseEntity.status(HttpStatus.CREATED).body(empleado);
+                } catch (RuntimeException e) {
+                        return ResponseEntity.badRequest().build();
+                }
+        }
+
+        @PutMapping("/{id}")
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<EmpleadoResponseDTO> actualizar(
+                        @PathVariable Long id,
+                        @RequestBody EmpleadoRequestDTO dto) {
+                try {
+                        EmpleadoResponseDTO empleadoActualizado = service.actualizar(id, dto);
+                        return ResponseEntity.ok(empleadoActualizado);
                 } catch (RuntimeException e) {
                         return ResponseEntity.badRequest().build();
                 }

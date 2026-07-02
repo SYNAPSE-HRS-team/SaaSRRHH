@@ -5,6 +5,7 @@ import com.SaasRRHH.main.DTO.UsuarioResponseDTO;
 import com.SaasRRHH.main.mapper.UsuarioMapper;
 import com.SaasRRHH.main.model.Rol;
 import com.SaasRRHH.main.model.Usuario;
+import com.SaasRRHH.main.repository.EmpleadoRepository;
 import com.SaasRRHH.main.repository.RolRepository;
 import com.SaasRRHH.main.repository.UsuarioRepository;
 import com.SaasRRHH.main.services.UsuarioService;
@@ -27,6 +28,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final EmpleadoRepository empleadoRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -178,6 +180,17 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         usuarioRepository.save(usuario);
+
+        empleadoRepository.findByUsuarioId(id).ifPresent(empleado -> {
+            if (profileData.containsKey("nombre")) {
+                empleado.setNombres(profileData.get("nombre"));
+            }
+            if (profileData.containsKey("apellido")) {
+                empleado.setApellidos(profileData.get("apellido"));
+            }
+            empleadoRepository.save(empleado);
+        });
+
         return UsuarioMapper.toDTO(usuario);
     }
 }

@@ -4,6 +4,7 @@ import com.SaasRRHH.main.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -64,6 +65,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll().requestMatchers("/uploads/**").permitAll()
 
+                                .requestMatchers("/api/usuarios/profile").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/profile").authenticated()
+
                         .requestMatchers(
                                 "/api/usuarios/**",
                                 "/api/roles/**",
@@ -76,6 +80,8 @@ public class SecurityConfig {
                                 "/api/validaciones-seguridad/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.PUT, "/api/empleados/**")
+                        .hasRole("ADMIN")
                         .requestMatchers(
                                 "/api/empleados/**",
                                 "/api/tareas-asignadas/**",

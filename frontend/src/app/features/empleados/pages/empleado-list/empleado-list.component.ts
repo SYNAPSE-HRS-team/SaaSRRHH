@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../../../core/services/auth.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 
@@ -30,9 +31,15 @@ export class EmpleadoListComponent implements OnInit {
   showDetailModal = signal(false);
   empleadoDetalle: EmpleadoResponse | null = null;
 
-  constructor(private empleadoService: EmpleadoService) { }
+  isAdmin = false;
+
+  constructor(
+    private empleadoService: EmpleadoService,
+    private authService: AuthService,
+  ) { }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.hasRole('ADMIN');
     this.loadEmpleados();
   }
 

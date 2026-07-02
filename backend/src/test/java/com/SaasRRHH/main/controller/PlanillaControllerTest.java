@@ -1,14 +1,17 @@
 package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.model.Planilla;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.PlanillaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -24,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PlanillaController.class)
+@AutoConfigureMockMvc(addFilters = false)
+
 class PlanillaControllerTest {
 
     @Autowired
@@ -31,6 +36,11 @@ class PlanillaControllerTest {
 
     @MockBean
     private PlanillaService planillaService;
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -99,8 +109,8 @@ class PlanillaControllerTest {
         when(planillaService.guardar(any(Planilla.class))).thenReturn(planilla);
 
         mockMvc.perform(post("/api/planillas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(planilla)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(planilla)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.mes", is(5)));
@@ -115,8 +125,8 @@ class PlanillaControllerTest {
         when(planillaService.actualizar(eq(1L), any(Planilla.class))).thenReturn(planilla);
 
         mockMvc.perform(put("/api/planillas/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(planilla)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(planilla)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)));
 
@@ -129,8 +139,8 @@ class PlanillaControllerTest {
                 .thenThrow(new RuntimeException("Planilla no encontrada"));
 
         mockMvc.perform(put("/api/planillas/99")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(planilla)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(planilla)))
                 .andExpect(status().isNotFound());
     }
 

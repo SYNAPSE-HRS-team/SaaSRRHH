@@ -56,9 +56,9 @@
     <div class="filtro-group">
       <label>Empleado:</label>
       <select [(ngModel)]="filtroEmpleadoId" (ngModelChange)="aplicarFiltros()">
-        <option [value]="null">Todos los empleados</option>
-        <option *ngFor="let emp of empleadosDisponibles" [value]="emp.id">
-          {{ emp.nombres }} {{ emp.apellidos }} ({{ emp.dni }})
+        <option [ngValue]="null">Todos los empleados</option>
+        <option *ngFor="let emp of empleadosDisponibles" [ngValue]="emp.id">
+          {{ emp.nombres }} {{ emp.apellidos }}
         </option>
       </select>
     </div>
@@ -66,8 +66,8 @@
     <div class="filtro-group">
       <label>Supervisor:</label>
       <select [(ngModel)]="filtroSupervisorId" (ngModelChange)="aplicarFiltros()">
-        <option [value]="null">Todos los supervisores</option>
-        <option *ngFor="let sup of supervisoresDisponibles" [value]="sup.id">
+        <option [ngValue]="null">Todos los supervisores</option>
+        <option *ngFor="let sup of supervisoresDisponibles" [ngValue]="sup.id">
           {{ sup.nombres }} {{ sup.apellidos }}
         </option>
       </select>
@@ -142,14 +142,20 @@
           </td>
           <td class="task-desc">{{ t.descripcion || 'Sin descripción' }}</td>
           <td class="emp-cell">
-            <strong>{{ t.empleado?.nombres || 'Sin asignar' }}</strong>
-            <span class="emp-dni" *ngIf="t.empleado?.dni">({{ t.empleado?.dni }})</span>
+            <strong>
+              {{ t.empleado?.nombres ? (t.empleado?.nombres + ' ' + (t.empleado?.apellidos || '')) : 'Sin asignar' }}
+            </strong>
           </td>
           <td>
-            {{ t.supervisor?.nombres || 'Sin supervisor' }}
-            <span class="emp-dni" *ngIf="t.supervisor?.apellidos">{{
-              t.supervisor?.apellidos
-            }}</span>
+            <strong>
+              {{
+                t.supervisor?.nombres || ''
+              }}
+              {{
+                t.supervisor?.apellidos || ''
+              }}
+            </strong>
+            <!-- DNI oculto en la tabla; solo mostramos nombre completo -->
           </td>
           <td>
             <span

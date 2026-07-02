@@ -2,6 +2,7 @@ package com.SaasRRHH.main.mapper;
 
 import com.SaasRRHH.main.DTO.TareaAsignadaRequestDTO;
 import com.SaasRRHH.main.DTO.TareaAsignadaResponseDTO;
+import com.SaasRRHH.main.mapper.AreaTrabajoMapper;
 import com.SaasRRHH.main.model.AreaTrabajo;
 import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.model.TareaAsignada;
@@ -20,6 +21,15 @@ public class TareaAsignadaMapper {
         dto.setDescripcion(t.getDescripcion());
         dto.setEstado(t.getEstado() != null ? t.getEstado().name() : null);
         dto.setFechaRegistro(t.getFechaRegistro());
+        if (t.getEmpleado() != null) {
+            dto.setEmpleado(EmpleadoMapper.toDTO(t.getEmpleado()));
+        }
+        if (t.getSupervisor() != null) {
+            dto.setSupervisor(EmpleadoMapper.toDTO(t.getSupervisor()));
+        }
+        if (t.getArea() != null) {
+            dto.setArea(AreaTrabajoMapper.toDTO(t.getArea()));
+        }
         return dto;
     }
 

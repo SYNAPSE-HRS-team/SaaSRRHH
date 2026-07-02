@@ -53,10 +53,8 @@ export class TareaListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // ✅ Cargar todo en paralelo
-    this.cargarEmpleados();
-    this.cargarSupervisores();
-    this.cargarTareas();
+    // ✅ Cargar empleados y supervisores primero, luego cargar tareas
+    this.cargarEmpleados(() => this.cargarSupervisores(() => this.cargarTareas()));
   }
 
   // ===================================
@@ -68,7 +66,43 @@ export class TareaListComponent implements OnInit {
     // ✅ Usar el método correcto del servicio de tareas
     this.tareaService.listar().subscribe({
       next: (data: TareaAsignadaResponse[]) => {
+        console.log('Tareas recibidas del backend:', data);
         this.tareas = data;
+        // Enriquecer y normalizar tareas: maneja distintas formas de respuesta
+        const normalizePerson = (p: any) => {
+          if (!p) return undefined;
+          const id = p.id ?? p.employeeId ?? p.empleadoId ?? null;
+          const nombres = p.nombres ?? p.nombre ?? p.firstName ?? p.first_name ?? p.employeeFirstName ?? '';
+          const apellidos = p.apellidos ?? p.apellido ?? p.lastName ?? p.last_name ?? p.employeeLastName ?? '';
+          const dni = p.dni ?? p.documento ?? p.doc ?? null;
+          return id ? { id, nombres: (nombres || '').toString().trim(), apellidos: (apellidos || '').toString().trim(), dni } : undefined;
+        };
+
+        const enrichPerson = (raw: any, lookup: any[]) => {
+          const normalized = normalizePerson(raw);
+          if (!normalized) return undefined;
+          const hasNames = (normalized.nombres || '').toString().trim() || (normalized.apellidos || '').toString().trim();
+          if (hasNames) return normalized;
+          if (normalized.id) {
+            const found = lookup.find((e) => e.id === normalized.id);
+            return normalizePerson(found) || normalized;
+          }
+          return normalized;
+        };
+
+        this.tareas.forEach(t => {
+          // empleado
+          const rawEmpleado = (t as any).empleado || (t as any).employee || (t as any).empleadoResponse || null;
+          t.empleado = enrichPerson(rawEmpleado || t.empleado, this.empleadosDisponibles) ||
+            (t.empleadoId ? enrichPerson({ id: t.empleadoId }, this.empleadosDisponibles) : undefined) ||
+            t.empleado;
+
+          // supervisor
+          const rawSupervisor = (t as any).supervisor || (t as any).supervisorResponse || null;
+          t.supervisor = enrichPerson(rawSupervisor || t.supervisor, this.supervisoresDisponibles) ||
+            (t.supervisorId ? enrichPerson({ id: t.supervisorId }, this.supervisoresDisponibles) : undefined) ||
+            t.supervisor;
+        });
         // ✅ Extraer funciones únicas para el filtro
         this.funcionesDisponibles = [...new Set(data.map((t) => t.funcion).filter(Boolean))];
         this.aplicarFiltros();
@@ -83,12 +117,13 @@ export class TareaListComponent implements OnInit {
   }
 
   // ✅ CARGAR EMPLEADOS DESDE EL BACKEND
-  cargarEmpleados(): void {
+  cargarEmpleados(onComplete?: () => void): void {
     // ✅ Usar listarActivos() que ya existe en el servicio
     this.empleadoService.listarActivos().subscribe({
       next: (data: any[]) => {
         this.empleadosDisponibles = data;
         console.log('✅ Empleados cargados:', this.empleadosDisponibles);
+        if (onComplete) onComplete();
       },
       error: (err: any) => {
         console.error('❌ Error al cargar empleados:', err);
@@ -97,9 +132,11 @@ export class TareaListComponent implements OnInit {
           next: (data: any[]) => {
             this.empleadosDisponibles = data;
             console.log('✅ Empleados cargados (fallback):', this.empleadosDisponibles);
+            if (onComplete) onComplete();
           },
           error: (err2: any) => {
             console.error('❌ Error al cargar empleados (fallback):', err2);
+            if (onComplete) onComplete();
           },
         });
       },
@@ -107,12 +144,13 @@ export class TareaListComponent implements OnInit {
   }
 
   // ✅ CARGAR SUPERVISORES DESDE EL BACKEND
-  cargarSupervisores(): void {
+  cargarSupervisores(onComplete?: () => void): void {
     // ✅ Usar listarSupervisoresByRol() que ya existe en el servicio
     this.empleadoService.listarSupervisoresByRol().subscribe({
       next: (data: any[]) => {
         this.supervisoresDisponibles = data;
         console.log('✅ Supervisores cargados:', this.supervisoresDisponibles);
+        if (onComplete) onComplete();
       },
       error: (err: any) => {
         console.error('❌ Error al cargar supervisores:', err);
@@ -121,9 +159,11 @@ export class TareaListComponent implements OnInit {
           next: (data: any[]) => {
             this.supervisoresDisponibles = data;
             console.log('✅ Supervisores cargados (fallback):', this.supervisoresDisponibles);
+            if (onComplete) onComplete();
           },
           error: (err2: any) => {
             console.error('❌ Error al cargar supervisores (fallback):', err2);
+            if (onComplete) onComplete();
           },
         });
       },
@@ -192,12 +232,12 @@ export class TareaListComponent implements OnInit {
       resultado = resultado.filter((t) => t.estado === this.filtroEstado);
     }
 
-    if (this.filtroEmpleadoId) {
-      resultado = resultado.filter((t) => t.empleado?.id === this.filtroEmpleadoId);
+    if (this.filtroEmpleadoId !== null) {
+      resultado = resultado.filter((t) => (t.empleado?.id ?? t.empleadoId) === this.filtroEmpleadoId);
     }
 
-    if (this.filtroSupervisorId) {
-      resultado = resultado.filter((t) => t.supervisor?.id === this.filtroSupervisorId);
+    if (this.filtroSupervisorId !== null) {
+      resultado = resultado.filter((t) => (t.supervisor?.id ?? t.supervisorId) === this.filtroSupervisorId);
     }
 
     if (this.filtroFecha) {
