@@ -9,7 +9,7 @@ import { BoletaPago } from '../../../../core/models/boleta-pago.model';
 @Component({
   selector: 'app-nomina',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './nomina.component.html',
   styleUrls: ['./nomina.component.scss']
 })

@@ -33,7 +33,17 @@ public class MetricaBurnoutMapper {
 
         MetricaBurnoutResponseDTO dto = new MetricaBurnoutResponseDTO();
         dto.setId(metrica.getId());
-        dto.setEmpleadoId(metrica.getEmpleado() != null ? metrica.getEmpleado().getId() : null);
+        
+        if (metrica.getEmpleado() != null) {
+            Empleado empleado = metrica.getEmpleado();
+            dto.setEmpleadoId(empleado.getId());
+            
+            // ✅ CONCATENAR NOMBRE + APELLIDO
+            String nombreCompleto = (empleado.getNombres() != null ? empleado.getNombres() : "") + " " +
+                                    (empleado.getApellidos() != null ? empleado.getApellidos() : "");
+            dto.setNombreEmpleado(nombreCompleto.trim());
+        }
+        
         dto.setNivelRiesgo(metrica.getNivelRiesgo() != null ? metrica.getNivelRiesgo().name() : null);
         dto.setHorasExtraAcumuladas(metrica.getHorasExtraAcumuladas());
         dto.setTendenciaTardanza(metrica.getTendenciaTardanza());

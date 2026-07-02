@@ -87,6 +87,13 @@ export const routes: Routes = [
         title: 'Documentos - SaaSRRHH',
       },
 
+      {
+    path: 'bienestar',
+    loadChildren: () => import('./features/bienestar/bienestar.routes')
+        .then(m => m.BIENESTAR_ROUTES),
+    canActivate: [AuthGuard],
+    data: { title: 'Bienestar' }
+},
       // ========================================================
       // 👤 PERFIL - Agregado por Nancy
       // ========================================================

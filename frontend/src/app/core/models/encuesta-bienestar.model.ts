@@ -1,11 +1,20 @@
-import { Empleado } from './empleado.model';
+export interface EncuestaBienestarResponse {
+    id: number;
+    empleadoId: number;
+    fecha: string;
+    cargaLaboral: number;
+    apoyoEquipo: number;
+    proyeccion: number;
+    nombreEmpleado: string;       
+    promedioGeneral: number;       
+    nivelBienestar: string;      
+    fechaRegistro?: string;
+}
 
-export interface EncuestaBienestar {
-  idEncuesta?: number;
-  fecha?: string;
-  puntajeSatisfaccion: number;
-  puntajeEstres: number;
-  comentarios?: string;
-  empleado?: Empleado;
-  idEmpleado?: number;
+export interface EncuestaBienestarRequest {
+    empleadoId: number;
+    fecha: string;
+    cargaLaboral: number;
+    apoyoEquipo: number;
+    proyeccion: number;
 }
