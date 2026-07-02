@@ -65,6 +65,14 @@ export const routes: Routes = [
           ),
         title: 'Reportes de Incidentes - SaaSRRHH',
       },
+      {
+        path: 'reportes-diarios',
+        loadChildren: () =>
+          import('./features/reportes-diarios/reportes-diarios.routes').then(
+            (m) => m.reportesDiariosRoutes
+          ),
+        title: 'Reportes Diarios - SaaSRRHH',
+      },
 
       {
         path: 'nomina',

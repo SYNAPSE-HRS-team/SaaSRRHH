@@ -94,6 +94,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/empleado/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/*").authenticated()
 
+                        // Permitir a usuarios autenticados gestionar sus reportes diarios
+                        .requestMatchers(HttpMethod.POST, "/api/reportes-diarios").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/reportes-diarios/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reportes-diarios/empleado/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reportes-diarios/*").authenticated()
+
                         .requestMatchers(
                                 "/api/empleados/**",
                                 "/api/tareas-asignadas/**",
