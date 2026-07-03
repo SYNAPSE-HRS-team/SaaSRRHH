@@ -25,26 +25,24 @@ export class SidebarComponent {
   collapsed = signal(false);
   currentUser: ReturnType<AuthService['getCurrentUser']>;
 
-  // Menú fusionado: Se añadieron 'Tareas' y se unificaron las rutas y roles
-  // Mantiene tu estructura base y añade los items de la otra persona.
+  // Menú fusionado
   menuItems: MenuItem[] = [
     { label: 'Dashboard', icon: '📊', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Empleados', icon: '👥', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Áreas de Trabajo', icon: '🏢', route: '/areas-trabajo', roles: ['ADMIN'] },
-    // Item añadido de la otra versión
     { label: 'Tareas', icon: '✅', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Asistencia', icon: '⏰', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
     { label: 'Nómina', icon: '💰', route: '/nomina', roles: ['ADMIN'] },
-    { label: 'Planillas', icon: '📋', route: '/planillas', roles: ['ADMIN'] },
     { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
-    // Ruta unificada a '/incidentes' como en tu versión original
     { label: 'Incidentes', icon: '⚠️', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Bienestar', icon: '💚', route: '/encuestas-bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },
+    { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
+    // ✅ CORREGIDO: Ruta de bienestar
+    { label: 'Bienestar', icon: '💚', route: '/bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },
     { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
+    { label: 'Métricas Burnout', icon: '💚', route: '/bienestar/metricas-burnout', roles: ['ADMIN', 'SUPERVISOR'] },
+
     { label: 'Usuarios', icon: '🔐', route: '/usuarios', roles: ['ADMIN'] },
-    { label: 'Roles', icon: '🎯', route: '/roles', roles: ['ADMIN'] },
   ];
 
   constructor(private authService: AuthService) {

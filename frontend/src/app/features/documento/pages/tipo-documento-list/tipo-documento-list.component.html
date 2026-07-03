@@ -1,0 +1,104 @@
+<div class="tipo-documento-list">
+  <div class="header">
+    <div>
+      <h1>🏷️ Categorías de Documento</h1>
+      <div class="tabs">
+        <a routerLink="/documentos" class="tab">Documentos</a>
+        <a routerLink="/documentos/tipos-documento" class="tab active">Tipos de Documento</a>
+      </div>
+    </div>
+    @if (!mostrandoForm) {
+      <button class="btn-primary" (click)="abrirNuevo()">+ Nuevo tipo de documento</button>
+    }
+  </div>
+
+  @if (mostrandoForm) {
+    <div class="form-card">
+      @if (error()) {
+        <div class="alerta error">{{ error() }}</div>
+      }
+
+      <div class="campo">
+        <label>Nombre *</label>
+        <input type="text" [(ngModel)]="nombre" placeholder="Ej: Constancia de trabajo" />
+      </div>
+
+      <div class="campo-check">
+        <label>
+          <input type="checkbox" [(ngModel)]="obligatorio" />
+          Es obligatorio para todos los empleados
+        </label>
+      </div>
+
+      <div class="campo-check">
+        <label>
+          <input type="checkbox" [(ngModel)]="requiereRenovacion" />
+          Requiere renovación periódica
+        </label>
+      </div>
+
+      @if (requiereRenovacion) {
+        <div class="campo">
+          <label>Días de vigencia</label>
+          <input type="number" min="1" [(ngModel)]="diasVigencia" placeholder="Ej: 90" />
+        </div>
+      }
+
+      <div class="campo">
+        <label>Descripción (opcional)</label>
+        <input type="text" [(ngModel)]="descripcion" placeholder="Descripción breve" />
+      </div>
+
+      <div class="form-acciones">
+        <button class="btn-secondary-btn" (click)="cancelar()">Cancelar</button>
+        <button class="btn-primary-small" (click)="guardar()" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : (editandoId ? 'Actualizar' : 'Crear categoría') }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando categorías...</p>
+  }
+
+  @if (errorHttp()) {
+    <p class="estado error">No se pudo conectar con la API de categorías.</p>
+  }
+
+  @if (!cargando() && !errorHttp()) {
+    @if (tipos.length === 0) {
+      <p class="estado">Todavía no hay categorías registradas.</p>
+    } @else {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Obligatorio</th>
+            <th>Renovación</th>
+            <th>Vigencia (días)</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tipo of tipos; track tipo.idTipo) {
+            <tr>
+              <td class="mono">#{{ tipo.idTipo }}</td>
+              <td class="font-semibold">{{ tipo.nombre }}</td>
+              <td>{{ tipo.obligatorio ? 'Sí' : 'No' }}</td>
+              <td>{{ tipo.requiereRenovacion ? 'Sí' : 'No' }}</td>
+              <td>{{ tipo.diasVigencia ?? '—' }}</td>
+              <td class="text-muted">{{ tipo.descripcion || '—' }}</td>
+              <td class="acciones">
+                <button (click)="editar(tipo)" class="btn-icon" title="Editar">✏️</button>
+                <button (click)="eliminar(tipo)" class="btn-icon danger" title="Eliminar">🗑️</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</div>

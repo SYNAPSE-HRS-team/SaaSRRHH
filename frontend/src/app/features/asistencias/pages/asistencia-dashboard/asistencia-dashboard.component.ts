@@ -17,6 +17,7 @@ import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 })
 export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   isEmployee = false;
+  isAdmin = false;
   qrImage = signal('');
   qrName = signal('');
   secondsLeft = signal(0);
@@ -24,35 +25,85 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   message = signal('');
   error = signal('');
   viewMode = signal<'mensual' | 'anual'>('mensual');
+  activeTab = signal<'calendario' | 'historial'>('calendario');
   month = signal<CalendarioMes | null>(null);
   annual = signal<CalendarioAnual | null>(null);
   empleados = signal<EmpleadoResponse[]>([]);
+  historial = signal<RegistroAsistencia[]>([]);
+  loadingHistorial = signal(false);
+
+  // Asistencias de hoy (Admin/Supervisor)
+  activeSubTab = signal<'hoy' | 'por_empleado'>('hoy');
+  searchTerm = signal('');
+  asistenciasHoyList = signal<RegistroAsistencia[]>([]);
+  loadingHoy = signal(false);
+  fechaConsultaHoy = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
+
+  // Marcado de salida
+  yaMarcoEntrada = signal(false);
+  yaMarcoSalida = signal(false);
+  loadingMarcado = signal(false);
+
+  // Modal de Detalle/Edición Unificado
+  showDetailModal = signal(false);
+  selectedEmployeeNameForModal = '';
+  selectedEmployeeIdForModal?: number;
+  selectedDateForModal = '';
+
+  modalEntradaId?: number;
+  modalEntradaHora = '';
+  modalEntradaEstado = 'VALIDADO';
+  modalEntradaObs = '';
+  modalEntradaExiste = false;
+
+  modalSalidaId?: number;
+  modalSalidaHora = '';
+  modalSalidaEstado = 'VALIDADO';
+  modalSalidaObs = '';
+  modalSalidaExiste = false;
 
   manualPayload = '';
   selectedEmpleadoId?: number;
   selectedMonth = new Date().getMonth() + 1;
   selectedYear = new Date().getFullYear();
-  editFecha = new Date().toISOString().slice(0, 10);
+  editFecha = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
   editEstado = 'VALIDADO';
   editObservaciones = '';
   private qrTimer?: number;
+  private countdownInterval?: any;
   private scanner: any;
 
   weekDays = ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'];
   months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((label, i) => ({ label, value: i + 1 }));
 
-  constructor(private auth: AuthService, private asistencia: AsistenciaService, private empleadoService: EmpleadoService) {}
+  constructor(
+    private auth: AuthService,
+    private asistencia: AsistenciaService,
+    private empleadoService: EmpleadoService
+  ) {}
 
   ngOnInit(): void {
     const role = this.auth.getCurrentUser()?.rol;
     this.isEmployee = role === 'EMPLEADO' || role === 'TRABAJADOR';
-    if (this.isEmployee) this.loadQr();
-    else this.loadEmployees();
+    this.isAdmin = role === 'ADMIN';
+
+    if (this.isEmployee) {
+      this.loadQr();
+    } else {
+      this.loadEmployees();
+    }
     this.loadCalendar();
   }
 
   ngOnDestroy(): void {
     if (this.qrTimer) window.clearTimeout(this.qrTimer);
+    if (this.countdownInterval) window.clearInterval(this.countdownInterval);
     this.stopScanner();
   }
 
@@ -60,6 +111,47 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.viewMode.set(mode);
     this.loadCalendar();
   }
+
+  setTab(tab: 'calendario' | 'historial'): void {
+    this.activeTab.set(tab);
+    if (tab === 'historial') {
+      if (!this.isEmployee && this.activeSubTab() === 'hoy') {
+        this.loadAsistenciasHoy();
+      } else {
+        this.loadHistorial();
+      }
+    }
+  }
+
+  setSubTab(subTab: 'hoy' | 'por_empleado'): void {
+    this.activeSubTab.set(subTab);
+    if (subTab === 'hoy') {
+      this.loadAsistenciasHoy();
+    } else {
+      this.loadHistorial();
+    }
+  }
+
+  loadAsistenciasHoy(): void {
+    this.loadingHoy.set(true);
+    this.asistencia.asistenciasHoy(this.fechaConsultaHoy).subscribe({
+      next: data => {
+        const sorted = data.sort((a, b) => {
+          const tA = a.fechaHora ? new Date(a.fechaHora).getTime() : 0;
+          const tB = b.fechaHora ? new Date(b.fechaHora).getTime() : 0;
+          return tB - tA;
+        });
+        this.asistenciasHoyList.set(sorted);
+        this.loadingHoy.set(false);
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'No se pudo cargar las asistencias de hoy');
+        this.loadingHoy.set(false);
+      }
+    });
+  }
+
+  // ---- QR ----
 
   loadQr(): void {
     this.asistencia.miQr().subscribe({
@@ -71,14 +163,45 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
           this.qrImage.set(await QRCode.toDataURL(qr.payload, { width: 235, margin: 1 }));
         } catch {
           this.qrImage.set('');
-          this.error.set('No se pudo renderizar el QR. Revisa que la dependencia qrcode esta instalada.');
+          this.error.set('No se pudo renderizar el QR.');
         }
+
         if (this.qrTimer) window.clearTimeout(this.qrTimer);
-        this.qrTimer = window.setTimeout(() => this.loadQr(), Math.max(qr.segundosRestantes, 1) * 1000);
+        if (this.countdownInterval) window.clearInterval(this.countdownInterval);
+
+        this.countdownInterval = window.setInterval(() => {
+          this.secondsLeft.update(s => {
+            if (s <= 1) {
+              window.clearInterval(this.countdownInterval);
+              this.loadQr();
+              return 0;
+            }
+            return s - 1;
+          });
+        }, 1000);
+
+        this.checkMarcadoHoy();
       },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el QR')
     });
   }
+
+  // ---- Marcado de salida (empleado) ----
+
+  checkMarcadoHoy(): void {
+    // Verificar si ya marco entrada y/o salida hoy utilizando fecha local del navegador
+    this.asistencia.miHistorial().subscribe({
+      next: (registros) => {
+        const d = new Date();
+        const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const hoyRegistros = registros.filter(r => r.fechaHora?.startsWith(hoy));
+        this.yaMarcoEntrada.set(hoyRegistros.some(r => r.tipoMarcacion === 'ENTRADA'));
+        this.yaMarcoSalida.set(hoyRegistros.some(r => r.tipoMarcacion === 'SALIDA'));
+      }
+    });
+  }
+
+  // ---- Employees (admin) ----
 
   loadEmployees(): void {
     this.empleadoService.listarActivos().subscribe({
@@ -90,6 +213,8 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       error: err => this.error.set(err.error?.message || 'No se pudo cargar empleados')
     });
   }
+
+  // ---- Calendario ----
 
   loadCalendar(): void {
     if (!this.isEmployee && !this.selectedEmpleadoId) return;
@@ -114,10 +239,31 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   monthName(mes: number): string { return this.months[mes - 1]?.label || ''; }
 
   selectDay(day: CalendarioDia): void {
-    if (this.isEmployee) return;
+    if (!this.isAdmin) return; // Solo admin puede editar
     this.editFecha = day.fecha;
     this.editEstado = day.estado === 'ASISTIO' ? 'VALIDADO' : this.editEstado;
   }
+
+  // ---- Historial ----
+
+  loadHistorial(): void {
+    this.loadingHistorial.set(true);
+    const req = this.isEmployee
+      ? this.asistencia.miHistorial()
+      : (this.selectedEmpleadoId ? this.asistencia.historialEmpleado(this.selectedEmpleadoId) : this.asistencia.miHistorial());
+    req.subscribe({
+      next: data => {
+        this.historial.set(data);
+        this.loadingHistorial.set(false);
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'No se pudo cargar historial');
+        this.loadingHistorial.set(false);
+      }
+    });
+  }
+
+  // ---- Scanner ----
 
   async startScanner(): Promise<void> {
     this.error.set('');
@@ -145,17 +291,28 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     if (!payload) return;
     this.asistencia.scanQr(payload).subscribe({
       next: r => {
-        this.message.set(`Asistencia registrada para empleado #${r.empleadoId}`);
+        const tipo = r.tipoMarcacion || 'asistencia';
+        this.message.set(`${tipo} registrada para empleado #${r.empleadoId}`);
         this.error.set('');
         this.manualPayload = '';
         this.loadCalendar();
+        this.checkMarcadoHoy();
+        if (!this.isEmployee) {
+          this.loadAsistenciasHoy();
+        }
         this.stopScanner();
       },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo registrar la asistencia')
     });
   }
 
+  // ---- Edición manual (SOLO ADMIN) ----
+
   saveAttendance(): void {
+    if (!this.isAdmin) {
+      this.error.set('Solo los administradores pueden editar asistencias.');
+      return;
+    }
     if (!this.selectedEmpleadoId) return;
     const existing = this.monthDays().find(d => d.fecha === this.editFecha && d.asistenciaId);
     const payload: RegistroAsistencia = {
@@ -170,6 +327,196 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     req.subscribe({
       next: () => { this.message.set('Asistencia guardada'); this.error.set(''); this.loadCalendar(); },
       error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo guardar')
+    });
+  }
+
+  // Admin: marcar entrada/salida manual para un empleado
+  marcarEntradaAdmin(): void {
+    if (!this.isAdmin || !this.selectedEmpleadoId) return;
+    this.loadingMarcado.set(true);
+    this.asistencia.registrarEntrada(this.selectedEmpleadoId, 'MANUAL').subscribe({
+      next: () => {
+        this.message.set('Entrada registrada correctamente');
+        this.error.set('');
+        this.loadingMarcado.set(false);
+        this.loadCalendar();
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'Error al registrar entrada');
+        this.loadingMarcado.set(false);
+      }
+    });
+  }
+
+  marcarSalidaAdmin(): void {
+    if (!this.isAdmin || !this.selectedEmpleadoId) return;
+    this.loadingMarcado.set(true);
+    this.asistencia.registrarSalida(this.selectedEmpleadoId, 'MANUAL').subscribe({
+      next: () => {
+        this.message.set('Salida registrada correctamente');
+        this.error.set('');
+        this.loadingMarcado.set(false);
+        this.loadCalendar();
+      },
+      error: err => {
+        this.error.set(err.error?.message || 'Error al registrar salida');
+        this.loadingMarcado.set(false);
+      }
+    });
+  }
+
+  getEmpleadoNombre(id?: number): string {
+    if (!id) return '—';
+    const emp = this.empleados().find(e => e.id === id);
+    return emp ? `${emp.apellidos}, ${emp.nombres}` : `Empleado #${id}`;
+  }
+
+  getEmpleadoDni(id?: number): string {
+    if (!id) return '—';
+    const emp = this.empleados().find(e => e.id === id);
+    return emp ? emp.dni : '—';
+  }
+
+  getFilteredAsistenciasHoy(): any[] {
+    const term = this.searchTerm().toLowerCase().trim();
+    const allRegistered = this.asistenciasHoyList();
+    const emps = this.empleados();
+    const selectedDateStr = this.fechaConsultaHoy;
+
+    const todayStr = (() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })();
+
+    const isPastDay = selectedDateStr < todayStr;
+
+    const resultList: any[] = [];
+
+    for (const emp of emps) {
+      const empRecords = allRegistered.filter(r => r.empleadoId === emp.id);
+      const entrada = empRecords.find(r => r.tipoMarcacion === 'ENTRADA');
+      const salida = empRecords.find(r => r.tipoMarcacion === 'SALIDA');
+
+      const estadoGeneral = (() => {
+        if (entrada && salida) return entrada.estado;
+        if (entrada) return entrada.estado;
+        if (salida) return salida.estado;
+        return isPastDay ? 'INVALIDO' : 'PENDIENTE';
+      })();
+
+      resultList.push({
+        id: emp.id,
+        empleadoId: emp.id,
+        dni: emp.dni,
+        nombre: `${emp.apellidos}, ${emp.nombres}`,
+        entrada: entrada || null,
+        salida: salida || null,
+        estado: estadoGeneral,
+        isPastDay: isPastDay
+      });
+    }
+
+    if (!term) return resultList;
+    return resultList.filter(r => {
+      return r.nombre.toLowerCase().includes(term) || r.dni.toLowerCase().includes(term);
+    });
+  }
+
+  openAsistenciaModal(row: any): void {
+    this.selectedEmployeeIdForModal = row.empleadoId;
+    this.selectedEmployeeNameForModal = row.nombre;
+    this.selectedDateForModal = this.fechaConsultaHoy;
+
+    // Reset forms
+    this.modalEntradaId = undefined;
+    this.modalEntradaHora = '';
+    this.modalEntradaEstado = 'VALIDADO';
+    this.modalEntradaObs = '';
+    this.modalEntradaExiste = false;
+
+    this.modalSalidaId = undefined;
+    this.modalSalidaHora = '';
+    this.modalSalidaEstado = 'VALIDADO';
+    this.modalSalidaObs = '';
+    this.modalSalidaExiste = false;
+
+    if (row.entrada) {
+      this.modalEntradaId = row.entrada.id;
+      // Extrae la hora en formato HH:MM
+      this.modalEntradaHora = row.entrada.fechaHora ? row.entrada.fechaHora.slice(11, 16) : '';
+      this.modalEntradaEstado = row.entrada.estado;
+      this.modalEntradaObs = row.entrada.observaciones || '';
+      this.modalEntradaExiste = true;
+    }
+    if (row.salida) {
+      this.modalSalidaId = row.salida.id;
+      this.modalSalidaHora = row.salida.fechaHora ? row.salida.fechaHora.slice(11, 16) : '';
+      this.modalSalidaEstado = row.salida.estado;
+      this.modalSalidaObs = row.salida.observaciones || '';
+      this.modalSalidaExiste = true;
+    }
+
+    this.showDetailModal.set(true);
+  }
+
+  saveModalAsistencia(): void {
+    if (!this.isAdmin) return;
+    if (!this.selectedEmployeeIdForModal) return;
+
+    const promises: Observable<any>[] = [];
+
+    // 1. Guardar Entrada
+    if (this.modalEntradaHora) {
+      const payload: RegistroAsistencia = {
+        empleadoId: this.selectedEmployeeIdForModal,
+        fechaHora: `${this.selectedDateForModal}T${this.modalEntradaHora}:00`,
+        tipoMarcacion: 'ENTRADA',
+        metodo: this.modalEntradaExiste ? undefined : 'MANUAL',
+        estado: this.modalEntradaEstado,
+        observaciones: this.modalEntradaObs
+      };
+      if (this.modalEntradaId) {
+        promises.push(this.asistencia.actualizar(this.modalEntradaId, payload));
+      } else {
+        promises.push(this.asistencia.crear(payload));
+      }
+    }
+
+    // 2. Guardar Salida
+    if (this.modalSalidaHora) {
+      const payload: RegistroAsistencia = {
+        empleadoId: this.selectedEmployeeIdForModal,
+        fechaHora: `${this.selectedDateForModal}T${this.modalSalidaHora}:00`,
+        tipoMarcacion: 'SALIDA',
+        metodo: this.modalSalidaExiste ? undefined : 'MANUAL',
+        estado: this.modalSalidaEstado,
+        observaciones: this.modalSalidaObs
+      };
+      if (this.modalSalidaId) {
+        promises.push(this.asistencia.actualizar(this.modalSalidaId, payload));
+      } else {
+        promises.push(this.asistencia.crear(payload));
+      }
+    }
+
+    if (promises.length === 0) {
+      this.showDetailModal.set(false);
+      return;
+    }
+
+    import('rxjs').then(({ forkJoin }) => {
+      forkJoin(promises).subscribe({
+        next: () => {
+          this.message.set('Asistencias guardadas correctamente');
+          this.error.set('');
+          this.showDetailModal.set(false);
+          this.loadCalendar();
+          this.loadAsistenciasHoy();
+        },
+        error: err => {
+          this.error.set(err.error?.message || 'Error al guardar los cambios');
+        }
+      });
     });
   }
 }

@@ -69,6 +69,18 @@
   background: var(--color-primary-light);
 }
 
+.employee-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.employee-name {
+  font-size: 0.85rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
 .neto-badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
@@ -77,6 +89,28 @@
   border-radius: var(--radius-full);
   font-weight: 700;
   font-size: 0.82rem;
+}
+
+.btn-danger-sm {
+  padding: 0.4rem 0.75rem;
+  border: none;
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-danger);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-danger-sm:hover:not(:disabled) {
+  background: var(--color-danger);
+  color: white;
+}
+
+.btn-danger-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-pdf {

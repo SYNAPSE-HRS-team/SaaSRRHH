@@ -10,9 +10,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @EnableScheduling
 @SpringBootApplication
 public class MainApplication {
+
+	@PostConstruct
+	public void init() {
+		TimeZone.setDefault(TimeZone.getTimeZone("America/Lima"));
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(MainApplication.class, args);

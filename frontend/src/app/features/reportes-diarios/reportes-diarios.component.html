@@ -1,0 +1,240 @@
+<div class="reportes-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>📝 Reportes Diarios de Actividades</h1>
+      <p class="subtitle">Escribe tus evidencias de ejecución diaria y consulta su estado de validez</p>
+    </div>
+    <button *ngIf="isEmployee" (click)="abrirCrear()" class="btn-primary">+ Crear Reporte Diario</button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="message()" class="alert-message success">
+    <span>✅ {{ message() }}</span>
+    <button class="close-alert" (click)="message.set('')">&times;</button>
+  </div>
+  <div *ngIf="error()" class="alert-message error">
+    <span>⚠️ {{ error() }}</span>
+    <button class="close-alert" (click)="error.set('')">&times;</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <span class="stat-number">{{ totalReportes }}</span>
+      <span class="stat-label">Total Reportados</span>
+    </div>
+    <div class="stat-card pendiente">
+      <span class="stat-number">{{ reportesPendientes }}</span>
+      <span class="stat-label">Pendientes de Revisión</span>
+    </div>
+    <div class="stat-card validado">
+      <span class="stat-number">{{ reportesValidados }}</span>
+      <span class="stat-label">Validados</span>
+    </div>
+    <div class="stat-card observado">
+      <span class="stat-number">{{ reportesObservados }}</span>
+      <span class="stat-label">Observados</span>
+    </div>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Estado:</label>
+      <select [ngModel]="filtroEstado()" (ngModelChange)="filtroEstado.set($event); aplicarFiltros()">
+        <option value="">Todos</option>
+        <option value="PENDIENTE">PENDIENTE</option>
+        <option value="VALIDADO">VALIDADO</option>
+        <option value="OBSERVADO">OBSERVADO</option>
+      </select>
+    </div>
+
+    <div class="filter-group" *ngIf="!isEmployee">
+      <label>Empleado:</label>
+      <select [ngModel]="filtroEmpleadoId()" (ngModelChange)="filtroEmpleadoId.set($event); aplicarFiltros()">
+        <option [ngValue]="null">Todos los empleados</option>
+        <option *ngFor="let emp of empleados()" [ngValue]="emp.id">
+          {{ emp.apellidos }}, {{ emp.nombres }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Fecha:</label>
+      <input type="date" [ngModel]="filtroFecha()" (ngModelChange)="filtroFecha.set($event); aplicarFiltros()" />
+    </div>
+
+    <button class="btn-clear" (click)="limpiarFiltros()">Limpiar Filtros</button>
+  </div>
+
+  <!-- Reports Table -->
+  <div class="table-responsive" *ngIf="!loading()">
+    <div *ngIf="reportesFiltrados().length === 0" class="empty-state">
+      <span class="empty-icon">📋</span>
+      <h3>No hay reportes diarios</h3>
+      <p>No se encontraron evidencias de ejecución registradas para los filtros aplicados.</p>
+    </div>
+
+    <table class="custom-table" *ngIf="reportesFiltrados().length > 0">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th *ngIf="!isEmployee">DNI</th>
+          <th *ngIf="!isEmployee">Empleado</th>
+          <th>Tarea Asignada</th>
+          <th>Qué hizo (Evidencia)</th>
+          <th>Avance</th>
+          <th>Estado</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rep of reportesFiltrados()">
+          <td class="date-cell">{{ rep.fechaReporte | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td *ngIf="!isEmployee"><span class="dni-badge">{{ getEmpleadoDni(rep.empleadoId) }}</span></td>
+          <td *ngIf="!isEmployee" class="font-medium">{{ getEmpleadoNombre(rep.empleadoId) }}</td>
+          <td>
+            <div class="task-cell">
+              <strong>{{ getTareaLabel(rep.tareaId) }}</strong>
+              <small>{{ getTareaDesc(rep.tareaId) | slice:0:45 }}...</small>
+            </div>
+          </td>
+          <td class="desc-cell">{{ rep.descripcionTrabajador || '—' }}</td>
+          <td>
+            <div class="progress-wrapper">
+              <span class="progress-num">{{ rep.porcentajeAvance }}%</span>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" [style.width]="rep.porcentajeAvance + '%'"></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge" 
+                  [ngClass]="{
+                    'badge-yellow': rep.estado === 'PENDIENTE',
+                    'badge-green': rep.estado === 'VALIDADO',
+                    'badge-orange': rep.estado === 'OBSERVADO'
+                  }">
+              {{ rep.estado }}
+            </span>
+          </td>
+          <td class="text-right actions-cell">
+            <!-- Ver/Revisar -->
+            <button (click)="abrirDetalleReview(rep)" class="btn-action edit" title="Ver detalle o validar">
+              {{ isEmployee ? '👁️ Ver / Editar' : '⚖️ Revisar' }}
+            </button>
+            <!-- Eliminar (solo Admin o empleado si está pendiente) -->
+            <button *ngIf="isAdmin || (isEmployee && rep.estado === 'PENDIENTE')" (click)="eliminarReporte(rep.id)" class="btn-action delete" title="Eliminar reporte">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading spinner -->
+  <div class="loading-state" *ngIf="loading()">
+    <div class="spinner"></div>
+    <p>Cargando reportes diarios...</p>
+  </div>
+
+  <!-- Modal overlay -->
+  <div class="modal-backdrop" *ngIf="isModalOpen()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>{{ editMode() ? (isEmployee ? 'Detalle de Reporte Diario' : '⚖️ Validar Reporte Diario') : '📝 Registrar Reporte Diario' }}</h3>
+        <button (click)="isModalOpen.set(false)" class="close-btn">&times;</button>
+      </div>
+
+      <form [formGroup]="reporteForm" (ngSubmit)="onSubmit()" class="modal-form">
+        <div class="modal-body">
+          
+          <!-- Seleccionar Tarea -->
+          <div class="form-group">
+            <label>Tarea Asignada <span class="required-mark">*</span></label>
+            <select formControlName="tareaId" [attr.disabled]="editMode() ? true : null">
+              <option [ngValue]="null" disabled>Selecciona la tarea que realizaste...</option>
+              <option *ngFor="let t of tareas()" [ngValue]="t.id">
+                [{{ t.id }}] {{ t.funcion }}
+              </option>
+            </select>
+            <small class="help-text" *ngIf="!editMode()">Solo se listan las tareas actualmente pendientes o en progreso.</small>
+          </div>
+
+          <!-- Porcentaje de Avance -->
+          <div class="form-group">
+            <label>Porcentaje de Avance: <strong>{{ reporteForm.get('porcentajeAvance')?.value }}%</strong></label>
+            <div class="range-wrapper">
+              <input type="range" min="0" max="100" step="5" formControlName="porcentajeAvance" [attr.disabled]="(editMode() && !isEmployee) ? true : null" />
+            </div>
+          </div>
+
+          <!-- Descripción del trabajador -->
+          <div class="form-group">
+            <label>Evidencia de Ejecución (¿Qué hiciste realmente?) <span class="required-mark">*</span></label>
+            <textarea 
+              formControlName="descripcionTrabajador" 
+              rows="4" 
+              placeholder="Explica a detalle las actividades realizadas hoy como evidencia de tu trabajo..."
+              [attr.readonly]="(editMode() && !isEmployee) ? true : null"
+            ></textarea>
+            <div *ngIf="reporteForm.get('descripcionTrabajador')?.touched && reporteForm.get('descripcionTrabajador')?.invalid" class="error-msg">
+              <small>La evidencia de ejecución es obligatoria (máx 1000 caracteres).</small>
+            </div>
+          </div>
+
+          <!-- SECCIÓN DE REVISIÓN PARA EL SUPERVISOR / ADMIN -->
+          <div class="supervisor-review-section" *ngIf="editMode() && !isEmployee">
+            <h4>⚖️ Sección de Revisión (Supervisor / Admin)</h4>
+            
+            <!-- Observación del supervisor -->
+            <div class="form-group">
+              <label>Observaciones del Supervisor</label>
+              <textarea 
+                formControlName="observacionSupervisor" 
+                rows="3" 
+                placeholder="Escribe comentarios, correcciones o justificaciones del reporte..."
+              ></textarea>
+            </div>
+
+            <!-- Estado de validez del reporte -->
+            <div class="form-group">
+              <label>Estado de Validez <span class="required-mark">*</span></label>
+              <select formControlName="estado">
+                <option value="PENDIENTE">PENDIENTE</option>
+                <option value="VALIDADO">VALIDADO</option>
+                <option value="OBSERVADO">OBSERVADO</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Mensaje Informativo si el reporte ya fue validado -->
+          <div class="info-banner" *ngIf="editMode() && reporteSeleccionado()?.estado !== 'PENDIENTE'">
+            🔒 Este reporte ya se encuentra en estado <strong>{{ reporteSeleccionado()?.estado }}</strong> y no admite más cambios.
+          </div>
+
+          <!-- Observaciones del Supervisor (Vista del empleado) -->
+          <div class="supervisor-feedback-banner" *ngIf="editMode() && isEmployee && reporteSeleccionado()?.observacionSupervisor">
+            <strong>💬 Observaciones del Supervisor:</strong>
+            <p>{{ reporteSeleccionado()?.observacionSupervisor }}</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="isModalOpen.set(false)" class="btn-cancel">Cerrar</button>
+          
+          <!-- Botón de Guardar / Actualizar (Condicional) -->
+          @if (!editMode()) {
+            <button type="submit" [disabled]="reporteForm.invalid" class="btn-submit">Enviar Reporte</button>
+          } @else if (isEmployee && reporteSeleccionado()?.estado === 'PENDIENTE') {
+            <button type="submit" [disabled]="reporteForm.invalid" class="btn-submit">Actualizar Reporte</button>
+          } @else if (!isEmployee) {
+            <button type="submit" [disabled]="reporteForm.invalid" class="btn-submit">Guardar Validación</button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

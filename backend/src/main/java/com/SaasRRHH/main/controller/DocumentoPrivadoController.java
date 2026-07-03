@@ -3,6 +3,7 @@ package com.SaasRRHH.main.controller;
 import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
 import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
 import com.SaasRRHH.main.services.DocumentoPrivadoService;
+import com.SaasRRHH.main.services.FileStorageService;
 
 import jakarta.validation.Valid;
 
@@ -12,9 +13,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/documentos-privados")
@@ -23,6 +26,26 @@ import java.util.List;
 public class DocumentoPrivadoController {
 
         private final DocumentoPrivadoService service;
+        private final FileStorageService fileStorageService;
+
+        // ===================================
+        // SUBIDA DE ARCHIVO (paso previo al guardar)
+        // ===================================
+
+        @PostMapping("/upload")
+        public ResponseEntity<Map<String, String>> subirArchivo(
+                        @RequestParam("file") MultipartFile file) {
+
+                try {
+                        String url = fileStorageService.guardar(file);
+                        return ResponseEntity.ok(Map.of("url", url));
+
+                } catch (Exception e) {
+                        return ResponseEntity
+                                        .badRequest()
+                                        .body(Map.of("error", "No se pudo guardar el archivo: " + e.getMessage()));
+                }
+        }
 
         // ===================================
         // CRUD

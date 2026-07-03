@@ -67,6 +67,13 @@ public class RegistroAsistenciaController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<RegistroAsistenciaResponseDTO> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody RegistroAsistenciaRequestDTO dto) {
+        return ResponseEntity.ok(service.actualizar(id, dto));
+    }
+
     // ===================================
     // REGISTRO ENTRADA / SALIDA
     // ===================================
@@ -141,11 +148,10 @@ public class RegistroAsistenciaController {
     // ===================================
 
     @GetMapping("/hoy")
-    public ResponseEntity<List<RegistroAsistenciaResponseDTO>>
-    asistenciasHoy() {
-
-        return ResponseEntity.ok(
-                service.asistenciasHoy());
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>> asistenciasHoy(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate fecha) {
+        java.time.LocalDate consulta = fecha != null ? fecha : java.time.LocalDate.now();
+        return ResponseEntity.ok(service.asistenciasPorFecha(consulta));
     }
 
     @GetMapping("/incidencias")
@@ -250,5 +256,10 @@ public class RegistroAsistenciaController {
             @PathVariable Long empleadoId,
             @RequestParam Integer anio) {
         return ResponseEntity.ok(service.calendarioAnualEmpleado(empleadoId, anio));
+    }
+
+    @GetMapping("/mi-historial")
+    public ResponseEntity<List<RegistroAsistenciaResponseDTO>> miHistorial() {
+        return ResponseEntity.ok(service.historialEmpleadoActual());
     }
 }

@@ -50,6 +50,18 @@ public class PlanillaServiceImpl implements PlanillaService {
     }
 
     @Override
+    public Planilla cerrar(Long id) {
+        Planilla existente = planillaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Planilla no encontrada"));
+        if (existente.getEstado() == Planilla.EstadoPlanilla.CERRADO) {
+            throw new RuntimeException("La planilla ya está cerrada");
+        }
+        existente.setEstado(Planilla.EstadoPlanilla.CERRADO);
+        existente.setFechaCierre(java.time.LocalDateTime.now());
+        return planillaRepository.save(existente);
+    }
+
+    @Override
     public void eliminar(Long id) {
         planillaRepository.deleteById(id);
     }

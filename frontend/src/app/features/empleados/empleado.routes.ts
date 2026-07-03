@@ -22,6 +22,14 @@ export const empleadoRoutes: Routes = [
         loadComponent: () =>
           import('./pages/empleado-form/empleado-form.component').then(m => m.EmpleadoFormComponent),
         title: 'Nuevo Empleado - SaaSRRHH'
+      },
+      {
+        path: ':id',
+        canActivate: [RoleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+          import('./pages/empleado-form/empleado-form.component').then(m => m.EmpleadoFormComponent),
+        title: 'Editar Empleado - SaaSRRHH'
       }
     ]
   }

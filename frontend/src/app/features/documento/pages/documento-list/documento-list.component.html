@@ -1,0 +1,69 @@
+<div class="documento-list">
+  <div class="header">
+    <div>
+      <h1>📄 Documentos</h1>
+      <div class="tabs">
+  <a routerLink="/documentos" class="tab active">Documentos</a>
+  <a routerLink="/documentos/tipos-documento" class="tab">Tipos de Documento</a>
+</div>
+    </div>
+    <a routerLink="/documentos/nuevo" class="btn-primary">+ Nuevo documento</a>
+  </div>
+
+  @if (cargando) {
+    <p class="estado">Cargando documentos...</p>
+  }
+
+  @if (errorHttp) {
+    <p class="estado error">
+      No se pudo conectar con la API de documentos. Verifica que el backend esté corriendo.
+    </p>
+  }
+
+  @if (!cargando && !errorHttp) {
+    @if (documentos.length === 0) {
+      <p class="estado">Todavía no hay documentos registrados.</p>
+    } @else {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Empleado</th>
+            <th>Tipo</th>
+            <th>Fecha de carga</th>
+            <th>Vencimiento</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of documentos; track doc.id) {
+            <tr>
+              <td class="mono">#{{ doc.id }}</td>
+              <td class="font-semibold">{{ doc.empleadoNombre }}</td>
+              <td>
+                <span class="badge">{{ doc.tipoNombre }}</span>
+              </td>
+              <td>{{ doc.fechaCarga | date: 'dd/MM/yyyy' }}</td>
+              <td [class.vencido]="estaVencido(doc)">
+                {{ doc.fechaVencimiento ? (doc.fechaVencimiento | date: 'dd/MM/yyyy') : '—' }}
+                @if (estaVencido(doc)) {
+                  <span class="tag-vencido">Vencido</span>
+                }
+              </td>
+              <td>
+                <span [class]="doc.activo ? 'tag-activo' : 'tag-inactivo'">
+                  {{ doc.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td class="acciones">
+                <button (click)="verDocumento(doc)" class="btn-icon" title="Ver archivo">👁️</button>
+                <button (click)="eliminar(doc)" class="btn-icon danger" title="Eliminar">🗑️</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</div>

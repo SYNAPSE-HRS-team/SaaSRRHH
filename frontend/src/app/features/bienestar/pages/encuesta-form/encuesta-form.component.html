@@ -1,0 +1,190 @@
+<div class="page-container">
+    <div class="page-header">
+        <div class="header-left">
+            <h1>{{ esEdicion ? 'Editar' : 'Nueva' }} Encuesta de Bienestar</h1>
+            <p class="subtitle">
+                {{ esEdicion ? 'Actualiza los datos de la encuesta' : 'Registra una nueva encuesta de bienestar' }}
+            </p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-secondary" (click)="cancelar()">⬅️ Volver</button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <!-- Success -->
+    <div *ngIf="success" class="success-message">
+        <span>✅</span>
+        <span>{{ success }}</span>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="error-message">
+        <span>❌</span>
+        <span>{{ error }}</span>
+        <button class="btn-close" (click)="error = ''">✕</button>
+    </div>
+
+    <!-- Formulario -->
+    <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+
+        <!-- ============================================ -->
+        <!-- SECCIÓN: DATOS DEL EMPLEADO                   -->
+        <!-- ============================================ -->
+        <div class="form-section">
+            <h3 class="section-title">👤 Datos del Empleado</h3>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="empleadoId">Empleado <span class="required">*</span></label>
+                    <select id="empleadoId" formControlName="empleadoId" class="form-control" [class.invalid]="form.get('empleadoId')?.invalid && submitted">
+                        <option value="">-- Seleccione un empleado --</option>
+                        <option *ngFor="let emp of empleados" [value]="emp.id">
+                            {{ emp.nombres }} {{ emp.apellidos }} - {{ emp.dni }}
+                        </option>
+                    </select>
+                    <div class="error-text" *ngIf="form.get('empleadoId')?.invalid && submitted">
+                        <span *ngIf="form.get('empleadoId')?.errors?.['required']">Debe seleccionar un empleado</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Fecha <span class="required">*</span></label>
+                    <input type="date" id="fecha" formControlName="fecha" class="form-control" [class.invalid]="form.get('fecha')?.invalid && submitted" />
+                    <div class="error-text" *ngIf="form.get('fecha')?.invalid && submitted">
+                        <span *ngIf="form.get('fecha')?.errors?.['required']">La fecha es obligatoria</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SECCIÓN: CALIFICACIONES                       -->
+        <!-- ============================================ -->
+        <div class="form-section">
+            <h3 class="section-title">📊 Calificaciones</h3>
+            <p class="section-description">Califica del 1 al 5 cada aspecto (1 = Muy bajo, 5 = Muy alto)</p>
+
+            <div class="form-grid">
+
+                <!-- Carga Laboral -->
+                <div class="form-group">
+                    <label for="cargaLaboral">Carga de Trabajo <span class="required">*</span></label>
+                    <div class="rating-container">
+                        <div class="rating-options">
+                            <label *ngFor="let n of [1,2,3,4,5]" class="rating-option">
+                                <input type="radio" formControlName="cargaLaboral" [value]="n" />
+                                <span class="rating-label">{{ n }}</span>
+                            </label>
+                        </div>
+                        <div class="rating-labels">
+                            <span class="label-min">Muy baja</span>
+                            <span class="label-mid">Moderada</span>
+                            <span class="label-max">Muy alta</span>
+                        </div>
+                    </div>
+                    <div class="error-text" *ngIf="form.get('cargaLaboral')?.invalid && submitted">
+                        <span *ngIf="form.get('cargaLaboral')?.errors?.['required']">Este campo es obligatorio</span>
+                        <span *ngIf="form.get('cargaLaboral')?.errors?.['min'] || form.get('cargaLaboral')?.errors?.['max']">
+                            Debe ser un valor entre 1 y 5
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Apoyo Equipo -->
+                <div class="form-group">
+                    <label for="apoyoEquipo">Apoyo del Equipo <span class="required">*</span></label>
+                    <div class="rating-container">
+                        <div class="rating-options">
+                            <label *ngFor="let n of [1,2,3,4,5]" class="rating-option">
+                                <input type="radio" formControlName="apoyoEquipo" [value]="n" />
+                                <span class="rating-label">{{ n }}</span>
+                            </label>
+                        </div>
+                        <div class="rating-labels">
+                            <span class="label-min">Muy bajo</span>
+                            <span class="label-mid">Moderado</span>
+                            <span class="label-max">Muy alto</span>
+                        </div>
+                    </div>
+                    <div class="error-text" *ngIf="form.get('apoyoEquipo')?.invalid && submitted">
+                        <span *ngIf="form.get('apoyoEquipo')?.errors?.['required']">Este campo es obligatorio</span>
+                        <span *ngIf="form.get('apoyoEquipo')?.errors?.['min'] || form.get('apoyoEquipo')?.errors?.['max']">
+                            Debe ser un valor entre 1 y 5
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Proyección -->
+                <div class="form-group">
+                    <label for="proyeccion">Proyección / Expectativas <span class="required">*</span></label>
+                    <div class="rating-container">
+                        <div class="rating-options">
+                            <label *ngFor="let n of [1,2,3,4,5]" class="rating-option">
+                                <input type="radio" formControlName="proyeccion" [value]="n" />
+                                <span class="rating-label">{{ n }}</span>
+                            </label>
+                        </div>
+                        <div class="rating-labels">
+                            <span class="label-min">Muy baja</span>
+                            <span class="label-mid">Moderada</span>
+                            <span class="label-max">Muy alta</span>
+                        </div>
+                    </div>
+                    <div class="error-text" *ngIf="form.get('proyeccion')?.invalid && submitted">
+                        <span *ngIf="form.get('proyeccion')?.errors?.['required']">Este campo es obligatorio</span>
+                        <span *ngIf="form.get('proyeccion')?.errors?.['min'] || form.get('proyeccion')?.errors?.['max']">
+                            Debe ser un valor entre 1 y 5
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- RESUMEN                                        -->
+        <!-- ============================================ -->
+        <div class="form-section" *ngIf="form.valid && !submitted">
+            <h3 class="section-title">📈 Resumen de la Encuesta</h3>
+            <div class="resumen-container">
+                <div class="resumen-item">
+                    <span class="resumen-label">Carga Laboral:</span>
+                    <span class="resumen-value" [style.color]="getColor(form.get('cargaLaboral')?.value)">
+                        {{ form.get('cargaLaboral')?.value || '-' }} - {{ getTexto(form.get('cargaLaboral')?.value) }}
+                    </span>
+                </div>
+                <div class="resumen-item">
+                    <span class="resumen-label">Apoyo del Equipo:</span>
+                    <span class="resumen-value" [style.color]="getColor(form.get('apoyoEquipo')?.value)">
+                        {{ form.get('apoyoEquipo')?.value || '-' }} - {{ getTexto(form.get('apoyoEquipo')?.value) }}
+                    </span>
+                </div>
+                <div class="resumen-item">
+                    <span class="resumen-label">Proyección:</span>
+                    <span class="resumen-value" [style.color]="getColor(form.get('proyeccion')?.value)">
+                        {{ form.get('proyeccion')?.value || '-' }} - {{ getTexto(form.get('proyeccion')?.value) }}
+                    </span>
+                </div>
+                <div class="resumen-item total">
+                    <span class="resumen-label">Promedio General:</span>
+                    <span class="resumen-value">
+                        {{ getPromedio() || '-' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="cancelar()">Cancelar</button>
+            <button type="submit" class="btn-primary" [disabled]="loading">
+                {{ loading ? 'Guardando...' : (esEdicion ? 'Actualizar' : 'Guardar') }}
+            </button>
+        </div>
+    </form>
+</div>

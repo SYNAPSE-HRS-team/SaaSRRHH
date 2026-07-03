@@ -1,10 +1,20 @@
-import { Empleado } from './empleado.model';
+export interface ReporteDiarioResponse {
+  id: number;
+  tareaId: number;
+  empleadoId: number;
+  descripcionTrabajador: string;
+  observacionSupervisor?: string;
+  porcentajeAvance: number;
+  estado: 'PENDIENTE' | 'VALIDADO' | 'OBSERVADO';
+  fechaReporte: string;
+}
 
-export interface ReporteDiario {
-  idReporte?: number;
-  fecha: string;
-  resumen: string;
-  horasTrabajadas?: number;
-  empleado?: Empleado;
-  idEmpleado?: number;
+export interface ReporteDiarioRequest {
+  id?: number;
+  tareaId: number;
+  empleadoId: number;
+  descripcionTrabajador: string;
+  observacionSupervisor?: string;
+  porcentajeAvance: number;
+  estado: 'PENDIENTE' | 'VALIDADO' | 'OBSERVADO';
 }

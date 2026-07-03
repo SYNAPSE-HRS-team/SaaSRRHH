@@ -3,7 +3,10 @@ import { Empleado } from './empleado.model';
 export interface BoletaPago {
   id?: number;
   empleadoId: number;
+  empleadoNombre?: string;
   planillaId?: number;
+  planillaMes?: number;
+  planillaAnio?: number;
   sueldoBase: number;
   diasTrabajados: number;
   diasNoTrabajados: number;

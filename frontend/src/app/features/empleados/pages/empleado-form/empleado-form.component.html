@@ -4,10 +4,12 @@
       <div class="breadcrumb">
         <a routerLink="/empleados">Empleados</a>
         <span class="separator">/</span>
-        <span>Nuevo Empleado</span>
+        <span>{{ isEditMode ? 'Editar Empleado' : 'Nuevo Empleado' }}</span>
       </div>
-      <h1>Registrar Nuevo Empleado</h1>
-      <p class="subtitle">Ingresa los datos del nuevo empleado en el sistema</p>
+      <h1>{{ isEditMode ? 'Editar Empleado' : 'Registrar Nuevo Empleado' }}</h1>
+      <p class="subtitle">
+        {{ isEditMode ? 'Actualiza los datos del empleado y sincroniza el nombre con el usuario.' : 'Ingresa los datos del nuevo empleado en el sistema' }}
+      </p>
     </div>
   </div>
 
@@ -46,6 +48,7 @@
             id="usuarioId"
             name="usuarioId"
             [(ngModel)]="formData.usuarioId"
+            (change)="onUsuarioChange($event)"
             required
             class="form-select"
           >
@@ -59,6 +62,7 @@
         }
 
         <p class="field-hint">
+          💡 Al seleccionar un usuario, sus nombres y apellidos se cargarán automáticamente.
           Solo aparecen usuarios que no tienen un empleado asociado.
           <a routerLink="/usuarios/nuevo" target="_blank">Crear nuevo usuario</a>
         </p>
@@ -78,7 +82,10 @@
             [(ngModel)]="formData.nombres"
             required
             placeholder="Nombres del empleado"
+            [class.auto-filled]="formData.nombres"
           />
+          @if (formData.nombres) {
+          }
         </div>
         <div class="form-group">
           <label for="apellidos">Apellidos <span class="required">*</span></label>
@@ -89,7 +96,10 @@
             [(ngModel)]="formData.apellidos"
             required
             placeholder="Apellidos del empleado"
+            [class.auto-filled]="formData.apellidos"
           />
+          @if (formData.apellidos) {
+          }
         </div>
         <div class="form-group">
           <label for="dni">DNI <span class="required">*</span></label>
@@ -200,7 +210,7 @@
           Guardando...
         } @else {
           <span>💾</span>
-          Guardar Empleado
+          {{ isEditMode ? 'Actualizar Empleado' : 'Guardar Empleado' }}
         }
       </button>
     </div>

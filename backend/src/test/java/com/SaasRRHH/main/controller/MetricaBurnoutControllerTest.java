@@ -1,14 +1,16 @@
 package com.SaasRRHH.main.controller;
 
-import com.SaasRRHH.main.model.MetricaBurnout;
+import com.SaasRRHH.main.DTO.MetricaBurnoutResponseDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.MetricaBurnoutService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MetricaBurnoutController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class MetricaBurnoutControllerTest {
 
     @Autowired
@@ -32,32 +35,42 @@ class MetricaBurnoutControllerTest {
     @MockBean
     private MetricaBurnoutService metricaBurnoutService;
 
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
-    private MetricaBurnout metrica;
+    private MetricaBurnoutResponseDTO metricaDTO;
 
     @BeforeEach
     void setUp() {
-        metrica = new MetricaBurnout();
-        metrica.setId(1L);
-        metrica.setNivelRiesgo(MetricaBurnout.NivelRiesgoBurnout.MEDIO);
-        metrica.setHorasExtraAcumuladas(10);
-        metrica.setTendenciaTardanza(false);
-        metrica.setFechaEvaluacion(LocalDateTime.now());
+        metricaDTO = new MetricaBurnoutResponseDTO();
+        metricaDTO.setId(1L);
+        metricaDTO.setEmpleadoId(1L);
+        metricaDTO.setNombreEmpleado("Juan Pérez");
+        metricaDTO.setNivelRiesgo("MEDIO");
+        metricaDTO.setHorasExtraAcumuladas(10);
+        metricaDTO.setTendenciaTardanza(false);
+        metricaDTO.setFechaEvaluacion(LocalDateTime.now());
     }
 
     // ===================== GET ALL =====================
 
     @Test
     void listarMetricas_debeRetornarLista() throws Exception {
-        List<MetricaBurnout> metricas = Arrays.asList(metrica);
+        List<MetricaBurnoutResponseDTO> metricas = Arrays.asList(metricaDTO);
         when(metricaBurnoutService.listar()).thenReturn(metricas);
 
         mockMvc.perform(get("/api/burnout"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(1)));
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].nombreEmpleado", is("Juan Pérez")))
+                .andExpect(jsonPath("$[0].nivelRiesgo", is("MEDIO")));
 
         verify(metricaBurnoutService).listar();
     }
@@ -75,11 +88,12 @@ class MetricaBurnoutControllerTest {
 
     @Test
     void obtenerPorId_cuandoExiste_debeRetornar200() throws Exception {
-        when(metricaBurnoutService.obtenerPorId(1L)).thenReturn(metrica);
+        when(metricaBurnoutService.obtenerPorId(1L)).thenReturn(metricaDTO);
 
         mockMvc.perform(get("/api/burnout/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.nombreEmpleado", is("Juan Pérez")));
 
         verify(metricaBurnoutService).obtenerPorId(1L);
     }
@@ -87,7 +101,7 @@ class MetricaBurnoutControllerTest {
     @Test
     void obtenerPorId_cuandoNoExiste_debeRetornar500() throws Exception {
         when(metricaBurnoutService.obtenerPorId(99L))
-                .thenThrow(new RuntimeException("No encontrado"));
+                .thenThrow(new RuntimeException("Métrica no encontrada"));
 
         mockMvc.perform(get("/api/burnout/99"))
                 .andExpect(status().is5xxServerError());
@@ -97,11 +111,12 @@ class MetricaBurnoutControllerTest {
 
     @Test
     void buscarPorEmpleado_debeRetornarListaFiltrada() throws Exception {
-        when(metricaBurnoutService.buscarPorEmpleado(1L)).thenReturn(List.of(metrica));
+        when(metricaBurnoutService.buscarPorEmpleado(1L)).thenReturn(List.of(metricaDTO));
 
         mockMvc.perform(get("/api/burnout/empleado/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].empleadoId", is(1)));
 
         verify(metricaBurnoutService).buscarPorEmpleado(1L);
     }
@@ -115,34 +130,77 @@ class MetricaBurnoutControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
     }
 
-    // ===================== POST =====================
+    // ===================== GET ÚLTIMO NIVEL DE RIESGO =====================
 
     @Test
-    void crearMetrica_debeRetornar201() throws Exception {
-        when(metricaBurnoutService.guardar(any(MetricaBurnout.class))).thenReturn(metrica);
+    void obtenerUltimoNivelRiesgo_debeRetornarString() throws Exception {
+        when(metricaBurnoutService.obtenerUltimoNivelRiesgo(1L)).thenReturn("MEDIO");
 
-        mockMvc.perform(post("/api/burnout")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(metrica)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(1)));
+        mockMvc.perform(get("/api/burnout/empleado/1/ultimo"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("MEDIO"));
 
-        verify(metricaBurnoutService).guardar(any(MetricaBurnout.class));
+        verify(metricaBurnoutService).obtenerUltimoNivelRiesgo(1L);
     }
 
-    // ===================== PUT =====================
+    @Test
+    void obtenerUltimoNivelRiesgo_cuandoNoTieneMetricas_debeRetornarSIN_EVALUACION() throws Exception {
+        when(metricaBurnoutService.obtenerUltimoNivelRiesgo(99L)).thenReturn("SIN_EVALUACION");
+
+        mockMvc.perform(get("/api/burnout/empleado/99/ultimo"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("SIN_EVALUACION"));
+    }
+
+    // ===================== GET HISTORIAL COMPLETO =====================
 
     @Test
-    void actualizar_debeRetornar200() throws Exception {
-        when(metricaBurnoutService.actualizar(eq(1L), any(MetricaBurnout.class))).thenReturn(metrica);
+    void obtenerHistorial_debeRetornarLista() throws Exception {
+        List<MetricaBurnoutResponseDTO> historial = Arrays.asList(metricaDTO);
+        when(metricaBurnoutService.obtenerHistorialCompleto(1L)).thenReturn(historial);
 
-        mockMvc.perform(put("/api/burnout/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(metrica)))
+        mockMvc.perform(get("/api/burnout/empleado/1/historial"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$", hasSize(1)));
 
-        verify(metricaBurnoutService).actualizar(eq(1L), any(MetricaBurnout.class));
+        verify(metricaBurnoutService).obtenerHistorialCompleto(1L);
+    }
+
+    // ===================== POST CALCULAR =====================
+
+    @Test
+    void calcularMetrica_debeRetornar201() throws Exception {
+        when(metricaBurnoutService.calcularMetrica(1L)).thenReturn(metricaDTO);
+
+        mockMvc.perform(post("/api/burnout/calcular/1"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.nivelRiesgo", is("MEDIO")));
+
+        verify(metricaBurnoutService).calcularMetrica(1L);
+    }
+
+    @Test
+    void calcularMetrica_cuandoEmpleadoNoExiste_debeRetornar500() throws Exception {
+        when(metricaBurnoutService.calcularMetrica(99L))
+                .thenThrow(new RuntimeException("Empleado no encontrado"));
+
+        mockMvc.perform(post("/api/burnout/calcular/99"))
+                .andExpect(status().is5xxServerError());
+    }
+
+    // ===================== POST RECALCULAR TODAS =====================
+
+    @Test
+    void recalcularTodas_debeRetornarLista() throws Exception {
+        List<MetricaBurnoutResponseDTO> metricas = Arrays.asList(metricaDTO);
+        when(metricaBurnoutService.recalcularTodas()).thenReturn(metricas);
+
+        mockMvc.perform(post("/api/burnout/recalcular-todas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+
+        verify(metricaBurnoutService).recalcularTodas();
     }
 
     // ===================== DELETE =====================

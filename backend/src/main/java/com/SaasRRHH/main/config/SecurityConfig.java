@@ -4,6 +4,7 @@ import com.SaasRRHH.main.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -62,7 +63,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll().requestMatchers("/uploads/**").permitAll()
+
+                        .requestMatchers("/api/boletas_pago/mis-boletas")
+                        .authenticated()
+
+                        .requestMatchers("/api/nomina/boleta/*/pdf")
+                        .authenticated()
+
+                                .requestMatchers("/api/usuarios/profile").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/profile").authenticated()
 
                         .requestMatchers(
                                 "/api/usuarios/**",
@@ -75,6 +85,20 @@ public class SecurityConfig {
                                 "/api/accesos/**",
                                 "/api/validaciones-seguridad/**")
                         .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/empleados/**")
+                        .hasRole("ADMIN")
+
+                        // Permitir a usuarios autenticados consultar sus propios datos de empleado y tareas
+                        .requestMatchers(HttpMethod.GET, "/api/empleados/usuario/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/empleado/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/*").authenticated()
+
+                        // Permitir a usuarios autenticados gestionar sus reportes diarios
+                        .requestMatchers(HttpMethod.POST, "/api/reportes-diarios").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/reportes-diarios/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reportes-diarios/empleado/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reportes-diarios/*").authenticated()
 
                         .requestMatchers(
                                 "/api/empleados/**",

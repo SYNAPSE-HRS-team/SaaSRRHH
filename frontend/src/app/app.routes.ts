@@ -65,6 +65,14 @@ export const routes: Routes = [
           ),
         title: 'Reportes de Incidentes - SaaSRRHH',
       },
+      {
+        path: 'reportes-diarios',
+        loadChildren: () =>
+          import('./features/reportes-diarios/reportes-diarios.routes').then(
+            (m) => m.reportesDiariosRoutes
+          ),
+        title: 'Reportes Diarios - SaaSRRHH',
+      },
 
       {
         path: 'nomina',
@@ -73,15 +81,27 @@ export const routes: Routes = [
       },
       {
         path: 'planillas',
-        loadChildren: () => import('./features/planillas/planilla.routes').then((m) => m.planillaRoutes),
-        title: 'Planillas - SaaSRRHH',
+        redirectTo: 'nomina',
+        pathMatch: 'full',
       },
       {
         path: 'boletas',
         loadChildren: () => import('./features/boletas/boleta.routes').then((m) => m.boletaRoutes),
         title: 'Boletas de Pago - SaaSRRHH',
       },
+      {
+        path: 'documentos',
+        loadChildren: () => import('./features/documento/documento.routes').then((m) => m.documentoRoutes),
+        title: 'Documentos - SaaSRRHH',
+      },
 
+      {
+    path: 'bienestar',
+    loadChildren: () => import('./features/bienestar/bienestar.routes')
+        .then(m => m.BIENESTAR_ROUTES),
+    canActivate: [AuthGuard],
+    data: { title: 'Bienestar' }
+},
       // ========================================================
       // 👤 PERFIL - Agregado por Nancy
       // ========================================================

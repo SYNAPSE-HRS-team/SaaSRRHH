@@ -2,6 +2,7 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
 import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
+import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.DocumentoPrivadoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDate;
@@ -32,6 +34,11 @@ class DocumentoPrivadoControllerTest {
 
     @MockBean
     private DocumentoPrivadoService service;
+            @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

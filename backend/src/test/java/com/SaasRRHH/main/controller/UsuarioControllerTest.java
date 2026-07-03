@@ -8,10 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
+import com.SaasRRHH.main.security.JwtUtil;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDateTime;
@@ -25,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UsuarioController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @WithMockUser
 class UsuarioControllerTest {
 
@@ -33,6 +38,12 @@ class UsuarioControllerTest {
 
     @MockBean
     private UsuarioService service;
+
+        @MockBean
+        private JwtUtil jwtUtil;
+
+        @MockBean
+        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -44,15 +55,15 @@ class UsuarioControllerTest {
     void setUp() {
         usuarioResponse = new UsuarioResponseDTO();
         usuarioResponse.setId(1L);
-        usuarioResponse.setEmail("admin@empresa.com");
+        usuarioResponse.setEmail("admin@test.com");
         usuarioResponse.setRolId(1L);
         usuarioResponse.setRolNombre("ADMIN");
         usuarioResponse.setActivo(true);
         usuarioResponse.setFechaCreacion(LocalDateTime.now());
 
         usuarioRequest = new UsuarioRequestDTO();
-        usuarioRequest.setEmail("admin@empresa.com");
-        usuarioRequest.setPassword("password123");
+        usuarioRequest.setEmail("admin@test.com");
+        usuarioRequest.setPassword("password");
         usuarioRequest.setRolId(1L);
         usuarioRequest.setActivo(true);
     }
@@ -67,7 +78,7 @@ class UsuarioControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].email", is("admin@empresa.com")));
+                .andExpect(jsonPath("$[0].email", is("admin@test.com")));
     }
 
     @Test
@@ -146,11 +157,11 @@ class UsuarioControllerTest {
 
     @Test
     void buscarPorEmail_cuandoExiste_debeRetornar200() throws Exception {
-        when(service.buscarPorEmail("admin@empresa.com")).thenReturn(usuarioResponse);
+        when(service.buscarPorEmail("admin@test.com")).thenReturn(usuarioResponse);
 
-        mockMvc.perform(get("/api/usuarios/email/admin@empresa.com"))
+        mockMvc.perform(get("/api/usuarios/email/admin@test.com"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email", is("admin@empresa.com")));
+                .andExpect(jsonPath("$.email", is("admin@test.com")));
     }
 
     @Test
