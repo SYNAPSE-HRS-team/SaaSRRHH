@@ -1,14 +1,17 @@
 <div class="documento-form">
   <div class="header">
     <h1>📄 Nuevo Documento</h1>
-    <a routerLink="/documentos" class="btn-secondary">← Volver</a>
+    <button class="btn-secondary" (click)="goToDocumentList()">← Volver</button>
   </div>
 
   @if (cargandoCatalogos()) {
-    <p class="estado">Cargando empleados y tipos de documento...</p>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando empleados y tipos de documento...</p>
+    </div>
   } @else {
-    <form (ngSubmit)="onSubmit()" class="form-card">
-
+    <form [formGroup]="documentoForm" (ngSubmit)="onSubmit()" class="form-card">
+      <!-- Mensajes de alerta -->
       @if (error()) {
         <div class="alerta error">{{ error() }}</div>
       }
@@ -16,67 +19,277 @@
         <div class="alerta success">{{ successMessage() }}</div>
       }
 
+      <!-- Empleado -->
       <div class="campo">
-        <label>Empleado *</label>
-        <select [(ngModel)]="empleadoId" name="empleadoId" required>
+        <label for="empleadoId" class="required">Empleado</label>
+        <select
+          id="empleadoId"
+          formControlName="empleadoId"
+          class="form-control"
+          [class.error]="
+            documentoForm.get('empleadoId')?.invalid && documentoForm.get('empleadoId')?.touched
+          "
+        >
           <option [ngValue]="null" disabled>Selecciona un empleado</option>
           @for (emp of empleados; track emp.id) {
             <option [ngValue]="emp.id">{{ emp.nombres }} {{ emp.apellidos }}</option>
           }
         </select>
+        @if (documentoForm.get('empleadoId')?.invalid && documentoForm.get('empleadoId')?.touched) {
+          <small class="error-message">Debes seleccionar un empleado</small>
+        }
       </div>
 
+      <!-- Tipo de Documento -->
       <div class="campo">
-        <label>Tipo de documento *</label>
-        <select [(ngModel)]="tipoId" name="tipoId" (ngModelChange)="onTipoChange()" required>
+        <label for="tipoId" class="required">Tipo de documento</label>
+        <select
+          id="tipoId"
+          formControlName="tipoId"
+          class="form-control"
+          [class.error]="
+            documentoForm.get('tipoId')?.invalid && documentoForm.get('tipoId')?.touched
+          "
+          (change)="onTipoChange()"
+        >
           <option [ngValue]="null" disabled>Selecciona un tipo</option>
           @for (tipo of tipos; track tipo.idTipo) {
-            <option [ngValue]="tipo.idTipo">{{ tipo.nombre }}</option>
+            <option [ngValue]="tipo.idTipo">
+              {{ tipo.nombre }}
+              @if (tipo.diasVigencia) {
+                ({{ tipo.diasVigencia }} días)
+              }
+            </option>
           }
           <option [ngValue]="OPCION_NUEVO_TIPO">➕ Crear nuevo tipo...</option>
         </select>
+        @if (documentoForm.get('tipoId')?.invalid && documentoForm.get('tipoId')?.touched) {
+          <small class="error-message">Debes seleccionar un tipo de documento</small>
+        }
+        @if (getDiasVigencia() !== null && getDiasVigencia()! > 0) {
+          <small class="help-text success">
+            ✅ Este documento vencerá en <strong>{{ getDiasVigencia() }} días</strong>
+            después de la fecha de emisión
+          </small>
+        }
       </div>
 
+      <!-- Crear Nuevo Tipo -->
       @if (mostrandoNuevoTipo) {
         <div class="nuevo-tipo-box">
           <div class="campo">
-            <label>Nombre del nuevo tipo *</label>
-            <input type="text" [(ngModel)]="nuevoTipoNombre" name="nuevoTipoNombre"
-                   placeholder="Ej: Constancia de trabajo" />
+            <label for="nuevoTipoNombre" class="required">Nombre del nuevo tipo</label>
+            <input
+              id="nuevoTipoNombre"
+              type="text"
+              [(ngModel)]="nuevoTipoNombre"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Ej: Constancia de trabajo"
+              class="form-control"
+            />
           </div>
 
           <div class="nuevo-tipo-acciones">
             <button type="button" class="btn-secondary-btn" (click)="cancelarNuevoTipo()">
               Cancelar
             </button>
-            <button type="button" class="btn-primary-small" (click)="crearNuevoTipo()" [disabled]="creandoTipo()">
+            <button
+              type="button"
+              class="btn-primary-small"
+              (click)="crearNuevoTipo()"
+              [disabled]="creandoTipo()"
+            >
               {{ creandoTipo() ? 'Creando...' : 'Crear tipo' }}
             </button>
           </div>
         </div>
       }
 
+      <!-- Fecha de Emisión (EL USUARIO LA INGRESA) -->
       <div class="campo">
-        <label>Fecha de vencimiento (opcional)</label>
-        <input type="date" [(ngModel)]="fechaVencimiento" name="fechaVencimiento" />
+        <label for="fechaEmision" class="required">Fecha de emisión</label>
+        <input
+          type="date"
+          id="fechaEmision"
+          formControlName="fechaEmision"
+          class="form-control"
+          [class.error]="
+            documentoForm.get('fechaEmision')?.invalid && documentoForm.get('fechaEmision')?.touched
+          "
+        />
+        @if (
+          documentoForm.get('fechaEmision')?.invalid && documentoForm.get('fechaEmision')?.touched
+        ) {
+          <small class="error-message">La fecha de emisión es obligatoria</small>
+        }
+        <small class="help-text">📅 Fecha en que se emite el documento</small>
       </div>
 
+      <!-- Fecha de Vencimiento (SE CALCULA AUTOMÁTICAMENTE) -->
       <div class="campo">
-        <label>Archivo *</label>
-        <input type="file" (change)="onFileChange($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required />
-        @if (nombreArchivo) {
-          <p class="archivo-info">Seleccionado: {{ nombreArchivo }}</p>
+        <label for="fechaVencimiento">Fecha de vencimiento (calculada automáticamente)</label>
+        <input
+          type="date"
+          id="fechaVencimiento"
+          formControlName="fechaVencimiento"
+          class="form-control readonly"
+          readonly
+          [disabled]="true"
+        />
+        <small class="help-text">
+          @if (getDiasVigencia() !== null && getDiasVigencia()! > 0) {
+            ⏱️ Se calcula automáticamente sumando <strong>{{ getDiasVigencia() }} días</strong>
+            a la fecha de emisión
+          } @else {
+            ⚠️ Selecciona un tipo de documento con días de vigencia
+          }
+        </small>
+        @if (documentoForm.get('fechaVencimiento')?.value && isVencido()) {
+          <small class="error-message">⚠️ Este documento ya está vencido</small>
         }
       </div>
 
-      <button type="submit" class="btn-primary" [disabled]="subiendoArchivo() || guardando()">
-        @if (subiendoArchivo()) {
-          Subiendo archivo...
-        } @else if (guardando()) {
-          Guardando...
-        } @else {
-          Guardar documento
+      <!-- Estado Activo -->
+      <div class="campo checkbox">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="activo" />
+          <span>Documento activo</span>
+        </label>
+        <small class="help-text"
+          >Los documentos inactivos no aparecerán en la lista principal</small
+        >
+      </div>
+
+      <!-- Archivo -->
+      <div class="campo">
+        <label class="required">Archivo</label>
+        <div
+          class="upload-area"
+          [class.has-file]="archivoSeleccionado"
+          [class.uploading]="subiendoArchivo()"
+        >
+          @if (!archivoSeleccionado && !subiendoArchivo()) {
+            <div class="upload-placeholder">
+              <span class="upload-icon">📎</span>
+              <p>Arrastra un archivo aquí o</p>
+              <button type="button" class="btn-upload" (click)="fileInput.click()">
+                Seleccionar archivo
+              </button>
+              <small class="help-text">PDF, JPG, PNG, DOC (Max 10MB)</small>
+            </div>
+          }
+
+          @if (subiendoArchivo()) {
+            <div class="upload-progress">
+              <div class="spinner-small"></div>
+              <p>Subiendo archivo...</p>
+            </div>
+          }
+
+          @if (archivoSeleccionado && !subiendoArchivo()) {
+            <div class="file-info">
+              <span class="file-icon">📄</span>
+              <div class="file-details">
+                <p class="file-name">{{ nombreArchivo }}</p>
+                <p class="file-size">
+                  {{ (archivoSeleccionado.size / 1024 / 1024).toFixed(2) }} MB
+                </p>
+              </div>
+              <button type="button" class="btn-remove" (click)="removeFile()">✕</button>
+            </div>
+          }
+
+          <input
+            type="file"
+            id="fileInput"
+            (change)="onFileChange($event)"
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            style="display: none"
+            #fileInput
+          />
+        </div>
+
+        @if (documentoForm.get('archivoUrl')?.invalid && documentoForm.get('archivoUrl')?.touched) {
+          <small class="error-message">Debes subir un archivo</small>
         }
-      </button>
+
+        @if (documentoForm.get('archivoUrl')?.value && !subiendoArchivo()) {
+          <div class="upload-success">
+            <span class="success-icon">✅</span>
+            <span>Archivo subido correctamente</span>
+          </div>
+        }
+      </div>
+
+      <!-- Resumen -->
+      @if (
+        documentoForm.get('tipoId')?.value &&
+        documentoForm.get('tipoId')?.value !== OPCION_NUEVO_TIPO
+      ) {
+        <div class="resumen">
+          <h3>📋 Resumen del documento</h3>
+          <div class="resumen-item">
+            <span class="label">Empleado:</span>
+            <span class="value">{{ getEmpleadoNombre() }}</span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Tipo:</span>
+            <span class="value">{{ getTipoNombre() }}</span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Emisión:</span>
+            <span class="value">{{
+              documentoForm.get('fechaEmision')?.value | date: 'dd/MM/yyyy'
+            }}</span>
+          </div>
+          <div class="resumen-item" [class.vencido]="isVencido()">
+            <span class="label">Vencimiento:</span>
+            <span class="value">
+              {{ documentoForm.get('fechaVencimiento')?.value | date: 'dd/MM/yyyy' }}
+              @if (isVencido()) {
+                <span class="badge-vencido">⚠️ Vencido</span>
+              }
+            </span>
+          </div>
+          @if (getDiasVigencia() !== null && getDiasVigencia()! > 0) {
+            <div class="resumen-item">
+              <span class="label">Días de vigencia:</span>
+              <span class="value">{{ getDiasVigencia() }} días</span>
+            </div>
+          }
+          <div class="resumen-item">
+            <span class="label">Estado:</span>
+            <span class="value">
+              <span [class]="documentoForm.get('activo')?.value ? 'tag-activo' : 'tag-inactivo'">
+                {{ documentoForm.get('activo')?.value ? 'Activo' : 'Inactivo' }}
+              </span>
+            </span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Archivo:</span>
+            <span class="value file-uploaded">✅ {{ nombreArchivo || 'Subido' }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- Botones de acción -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary-btn" (click)="goToDocumentList()">
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="documentoForm.invalid || subiendoArchivo() || guardando()"
+        >
+          @if (guardando()) {
+            <span class="spinner-small"></span>
+            Guardando...
+          } @else {
+            💾 Guardar documento
+          }
+        </button>
+      </div>
     </form>
   }
+</div>

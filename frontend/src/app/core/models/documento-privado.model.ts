@@ -4,6 +4,7 @@ export interface DocumentoPrivadoRequest {
   tipoId: number;
   archivoUrl: string;
   fechaVencimiento?: string | null; // yyyy-MM-dd
+  fechaEmision?: string | null; // yyyy-MM-dd
   activo?: boolean;
 }
 
@@ -16,6 +17,7 @@ export interface DocumentoPrivadoResponse {
   tipoNombre: string;
   archivoUrl: string;
   fechaVencimiento?: string | null;
+  fechaEmision?: string | null; // yyyy-MM-dd
   fechaCarga: string;
   activo: boolean;
 }

@@ -24,7 +24,48 @@
   .estado {
     color: #64748b;
   }
+  // Agregar estos estilos adicionales al SCSS existente
 
+  .help-text {
+    &.success {
+      color: #16a34a;
+
+      strong {
+        color: #16a34a;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .resumen-item {
+    .file-uploaded {
+      color: #16a34a;
+      font-weight: 500;
+    }
+  }
+
+  // Estilos para el badge de vencido en el resumen
+  .badge-vencido {
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  // Estilo para el campo de fecha vencimiento cuando está calculado
+  .form-control.readonly {
+    background: #f8fafc;
+    cursor: not-allowed;
+    color: #1e293b;
+    font-weight: 500;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
   .form-card {
     background: #fff;
     border-radius: 12px;
@@ -46,7 +87,9 @@
       color: #334155;
     }
 
-    select, input[type="date"], input[type="file"] {
+    select,
+    input[type='date'],
+    input[type='file'] {
       padding: 10px 12px;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
@@ -130,7 +173,9 @@
     font-size: 13px;
     cursor: pointer;
 
-    &:hover { background: #cbd5e1; }
+    &:hover {
+      background: #cbd5e1;
+    }
   }
 
   .btn-primary-small {
@@ -142,7 +187,12 @@
     font-size: 13px;
     cursor: pointer;
 
-    &:hover:not(:disabled) { background: #1d4ed8; }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
 }
