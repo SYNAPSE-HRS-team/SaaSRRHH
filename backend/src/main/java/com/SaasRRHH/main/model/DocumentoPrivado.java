@@ -43,8 +43,7 @@ public class DocumentoPrivado {
         @Column(name = "fecha_vencimiento")
         private LocalDate fechaVencimiento;
 
-        @NotNull(message = "La fecha de emision es obligatoria")
-        @Column(name="fecha-emision", nullable = false)
+        @Column(name="fecha_emision", nullable = true)
         private LocalDate fecha_emision;
 
         @Column(name = "fecha_carga", nullable = false, insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

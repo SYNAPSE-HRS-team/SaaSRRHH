@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class DocumentoPrivadoServiceImpl
-                implements DocumentoPrivadoService {
+        implements DocumentoPrivadoService {
 
         private final DocumentoPrivadoRepository repository;
 
@@ -65,6 +65,8 @@ public class DocumentoPrivadoServiceImpl
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Tipo documento no encontrado"));
 
+                LocalDate diasCalculados = dto.getFechaEmision().plusDays(tipo.getDiasVigencia());
+                dto.setFechaVencimiento(diasCalculados);
                 DocumentoPrivado entidad = DocumentoPrivadoMapper.toEntity(
                                 dto,
                                 empleado,

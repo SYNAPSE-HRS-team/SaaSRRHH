@@ -157,8 +157,10 @@ public class DocumentoPrivadoController {
                                                 empleadoId));
         }
 
-        @GetMapping("buscar_fecha_emision/")
-        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> buscarFechaEmision(@RequestParam("fecha") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate fecha){
+        @GetMapping("/buscar-fecha-emision")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> buscarFechaEmision(@RequestParam("fecha")
+                                                                                            @DateTimeFormat(iso=DateTimeFormat.ISO.DATE)
+                                                                                            LocalDate fecha){
                 return  ResponseEntity.ok(service.buscarPorFechaEmision(fecha));
         }
 

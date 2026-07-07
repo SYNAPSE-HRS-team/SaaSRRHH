@@ -1,69 +1,232 @@
 <div class="documento-list">
+  <!-- Header -->
   <div class="header">
     <div>
       <h1>📄 Documentos</h1>
       <div class="tabs">
-  <a routerLink="/documentos" class="tab active">Documentos</a>
-  <a routerLink="/documentos/tipos-documento" class="tab">Tipos de Documento</a>
-</div>
+        <a routerLink="/documentos" class="tab active">Documentos</a>
+        <a routerLink="/documentos/tipos-documento" class="tab">Tipos de Documento</a>
+      </div>
     </div>
     <a routerLink="/documentos/nuevo" class="btn-primary">+ Nuevo documento</a>
   </div>
 
-  @if (cargando) {
-    <p class="estado">Cargando documentos...</p>
-  }
+  <!-- Estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">📊</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalDocumentos() }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+    </div>
+    <div class="stat-card success">
+      <span class="stat-icon">✅</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalActivos() }}</span>
+        <span class="stat-label">Activos</span>
+      </div>
+    </div>
+    <div class="stat-card danger">
+      <span class="stat-icon">⚠️</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalVencidos() }}</span>
+        <span class="stat-label">Vencidos</span>
+      </div>
+    </div>
+  </div>
 
-  @if (errorHttp) {
-    <p class="estado error">
-      No se pudo conectar con la API de documentos. Verifica que el backend esté corriendo.
-    </p>
-  }
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-grid">
+      <!-- Búsqueda -->
+      <div class="filter-group search-group">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            [ngModel]="filtroBusqueda()"
+            (ngModelChange)="filtroBusqueda.set($event)"
+            placeholder="Buscar por empleado, tipo o ID..."
+            class="filter-input search-input"
+          />
+          @if (filtroBusqueda()) {
+            <button class="clear-search" (click)="filtroBusqueda.set('')">✕</button>
+          }
+        </div>
+      </div>
 
-  @if (!cargando && !errorHttp) {
-    @if (documentos.length === 0) {
-      <p class="estado">Todavía no hay documentos registrados.</p>
-    } @else {
+      <!-- Tipo -->
+      <div class="filter-group">
+        <select
+          [ngModel]="filtroTipoId()"
+          (ngModelChange)="filtroTipoId.set($event); aplicarFiltros()"
+          class="filter-select"
+        >
+          <option [ngValue]="null">Todos los tipos</option>
+          @for (tipo of tiposDocumento(); track tipo.idTipo) {
+            <option [ngValue]="tipo.idTipo">{{ tipo.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Estado -->
+      <div class="filter-group">
+        <select
+          [ngModel]="filtroEstado()"
+          (ngModelChange)="filtroEstado.set($event); aplicarFiltros()"
+          class="filter-select"
+        >
+          <option value="todos">Todos los estados</option>
+          <option value="activos">Activos</option>
+          <option value="inactivos">Inactivos</option>
+          <option value="vencidos">Vencidos</option>
+          <option value="por-vencer">Por vencer (30 días)</option>
+        </select>
+      </div>
+
+      <!-- Rango de fechas -->
+      <div class="filter-group date-group">
+        <input
+          type="date"
+          [ngModel]="filtroFechaDesde()"
+          (ngModelChange)="filtroFechaDesde.set($event); aplicarFiltros()"
+          class="filter-input"
+          placeholder="Fecha desde"
+        />
+        <span class="date-separator">→</span>
+        <input
+          type="date"
+          [ngModel]="filtroFechaHasta()"
+          (ngModelChange)="filtroFechaHasta.set($event); aplicarFiltros()"
+          class="filter-input"
+          placeholder="Fecha hasta"
+        />
+      </div>
+
+      <!-- Acciones de filtros -->
+      <div class="filter-actions">
+        <button class="btn-clear" (click)="limpiarFiltros()">Limpiar filtros</button>
+      </div>
+    </div>
+
+    <!-- Ordenamiento -->
+    <div class="order-section">
+      <div class="order-controls">
+        <span class="order-label">Ordenar por:</span>
+        <select
+          [ngModel]="ordenCampo()"
+          (ngModelChange)="ordenCampo.set($event); aplicarFiltros()"
+          class="order-select"
+        >
+          @for (opcion of opcionesOrden; track opcion.value) {
+            <option [value]="opcion.value">{{ opcion.label }}</option>
+          }
+        </select>
+        <button
+          class="order-direction"
+          (click)="
+            ordenDireccion.set(ordenDireccion() === 'asc' ? 'desc' : 'asc'); aplicarFiltros()
+          "
+        >
+          {{ ordenDireccion() === 'asc' ? '↑' : '↓' }}
+        </button>
+      </div>
+      <span class="result-count"
+        >{{ totalDocumentos() }} documento{{ totalDocumentos() !== 1 ? 's' : '' }}</span
+      >
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  @if (cargando()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando documentos...</p>
+    </div>
+  } @else if (errorHttp()) {
+    <div class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>No se pudo conectar con la API de documentos. Verifica que el backend esté corriendo.</p>
+      <button class="btn-retry" (click)="cargarDocumentos()">Reintentar</button>
+    </div>
+  } @else if (documentosFiltrados().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>No hay documentos</h3>
+      <p>No se encontraron documentos con los filtros aplicados.</p>
+      <button class="btn-primary" (click)="limpiarFiltros()">Limpiar filtros</button>
+    </div>
+  } @else {
+    <div class="table-container">
       <table class="tabla">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Empleado</th>
-            <th>Tipo</th>
-            <th>Fecha de carga</th>
-            <th>Vencimiento</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <th class="id-col">#</th>
+            <th class="empleado-col">Empleado</th>
+            <th class="tipo-col">Tipo</th>
+            <th class="fecha-col sortable" (click)="cambiarOrden('fechaCarga')">
+              Fecha de carga
+              @if (ordenCampo() === 'fechaCarga') {
+                <span class="sort-icon">{{ ordenDireccion() === 'asc' ? '↑' : '↓' }}</span>
+              }
+            </th>
+            <th class="fecha-col sortable" (click)="cambiarOrden('fechaVencimiento')">
+              Vencimiento
+              @if (ordenCampo() === 'fechaVencimiento') {
+                <span class="sort-icon">{{ ordenDireccion() === 'asc' ? '↑' : '↓' }}</span>
+              }
+            </th>
+            <th class="estado-col">Estado</th>
+            <th class="acciones-col">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (doc of documentos; track doc.id) {
-            <tr>
-              <td class="mono">#{{ doc.id }}</td>
-              <td class="font-semibold">{{ doc.empleadoNombre }}</td>
-              <td>
-                <span class="badge">{{ doc.tipoNombre }}</span>
+          @for (doc of documentosFiltrados(); track doc.id) {
+            <tr [class.vencido]="estaVencido(doc)">
+              <td class="id-col mono">#{{ doc.id }}</td>
+              <td class="empleado-col">
+                <span class="empleado-nombre">{{ doc.empleadoNombre || 'Sin nombre' }}</span>
               </td>
-              <td>{{ doc.fechaCarga | date: 'dd/MM/yyyy' }}</td>
-              <td [class.vencido]="estaVencido(doc)">
-                {{ doc.fechaVencimiento ? (doc.fechaVencimiento | date: 'dd/MM/yyyy') : '—' }}
-                @if (estaVencido(doc)) {
-                  <span class="tag-vencido">Vencido</span>
+              <td class="tipo-col">
+                <span class="badge">{{ doc.tipoNombre || 'Sin tipo' }}</span>
+              </td>
+              <td class="fecha-col">
+                {{ doc.fechaCarga | date: 'dd/MM/yyyy' }}
+              </td>
+              <td class="fecha-col">
+                @if (doc.fechaVencimiento) {
+                  <div class="vencimiento-info">
+                    <span>{{ doc.fechaVencimiento | date: 'dd/MM/yyyy' }}</span>
+                    @if (estaVencido(doc)) {
+                      <span class="tag-vencido">Vencido</span>
+                    } @else if (diasRestantes(doc) !== null && diasRestantes(doc)! <= 30) {
+                      <span class="tag-proximo">Próximo</span>
+                    }
+                  </div>
+                } @else {
+                  <span class="text-muted">—</span>
                 }
               </td>
-              <td>
+              <td class="estado-col">
                 <span [class]="doc.activo ? 'tag-activo' : 'tag-inactivo'">
                   {{ doc.activo ? 'Activo' : 'Inactivo' }}
                 </span>
               </td>
-              <td class="acciones">
-                <button (click)="verDocumento(doc)" class="btn-icon" title="Ver archivo">👁️</button>
-                <button (click)="eliminar(doc)" class="btn-icon danger" title="Eliminar">🗑️</button>
+              <td class="acciones-col">
+                <div class="acciones-buttons">
+                  <button (click)="verDocumento(doc)" class="btn-icon" title="Ver archivo">
+                    👁️
+                  </button>
+                  <button (click)="eliminar(doc)" class="btn-icon danger" title="Eliminar">
+                    🗑️
+                  </button>
+                </div>
               </td>
             </tr>
           }
         </tbody>
       </table>
-    }
+    </div>
   }
 </div>
