@@ -49,4 +49,7 @@ public interface DocumentoPrivadoService {
 
     List<Object[]>
     empleadosConMasDocumentos();
+
+    List<DocumentoPrivadoResponseDTO> buscarPorFechaEmision(LocalDate fechaEmision);
+
 }

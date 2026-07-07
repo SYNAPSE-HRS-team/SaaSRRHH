@@ -16,6 +16,8 @@ public class DocumentoPrivadoResponseDTO {
 
     private String empleadoNombre;
 
+    private String empleadoApellido;
+
     private Long tipoId;
 
     private String tipoNombre;
@@ -23,6 +25,8 @@ public class DocumentoPrivadoResponseDTO {
     private String archivoUrl;
 
     private LocalDate fechaVencimiento;
+
+    private LocalDate fechaEmesion;
 
     private LocalDateTime fechaCarga;
 

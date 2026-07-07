@@ -21,6 +21,7 @@ public class DocumentoPrivadoMapper {
         doc.setTipo(tipo);
         doc.setArchivoUrl(dto.getArchivoUrl());
         doc.setFechaVencimiento(dto.getFechaVencimiento());
+        doc.setFecha_emision(dto.getFechaEmision());
         doc.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
 
         return doc;
@@ -34,7 +35,9 @@ public class DocumentoPrivadoMapper {
         dto.setId(doc.getId());
         dto.setArchivoUrl(doc.getArchivoUrl());
         dto.setFechaVencimiento(doc.getFechaVencimiento());
+        dto.setFechaEmesion(doc.getFecha_emision());
         dto.setFechaCarga(doc.getFechaCarga());
+
         dto.setActivo(doc.getActivo());
 
         if (doc.getEmpleado() != null) {

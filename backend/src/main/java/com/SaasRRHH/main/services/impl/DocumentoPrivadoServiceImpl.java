@@ -189,6 +189,18 @@ public class DocumentoPrivadoServiceImpl
         }
 
         @Override
+        public List<DocumentoPrivadoResponseDTO> buscarPorFechaEmision
+                (LocalDate fechaEmision) {
+
+                return repository.listarPorFechaEmision(fechaEmision)
+                        .stream()
+                        .map(DocumentoPrivadoMapper::toDTO)
+                        .toList();
+
+
+        }
+
+        @Override
         @Transactional(readOnly = true)
         public List<Object[]> contarDocumentosPorTipo() {
 
@@ -203,4 +215,8 @@ public class DocumentoPrivadoServiceImpl
                 return repository
                                 .empleadosConMasDocumentos();
         }
+
+
+
+
 }

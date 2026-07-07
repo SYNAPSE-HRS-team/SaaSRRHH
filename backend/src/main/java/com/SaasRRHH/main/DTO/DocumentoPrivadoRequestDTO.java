@@ -17,5 +17,7 @@ public class DocumentoPrivadoRequestDTO {
 
     private LocalDate fechaVencimiento;
 
+    private LocalDate fechaEmision;
+
     private Boolean activo;
 }

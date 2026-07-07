@@ -66,7 +66,7 @@ public class DataSeeder implements CommandLineRunner {
         Rol trabajadorRol = rolRepository.findByNombreRol("TRABAJADOR")
                 .orElseThrow(() -> new RuntimeException("Rol TRABAJADOR no encontrado"));
 
-        // 👇 Usuario ADMIN con datos completos
+        // Usuario ADMIN con datos completos
         Usuario admin = new Usuario();
         admin.setEmail("admin@saasrrhh.com");
         admin.setPassword(passwordEncoder.encode("Admin123"));
@@ -78,7 +78,6 @@ public class DataSeeder implements CommandLineRunner {
         usuarioRepository.save(admin);
         log.info("Usuario ADMIN creado: admin@saasrrhh.com / Admin123");
 
-        // 👇 Usuario SUPERVISOR con datos completos
         Usuario supervisor = new Usuario();
         supervisor.setEmail("supervisor@saasrrhh.com");
         supervisor.setPassword(passwordEncoder.encode("Super123"));
