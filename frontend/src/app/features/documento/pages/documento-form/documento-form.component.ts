@@ -1,11 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
 import { catchError, finalize, of, Subject, takeUntil } from 'rxjs';
 import { DocumentoPrivadoRequest } from '../../../../core/models/documento-privado.model';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
-import { TipoDocumentoRequest, TipoDocumentoResponse } from '../../../../core/models/tipo-documento.model';
+import {
+  TipoDocumentoRequest,
+  TipoDocumentoResponse,
+} from '../../../../core/models/tipo-documento.model';
 import { DocumentoService } from '../../../../core/services/documento.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
@@ -15,7 +24,7 @@ const OPCION_NUEVO_TIPO = -1;
 @Component({
   selector: 'app-documento-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink], // <-- AÑADIR FormsModule
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './documento-form.component.html',
   styleUrls: ['./documento-form.component.scss'],
 })
@@ -31,7 +40,9 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
   readonly OPCION_NUEVO_TIPO = OPCION_NUEVO_TIPO;
   mostrandoNuevoTipo = false;
   nuevoTipoNombre = '';
+  nuevoTipoDias = 365;
   creandoTipo = signal(false);
+  esEdicion = false;
 
   // Estados de carga
   cargandoCatalogos = signal(true);
@@ -53,7 +64,7 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     private documentoService: DocumentoService,
     private tipoDocumentoService: TipoDocumentoService,
     private empleadoService: EmpleadoService,
-    public router: Router, // <-- CAMBIADO a public para usarlo en el template
+    public router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +103,6 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
       .get('tipoId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((tipoId) => {
-        console.log('Tipo seleccionado:', tipoId);
         if (tipoId === OPCION_NUEVO_TIPO) {
           this.mostrandoNuevoTipo = true;
           this.documentoForm.patchValue({
@@ -108,43 +118,32 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     this.documentoForm
       .get('fechaEmision')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe((fecha) => {
-        console.log('Fecha de emisión:', fecha);
+      .subscribe(() => {
         this.calcularFechaVencimiento();
       });
   }
 
   /**
-   * Calcula la fecha de vencimiento basada en el tipo y fecha de emisión
+   * Calcula la fecha de vencimiento
    */
   private calcularFechaVencimiento(): void {
     const tipoId = this.documentoForm.get('tipoId')?.value;
     const fechaEmision = this.documentoForm.get('fechaEmision')?.value;
 
-    console.log('Calculando fecha de vencimiento:', { tipoId, fechaEmision });
-
     if (!tipoId || !fechaEmision) {
-      this.documentoForm.patchValue({
-        fechaVencimiento: '',
-      });
+      this.documentoForm.patchValue({ fechaVencimiento: '' });
       return;
     }
 
     const tipoSeleccionado = this.tipos.find((tipo) => tipo.idTipo === tipoId);
 
-    console.log('Tipo seleccionado:', tipoSeleccionado);
-
     if (!tipoSeleccionado || !tipoSeleccionado.diasVigencia) {
-      this.documentoForm.patchValue({
-        fechaVencimiento: '',
-      });
+      this.documentoForm.patchValue({ fechaVencimiento: '' });
       return;
     }
 
-    // Calcular fecha de vencimiento: fechaEmision + diasVigencia
     const fechaEmisionDate = new Date(fechaEmision);
     const diasVigencia = tipoSeleccionado.diasVigencia;
-
     fechaEmisionDate.setDate(fechaEmisionDate.getDate() + diasVigencia);
 
     const year = fechaEmisionDate.getFullYear();
@@ -152,15 +151,11 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     const day = String(fechaEmisionDate.getDate()).padStart(2, '0');
     const fechaVencimiento = `${year}-${month}-${day}`;
 
-    console.log('Fecha de vencimiento calculada:', fechaVencimiento);
-
-    this.documentoForm.patchValue({
-      fechaVencimiento: fechaVencimiento,
-    });
+    this.documentoForm.patchValue({ fechaVencimiento });
   }
 
   /**
-   * Carga los catálogos necesarios
+   * Carga los catálogos
    */
   private cargarCatalogos(): void {
     this.cargandoCatalogos.set(true);
@@ -195,7 +190,6 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           this.tipos = data;
-          console.log('Tipos cargados:', this.tipos);
           if (this.tipos.length > 0) {
             this.documentoForm.patchValue({
               tipoId: this.tipos[0].idTipo,
@@ -214,9 +208,7 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     this.mostrandoNuevoTipo = tipoId === OPCION_NUEVO_TIPO;
 
     if (this.mostrandoNuevoTipo) {
-      this.documentoForm.patchValue({
-        tipoId: null,
-      });
+      this.documentoForm.patchValue({ tipoId: null });
     }
   }
 
@@ -226,6 +218,7 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
   cancelarNuevoTipo(): void {
     this.mostrandoNuevoTipo = false;
     this.nuevoTipoNombre = '';
+    this.nuevoTipoDias = 365;
     if (this.tipos.length > 0) {
       this.documentoForm.patchValue({
         tipoId: this.tipos[0].idTipo,
@@ -245,13 +238,18 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.nuevoTipoDias || this.nuevoTipoDias < 1) {
+      this.error.set('Los días de vigencia deben ser mayor a 0.');
+      return;
+    }
+
     this.creandoTipo.set(true);
 
     const payload: TipoDocumentoRequest = {
       nombre: this.nuevoTipoNombre.trim(),
       obligatorio: false,
       requiereRenovacion: false,
-      diasVigencia: 365,
+      diasVigencia: this.nuevoTipoDias,
     };
 
     this.tipoDocumentoService
@@ -275,6 +273,7 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
             });
             this.mostrandoNuevoTipo = false;
             this.nuevoTipoNombre = '';
+            this.nuevoTipoDias = 365;
             this.error.set('');
             this.calcularFechaVencimiento();
           }
@@ -372,20 +371,14 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
 
     this.guardando.set(true);
 
-    // Obtener la fecha de vencimiento calculada
-    const fechaVencimiento = this.documentoForm.get('fechaVencimiento')?.value;
-
-    // Crear el DTO con los datos del formulario
     const payload: DocumentoPrivadoRequest = {
       empleadoId: Number(this.documentoForm.get('empleadoId')?.value),
       tipoId: Number(this.documentoForm.get('tipoId')?.value),
       archivoUrl: this.documentoForm.get('archivoUrl')?.value,
-      fechaEmision: this.documentoForm.get('fechaEmision')?.value, // <-- AGREGAR fechaEmision
-      fechaVencimiento: fechaVencimiento || null,
+      fechaEmision: this.documentoForm.get('fechaEmision')?.value,
+      fechaVencimiento: this.documentoForm.get('fechaVencimiento')?.value || null,
       activo: this.documentoForm.get('activo')?.value,
     };
-
-    console.log('Payload a enviar:', payload);
 
     this.documentoService
       .create(payload)

@@ -61,7 +61,9 @@
               }
             </option>
           }
-          <option [ngValue]="OPCION_NUEVO_TIPO">➕ Crear nuevo tipo...</option>
+          <option [ngValue]="OPCION_NUEVO_TIPO" class="option-create">
+            ➕ Crear nuevo tipo...
+          </option>
         </select>
         @if (documentoForm.get('tipoId')?.invalid && documentoForm.get('tipoId')?.touched) {
           <small class="error-message">Debes seleccionar un tipo de documento</small>
@@ -74,38 +76,56 @@
         }
       </div>
 
-      <!-- Crear Nuevo Tipo -->
+      <!-- Crear Nuevo Tipo (Emergente) -->
       @if (mostrandoNuevoTipo) {
-        <div class="nuevo-tipo-box">
-          <div class="campo">
-            <label for="nuevoTipoNombre" class="required">Nombre del nuevo tipo</label>
-            <input
-              id="nuevoTipoNombre"
-              type="text"
-              [(ngModel)]="nuevoTipoNombre"
-              [ngModelOptions]="{ standalone: true }"
-              placeholder="Ej: Constancia de trabajo"
-              class="form-control"
-            />
-          </div>
-
-          <div class="nuevo-tipo-acciones">
-            <button type="button" class="btn-secondary-btn" (click)="cancelarNuevoTipo()">
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn-primary-small"
-              (click)="crearNuevoTipo()"
-              [disabled]="creandoTipo()"
-            >
-              {{ creandoTipo() ? 'Creando...' : 'Crear tipo' }}
-            </button>
+        <div class="nuevo-tipo-overlay">
+          <div class="nuevo-tipo-box">
+            <div class="nuevo-tipo-header">
+              <h3>➕ Crear nuevo tipo de documento</h3>
+              <button type="button" class="btn-close" (click)="cancelarNuevoTipo()">✕</button>
+            </div>
+            <div class="campo">
+              <label for="nuevoTipoNombre" class="required">Nombre del nuevo tipo</label>
+              <input
+                id="nuevoTipoNombre"
+                type="text"
+                [(ngModel)]="nuevoTipoNombre"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Ej: Constancia de trabajo"
+                class="form-control"
+              />
+            </div>
+            <div class="campo">
+              <label for="nuevoTipoDias">Días de vigencia</label>
+              <input
+                id="nuevoTipoDias"
+                type="number"
+                [(ngModel)]="nuevoTipoDias"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="365"
+                class="form-control"
+                min="1"
+              />
+              <small class="help-text">Días que tardará en vencer este tipo de documento</small>
+            </div>
+            <div class="nuevo-tipo-acciones">
+              <button type="button" class="btn-secondary-btn" (click)="cancelarNuevoTipo()">
+                Cancelar
+              </button>
+              <button
+                type="button"
+                class="btn-primary"
+                (click)="crearNuevoTipo()"
+                [disabled]="creandoTipo()"
+              >
+                {{ creandoTipo() ? 'Creando...' : 'Crear tipo' }}
+              </button>
+            </div>
           </div>
         </div>
       }
 
-      <!-- Fecha de Emisión (EL USUARIO LA INGRESA) -->
+      <!-- Fecha de Emisión -->
       <div class="campo">
         <label for="fechaEmision" class="required">Fecha de emisión</label>
         <input
@@ -125,7 +145,7 @@
         <small class="help-text">📅 Fecha en que se emite el documento</small>
       </div>
 
-      <!-- Fecha de Vencimiento (SE CALCULA AUTOMÁTICAMENTE) -->
+      <!-- Fecha de Vencimiento (Automática) -->
       <div class="campo">
         <label for="fechaVencimiento">Fecha de vencimiento (calculada automáticamente)</label>
         <input
@@ -155,9 +175,9 @@
           <input type="checkbox" formControlName="activo" />
           <span>Documento activo</span>
         </label>
-        <small class="help-text"
-          >Los documentos inactivos no aparecerán en la lista principal</small
-        >
+        <small class="help-text">
+          Desmarca esta opción para <strong>inactivar</strong> el documento
+        </small>
       </div>
 
       <!-- Archivo -->
@@ -261,7 +281,7 @@
             <span class="label">Estado:</span>
             <span class="value">
               <span [class]="documentoForm.get('activo')?.value ? 'tag-activo' : 'tag-inactivo'">
-                {{ documentoForm.get('activo')?.value ? 'Activo' : 'Inactivo' }}
+                {{ documentoForm.get('activo')?.value ? '✅ Activo' : '❌ Inactivo' }}
               </span>
             </span>
           </div>

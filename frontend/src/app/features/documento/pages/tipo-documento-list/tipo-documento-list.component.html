@@ -1,4 +1,5 @@
 <div class="tipo-documento-list">
+  <!-- Header -->
   <div class="header">
     <div>
       <h1>🏷️ Categorías de Documento</h1>
@@ -12,6 +13,7 @@
     }
   </div>
 
+  <!-- Formulario -->
   @if (mostrandoForm) {
     <div class="form-card">
       @if (error()) {
@@ -52,24 +54,97 @@
       <div class="form-acciones">
         <button class="btn-secondary-btn" (click)="cancelar()">Cancelar</button>
         <button class="btn-primary-small" (click)="guardar()" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : (editandoId ? 'Actualizar' : 'Crear categoría') }}
+          {{ guardando() ? 'Guardando...' : editandoId ? 'Actualizar' : 'Crear categoría' }}
         </button>
       </div>
     </div>
   }
 
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-grid">
+      <!-- Búsqueda por nombre -->
+      <div class="filter-group search-group">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            [ngModel]="filtroBusqueda()"
+            (ngModelChange)="filtroBusqueda.set($event)"
+            placeholder="Buscar por nombre..."
+            class="filter-input search-input"
+          />
+          @if (filtroBusqueda()) {
+            <button class="clear-search" (click)="filtroBusqueda.set('')">✕</button>
+          }
+        </div>
+      </div>
+
+      <!-- Filtro por obligatorio -->
+      <div class="filter-group">
+        <select
+          [ngModel]="filtroObligatorio()"
+          (ngModelChange)="filtroObligatorio.set($event)"
+          class="filter-select"
+        >
+          <option value="todos">Todos</option>
+          <option value="si">Obligatorios</option>
+          <option value="no">No obligatorios</option>
+        </select>
+      </div>
+
+      <!-- Filtro por renovación -->
+      <div class="filter-group">
+        <select
+          [ngModel]="filtroRenovacion()"
+          (ngModelChange)="filtroRenovacion.set($event)"
+          class="filter-select"
+        >
+          <option value="todos">Todos</option>
+          <option value="si">Con renovación</option>
+          <option value="no">Sin renovación</option>
+        </select>
+      </div>
+
+      <!-- Acciones -->
+      <div class="filter-actions">
+        <button class="btn-clear" (click)="limpiarFiltros()">Limpiar filtros</button>
+      </div>
+    </div>
+
+    <div class="filter-stats">
+      <span class="result-count">
+        {{ tiposFiltrados().length }} categoría{{ tiposFiltrados().length !== 1 ? 's' : '' }}
+        @if (
+          filtroBusqueda() || filtroObligatorio() !== 'todos' || filtroRenovacion() !== 'todos'
+        ) {
+          <span class="filter-badge">filtrados</span>
+        }
+      </span>
+    </div>
+  </div>
+
+  <!-- Contenido -->
   @if (cargando()) {
-    <p class="estado">Cargando categorías...</p>
-  }
-
-  @if (errorHttp()) {
-    <p class="estado error">No se pudo conectar con la API de categorías.</p>
-  }
-
-  @if (!cargando() && !errorHttp()) {
-    @if (tipos.length === 0) {
-      <p class="estado">Todavía no hay categorías registradas.</p>
-    } @else {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando categorías...</p>
+    </div>
+  } @else if (errorHttp()) {
+    <div class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>No se pudo conectar con la API de categorías.</p>
+      <button class="btn-retry" (click)="cargar()">Reintentar</button>
+    </div>
+  } @else if (tiposFiltrados().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>No hay categorías</h3>
+      <p>No se encontraron categorías con los filtros aplicados.</p>
+      <button class="btn-primary" (click)="limpiarFiltros()">Limpiar filtros</button>
+    </div>
+  } @else {
+    <div class="table-container">
       <table class="tabla">
         <thead>
           <tr>
@@ -83,22 +158,32 @@
           </tr>
         </thead>
         <tbody>
-          @for (tipo of tipos; track tipo.idTipo) {
+          @for (tipo of tiposFiltrados(); track tipo.idTipo) {
             <tr>
               <td class="mono">#{{ tipo.idTipo }}</td>
               <td class="font-semibold">{{ tipo.nombre }}</td>
-              <td>{{ tipo.obligatorio ? 'Sí' : 'No' }}</td>
-              <td>{{ tipo.requiereRenovacion ? 'Sí' : 'No' }}</td>
+              <td>
+                <span [class]="tipo.obligatorio ? 'tag-si' : 'tag-no'">
+                  {{ tipo.obligatorio ? '✅ Sí' : '❌ No' }}
+                </span>
+              </td>
+              <td>
+                <span [class]="tipo.requiereRenovacion ? 'tag-si' : 'tag-no'">
+                  {{ tipo.requiereRenovacion ? '✅ Sí' : '❌ No' }}
+                </span>
+              </td>
               <td>{{ tipo.diasVigencia ?? '—' }}</td>
               <td class="text-muted">{{ tipo.descripcion || '—' }}</td>
               <td class="acciones">
                 <button (click)="editar(tipo)" class="btn-icon" title="Editar">✏️</button>
-                <button (click)="eliminar(tipo)" class="btn-icon danger" title="Eliminar">🗑️</button>
+                <button (click)="eliminar(tipo)" class="btn-icon danger" title="Eliminar">
+                  🗑️
+                </button>
               </td>
             </tr>
           }
         </tbody>
       </table>
-    }
+    </div>
   }
 </div>
