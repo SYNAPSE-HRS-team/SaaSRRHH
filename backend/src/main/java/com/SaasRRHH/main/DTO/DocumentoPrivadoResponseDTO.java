@@ -26,9 +26,11 @@ public class DocumentoPrivadoResponseDTO {
 
     private LocalDate fechaVencimiento;
 
-    private LocalDate fechaEmesion;
+    private LocalDate fechaEmision;
 
     private LocalDateTime fechaCarga;
 
     private Boolean activo;
+
+    
 }

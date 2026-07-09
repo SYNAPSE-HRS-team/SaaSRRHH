@@ -128,7 +128,7 @@
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 2fr auto;
       gap: 12px;
-      align-items: center;
+      align-items: end;
 
       @media (max-width: 1024px) {
         grid-template-columns: 1fr 1fr;
@@ -141,7 +141,16 @@
 
     .filter-group {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 4px;
+
+      label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
       &.search-group {
         grid-column: span 1;
@@ -149,6 +158,7 @@
 
       &.date-group {
         display: flex;
+        flex-direction: row;
         align-items: center;
         gap: 8px;
 
@@ -160,6 +170,7 @@
         .date-separator {
           color: #94a3b8;
           font-size: 14px;
+          padding: 0 4px;
         }
       }
     }
@@ -173,11 +184,15 @@
         left: 12px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 16px;
+        font-size: 14px;
+        color: #94a3b8;
+        pointer-events: none;
+        z-index: 1;
       }
 
       .search-input {
-        padding-left: 36px;
+        padding-left: 36px !important;
+        padding-right: 36px !important;
       }
 
       .clear-search {
@@ -191,6 +206,7 @@
         cursor: pointer;
         font-size: 16px;
         padding: 4px;
+        z-index: 1;
 
         &:hover {
           color: #475569;
@@ -213,14 +229,15 @@
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
       }
 
-      &.search-input {
-        padding-left: 36px;
+      &::placeholder {
+        color: #94a3b8;
+        font-size: 13px;
       }
     }
 
     .filter-select {
       width: 100%;
-      padding: 8px 12px;
+      padding: 8px 36px 8px 12px;
       border: 1.5px solid #e2e8f0;
       border-radius: 8px;
       font-size: 14px;
@@ -244,6 +261,7 @@
       display: flex;
       gap: 8px;
       justify-content: flex-end;
+      align-items: end;
 
       .btn-clear {
         padding: 8px 16px;
@@ -256,6 +274,7 @@
         cursor: pointer;
         transition: all 0.2s;
         white-space: nowrap;
+        height: 40px;
 
         &:hover {
           background: #e2e8f0;
@@ -485,7 +504,6 @@
       }
     }
 
-    // Column widths
     .id-col {
       width: 60px;
       font-family: monospace;
@@ -507,7 +525,7 @@
     }
 
     .fecha-col {
-      min-width: 120px;
+      min-width: 110px;
       white-space: nowrap;
     }
 
@@ -516,7 +534,7 @@
     }
 
     .acciones-col {
-      min-width: 80px;
+      min-width: 130px;
       text-align: center;
     }
 
@@ -542,6 +560,7 @@
         padding: 2px 8px;
         border-radius: 999px;
         font-weight: 600;
+        white-space: nowrap;
       }
 
       .tag-proximo {
@@ -551,6 +570,7 @@
         padding: 2px 8px;
         border-radius: 999px;
         font-weight: 600;
+        white-space: nowrap;
       }
     }
 
@@ -561,6 +581,7 @@
       background: #dcfce7;
       padding: 2px 10px;
       border-radius: 999px;
+      display: inline-block;
     }
 
     .tag-inactivo {
@@ -570,6 +591,7 @@
       background: #f1f5f9;
       padding: 2px 10px;
       border-radius: 999px;
+      display: inline-block;
     }
 
     .text-muted {
@@ -580,6 +602,7 @@
       display: flex;
       gap: 6px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn-icon {
@@ -590,6 +613,13 @@
       cursor: pointer;
       font-size: 14px;
       transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+      width: 32px;
+      height: 32px;
 
       &:hover {
         background: #e2e8f0;
@@ -599,6 +629,16 @@
       &.danger:hover {
         background: #fee2e2;
         color: #dc2626;
+      }
+    }
+
+    .btn-icon.edit-link {
+      background: #e0f2fe;
+      color: #0284c7;
+
+      &:hover {
+        background: #bae6fd;
+        color: #0369a1;
       }
     }
   }
@@ -679,14 +719,27 @@
       }
 
       .empleado-col,
-      .tipo-col,
-      .fecha-col {
+      .tipo-col {
         min-width: 80px;
       }
 
-      .estado-col,
-      .acciones-col {
+      .fecha-col {
+        min-width: 70px;
+        white-space: nowrap;
+      }
+
+      .estado-col {
         min-width: 60px;
+      }
+
+      .acciones-col {
+        min-width: 100px;
+      }
+
+      .btn-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
       }
     }
   }

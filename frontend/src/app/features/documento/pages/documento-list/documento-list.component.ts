@@ -37,7 +37,7 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
   // Filtros
   filtroBusqueda = signal('');
   filtroTipoId = signal<number | null>(null);
-  filtroEstado = signal<string>('todos'); // 'todos' | 'activos' | 'inactivos' | 'vencidos' | 'por-vencer'
+  filtroEstado = signal<string>('todos');
   filtroFechaDesde = signal<string>('');
   filtroFechaHasta = signal<string>('');
 
@@ -53,9 +53,9 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
   // Manejo de destrucción
   private destroy$ = new Subject<void>();
 
-  // Opciones de ordenamiento
   opcionesOrden = [
     { value: 'fechaCarga', label: 'Fecha de carga' },
+    { value: 'fechaEmision', label: 'Fecha de emisión' },
     { value: 'fechaVencimiento', label: 'Fecha de vencimiento' },
     { value: 'empleadoNombre', label: 'Empleado' },
     { value: 'tipoNombre', label: 'Tipo' },
@@ -118,6 +118,11 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (data) => {
+          console.log('📄 Documentos cargados:', data);
+          // Verificar que cada documento tenga fechaEmision
+          data.forEach((doc) => {
+            console.log(`📅 Doc ${doc.id}: fechaEmision = ${doc.fechaEmision}`);
+          });
           this.documentos.set(data);
           this.aplicarFiltros();
         },
@@ -128,8 +133,6 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
    * Configura los filtros con debounce para mejor rendimiento
    */
   private configurarFiltros(): void {
-    // El filtro de búsqueda se aplica con debounce
-    // Usamos un Subject para manejar el debounce
     const busquedaSubject = new Subject<string>();
 
     busquedaSubject
@@ -138,7 +141,6 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
         this.aplicarFiltros();
       });
 
-    // Sobrescribimos el setter del filtro de búsqueda para usar el Subject
     const originalSet = this.filtroBusqueda.set.bind(this.filtroBusqueda);
     this.filtroBusqueda.set = (value: string) => {
       originalSet(value);
@@ -206,7 +208,7 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Ordenamiento
+    // Ordenamiento (incluyendo fechaEmision)
     const campo = this.ordenCampo();
     const direccion = this.ordenDireccion();
 
@@ -215,7 +217,7 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
       let valorB = b[campo as keyof DocumentoPrivadoResponse] || '';
 
       // Manejar fechas
-      if (campo === 'fechaCarga' || campo === 'fechaVencimiento') {
+      if (campo === 'fechaCarga' || campo === 'fechaVencimiento' || campo === 'fechaEmision') {
         valorA = new Date(valorA as string).getTime() as any;
         valorB = new Date(valorB as string).getTime() as any;
       }

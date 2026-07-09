@@ -35,7 +35,7 @@ public class DocumentoPrivadoMapper {
         dto.setId(doc.getId());
         dto.setArchivoUrl(doc.getArchivoUrl());
         dto.setFechaVencimiento(doc.getFechaVencimiento());
-        dto.setFechaEmesion(doc.getFecha_emision());
+        dto.setFechaEmision(doc.getFecha_emision());
         dto.setFechaCarga(doc.getFechaCarga());
 
         dto.setActivo(doc.getActivo());

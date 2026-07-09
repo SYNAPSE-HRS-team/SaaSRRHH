@@ -171,6 +171,12 @@
                 <span class="sort-icon">{{ ordenDireccion() === 'asc' ? '↑' : '↓' }}</span>
               }
             </th>
+            <th class="fecha-col sortable" (click)="cambiarOrden('fechaEmision')">
+              Fecha de emisión
+              @if (ordenCampo() === 'fechaEmision') {
+                <span class="sort-icon">{{ ordenDireccion() === 'asc' ? '↑' : '↓' }}</span>
+              }
+            </th>
             <th class="fecha-col sortable" (click)="cambiarOrden('fechaVencimiento')">
               Vencimiento
               @if (ordenCampo() === 'fechaVencimiento') {
@@ -195,6 +201,9 @@
                 {{ doc.fechaCarga | date: 'dd/MM/yyyy' }}
               </td>
               <td class="fecha-col">
+                {{ doc.fechaEmision ? (doc.fechaEmision | date: 'dd/MM/yyyy') : '—' }}
+              </td>
+              <td class="fecha-col">
                 @if (doc.fechaVencimiento) {
                   <div class="vencimiento-info">
                     <span>{{ doc.fechaVencimiento | date: 'dd/MM/yyyy' }}</span>
@@ -213,8 +222,16 @@
                   {{ doc.activo ? 'Activo' : 'Inactivo' }}
                 </span>
               </td>
+              <!-- En la sección de acciones -->
               <td class="acciones-col">
                 <div class="acciones-buttons">
+                  <a
+                    [routerLink]="['/documentos/editar', doc.id]"
+                    class="btn-icon edit-link"
+                    title="Editar"
+                  >
+                    ✏️
+                  </a>
                   <button (click)="verDocumento(doc)" class="btn-icon" title="Ver archivo">
                     👁️
                   </button>

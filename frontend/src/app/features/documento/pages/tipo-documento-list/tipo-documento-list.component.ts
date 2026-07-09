@@ -16,7 +16,8 @@ import { TipoDocumentoService } from '../../../../core/services/tipo-documento.s
   styleUrls: ['./tipo-documento-list.component.scss'],
 })
 export class TipoDocumentoListComponent implements OnInit {
-  tipos: TipoDocumentoResponse[] = [];
+  // Cambiar a signal para que sea reactivo
+  tipos = signal<TipoDocumentoResponse[]>([]);
 
   // Signals para estado
   cargando = signal(true);
@@ -31,7 +32,7 @@ export class TipoDocumentoListComponent implements OnInit {
 
   // Tipos filtrados (computado usando signals)
   tiposFiltrados = computed(() => {
-    let filtrados = [...this.tipos];
+    let filtrados = this.tipos(); // Ahora tipos es un signal
 
     // Filtro por búsqueda
     const busqueda = this.filtroBusqueda().toLowerCase().trim();
@@ -83,7 +84,7 @@ export class TipoDocumentoListComponent implements OnInit {
 
     this.tipoDocumentoService.getAll().subscribe({
       next: (data) => {
-        this.tipos = data;
+        this.tipos.set(data); // Actualizar el signal
         this.cargando.set(false);
       },
       error: (err) => {
