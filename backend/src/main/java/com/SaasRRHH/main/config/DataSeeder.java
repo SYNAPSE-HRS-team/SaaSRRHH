@@ -69,7 +69,7 @@ public class DataSeeder implements CommandLineRunner {
         // Usuario ADMIN con datos completos
         Usuario admin = new Usuario();
         admin.setEmail("admin@saasrrhh.com");
-            admin.setPassword(passwordEncoder.encode("Admin123"));
+        admin.setPassword(passwordEncoder.encode("Admin123"));
         admin.setRol(adminRol);
         admin.setActivo(true);
         admin.setNombre("Administrador");
@@ -89,7 +89,7 @@ public class DataSeeder implements CommandLineRunner {
         usuarioRepository.save(supervisor);
         log.info("Usuario SUPERVISOR creado: supervisor@saasrrhh.com / Super123");
 
-        // 👇 Usuario TRABAJADOR con datos completos
+        //Usuario TRABAJADOR con datos completos
         Usuario trabajador = new Usuario();
         trabajador.setEmail("trabajador@saasrrhh.com");
         trabajador.setPassword(passwordEncoder.encode("123456"));
