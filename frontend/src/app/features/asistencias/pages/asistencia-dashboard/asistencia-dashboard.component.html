@@ -142,8 +142,9 @@
 
           <label>Estado</label>
           <select [(ngModel)]="editEstado">
-            <option value="VALIDADO">VALIDADO</option>
-            <option value="RECHAZADO">RECHAZADO</option>
+            <option value="VALIDADO">✅ VALIDADO</option>
+            <option value="OBSERVADO">⚠️ OBSERVADO</option>
+            <option value="RECHAZADO">❌ RECHAZADO</option>
           </select>
 
           <label>Observaciones</label>
@@ -328,7 +329,10 @@
               </thead>
               <tbody>
                 @for (reg of getFilteredAsistenciasHoy(); track reg.id) {
-                  <tr [class.virtual-row]="!reg.entrada && !reg.salida">
+                  <tr
+                    [class.virtual-row]="!reg.entrada && !reg.salida"
+                    [class.edicion-pasada]="reg.isPastDay"
+                  >
                     <td>
                       <span class="dni-badge">{{ reg.dni }}</span>
                     </td>
@@ -369,6 +373,7 @@
                       <span
                         class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
+                        [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
                         [class.pendiente]="reg.estado === 'PENDIENTE'"
                         [class.invalido]="reg.estado === 'INVALIDO'"
@@ -376,15 +381,26 @@
                       >
                     </td>
                     <td>
-                      <button
-                        class="btn btn-sm ghost compact"
-                        (click)="openAsistenciaModal(reg)"
-                        [disabled]="!esFechaHoy()"
-                      >
-                        👁️ Ver / Editar
-                      </button>
-                      @if (!esFechaHoy()) {
-                        <span class="tooltip">Solo hoy</span>
+                      <!-- ✅ Solo mostrar botón si HAY un registro (entrada o salida) -->
+                      @if (reg.entrada || reg.salida) {
+                        <button
+                          class="btn btn-sm ghost compact"
+                          (click)="openAsistenciaModal(reg)"
+                          [disabled]="!isAdmin"
+                        >
+                          👁️ Ver / Editar
+                        </button>
+                        @if (reg.isPastDay) {
+                          <span class="tooltip">⚠️ Día pasado</span>
+                        }
+                      } @else {
+                        <!-- ❌ No hay registro, no se puede editar -->
+                        <span class="sin-registro-label">📭 Sin registro</span>
+                        @if (isAdmin && !reg.isPastDay) {
+                          <button class="btn btn-sm primary compact" (click)="crearAsistencia(reg)">
+                            ➕ Crear
+                          </button>
+                        }
                       }
                     </td>
                   </tr>
@@ -441,6 +457,7 @@
                       <span
                         class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
+                        [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
                         >{{ reg.estado }}</span
                       >
@@ -461,7 +478,13 @@
     <div class="modal-overlay">
       <div class="modal-card">
         <div class="modal-header">
-          <h3>👁️ Detalle de Asistencia</h3>
+          <h3>
+            @if (modalEntradaExiste || modalSalidaExiste) {
+              👁️ Detalle de Asistencia
+            } @else {
+              ➕ Nueva Asistencia
+            }
+          </h3>
           <button class="close-btn" (click)="showDetailModal.set(false)">✕</button>
         </div>
         <div class="modal-body">
@@ -485,15 +508,16 @@
                 <input
                   type="time"
                   [(ngModel)]="modalEntradaHora"
-                  [disabled]="!isAdmin || !esFechaHoy()"
+                  [disabled]="!isAdmin"
                   placeholder="HH:MM"
                 />
               </div>
               <div>
                 <label>Estado</label>
-                <select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin || !esFechaHoy()">
-                  <option value="VALIDADO">VALIDADO</option>
-                  <option value="RECHAZADO">RECHAZADO</option>
+                <select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin">
+                  <option value="VALIDADO">✅ VALIDADO</option>
+                  <option value="OBSERVADO">⚠️ OBSERVADO</option>
+                  <option value="RECHAZADO">❌ RECHAZADO</option>
                 </select>
               </div>
               <div class="full-width">
@@ -501,15 +525,15 @@
                 <input
                   type="text"
                   [(ngModel)]="modalEntradaObs"
-                  [disabled]="!isAdmin || !esFechaHoy()"
+                  [disabled]="!isAdmin"
                   placeholder="Ninguna"
                 />
               </div>
             </div>
-            @if (!esFechaHoy()) {
+            @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
               <div class="warning-message">
-                ⚠️ No se puede editar asistencias de días pasados. Solo se permite editar el día de
-                hoy.
+                ⚠️ Estás editando una asistencia de un día anterior. Los cambios quedarán
+                registrados en el historial.
               </div>
             }
             @if (modalEntradaExiste) {
@@ -530,15 +554,16 @@
                 <input
                   type="time"
                   [(ngModel)]="modalSalidaHora"
-                  [disabled]="!isAdmin || !esFechaHoy()"
+                  [disabled]="!isAdmin"
                   placeholder="HH:MM"
                 />
               </div>
               <div>
                 <label>Estado</label>
-                <select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin || !esFechaHoy()">
-                  <option value="VALIDADO">VALIDADO</option>
-                  <option value="RECHAZADO">RECHAZADO</option>
+                <select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin">
+                  <option value="VALIDADO">✅ VALIDADO</option>
+                  <option value="OBSERVADO">⚠️ OBSERVADO</option>
+                  <option value="RECHAZADO">❌ RECHAZADO</option>
                 </select>
               </div>
               <div class="full-width">
@@ -546,15 +571,15 @@
                 <input
                   type="text"
                   [(ngModel)]="modalSalidaObs"
-                  [disabled]="!isAdmin || !esFechaHoy()"
+                  [disabled]="!isAdmin"
                   placeholder="Ninguna"
                 />
               </div>
             </div>
-            @if (!esFechaHoy()) {
+            @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
               <div class="warning-message">
-                ⚠️ No se puede editar asistencias de días pasados. Solo se permite editar el día de
-                hoy.
+                ⚠️ Estás editando una asistencia de un día anterior. Los cambios quedarán
+                registrados en el historial.
               </div>
             }
             @if (modalSalidaExiste) {
@@ -566,9 +591,15 @@
         </div>
 
         <div class="modal-footer">
-          @if (isAdmin && esFechaHoy()) {
+          @if (isAdmin) {
             <button class="btn ghost" (click)="showDetailModal.set(false)">Cancelar</button>
-            <button class="btn primary" (click)="saveModalAsistencia()">💾 Guardar Cambios</button>
+            <button class="btn primary" (click)="saveModalAsistencia()">
+              @if (modalEntradaExiste || modalSalidaExiste) {
+                💾 Guardar Cambios
+              } @else {
+                ➕ Crear Asistencia
+              }
+            </button>
           } @else {
             <button class="btn primary" (click)="showDetailModal.set(false)">Cerrar</button>
           }

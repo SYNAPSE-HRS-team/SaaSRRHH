@@ -125,13 +125,13 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.stopScanner();
   }
 
-  // 🔥 NUEVO: Getter para fecha máxima (hoy)
+  // Getter para fecha máxima (hoy)
   get fechaMaxima(): string {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
-  // 🔥 NUEVO: Verificar si la fecha seleccionada es hoy
+  // Verificar si la fecha seleccionada es hoy
   esFechaHoy(): boolean {
     const hoy = this.fechaMaxima;
     return this.selectedDateForModal === hoy;
@@ -376,7 +376,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     }
     if (!this.selectedEmpleadoId) return;
 
-    // Validar que la fecha sea hoy
+    // Validar que la fecha sea hoy para NUEVOS registros
     const hoy = this.fechaMaxima;
     if (this.editFecha !== hoy) {
       this.error.set('❌ Solo se puede registrar asistencia para el día de hoy');
@@ -498,6 +498,41 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  crearAsistencia(row: any): void {
+    if (!this.isAdmin) {
+      this.error.set('❌ Solo administradores pueden crear asistencias');
+      return;
+    }
+
+    // Validar que sea hoy (solo se puede crear para hoy)
+    const hoy = this.fechaMaxima;
+    if (this.fechaConsultaHoy !== hoy) {
+      this.error.set('❌ Solo se puede crear asistencias para el día de hoy');
+      return;
+    }
+
+    // Abrir modal en modo creación
+    this.selectedEmployeeIdForModal = row.empleadoId;
+    this.selectedEmployeeNameForModal = row.nombre;
+    this.selectedDateForModal = this.fechaConsultaHoy;
+
+    // Reset forms (sin datos existentes)
+    this.modalEntradaId = undefined;
+    this.modalEntradaHora = '';
+    this.modalEntradaEstado = 'VALIDADO';
+    this.modalEntradaObs = '';
+    this.modalEntradaExiste = false;
+
+    this.modalSalidaId = undefined;
+    this.modalSalidaHora = '';
+    this.modalSalidaEstado = 'VALIDADO';
+    this.modalSalidaObs = '';
+    this.modalSalidaExiste = false;
+
+    this.message.set('📝 Creando nueva asistencia para ' + row.nombre);
+    this.showDetailModal.set(true);
+  }
+
   openAsistenciaModal(row: any): void {
     this.selectedEmployeeIdForModal = row.empleadoId;
     this.selectedEmployeeNameForModal = row.nombre;
@@ -531,9 +566,8 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       this.modalSalidaExiste = true;
     }
 
-    // Mostrar advertencia si es fecha pasada
-    if (!this.esFechaHoy()) {
-      this.message.set('⚠️ Solo se puede editar asistencias del día de hoy');
+    if (!this.esFechaHoy() && this.isAdmin) {
+      this.message.set('⚠️ Estás editando una asistencia de un día anterior');
     }
 
     this.showDetailModal.set(true);
@@ -545,13 +579,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // 🔥 Validar que sea hoy
-    if (!this.esFechaHoy()) {
-      this.error.set('❌ Solo se puede editar asistencias del día de hoy');
+    if (!this.selectedEmployeeIdForModal) {
+      this.error.set('❌ No hay empleado seleccionado');
       return;
     }
-
-    if (!this.selectedEmployeeIdForModal) return;
 
     const promises: Observable<any>[] = [];
 
