@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface FeedbackAnonimoService {
 
+    // ============================================
+    // MÉTODOS ORIGINALES
+    // ============================================
+
     FeedbackAnonimoResponseDTO enviarFeedback(FeedbackAnonimoRequestDTO request);
 
     List<FeedbackAnonimoResponseDTO> listar();
@@ -22,4 +26,28 @@ public interface FeedbackAnonimoService {
     FeedbackAnonimoResponseDTO cambiarEstado(Long id, FeedbackAnonimo.EstadoFeedback estado);
 
     void eliminar(Long id);
+
+    // ============================================
+    // ✅ NUEVOS MÉTODOS (DEBEN AGREGARSE A LA INTERFAZ)
+    // ============================================
+
+    /**
+     * Permite al admin responder un feedback y cambiar su estado
+     */
+    FeedbackAnonimoResponseDTO responderFeedback(Long id, String respuesta, FeedbackAnonimo.EstadoFeedback estado);
+
+    /**
+     * Lista feedback por empleado específico
+     */
+    List<FeedbackAnonimoResponseDTO> listarPorEmpleado(Long empleadoId);
+
+    /**
+     * Lista feedback del empleado autenticado (ve sus propios feedbacks)
+     */
+    List<FeedbackAnonimoResponseDTO> listarMisFeedbacks(Long empleadoId);
+
+    /**
+     * Cuenta feedback pendientes de respuesta
+     */
+    long contarPendientes();
 }

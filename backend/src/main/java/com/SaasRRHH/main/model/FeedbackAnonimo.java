@@ -32,6 +32,23 @@ public class FeedbackAnonimo {
     @Column(name = "fecha_envio", nullable = false, updatable = false)
     private LocalDateTime fechaEnvio;
 
+    // ============================================
+    // ✅ NUEVOS CAMPOS: RELACIÓN CON EMPLEADO Y RESPUESTA
+    // ============================================
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empleado_id", foreignKey = @ForeignKey(name = "fk_feedback_empleado"))
+    private Empleado empleado; // Ahora el feedback está vinculado a un empleado
+    
+    @Column(name = "es_anonimo")
+    private Boolean esAnonimo = true; // true = no muestra nombre al admin
+    
+    @Column(name = "respuesta", length = 1000)
+    private String respuesta; // Respuesta del admin
+    
+    @Column(name = "fecha_respuesta")
+    private LocalDateTime fechaRespuesta; // Cuándo respondió el admin
+
     @PrePersist
     public void prePersist() {
         if (fechaEnvio == null)
@@ -47,9 +64,11 @@ public class FeedbackAnonimo {
         OTRO
     }
 
+   
     public enum EstadoFeedback {
-        PENDIENTE,
-        REVISADO,
-        RESUELTO
+        PENDIENTE,   // Recién enviado
+        REVISADO,    // Admin lo leyó y respondió
+        NO_PROCEDE,  // Admin determina que no aplica
+        ACEPTADO     // Admin acepta y toma acción
     }
 }

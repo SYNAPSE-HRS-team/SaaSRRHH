@@ -1,6 +1,4 @@
 <div class="dashboard">
-
-  <!-- Header -->
   <div class="page-header">
     <div class="header-info">
       <h1>Dashboard</h1>
@@ -75,10 +73,7 @@
               <span class="metric-icon">📊</span>
               <span class="metric-title">% Ausentismo</span>
             </div>
-            <div
-              class="metric-value"
-              [class.text-danger]="(dashboardData()?.porcentajeAusentismo ?? 0) > 10"
-            >
+            <div class="metric-value" [class.text-danger]="(dashboardData()?.porcentajeAusentismo ?? 0) > 10">
               {{ dashboardData()?.porcentajeAusentismo?.toFixed(1) ?? '0.0' }}%
             </div>
             <div class="metric-sub">Porcentaje del período</div>
@@ -97,6 +92,94 @@
           </div>
         </div>
       </section>
+
+      @if ((dashboardData()?.empleadosRiesgoAlto ?? 0) > 0) {
+        <section class="dashboard-section">
+          <h2 class="section-title">🚨 Alertas de Riesgo</h2>
+          <div class="stats-grid">
+            <div class="stat-card alert">
+              <div class="stat-icon red">🔴</div>
+              <div class="stat-info">
+                <span class="stat-value">{{ dashboardData()?.empleadosRiesgoAlto ?? 0 }}</span>
+                <span class="stat-label">Empleados Riesgo ALTO</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon yellow">⏰</div>
+              <div class="stat-info">
+                <span class="stat-value">{{ dashboardData()?.totalFaltasHoy ?? 0 }}</span>
+                <span class="stat-label">Faltas Hoy</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon orange">⏱️</div>
+              <div class="stat-info">
+                <span class="stat-value">{{ dashboardData()?.totalTardanzasHoy ?? 0 }}</span>
+                <span class="stat-label">Tardanzas Hoy</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue">📊</div>
+              <div class="stat-info">
+                <span class="stat-value">{{ (dashboardData()?.promedioPuntualidad ?? 0).toFixed(1) }}%</span>
+                <span class="stat-label">Puntualidad General</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      }
+
+      @if ((dashboardData()?.rankingBajoDesempeno?.length ?? 0) > 0) {
+        <section class="dashboard-section">
+          <h2 class="section-title">📉 Ranking de Bajo Desempeño</h2>
+          <div class="table-container">
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Empleado</th>
+                  <th>Cargo</th>
+                  <th>Riesgo</th>
+                  <th>Puntualidad</th>
+                  <th>Faltas</th>
+                  <th>Tardanzas</th>
+                  <th>Patrón</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (emp of dashboardData()!.rankingBajoDesempeno!; track emp.empleadoId; let i = $index) {
+                  <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ emp.nombreEmpleado }}</td>
+                    <td>{{ emp.cargo }}</td>
+                    <td>
+                      <span class="risk-badge" [class.alto]="emp.nivelRiesgo === 'ALTO'" [class.medio]="emp.nivelRiesgo === 'MEDIO'">
+                        {{ emp.nivelRiesgo }}
+                      </span>
+                    </td>
+                    <td>{{ (emp.indicePuntualidad || 0).toFixed(1) }}%</td>
+                    <td>{{ emp.faltasMes || 0 }}</td>
+                    <td>{{ emp.tardanzasMes || 0 }}</td>
+                    <td>{{ emp.patronDetectado || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
+
+      @if ((dashboardData()?.feedbackPendientes ?? 0) > 0) {
+        <section class="dashboard-section">
+          <div class="alert-card">
+            <span class="alert-icon">💬</span>
+            <div class="alert-info">
+              <strong>{{ dashboardData()?.feedbackPendientes }}</strong> feedback(s) pendientes de respuesta
+            </div>
+            <a routerLink="/feedback" class="btn-sm primary">Ver Feedback</a>
+          </div>
+        </section>
+      }
     }
 
     <!-- SUPERVISOR Dashboard -->
@@ -136,8 +219,8 @@
       </section>
     }
 
-    <!-- EMPLEADO Dashboard -->
-    @if (isEmpleado) {
+    <!-- TRABAJADOR Dashboard -->
+    @if (isTrabajador) {
       <section class="dashboard-section">
         <h2 class="section-title">👤 Mi Espacio</h2>
         <div class="welcome-card">
@@ -150,7 +233,7 @@
       </section>
     }
 
-    <!-- Quick Actions (filtradas por rol) -->
+    <!-- Acciones Rápidas -->
     <section class="dashboard-section">
       <h2 class="section-title">⚡ Acciones Rápidas</h2>
       <div class="actions-grid">

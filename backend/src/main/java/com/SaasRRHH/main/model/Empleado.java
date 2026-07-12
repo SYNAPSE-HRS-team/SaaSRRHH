@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,11 +58,34 @@ public class Empleado {
 
     @Column(name = "activo")
     private Boolean activo = true;
+    
     @Column(name = "totp_secret", length = 64, unique = true)
     private String totpSecret;
 
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    // ============================================
+    // ✅ NUEVOS CAMPOS: HORARIO LABORAL CONFIGURABLE
+    // ============================================
+    
+    @Column(name = "hora_entrada")
+    private LocalTime horaEntrada = LocalTime.of(8, 0); // Default 8:00 AM
+    
+    @Column(name = "hora_salida")
+    private LocalTime horaSalida = LocalTime.of(17, 0); // Default 5:00 PM
+    
+    @Column(name = "dias_laborables", length = 50)
+    private String diasLaborables = "LUN,MAR,MIE,JUE,VIE"; // Días separados por coma
+    
+    @Column(name = "tolerancia_minutos")
+    private Integer toleranciaMinutos = 10; // Minutos de tolerancia para tardanza
+    
+    @Column(name = "tipo_pago", length = 20)
+    private String tipoPago = "MENSUAL"; // HORA, DIA, MENSUAL
+    
+    @Column(name = "monto_pago", precision = 10, scale = 2)
+    private BigDecimal montoPago; // Monto según tipo de pago (por hora, día o mes)
 
     // ==========================
     // RELACION CON METRICAS BURNOUT
@@ -77,7 +101,7 @@ public class Empleado {
     @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Encuestabienestar> encuestasBienestar = new ArrayList<>();
 
-    // MÃ©todos de conveniencia (muy recomendables)
+    // Métodos de conveniencia
     public void agregarMetricaBurnout(MetricaBurnout metrica) {
         metricasBurnout.add(metrica);
         metrica.setEmpleado(this);
@@ -96,5 +120,26 @@ public class Empleado {
     public void removerEncuestaBienestar(Encuestabienestar encuesta) {
         encuestasBienestar.remove(encuesta);
         encuesta.setEmpleado(null);
+    }
+    
+    // ============================================
+    // ✅ NUEVOS MÉTODOS DE UTILIDAD
+    // ============================================
+    
+    // Verifica si un día específico es laborable para este empleado
+    public boolean esDiaLaborable(java.time.DayOfWeek dia) {
+        if (diasLaborables == null || diasLaborables.isBlank()) return true;
+        String[] dias = diasLaborables.split(",");
+        String diaStr = dia.name().substring(0, 3).toUpperCase(); // MON, TUE, WED...
+        for (String d : dias) {
+            if (d.trim().equalsIgnoreCase(diaStr)) return true;
+        }
+        return false;
+    }
+    
+    // Calcula horas de contrato por día
+    public long horasContratoPorDia() {
+        if (horaEntrada == null || horaSalida == null) return 8;
+        return java.time.Duration.between(horaEntrada, horaSalida).toHours();
     }
 }

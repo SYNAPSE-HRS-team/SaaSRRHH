@@ -1,9 +1,7 @@
 package com.SaasRRHH.main.DTO;
 
-import com.SaasRRHH.main.model.FeedbackAnonimo;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,7 +9,14 @@ import java.time.LocalDateTime;
 public class FeedbackAnonimoResponseDTO {
     private Long id;
     private String mensaje;
-    private FeedbackAnonimo.CategoriaFeedback categoria;
-    private FeedbackAnonimo.EstadoFeedback estado;
+    private String categoria;
+    private String estado; // PENDIENTE, REVISADO, NO_PROCEDE, ACEPTADO
     private LocalDateTime fechaEnvio;
+    
+    // ✅ NUEVOS CAMPOS
+    private Long empleadoId;
+    private String nombreEmpleado; // null si es anónimo
+    private Boolean esAnonimo;
+    private String respuesta;
+    private LocalDateTime fechaRespuesta;
 }

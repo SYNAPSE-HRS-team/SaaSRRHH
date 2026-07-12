@@ -39,24 +39,20 @@ export class AsistenciaService {
     return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/hoy`, { params });
   }
 
-  /** Historial de asistencias del empleado autenticado */
   miHistorial(): Observable<RegistroAsistencia[]> {
     return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/mi-historial`);
   }
 
-  /** Historial de un empleado específico (admin) */
   historialEmpleado(empleadoId: number): Observable<RegistroAsistencia[]> {
     return this.http.get<RegistroAsistencia[]>(`${this.baseUrl}/empleado/${empleadoId}`);
   }
 
-  /** Registrar entrada manual (admin) */
   registrarEntrada(empleadoId: number, metodo?: string): Observable<RegistroAsistencia> {
     const params: any = {};
     if (metodo) params.metodo = metodo;
     return this.http.post<RegistroAsistencia>(`${this.baseUrl}/entrada/${empleadoId}`, null, { params });
   }
 
-  /** Registrar salida manual (admin) */
   registrarSalida(empleadoId: number, metodo?: string): Observable<RegistroAsistencia> {
     const params: any = {};
     if (metodo) params.metodo = metodo;
@@ -69,5 +65,20 @@ export class AsistenciaService {
 
   actualizar(id: number, data: RegistroAsistencia): Observable<RegistroAsistencia> {
     return this.http.put<RegistroAsistencia>(`${this.baseUrl}/${id}`, data);
+  }
+
+  // ✅ NUEVO: Procesar faltas automáticas (admin)
+  procesarFaltas(): Observable<any> {
+    return this.http.post(`${this.baseUrl}/procesar-faltas`, {});
+  }
+
+  // ✅ NUEVO: Detectar patrón de tardanza de un empleado
+  detectarPatronTardanza(empleadoId: number): Observable<{ empleadoId: string; patronDetectado: string }> {
+    return this.http.get<{ empleadoId: string; patronDetectado: string }>(`${this.baseUrl}/empleado/${empleadoId}/patron-tardanza`);
+  }
+
+  // ✅ NUEVO: Obtener estadísticas de asistencia
+  obtenerEstadisticas(empleadoId: number, inicio: string, fin: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/empleado/${empleadoId}/estadisticas`, { params: { inicio, fin } });
   }
 }

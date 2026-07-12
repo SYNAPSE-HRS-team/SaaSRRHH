@@ -26,14 +26,18 @@ export class EmpleadoFormComponent implements OnInit {
     asignacionFamiliar: false,
     activo: true,
     fotoPerfilUrl: '',
+    horaEntrada: '08:00',
+    horaSalida: '17:00',
+    diasLaborables: 'LUN,MAR,MIE,JUE,VIE',
+    toleranciaMinutos: 10,
+    tipoPago: 'MENSUAL',
+    montoPago: undefined,
   };
 
   usuarios: any[] = [];
   usuariosCargados = signal(false);
-
   isEditMode = false;
   empleadoId?: number;
-
   saving = signal(false);
   error = signal('');
   successMessage = signal('');
@@ -56,16 +60,11 @@ export class EmpleadoFormComponent implements OnInit {
     }
   }
 
-  // ✅ Cargar usuarios sin empleado
   cargarUsuarios(currentUsuarioId?: number): void {
-    console.log('🔄 Cargando usuarios sin empleado...');
-
     this.usuarioService.listarSinEmpleado().subscribe({
       next: (data) => {
-        console.log('✅ Usuarios disponibles (sin empleado):', data);
         this.usuarios = data;
         this.usuariosCargados.set(true);
-
         if (currentUsuarioId) {
           this.usuarioService.obtener(currentUsuarioId).subscribe({
             next: (currentUser) => {
@@ -73,18 +72,15 @@ export class EmpleadoFormComponent implements OnInit {
                 this.usuarios.unshift(currentUser);
               }
             },
-            error: (err) => {
-              console.error('❌ Error cargando usuario actual de empleado:', err);
-            },
+            error: (err) => console.error('Error cargando usuario actual:', err),
           });
         }
-
         if (data.length === 0 && !currentUsuarioId) {
           this.error.set('No hay usuarios disponibles. Crea un usuario primero.');
         }
       },
       error: (err) => {
-        console.error('❌ Error cargando usuarios:', err);
+        console.error('Error cargando usuarios:', err);
         this.error.set('Error al cargar la lista de usuarios');
         this.usuariosCargados.set(true);
       },
@@ -106,24 +102,27 @@ export class EmpleadoFormComponent implements OnInit {
           asignacionFamiliar: empleado.asignacionFamiliar || false,
           activo: empleado.activo ?? true,
           fotoPerfilUrl: empleado.fotoPerfilUrl || '',
+          horaEntrada: empleado.horaEntrada || '08:00',
+          horaSalida: empleado.horaSalida || '17:00',
+          diasLaborables: empleado.diasLaborables || 'LUN,MAR,MIE,JUE,VIE',
+          toleranciaMinutos: empleado.toleranciaMinutos ?? 10,
+          tipoPago: empleado.tipoPago || 'MENSUAL',
+          montoPago: empleado.montoPago,
         };
         this.cargarUsuarios(empleado.usuarioId || undefined);
       },
       error: (err) => {
-        console.error('❌ Error al cargar empleado para edición:', err);
+        console.error('Error al cargar empleado:', err);
         this.error.set('No se pudo cargar el empleado para edición');
       },
     });
   }
 
-  // ✅ Método corregido - Recibe el evento y extrae el valor con tipado seguro
   onUsuarioChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const id = Number(select.value);
-    
     this.formData.usuarioId = id;
 
-    // Si selecciona "Seleccionar usuario..." (valor 0)
     if (!id || id === 0) {
       this.formData.nombres = '';
       this.formData.apellidos = '';
@@ -131,22 +130,14 @@ export class EmpleadoFormComponent implements OnInit {
     }
 
     this.error.set('');
-
-    // ✅ Obtener datos del usuario seleccionado para autocompletar
     this.usuarioService.obtener(id).subscribe({
       next: (usuario) => {
-        // ✅ Autocompletar nombres y apellidos
         this.formData.nombres = usuario.nombre || '';
         this.formData.apellidos = usuario.apellido || '';
-        console.log('✅ Datos autocompletados:', {
-          nombres: this.formData.nombres,
-          apellidos: this.formData.apellidos
-        });
       },
       error: (err) => {
-        console.error('❌ Error obteniendo datos del usuario seleccionado:', err);
+        console.error('Error obteniendo datos del usuario:', err);
         this.error.set('No se pudo cargar los datos del usuario seleccionado');
-        // Limpiar campos en caso de error
         this.formData.nombres = '';
         this.formData.apellidos = '';
       },
@@ -154,17 +145,14 @@ export class EmpleadoFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Validaciones
     if (!this.formData.usuarioId || this.formData.usuarioId === 0) {
       this.error.set('Debes seleccionar un usuario');
       return;
     }
-
     if (!this.formData.nombres?.trim() || !this.formData.apellidos?.trim()) {
       this.error.set('Nombres y apellidos son obligatorios');
       return;
     }
-
     if (!this.formData.dni?.trim() || this.formData.dni.length !== 8) {
       this.error.set('El DNI debe tener exactamente 8 dígitos');
       return;
@@ -173,8 +161,6 @@ export class EmpleadoFormComponent implements OnInit {
     this.saving.set(true);
     this.error.set('');
     this.successMessage.set('');
-
-    console.log('📤 Enviando empleado:', this.formData);
 
     const operation = this.isEditMode && this.empleadoId
       ? this.empleadoService.update(this.empleadoId, this.formData)
@@ -192,7 +178,7 @@ export class EmpleadoFormComponent implements OnInit {
       },
       error: (err) => {
         this.saving.set(false);
-        console.error('❌ Error:', err);
+        console.error('Error:', err);
         this.error.set(err.error?.message || (this.isEditMode ? 'Error al actualizar el empleado' : 'Error al crear el empleado'));
       },
     });

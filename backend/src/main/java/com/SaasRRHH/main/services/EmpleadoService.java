@@ -2,7 +2,6 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,20 +28,31 @@ public interface EmpleadoService {
     // =========================
     List<EmpleadoResponseDTO> listarSupervisores();
     List<EmpleadoResponseDTO> buscarPorCargo(String cargo);
-
-    List<EmpleadoResponseDTO> buscarPorCargoYActivo(
-            String cargo,
-            Boolean activo);
-
+    List<EmpleadoResponseDTO> buscarPorCargoYActivo(String cargo, Boolean activo);
     List<EmpleadoResponseDTO> listarActivosConUsuario();
-
     List<EmpleadoResponseDTO> contratosVencidos();
-
-    List<EmpleadoResponseDTO> contratosPorVencer(
-            LocalDate fechaLimite);
-
+    List<EmpleadoResponseDTO> contratosPorVencer(LocalDate fechaLimite);
     List<Object[]> contarEmpleadosPorCargo();
     List<EmpleadoResponseDTO> listarTrabajadores();
     List<EmpleadoResponseDTO> listarTrabajadoresByRol();
     List<EmpleadoResponseDTO> listarSupervisoresByRol();
+
+    // ============================================
+    // ✅ NUEVOS MÉTODOS
+    // ============================================
+
+    /**
+     * Calcula las horas de contrato para un empleado en un período
+     */
+    long calcularHorasContrato(Long empleadoId, LocalDate inicio, LocalDate fin);
+
+    /**
+     * Calcula las horas reales trabajadas por un empleado en un período
+     */
+    long calcularHorasReales(Long empleadoId, LocalDate inicio, LocalDate fin);
+
+    /**
+     * Obtiene el resumen de puntualidad de un empleado
+     */
+    EmpleadoResponseDTO obtenerResumenPuntualidad(Long empleadoId);
 }

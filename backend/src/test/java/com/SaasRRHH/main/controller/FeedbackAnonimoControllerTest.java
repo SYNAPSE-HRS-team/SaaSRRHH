@@ -3,9 +3,9 @@ package com.SaasRRHH.main.controller;
 import com.SaasRRHH.main.DTO.FeedbackAnonimoRequestDTO;
 import com.SaasRRHH.main.DTO.FeedbackAnonimoResponseDTO;
 import com.SaasRRHH.main.model.FeedbackAnonimo;
-import com.SaasRRHH.main.security.JwtUtil;
 import com.SaasRRHH.main.services.FeedbackAnonimoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +13,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 
-import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -29,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(FeedbackAnonimoController.class)
 @AutoConfigureMockMvc(addFilters = false)
-
 class FeedbackAnonimoControllerTest {
 
     @Autowired
@@ -37,11 +33,6 @@ class FeedbackAnonimoControllerTest {
 
     @MockBean
     private FeedbackAnonimoService service;
-            @MockBean
-        private JwtUtil jwtUtil;
-
-        @MockBean
-        private UserDetailsService userDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -51,16 +42,25 @@ class FeedbackAnonimoControllerTest {
 
     @BeforeEach
     void setUp() {
+        objectMapper.registerModule(new JavaTimeModule());
+
         feedbackResponse = new FeedbackAnonimoResponseDTO();
         feedbackResponse.setId(1L);
         feedbackResponse.setMensaje("El clima laboral es tenso");
-        feedbackResponse.setCategoria(FeedbackAnonimo.CategoriaFeedback.CLIMA_LABORAL);
-        feedbackResponse.setEstado(FeedbackAnonimo.EstadoFeedback.PENDIENTE);
+        feedbackResponse.setCategoria("CLIMA_LABORAL");
+        feedbackResponse.setEstado("PENDIENTE");
         feedbackResponse.setFechaEnvio(LocalDateTime.now());
+        feedbackResponse.setEmpleadoId(1L);
+        feedbackResponse.setNombreEmpleado("Juan Pérez");
+        feedbackResponse.setEsAnonimo(false);
+        feedbackResponse.setRespuesta(null);
+        feedbackResponse.setFechaRespuesta(null);
 
         feedbackRequest = new FeedbackAnonimoRequestDTO();
         feedbackRequest.setMensaje("El clima laboral es tenso");
-        feedbackRequest.setCategoria(FeedbackAnonimo.CategoriaFeedback.CLIMA_LABORAL);
+        feedbackRequest.setCategoria("CLIMA_LABORAL");
+        feedbackRequest.setEmpleadoId(1L);
+        feedbackRequest.setEsAnonimo(false);
     }
 
     @Test
@@ -71,7 +71,8 @@ class FeedbackAnonimoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(feedbackRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.mensaje").value("El clima laboral es tenso"));
     }
 
     @Test
@@ -80,7 +81,7 @@ class FeedbackAnonimoControllerTest {
                 .thenThrow(new IllegalArgumentException("Mensaje es requerido"));
 
         FeedbackAnonimoRequestDTO requestSinMensaje = new FeedbackAnonimoRequestDTO();
-        requestSinMensaje.setCategoria(FeedbackAnonimo.CategoriaFeedback.CLIMA_LABORAL);
+        requestSinMensaje.setCategoria("CLIMA_LABORAL");
 
         mockMvc.perform(post("/api/feedback-anonimo")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,8 +95,8 @@ class FeedbackAnonimoControllerTest {
 
         mockMvc.perform(get("/api/feedback-anonimo"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(1)));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(1));
     }
 
     @Test
@@ -105,7 +106,7 @@ class FeedbackAnonimoControllerTest {
 
         mockMvc.perform(get("/api/feedback-anonimo/categoria/CLIMA_LABORAL"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$.length()").value(1));
     }
 
     @Test
@@ -115,12 +116,12 @@ class FeedbackAnonimoControllerTest {
 
         mockMvc.perform(get("/api/feedback-anonimo/estado/PENDIENTE"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$.length()").value(1));
     }
 
     @Test
     void cambiarEstado_cuandoExiste_debeRetornar200() throws Exception {
-        feedbackResponse.setEstado(FeedbackAnonimo.EstadoFeedback.REVISADO);
+        feedbackResponse.setEstado("REVISADO");
         when(service.cambiarEstado(eq(1L), eq(FeedbackAnonimo.EstadoFeedback.REVISADO)))
                 .thenReturn(feedbackResponse);
 
@@ -154,5 +155,22 @@ class FeedbackAnonimoControllerTest {
 
         mockMvc.perform(delete("/api/feedback-anonimo/99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void responderFeedback_debeRetornar200() throws Exception {
+        feedbackResponse.setEstado("REVISADO");
+        feedbackResponse.setRespuesta("Gracias por tu feedback");
+        feedbackResponse.setFechaRespuesta(LocalDateTime.now());
+
+        when(service.responderFeedback(eq(1L), any(), eq(FeedbackAnonimo.EstadoFeedback.REVISADO)))
+                .thenReturn(feedbackResponse);
+
+        String body = "{\"respuesta\":\"Gracias por tu feedback\",\"estado\":\"REVISADO\"}";
+
+        mockMvc.perform(post("/api/feedback-anonimo/1/responder")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
     }
 }
