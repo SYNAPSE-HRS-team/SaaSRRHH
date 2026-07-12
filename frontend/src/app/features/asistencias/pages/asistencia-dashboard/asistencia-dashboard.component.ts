@@ -37,7 +37,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   historial = signal<RegistroAsistencia[]>([]);
   loadingHistorial = signal(false);
 
-  // Asistencias de hoy (Admin/Supervisor)
   activeSubTab = signal<'hoy' | 'por_empleado'>('hoy');
   searchTerm = signal('');
   asistenciasHoyList = signal<RegistroAsistencia[]>([]);
@@ -47,12 +46,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
-  // Marcado de salida
   yaMarcoEntrada = signal(false);
   yaMarcoSalida = signal(false);
   loadingMarcado = signal(false);
 
-  // Modal de Detalle/Edición Unificado
   showDetailModal = signal(false);
   selectedEmployeeNameForModal = '';
   selectedEmployeeIdForModal?: number;
@@ -84,7 +81,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   private countdownInterval?: any;
   private scanner: any;
 
-  weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+  weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   months = [
     'Enero',
     'Febrero',
@@ -125,16 +122,117 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.stopScanner();
   }
 
-  // Getter para fecha máxima (hoy)
   get fechaMaxima(): string {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
-  // Verificar si la fecha seleccionada es hoy
   esFechaHoy(): boolean {
     const hoy = this.fechaMaxima;
     return this.selectedDateForModal === hoy;
+  }
+
+  // ============================================
+  // VALIDACIONES DE ESTADOS (CORREGIDAS)
+  // ============================================
+
+  validarEstados(): boolean {
+    // ❌ No se puede tener SALIDA sin ENTRADA
+    if (this.modalSalidaHora && !this.modalEntradaHora) {
+      this.error.set('⚠️ No se puede registrar salida sin entrada');
+      return false;
+    }
+
+    // ❌ No se puede validar SALIDA sin ENTRADA
+    if (this.modalSalidaEstado === 'VALIDADO' && !this.modalEntradaHora) {
+      this.error.set('⚠️ No se puede validar una salida sin registrar la entrada');
+      return false;
+    }
+
+    return true;
+  }
+
+  hasErrorEstados(): boolean {
+    return (
+      (this.modalSalidaEstado === 'VALIDADO' && !this.modalEntradaHora) ||
+      (!!this.modalSalidaHora && !this.modalEntradaHora)
+    );
+  }
+
+  getAyudaEstado(estado: string, tipo: string): string {
+    if (estado === 'VALIDADO') {
+      if (tipo === 'ENTRADA') {
+        return '✅ Entrada válida. Puede tener o no salida.';
+      } else {
+        return '⚠️ Requiere que la entrada también esté registrada';
+      }
+    }
+    if (estado === 'RECHAZADO') {
+      if (tipo === 'ENTRADA') {
+        return '❌ Entrada rechazada (tardanza sin justificar)';
+      } else {
+        return '❌ Salida rechazada (salida temprana sin justificar)';
+      }
+    }
+    if (estado === 'OBSERVADO') {
+      return '⏳ Pendiente de revisión por RRHH';
+    }
+    return '';
+  }
+
+  getImpactoEntrada(estado: string): string {
+    switch (estado) {
+      case 'VALIDADO':
+        return '✅ Sin descuento por tardanza';
+      case 'OBSERVADO':
+        return '⏳ Pendiente de revisión';
+      case 'RECHAZADO':
+        return '❌ Descuento por tardanza aplicado';
+      default:
+        return '';
+    }
+  }
+
+  getImpactoSalida(estado: string): string {
+    if (estado === 'VALIDADO' && !this.modalEntradaHora) {
+      return '⚠️ Requiere entrada para validar';
+    }
+    switch (estado) {
+      case 'VALIDADO':
+        return '✅ Sin descuento por salida temprana';
+      case 'OBSERVADO':
+        return '⏳ Pendiente de revisión';
+      case 'RECHAZADO':
+        return '❌ Descuento por salida temprana aplicado';
+      default:
+        return '';
+    }
+  }
+
+  getResumenDia(entradaEstado: string, salidaEstado: string): string {
+    if (!this.modalEntradaHora && this.modalSalidaHora) {
+      return '❌ Error: Salida sin entrada';
+    }
+
+    if (entradaEstado === 'VALIDADO' && salidaEstado === 'VALIDADO' && this.modalSalidaHora) {
+      return '✅ Día completo pagado';
+    }
+    if (entradaEstado === 'VALIDADO' && salidaEstado === 'RECHAZADO' && this.modalSalidaHora) {
+      return '⚠️ Descuento por salida temprana';
+    }
+    if (entradaEstado === 'RECHAZADO' && salidaEstado === 'VALIDADO' && this.modalSalidaHora) {
+      return '⚠️ Descuento por tardanza';
+    }
+    if (entradaEstado === 'RECHAZADO' && salidaEstado === 'RECHAZADO' && this.modalSalidaHora) {
+      return '❌ Día no pagado';
+    }
+    if (entradaEstado === 'VALIDADO' && !this.modalSalidaHora) {
+      return '⏳ Entrada registrada, salida pendiente';
+    }
+    if (entradaEstado === 'OBSERVADO' || salidaEstado === 'OBSERVADO') {
+      return '⏳ Revisión pendiente';
+    }
+    return '📋 Revisar registro';
   }
 
   setView(mode: 'mensual' | 'anual'): void {
@@ -181,8 +279,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---- QR ----
-
   loadQr(): void {
     this.asistencia.miQr().subscribe({
       next: async (qr) => {
@@ -217,8 +313,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---- Marcado de salida (empleado) ----
-
   checkMarcadoHoy(): void {
     this.asistencia.miHistorial().subscribe({
       next: (registros) => {
@@ -231,8 +325,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---- Employees (admin) ----
-
   loadEmployees(): void {
     this.empleadoService.listarActivos().subscribe({
       next: (data) => {
@@ -243,8 +335,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       error: (err) => this.error.set(err.error?.message || 'No se pudo cargar empleados'),
     });
   }
-
-  // ---- Calendario ----
 
   loadCalendar(): void {
     if (!this.isEmployee && !this.selectedEmpleadoId) return;
@@ -291,8 +381,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.editEstado = day.estado === 'ASISTIO' ? 'VALIDADO' : this.editEstado;
   }
 
-  // ---- Historial ----
-
   loadHistorial(): void {
     this.loadingHistorial.set(true);
     const req = this.isEmployee
@@ -312,8 +400,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---- Scanner ----
-
   async startScanner(): Promise<void> {
     this.error.set('');
     try {
@@ -326,7 +412,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       );
       this.scannerOn.set(true);
     } catch {
-      this.error.set('No se pudo iniciar la camara. Puedes pegar el QR manualmente.');
+      this.error.set('No se pudo iniciar la cámara. Puedes pegar el QR manualmente.');
     }
   }
 
@@ -367,8 +453,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ---- Edición manual (SOLO ADMIN) ----
-
   saveAttendance(): void {
     if (!this.isAdmin) {
       this.error.set('Solo los administradores pueden editar asistencias.');
@@ -376,10 +460,9 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     }
     if (!this.selectedEmpleadoId) return;
 
-    // Validar que la fecha sea hoy para NUEVOS registros
     const hoy = this.fechaMaxima;
     if (this.editFecha !== hoy) {
-      this.error.set('❌ Solo se puede registrar asistencia para el día de hoy');
+      this.error.set('Solo se puede registrar asistencia para el día de hoy');
       return;
     }
 
@@ -406,7 +489,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Admin: marcar entrada/salida manual para un empleado
   marcarEntradaAdmin(): void {
     if (!this.isAdmin || !this.selectedEmpleadoId) return;
     this.loadingMarcado.set(true);
@@ -500,23 +582,20 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   crearAsistencia(row: any): void {
     if (!this.isAdmin) {
-      this.error.set('❌ Solo administradores pueden crear asistencias');
+      this.error.set('Solo administradores pueden crear asistencias');
       return;
     }
 
-    // Validar que sea hoy (solo se puede crear para hoy)
     const hoy = this.fechaMaxima;
     if (this.fechaConsultaHoy !== hoy) {
-      this.error.set('❌ Solo se puede crear asistencias para el día de hoy');
+      this.error.set('Solo se puede crear asistencias para el día de hoy');
       return;
     }
 
-    // Abrir modal en modo creación
     this.selectedEmployeeIdForModal = row.empleadoId;
     this.selectedEmployeeNameForModal = row.nombre;
     this.selectedDateForModal = this.fechaConsultaHoy;
 
-    // Reset forms (sin datos existentes)
     this.modalEntradaId = undefined;
     this.modalEntradaHora = '';
     this.modalEntradaEstado = 'VALIDADO';
@@ -529,7 +608,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.modalSalidaObs = '';
     this.modalSalidaExiste = false;
 
-    this.message.set('📝 Creando nueva asistencia para ' + row.nombre);
+    this.message.set('Creando nueva asistencia para ' + row.nombre);
     this.showDetailModal.set(true);
   }
 
@@ -538,7 +617,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.selectedEmployeeNameForModal = row.nombre;
     this.selectedDateForModal = this.fechaConsultaHoy;
 
-    // Reset forms
     this.modalEntradaId = undefined;
     this.modalEntradaHora = '';
     this.modalEntradaEstado = 'VALIDADO';
@@ -567,7 +645,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     }
 
     if (!this.esFechaHoy() && this.isAdmin) {
-      this.message.set('⚠️ Estás editando una asistencia de un día anterior');
+      this.message.set('Estás editando una asistencia de un día anterior');
     }
 
     this.showDetailModal.set(true);
@@ -575,18 +653,28 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   saveModalAsistencia(): void {
     if (!this.isAdmin) {
-      this.error.set('❌ Solo administradores pueden editar asistencias');
+      this.error.set('Solo administradores pueden editar asistencias');
       return;
     }
 
     if (!this.selectedEmployeeIdForModal) {
-      this.error.set('❌ No hay empleado seleccionado');
+      this.error.set('No hay empleado seleccionado');
+      return;
+    }
+
+    // ✅ VALIDACIONES CORREGIDAS
+    if (this.modalSalidaHora && !this.modalEntradaHora) {
+      this.error.set('❌ No se puede registrar salida sin entrada');
+      return;
+    }
+
+    if (this.modalSalidaEstado === 'VALIDADO' && !this.modalEntradaHora) {
+      this.error.set('❌ No se puede validar una salida sin registrar la entrada');
       return;
     }
 
     const promises: Observable<any>[] = [];
 
-    // 1. Guardar Entrada
     if (this.modalEntradaHora) {
       const payload: RegistroAsistencia = {
         empleadoId: this.selectedEmployeeIdForModal,
@@ -603,8 +691,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    // 2. Guardar Salida
-    if (this.modalSalidaHora) {
+    if (this.modalEntradaHora && this.modalSalidaHora) {
       const payload: RegistroAsistencia = {
         empleadoId: this.selectedEmployeeIdForModal,
         fechaHora: `${this.selectedDateForModal}T${this.modalSalidaHora}:00`,
