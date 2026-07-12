@@ -2,18 +2,23 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../../../core/services/auth.service';
-import { AsistenciaService } from '../../../../core/services/asistencia.service';
-import { EmpleadoService } from '../../../../core/services/empleado.service';
-import { CalendarioAnual, CalendarioDia, CalendarioMes, RegistroAsistencia } from '../../../../core/models/registro-asistencia.model';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
+import {
+  CalendarioAnual,
+  CalendarioDia,
+  CalendarioMes,
+  RegistroAsistencia,
+} from '../../../../core/models/registro-asistencia.model';
+import { AsistenciaService } from '../../../../core/services/asistencia.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { EmpleadoService } from '../../../../core/services/empleado.service';
 
 @Component({
   selector: 'app-asistencia-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './asistencia-dashboard.component.html',
-  styleUrls: ['./asistencia-dashboard.component.scss']
+  styleUrls: ['./asistencia-dashboard.component.scss'],
 })
 export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   isEmployee = false;
@@ -79,13 +84,26 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   private countdownInterval?: any;
   private scanner: any;
 
-  weekDays = ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'];
-  months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((label, i) => ({ label, value: i + 1 }));
+  weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
+  months = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ].map((label, i) => ({ label, value: i + 1 }));
 
   constructor(
     private auth: AuthService,
     private asistencia: AsistenciaService,
-    private empleadoService: EmpleadoService
+    private empleadoService: EmpleadoService,
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +123,18 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     if (this.qrTimer) window.clearTimeout(this.qrTimer);
     if (this.countdownInterval) window.clearInterval(this.countdownInterval);
     this.stopScanner();
+  }
+
+  // 🔥 NUEVO: Getter para fecha máxima (hoy)
+  get fechaMaxima(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  // 🔥 NUEVO: Verificar si la fecha seleccionada es hoy
+  esFechaHoy(): boolean {
+    const hoy = this.fechaMaxima;
+    return this.selectedDateForModal === hoy;
   }
 
   setView(mode: 'mensual' | 'anual'): void {
@@ -135,7 +165,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   loadAsistenciasHoy(): void {
     this.loadingHoy.set(true);
     this.asistencia.asistenciasHoy(this.fechaConsultaHoy).subscribe({
-      next: data => {
+      next: (data) => {
         const sorted = data.sort((a, b) => {
           const tA = a.fechaHora ? new Date(a.fechaHora).getTime() : 0;
           const tB = b.fechaHora ? new Date(b.fechaHora).getTime() : 0;
@@ -144,10 +174,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.asistenciasHoyList.set(sorted);
         this.loadingHoy.set(false);
       },
-      error: err => {
+      error: (err) => {
         this.error.set(err.error?.message || 'No se pudo cargar las asistencias de hoy');
         this.loadingHoy.set(false);
-      }
+      },
     });
   }
 
@@ -155,7 +185,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   loadQr(): void {
     this.asistencia.miQr().subscribe({
-      next: async qr => {
+      next: async (qr) => {
         this.qrName.set(qr.empleadoNombre);
         this.secondsLeft.set(qr.segundosRestantes);
         try {
@@ -170,7 +200,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         if (this.countdownInterval) window.clearInterval(this.countdownInterval);
 
         this.countdownInterval = window.setInterval(() => {
-          this.secondsLeft.update(s => {
+          this.secondsLeft.update((s) => {
             if (s <= 1) {
               window.clearInterval(this.countdownInterval);
               this.loadQr();
@@ -182,22 +212,22 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
         this.checkMarcadoHoy();
       },
-      error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el QR')
+      error: (err) =>
+        this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el QR'),
     });
   }
 
   // ---- Marcado de salida (empleado) ----
 
   checkMarcadoHoy(): void {
-    // Verificar si ya marco entrada y/o salida hoy utilizando fecha local del navegador
     this.asistencia.miHistorial().subscribe({
       next: (registros) => {
         const d = new Date();
         const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        const hoyRegistros = registros.filter(r => r.fechaHora?.startsWith(hoy));
-        this.yaMarcoEntrada.set(hoyRegistros.some(r => r.tipoMarcacion === 'ENTRADA'));
-        this.yaMarcoSalida.set(hoyRegistros.some(r => r.tipoMarcacion === 'SALIDA'));
-      }
+        const hoyRegistros = registros.filter((r) => r.fechaHora?.startsWith(hoy));
+        this.yaMarcoEntrada.set(hoyRegistros.some((r) => r.tipoMarcacion === 'ENTRADA'));
+        this.yaMarcoSalida.set(hoyRegistros.some((r) => r.tipoMarcacion === 'SALIDA'));
+      },
     });
   }
 
@@ -205,12 +235,12 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   loadEmployees(): void {
     this.empleadoService.listarActivos().subscribe({
-      next: data => {
+      next: (data) => {
         this.empleados.set(data);
         this.selectedEmpleadoId = this.selectedEmpleadoId || data[0]?.id;
         this.loadCalendar();
       },
-      error: err => this.error.set(err.error?.message || 'No se pudo cargar empleados')
+      error: (err) => this.error.set(err.error?.message || 'No se pudo cargar empleados'),
     });
   }
 
@@ -218,16 +248,31 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   loadCalendar(): void {
     if (!this.isEmployee && !this.selectedEmpleadoId) return;
-    const req: Observable<CalendarioMes | CalendarioAnual> = this.viewMode() === 'mensual'
-      ? (this.isEmployee ? this.asistencia.miCalendario(this.selectedYear, this.selectedMonth) : this.asistencia.calendarioEmpleado(this.selectedEmpleadoId!, this.selectedYear, this.selectedMonth))
-      : (this.isEmployee ? this.asistencia.miCalendarioAnual(this.selectedYear) : this.asistencia.calendarioAnualEmpleado(this.selectedEmpleadoId!, this.selectedYear));
+    const req: Observable<CalendarioMes | CalendarioAnual> =
+      this.viewMode() === 'mensual'
+        ? this.isEmployee
+          ? this.asistencia.miCalendario(this.selectedYear, this.selectedMonth)
+          : this.asistencia.calendarioEmpleado(
+              this.selectedEmpleadoId!,
+              this.selectedYear,
+              this.selectedMonth,
+            )
+        : this.isEmployee
+          ? this.asistencia.miCalendarioAnual(this.selectedYear)
+          : this.asistencia.calendarioAnualEmpleado(this.selectedEmpleadoId!, this.selectedYear);
     req.subscribe({
-      next: data => Array.isArray((data as CalendarioAnual).meses) ? this.annual.set(data as CalendarioAnual) : this.month.set(data as CalendarioMes),
-      error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el calendario')
+      next: (data) =>
+        Array.isArray((data as CalendarioAnual).meses)
+          ? this.annual.set(data as CalendarioAnual)
+          : this.month.set(data as CalendarioMes),
+      error: (err) =>
+        this.error.set(err.error?.message || err.error?.error || 'No se pudo cargar el calendario'),
     });
   }
 
-  monthDays(): CalendarioDia[] { return this.month()?.dias || []; }
+  monthDays(): CalendarioDia[] {
+    return this.month()?.dias || [];
+  }
 
   leadingBlanks(): number[] {
     const first = this.monthDays()[0]?.fecha;
@@ -236,10 +281,12 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     return Array(day === 0 ? 6 : day - 1).fill(0);
   }
 
-  monthName(mes: number): string { return this.months[mes - 1]?.label || ''; }
+  monthName(mes: number): string {
+    return this.months[mes - 1]?.label || '';
+  }
 
   selectDay(day: CalendarioDia): void {
-    if (!this.isAdmin) return; // Solo admin puede editar
+    if (!this.isAdmin) return;
     this.editFecha = day.fecha;
     this.editEstado = day.estado === 'ASISTIO' ? 'VALIDADO' : this.editEstado;
   }
@@ -250,16 +297,18 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.loadingHistorial.set(true);
     const req = this.isEmployee
       ? this.asistencia.miHistorial()
-      : (this.selectedEmpleadoId ? this.asistencia.historialEmpleado(this.selectedEmpleadoId) : this.asistencia.miHistorial());
+      : this.selectedEmpleadoId
+        ? this.asistencia.historialEmpleado(this.selectedEmpleadoId)
+        : this.asistencia.miHistorial();
     req.subscribe({
-      next: data => {
+      next: (data) => {
         this.historial.set(data);
         this.loadingHistorial.set(false);
       },
-      error: err => {
+      error: (err) => {
         this.error.set(err.error?.message || 'No se pudo cargar historial');
         this.loadingHistorial.set(false);
-      }
+      },
     });
   }
 
@@ -270,7 +319,11 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     try {
       const mod = await import('html5-qrcode');
       this.scanner = new mod.Html5Qrcode('qr-reader');
-      await this.scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: 220 }, (text: string) => this.handleScan(text));
+      await this.scanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: 220 },
+        (text: string) => this.handleScan(text),
+      );
       this.scannerOn.set(true);
     } catch {
       this.error.set('No se pudo iniciar la camara. Puedes pegar el QR manualmente.');
@@ -279,18 +332,23 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
   async stopScanner(): Promise<void> {
     if (this.scanner) {
-      try { await this.scanner.stop(); await this.scanner.clear(); } catch {}
+      try {
+        await this.scanner.stop();
+        await this.scanner.clear();
+      } catch {}
       this.scanner = null;
     }
     this.scannerOn.set(false);
   }
 
-  scanManual(): void { this.handleScan(this.manualPayload); }
+  scanManual(): void {
+    this.handleScan(this.manualPayload);
+  }
 
   handleScan(payload: string): void {
     if (!payload) return;
     this.asistencia.scanQr(payload).subscribe({
-      next: r => {
+      next: (r) => {
         const tipo = r.tipoMarcacion || 'asistencia';
         this.message.set(`${tipo} registrada para empleado #${r.empleadoId}`);
         this.error.set('');
@@ -302,7 +360,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         }
         this.stopScanner();
       },
-      error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo registrar la asistencia')
+      error: (err) =>
+        this.error.set(
+          err.error?.message || err.error?.error || 'No se pudo registrar la asistencia',
+        ),
     });
   }
 
@@ -314,19 +375,34 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       return;
     }
     if (!this.selectedEmpleadoId) return;
-    const existing = this.monthDays().find(d => d.fecha === this.editFecha && d.asistenciaId);
+
+    // Validar que la fecha sea hoy
+    const hoy = this.fechaMaxima;
+    if (this.editFecha !== hoy) {
+      this.error.set('❌ Solo se puede registrar asistencia para el día de hoy');
+      return;
+    }
+
+    const existing = this.monthDays().find((d) => d.fecha === this.editFecha && d.asistenciaId);
     const payload: RegistroAsistencia = {
       empleadoId: this.selectedEmpleadoId,
       fechaHora: `${this.editFecha}T09:00:00`,
       tipoMarcacion: 'ENTRADA',
       metodo: 'MANUAL',
       estado: this.editEstado,
-      observaciones: this.editObservaciones
+      observaciones: this.editObservaciones,
     };
-    const req = existing?.asistenciaId ? this.asistencia.actualizar(existing.asistenciaId, payload) : this.asistencia.crear(payload);
+    const req = existing?.asistenciaId
+      ? this.asistencia.actualizar(existing.asistenciaId, payload)
+      : this.asistencia.crear(payload);
     req.subscribe({
-      next: () => { this.message.set('Asistencia guardada'); this.error.set(''); this.loadCalendar(); },
-      error: err => this.error.set(err.error?.message || err.error?.error || 'No se pudo guardar')
+      next: () => {
+        this.message.set('Asistencia guardada');
+        this.error.set('');
+        this.loadCalendar();
+      },
+      error: (err) =>
+        this.error.set(err.error?.message || err.error?.error || 'No se pudo guardar'),
     });
   }
 
@@ -341,10 +417,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.loadingMarcado.set(false);
         this.loadCalendar();
       },
-      error: err => {
+      error: (err) => {
         this.error.set(err.error?.message || 'Error al registrar entrada');
         this.loadingMarcado.set(false);
-      }
+      },
     });
   }
 
@@ -358,22 +434,22 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.loadingMarcado.set(false);
         this.loadCalendar();
       },
-      error: err => {
+      error: (err) => {
         this.error.set(err.error?.message || 'Error al registrar salida');
         this.loadingMarcado.set(false);
-      }
+      },
     });
   }
 
   getEmpleadoNombre(id?: number): string {
     if (!id) return '—';
-    const emp = this.empleados().find(e => e.id === id);
+    const emp = this.empleados().find((e) => e.id === id);
     return emp ? `${emp.apellidos}, ${emp.nombres}` : `Empleado #${id}`;
   }
 
   getEmpleadoDni(id?: number): string {
     if (!id) return '—';
-    const emp = this.empleados().find(e => e.id === id);
+    const emp = this.empleados().find((e) => e.id === id);
     return emp ? emp.dni : '—';
   }
 
@@ -393,9 +469,9 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     const resultList: any[] = [];
 
     for (const emp of emps) {
-      const empRecords = allRegistered.filter(r => r.empleadoId === emp.id);
-      const entrada = empRecords.find(r => r.tipoMarcacion === 'ENTRADA');
-      const salida = empRecords.find(r => r.tipoMarcacion === 'SALIDA');
+      const empRecords = allRegistered.filter((r) => r.empleadoId === emp.id);
+      const entrada = empRecords.find((r) => r.tipoMarcacion === 'ENTRADA');
+      const salida = empRecords.find((r) => r.tipoMarcacion === 'SALIDA');
 
       const estadoGeneral = (() => {
         if (entrada && salida) return entrada.estado;
@@ -412,12 +488,12 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         entrada: entrada || null,
         salida: salida || null,
         estado: estadoGeneral,
-        isPastDay: isPastDay
+        isPastDay: isPastDay,
       });
     }
 
     if (!term) return resultList;
-    return resultList.filter(r => {
+    return resultList.filter((r) => {
       return r.nombre.toLowerCase().includes(term) || r.dni.toLowerCase().includes(term);
     });
   }
@@ -442,7 +518,6 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
 
     if (row.entrada) {
       this.modalEntradaId = row.entrada.id;
-      // Extrae la hora en formato HH:MM
       this.modalEntradaHora = row.entrada.fechaHora ? row.entrada.fechaHora.slice(11, 16) : '';
       this.modalEntradaEstado = row.entrada.estado;
       this.modalEntradaObs = row.entrada.observaciones || '';
@@ -456,11 +531,26 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       this.modalSalidaExiste = true;
     }
 
+    // Mostrar advertencia si es fecha pasada
+    if (!this.esFechaHoy()) {
+      this.message.set('⚠️ Solo se puede editar asistencias del día de hoy');
+    }
+
     this.showDetailModal.set(true);
   }
 
   saveModalAsistencia(): void {
-    if (!this.isAdmin) return;
+    if (!this.isAdmin) {
+      this.error.set('❌ Solo administradores pueden editar asistencias');
+      return;
+    }
+
+    // 🔥 Validar que sea hoy
+    if (!this.esFechaHoy()) {
+      this.error.set('❌ Solo se puede editar asistencias del día de hoy');
+      return;
+    }
+
     if (!this.selectedEmployeeIdForModal) return;
 
     const promises: Observable<any>[] = [];
@@ -473,7 +563,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         tipoMarcacion: 'ENTRADA',
         metodo: this.modalEntradaExiste ? undefined : 'MANUAL',
         estado: this.modalEntradaEstado,
-        observaciones: this.modalEntradaObs
+        observaciones: this.modalEntradaObs,
       };
       if (this.modalEntradaId) {
         promises.push(this.asistencia.actualizar(this.modalEntradaId, payload));
@@ -490,7 +580,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         tipoMarcacion: 'SALIDA',
         metodo: this.modalSalidaExiste ? undefined : 'MANUAL',
         estado: this.modalSalidaEstado,
-        observaciones: this.modalSalidaObs
+        observaciones: this.modalSalidaObs,
       };
       if (this.modalSalidaId) {
         promises.push(this.asistencia.actualizar(this.modalSalidaId, payload));
@@ -507,15 +597,16 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     import('rxjs').then(({ forkJoin }) => {
       forkJoin(promises).subscribe({
         next: () => {
-          this.message.set('Asistencias guardadas correctamente');
+          this.message.set('✅ Asistencias guardadas correctamente');
           this.error.set('');
           this.showDetailModal.set(false);
           this.loadCalendar();
           this.loadAsistenciasHoy();
         },
-        error: err => {
-          this.error.set(err.error?.message || 'Error al guardar los cambios');
-        }
+        error: (err) => {
+          const mensaje = err.error?.message || 'Error al guardar los cambios';
+          this.error.set('❌ ' + mensaje);
+        },
       });
     });
   }

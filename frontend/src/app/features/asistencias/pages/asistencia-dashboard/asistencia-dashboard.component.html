@@ -2,24 +2,40 @@
   <div class="page-header">
     <div>
       <h1>⏰ Asistencia</h1>
-      <p>{{ isEmployee ? 'Muestra tu QR, marca tu salida y revisa tu historial' : 'Escanea QR, registra y administra asistencias' }}</p>
+      <p>
+        {{
+          isEmployee
+            ? 'Muestra tu QR, marca tu salida y revisa tu historial'
+            : 'Escanea QR, registra y administra asistencias'
+        }}
+      </p>
     </div>
     <div class="header-right">
       <div class="tab-toggle">
-        <button [class.active]="activeTab() === 'calendario'" (click)="setTab('calendario')">📅 Calendario</button>
-        <button [class.active]="activeTab() === 'historial'" (click)="setTab('historial')">📋 Historial</button>
+        <button [class.active]="activeTab() === 'calendario'" (click)="setTab('calendario')">
+          📅 Calendario
+        </button>
+        <button [class.active]="activeTab() === 'historial'" (click)="setTab('historial')">
+          📋 Historial
+        </button>
       </div>
       @if (activeTab() === 'calendario') {
         <div class="view-toggle">
-          <button [class.active]="viewMode() === 'mensual'" (click)="setView('mensual')">Mensual</button>
+          <button [class.active]="viewMode() === 'mensual'" (click)="setView('mensual')">
+            Mensual
+          </button>
           <button [class.active]="viewMode() === 'anual'" (click)="setView('anual')">Anual</button>
         </div>
       }
     </div>
   </div>
 
-  @if (message()) { <div class="notice success">✅ {{ message() }}</div> }
-  @if (error()) { <div class="notice error">⚠️ {{ error() }}</div> }
+  @if (message()) {
+    <div class="notice success">✅ {{ message() }}</div>
+  }
+  @if (error()) {
+    <div class="notice error">⚠️ {{ error() }}</div>
+  }
 
   <!-- ============================================================
        SECCIÓN SUPERIOR: QR / Scanner / Editor
@@ -30,8 +46,11 @@
       <div class="panel qr-panel">
         <h2>Mi QR Dinámico</h2>
         <div class="qr-box">
-          @if (qrImage()) { <img [src]="qrImage()" alt="QR de asistencia" /> }
-          @else { <div class="qr-placeholder">QR</div> }
+          @if (qrImage()) {
+            <img [src]="qrImage()" alt="QR de asistencia" />
+          } @else {
+            <div class="qr-placeholder">QR</div>
+          }
         </div>
         <div class="qr-meta">
           <strong>{{ qrName() }}</strong>
@@ -74,9 +93,14 @@
       <div class="panel scanner-panel">
         <h2>Escanear QR</h2>
         <div id="qr-reader" class="reader"></div>
-        <textarea [(ngModel)]="manualPayload" placeholder="Pega aquí el QR si la cámara no está disponible"></textarea>
+        <textarea
+          [(ngModel)]="manualPayload"
+          placeholder="Pega aquí el QR si la cámara no está disponible"
+        ></textarea>
         <div class="actions">
-          <button class="primary" (click)="startScanner()" [disabled]="scannerOn()">📷 Iniciar cámara</button>
+          <button class="primary" (click)="startScanner()" [disabled]="scannerOn()">
+            📷 Iniciar cámara
+          </button>
           <button class="ghost" (click)="stopScanner()" [disabled]="!scannerOn()">⏹ Detener</button>
           <button class="primary" (click)="scanManual()">✅ Registrar</button>
         </div>
@@ -95,10 +119,18 @@
           </select>
 
           <div class="quick-actions">
-            <button class="primary compact" (click)="marcarEntradaAdmin()" [disabled]="loadingMarcado()">
+            <button
+              class="primary compact"
+              (click)="marcarEntradaAdmin()"
+              [disabled]="loadingMarcado()"
+            >
               📥 Marcar Entrada
             </button>
-            <button class="ghost compact" (click)="marcarSalidaAdmin()" [disabled]="loadingMarcado()">
+            <button
+              class="ghost compact"
+              (click)="marcarSalidaAdmin()"
+              [disabled]="loadingMarcado()"
+            >
               📤 Marcar Salida
             </button>
           </div>
@@ -106,13 +138,14 @@
           <div class="divider"></div>
 
           <label>Fecha</label>
-          <input type="date" [(ngModel)]="editFecha" />
+          <input type="date" [(ngModel)]="editFecha" [max]="fechaMaxima" />
+
           <label>Estado</label>
           <select [(ngModel)]="editEstado">
             <option value="VALIDADO">VALIDADO</option>
-            <option value="OBSERVADO">OBSERVADO</option>
             <option value="RECHAZADO">RECHAZADO</option>
           </select>
+
           <label>Observaciones</label>
           <textarea [(ngModel)]="editObservaciones"></textarea>
           <button class="primary" (click)="saveAttendance()">💾 Guardar asistencia</button>
@@ -144,10 +177,18 @@
         <div class="date-controls">
           @if (viewMode() === 'mensual') {
             <select [(ngModel)]="selectedMonth" (change)="loadCalendar()">
-              @for (m of months; track m.value) { <option [ngValue]="m.value">{{ m.label }}</option> }
+              @for (m of months; track m.value) {
+                <option [ngValue]="m.value">{{ m.label }}</option>
+              }
             </select>
           }
-          <input type="number" [(ngModel)]="selectedYear" (change)="loadCalendar()" min="2020" max="2100" />
+          <input
+            type="number"
+            [(ngModel)]="selectedYear"
+            (change)="loadCalendar()"
+            min="2020"
+            max="2100"
+          />
         </div>
       </div>
 
@@ -160,19 +201,28 @@
 
       @if (viewMode() === 'mensual') {
         <div class="month-grid">
-          @for (name of weekDays; track name) { <div class="weekday">{{ name }}</div> }
-          @for (blank of leadingBlanks(); track $index) { <div class="day empty"></div> }
+          @for (name of weekDays; track name) {
+            <div class="weekday">{{ name }}</div>
+          }
+          @for (blank of leadingBlanks(); track $index) {
+            <div class="day empty"></div>
+          }
           @for (day of monthDays(); track day.fecha) {
-            <button class="day"
+            <button
+              class="day"
               [class.present]="day.estado === 'ASISTIO'"
               [class.absent]="day.estado === 'FALTA'"
               (click)="selectDay(day)"
               [class.clickable]="isAdmin"
             >
-              <span class="day-number">{{ day.fecha | date:'d' }}</span>
+              <span class="day-number">{{ day.fecha | date: 'd' }}</span>
               <div class="day-times">
-                @if (day.horaEntrada) { <small class="time-entry">↘ {{ day.horaEntrada.slice(0,5) }}</small> }
-                @if (day.horaSalida) { <small class="time-exit">↗ {{ day.horaSalida.slice(0,5) }}</small> }
+                @if (day.horaEntrada) {
+                  <small class="time-entry">↘ {{ day.horaEntrada.slice(0, 5) }}</small>
+                }
+                @if (day.horaSalida) {
+                  <small class="time-exit">↗ {{ day.horaSalida.slice(0, 5) }}</small>
+                }
               </div>
             </button>
           }
@@ -184,7 +234,10 @@
               <h3>{{ monthName(month.mes) }}</h3>
               <div class="mini-days">
                 @for (day of month.dias; track day.fecha) {
-                  <span [class.present]="day.estado === 'ASISTIO'" [class.absent]="day.estado === 'FALTA'"></span>
+                  <span
+                    [class.present]="day.estado === 'ASISTIO'"
+                    [class.absent]="day.estado === 'FALTA'"
+                  ></span>
                 }
               </div>
             </div>
@@ -198,12 +251,19 @@
       <div class="calendar-toolbar">
         <div class="toolbar-left">
           <h2>📋 Historial de Asistencias</h2>
-          
+
           <!-- Sub-toggles para Admin y Supervisor -->
           @if (!isEmployee) {
             <div class="sub-tab-toggle">
-              <button [class.active]="activeSubTab() === 'hoy'" (click)="setSubTab('hoy')">📅 Asistencias de Hoy</button>
-              <button [class.active]="activeSubTab() === 'por_empleado'" (click)="setSubTab('por_empleado')">👥 Por Empleado</button>
+              <button [class.active]="activeSubTab() === 'hoy'" (click)="setSubTab('hoy')">
+                📅 Asistencias de Hoy
+              </button>
+              <button
+                [class.active]="activeSubTab() === 'por_empleado'"
+                (click)="setSubTab('por_empleado')"
+              >
+                👥 Por Empleado
+              </button>
             </div>
           }
         </div>
@@ -224,17 +284,22 @@
         <div class="search-bar">
           <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" 
-                   [ngModel]="searchTerm()" 
-                   (ngModelChange)="searchTerm.set($event)" 
-                   placeholder="Buscar empleado por nombre o DNI..." />
+            <input
+              type="text"
+              [ngModel]="searchTerm()"
+              (ngModelChange)="searchTerm.set($event)"
+              placeholder="Buscar empleado por nombre o DNI..."
+            />
           </div>
           <div class="date-wrapper">
             <span class="date-label">📅 Fecha:</span>
-            <input type="date" 
-                   [(ngModel)]="fechaConsultaHoy" 
-                   (change)="loadAsistenciasHoy()" 
-                   class="date-input" />
+            <input
+              type="date"
+              [(ngModel)]="fechaConsultaHoy"
+              [max]="fechaMaxima"
+              (change)="loadAsistenciasHoy()"
+              class="date-input"
+            />
           </div>
         </div>
 
@@ -264,16 +329,22 @@
               <tbody>
                 @for (reg of getFilteredAsistenciasHoy(); track reg.id) {
                   <tr [class.virtual-row]="!reg.entrada && !reg.salida">
-                    <td><span class="dni-badge">{{ reg.dni }}</span></td>
+                    <td>
+                      <span class="dni-badge">{{ reg.dni }}</span>
+                    </td>
                     <td class="empleado-nombre">{{ reg.nombre }}</td>
                     <td>
                       @if (reg.entrada) {
                         <div class="check-time-cell">
-                          <span class="hora">{{ reg.entrada.fechaHora | date:'HH:mm:ss' }}</span>
+                          <span class="hora">{{ reg.entrada.fechaHora | date: 'HH:mm:ss' }}</span>
                           <span class="metodo-chip">{{ reg.entrada.metodo }}</span>
                         </div>
                       } @else {
-                        <span class="tipo-badge" [class.pendiente]="!reg.isPastDay" [class.no-registrado]="reg.isPastDay">
+                        <span
+                          class="tipo-badge"
+                          [class.pendiente]="!reg.isPastDay"
+                          [class.no-registrado]="reg.isPastDay"
+                        >
                           {{ reg.isPastDay ? '❌ No registrado' : '⏳ Pendiente' }}
                         </span>
                       }
@@ -281,28 +352,40 @@
                     <td>
                       @if (reg.salida) {
                         <div class="check-time-cell">
-                          <span class="hora">{{ reg.salida.fechaHora | date:'HH:mm:ss' }}</span>
+                          <span class="hora">{{ reg.salida.fechaHora | date: 'HH:mm:ss' }}</span>
                           <span class="metodo-chip">{{ reg.salida.metodo }}</span>
                         </div>
                       } @else {
-                        <span class="tipo-badge" [class.pendiente]="!reg.isPastDay" [class.no-registrado]="reg.isPastDay">
+                        <span
+                          class="tipo-badge"
+                          [class.pendiente]="!reg.isPastDay"
+                          [class.no-registrado]="reg.isPastDay"
+                        >
                           {{ reg.isPastDay ? '❌ No registrado' : '⏳ Pendiente' }}
                         </span>
                       }
                     </td>
                     <td>
-                      <span class="estado-badge"
+                      <span
+                        class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
-                        [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
                         [class.pendiente]="reg.estado === 'PENDIENTE'"
                         [class.invalido]="reg.estado === 'INVALIDO'"
-                      >{{ reg.estado }}</span>
+                        >{{ reg.estado }}</span
+                      >
                     </td>
                     <td>
-                      <button class="btn btn-sm ghost compact" (click)="openAsistenciaModal(reg)">
+                      <button
+                        class="btn btn-sm ghost compact"
+                        (click)="openAsistenciaModal(reg)"
+                        [disabled]="!esFechaHoy()"
+                      >
                         👁️ Ver / Editar
                       </button>
+                      @if (!esFechaHoy()) {
+                        <span class="tooltip">Solo hoy</span>
+                      }
                     </td>
                   </tr>
                 }
@@ -340,20 +423,27 @@
               <tbody>
                 @for (reg of historial(); track reg.id) {
                   <tr>
-                    <td>{{ reg.fechaHora | date:'dd/MM/yyyy' }}</td>
-                    <td class="hora">{{ reg.fechaHora | date:'HH:mm:ss' }}</td>
+                    <td>{{ reg.fechaHora | date: 'dd/MM/yyyy' }}</td>
+                    <td class="hora">{{ reg.fechaHora | date: 'HH:mm:ss' }}</td>
                     <td>
-                      <span class="tipo-badge" [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" [class.salida]="reg.tipoMarcacion === 'SALIDA'">
+                      <span
+                        class="tipo-badge"
+                        [class.entrada]="reg.tipoMarcacion === 'ENTRADA'"
+                        [class.salida]="reg.tipoMarcacion === 'SALIDA'"
+                      >
                         {{ reg.tipoMarcacion === 'ENTRADA' ? '📥 Entrada' : '📤 Salida' }}
                       </span>
                     </td>
-                    <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
                     <td>
-                      <span class="estado-badge"
+                      <span class="metodo-chip">{{ reg.metodo }}</span>
+                    </td>
+                    <td>
+                      <span
+                        class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
-                        [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
-                      >{{ reg.estado }}</span>
+                        >{{ reg.estado }}</span
+                      >
                     </td>
                     <td class="obs">{{ reg.observaciones || '—' }}</td>
                   </tr>
@@ -381,7 +471,7 @@
           </div>
           <div class="employee-meta">
             <span class="meta-label">Fecha:</span>
-            <span class="meta-value">{{ selectedDateForModal | date:'dd/MM/yyyy' }}</span>
+            <span class="meta-value">{{ selectedDateForModal | date: 'dd/MM/yyyy' }}</span>
           </div>
 
           <div class="divider"></div>
@@ -392,21 +482,36 @@
             <div class="section-form-grid">
               <div>
                 <label>Hora de Entrada</label>
-                <input type="time" [(ngModel)]="modalEntradaHora" [disabled]="!isAdmin" placeholder="HH:MM" />
+                <input
+                  type="time"
+                  [(ngModel)]="modalEntradaHora"
+                  [disabled]="!isAdmin || !esFechaHoy()"
+                  placeholder="HH:MM"
+                />
               </div>
               <div>
                 <label>Estado</label>
-                <select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin">
+                <select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin || !esFechaHoy()">
                   <option value="VALIDADO">VALIDADO</option>
-                  <option value="OBSERVADO">OBSERVADO</option>
                   <option value="RECHAZADO">RECHAZADO</option>
                 </select>
               </div>
               <div class="full-width">
                 <label>Observaciones de Entrada</label>
-                <input type="text" [(ngModel)]="modalEntradaObs" [disabled]="!isAdmin" placeholder="Ninguna" />
+                <input
+                  type="text"
+                  [(ngModel)]="modalEntradaObs"
+                  [disabled]="!isAdmin || !esFechaHoy()"
+                  placeholder="Ninguna"
+                />
               </div>
             </div>
+            @if (!esFechaHoy()) {
+              <div class="warning-message">
+                ⚠️ No se puede editar asistencias de días pasados. Solo se permite editar el día de
+                hoy.
+              </div>
+            }
             @if (modalEntradaExiste) {
               <div class="badge-row">
                 <span class="info-badge">Registrado por Sistema</span>
@@ -422,21 +527,36 @@
             <div class="section-form-grid">
               <div>
                 <label>Hora de Salida</label>
-                <input type="time" [(ngModel)]="modalSalidaHora" [disabled]="!isAdmin" placeholder="HH:MM" />
+                <input
+                  type="time"
+                  [(ngModel)]="modalSalidaHora"
+                  [disabled]="!isAdmin || !esFechaHoy()"
+                  placeholder="HH:MM"
+                />
               </div>
               <div>
                 <label>Estado</label>
-                <select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin">
+                <select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin || !esFechaHoy()">
                   <option value="VALIDADO">VALIDADO</option>
-                  <option value="OBSERVADO">OBSERVADO</option>
                   <option value="RECHAZADO">RECHAZADO</option>
                 </select>
               </div>
               <div class="full-width">
                 <label>Observaciones de Salida</label>
-                <input type="text" [(ngModel)]="modalSalidaObs" [disabled]="!isAdmin" placeholder="Ninguna" />
+                <input
+                  type="text"
+                  [(ngModel)]="modalSalidaObs"
+                  [disabled]="!isAdmin || !esFechaHoy()"
+                  placeholder="Ninguna"
+                />
               </div>
             </div>
+            @if (!esFechaHoy()) {
+              <div class="warning-message">
+                ⚠️ No se puede editar asistencias de días pasados. Solo se permite editar el día de
+                hoy.
+              </div>
+            }
             @if (modalSalidaExiste) {
               <div class="badge-row">
                 <span class="info-badge">Registrado por Sistema</span>
@@ -446,9 +566,9 @@
         </div>
 
         <div class="modal-footer">
-          @if (isAdmin) {
+          @if (isAdmin && esFechaHoy()) {
             <button class="btn ghost" (click)="showDetailModal.set(false)">Cancelar</button>
-            <button class="btn primary" (click)="saveModalAsistencia()">Guardar Cambios</button>
+            <button class="btn primary" (click)="saveModalAsistencia()">💾 Guardar Cambios</button>
           } @else {
             <button class="btn primary" (click)="showDetailModal.set(false)">Cerrar</button>
           }

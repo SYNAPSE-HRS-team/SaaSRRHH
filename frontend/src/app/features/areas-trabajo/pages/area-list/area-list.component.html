@@ -8,19 +8,13 @@
       <button class="btn-refresh" (click)="loadAreas()" [disabled]="loading()">
         <span>🔄</span> Actualizar
       </button>
-      <a routerLink="/areas-trabajo/nuevo" class="btn-primary">
-        <span>➕</span> Nueva Área
-      </a>
+      <a routerLink="/areas-trabajo/nuevo" class="btn-primary"> + Nueva Área </a>
     </div>
   </div>
 
   <div class="search-box">
     <span class="search-icon">🔍</span>
-    <input
-      type="text"
-      placeholder="Buscar por nombre..."
-      (input)="onSearch($event)"
-    />
+    <input type="text" placeholder="Buscar por nombre..." (input)="onSearch($event)" />
   </div>
 
   @if (loading()) {
@@ -71,11 +65,9 @@
                   <span class="status-inactive">Inactivo</span>
                 }
               </td>
-              <td class="date-cell">{{ area.fechaRegistro | date:'dd/MM/yyyy' }}</td>
+              <td class="date-cell">{{ area.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
               <td class="actions-cell">
-                <button class="btn-icon" title="Editar" (click)="editarArea(area)">
-                  ✏️
-                </button>
+                <button class="btn-icon" title="Editar" (click)="editarArea(area)">✏️</button>
                 <button class="btn-icon" title="Eliminar" (click)="confirmarEliminar(area)">
                   🗑️
                 </button>
@@ -99,7 +91,10 @@
           <span class="modal-icon">⚠️</span>
           <h3>Confirmar Eliminación</h3>
         </div>
-        <p>¿Estás seguro de eliminar el área <strong>{{ areaToDelete?.nombre }}</strong>?</p>
+        <p>
+          ¿Estás seguro de eliminar el área <strong>{{ areaToDelete?.nombre }}</strong
+          >?
+        </p>
         <p class="modal-warning">Esta acción no se puede deshacer.</p>
         <div class="modal-actions">
           <button class="btn-cancel" (click)="showDeleteModal.set(false)">Cancelar</button>

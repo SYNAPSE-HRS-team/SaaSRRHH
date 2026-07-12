@@ -41,22 +41,9 @@
       }
     }
 
-    .btn-primary {
-      background: #2563eb;
-      color: #fff;
-      padding: 8px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      height: fit-content;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #1d4ed8;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-      }
+    .header-actions {
+      display: flex;
+      gap: 10px;
     }
   }
 
@@ -423,24 +410,6 @@
       font-size: 14px;
       margin-bottom: 16px;
     }
-
-    .btn-primary {
-      display: inline-block;
-      padding: 8px 24px;
-      background: #2563eb;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #1d4ed8;
-      }
-    }
   }
 
   // Table
@@ -644,6 +613,199 @@
   }
 }
 
+// ============================================
+// BOTONES GLOBALES - ESTILO PLANILLA
+// ============================================
+
+// Botón Primary
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+  letter-spacing: 0.3px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+    background: linear-gradient(135deg, #5a6fd6 0%, #6a3f8f 100%);
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+  }
+
+  i,
+  .fas,
+  .icon,
+  span {
+    font-size: 1rem;
+    line-height: 1;
+    color: inherit;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Botón Secundario
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #6b7280;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #4b5563;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i,
+  .fas,
+  .icon {
+    font-size: 1rem;
+    color: inherit;
+  }
+}
+
+// Botón Peligro
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  i,
+  .fas,
+  .icon {
+    font-size: 1rem;
+    color: inherit;
+  }
+}
+
+// Botón Info
+.btn-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #0ea5e9;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #0284c7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Botón Warning
+.btn-warning {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #eab308;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #ca8a04;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Botón pequeño (sm)
+.btn-sm {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+}
+
 // Animations
 @keyframes spin {
   to {
@@ -660,6 +822,16 @@
   .header {
     flex-direction: column;
     gap: 16px;
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+
+      .btn-primary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   }
 
   .stats-grid {

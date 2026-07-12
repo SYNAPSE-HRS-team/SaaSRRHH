@@ -10,7 +10,7 @@
         {{ loadingPlanillas() ? '⏳' : '🔄' }} Actualizar
       </button>
       <button class="btn-primary" (click)="showGenerarModal.set(true)" id="btn-generar-planilla">
-        ➕ Generar Planilla
+        + Generar Planilla
       </button>
     </div>
   </div>
@@ -92,7 +92,7 @@
                 <td>{{ planilla.mes }}/{{ planilla.anio }}</td>
                 <td>
                   @if (planilla.totalPagado != null) {
-                    <span class="money">S/ {{ planilla.totalPagado | number:'1.2-2' }}</span>
+                    <span class="money">S/ {{ planilla.totalPagado | number: '1.2-2' }}</span>
                   } @else {
                     <span class="text-muted">—</span>
                   }
@@ -142,17 +142,27 @@
         <button class="modal-close" (click)="showCerrarModal.set(false)">✕</button>
       </div>
       <div class="modal-body">
-        <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+        <p style="color: var(--color-text-secondary); font-size: 0.9rem">
           ¿Estás seguro de cerrar la planilla de
-          <strong>{{ planillaACerrar ? getMesNombre(planillaACerrar.mes) + ' ' + planillaACerrar.anio : '' }}</strong>?
-          Una vez cerrada, ya no se podrá modificar.
+          <strong>{{
+            planillaACerrar ? getMesNombre(planillaACerrar.mes) + ' ' + planillaACerrar.anio : ''
+          }}</strong
+          >? Una vez cerrada, ya no se podrá modificar.
         </p>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="showCerrarModal.set(false)">Cancelar</button>
-        <button class="btn-primary" style="background: var(--color-danger);" (click)="cerrarPlanilla()" [disabled]="cerrando()">
-          @if (cerrando()) { <span class="spinner"></span> Cerrando... }
-          @else { 🔒 Cerrar Planilla }
+        <button
+          class="btn-primary"
+          style="background: var(--color-danger)"
+          (click)="cerrarPlanilla()"
+          [disabled]="cerrando()"
+        >
+          @if (cerrando()) {
+            <span class="spinner"></span> Cerrando...
+          } @else {
+            🔒 Cerrar Planilla
+          }
         </button>
       </div>
     </div>
@@ -199,7 +209,7 @@
           </div>
         </div>
 
-        <div class="info-banner" style="margin-top: 1rem; margin-bottom: 0;">
+        <div class="info-banner" style="margin-top: 1rem; margin-bottom: 0">
           💡 Si ya existe una planilla para este período, el sistema retornará la existente.
         </div>
       </div>
@@ -222,7 +232,14 @@
   <div class="modal-overlay" (click)="showBoletasModal.set(false)">
     <div class="modal-card modal-lg" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>🧾 Boletas — {{ planillaSeleccionada ? getMesNombre(planillaSeleccionada.mes) + ' ' + planillaSeleccionada.anio : '' }}</h3>
+        <h3>
+          🧾 Boletas —
+          {{
+            planillaSeleccionada
+              ? getMesNombre(planillaSeleccionada.mes) + ' ' + planillaSeleccionada.anio
+              : ''
+          }}
+        </h3>
         <button class="modal-close" (click)="showBoletasModal.set(false)">✕</button>
       </div>
       <div class="modal-body">
@@ -240,7 +257,7 @@
         } @else {
           <div class="boletas-summary">
             <span>{{ boletas().length }} boleta(s) encontradas</span>
-            <span class="money-positive">Total: S/ {{ getTotalBoletas() | number:'1.2-2' }}</span>
+            <span class="money-positive">Total: S/ {{ getTotalBoletas() | number: '1.2-2' }}</span>
           </div>
           <div class="table-container">
             <table>
@@ -268,12 +285,16 @@
                         }
                       </div>
                     </td>
-                    <td>S/ {{ boleta.sueldoBase | number:'1.2-2' }}</td>
+                    <td>S/ {{ boleta.sueldoBase | number: '1.2-2' }}</td>
                     <td>{{ boleta.diasTrabajados }}</td>
-                    <td class="money-positive">S/ {{ boleta.totalIngresos | number:'1.2-2' }}</td>
-                    <td class="money-negative">S/ {{ boleta.totalDescuentos | number:'1.2-2' }}</td>
+                    <td class="money-positive">S/ {{ boleta.totalIngresos | number: '1.2-2' }}</td>
+                    <td class="money-negative">
+                      S/ {{ boleta.totalDescuentos | number: '1.2-2' }}
+                    </td>
                     <td>
-                      <strong class="neto-badge">S/ {{ boleta.netoPagar | number:'1.2-2' }}</strong>
+                      <strong class="neto-badge"
+                        >S/ {{ boleta.netoPagar | number: '1.2-2' }}</strong
+                      >
                     </td>
                     <td>
                       <button

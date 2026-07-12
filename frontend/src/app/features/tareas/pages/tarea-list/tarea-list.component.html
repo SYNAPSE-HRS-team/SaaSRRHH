@@ -143,17 +143,17 @@
           <td class="task-desc">{{ t.descripcion || 'Sin descripción' }}</td>
           <td class="emp-cell">
             <strong>
-              {{ t.empleado?.nombres ? (t.empleado?.nombres + ' ' + (t.empleado?.apellidos || '')) : 'Sin asignar' }}
+              {{
+                t.empleado?.nombres
+                  ? t.empleado?.nombres + ' ' + (t.empleado?.apellidos || '')
+                  : 'Sin asignar'
+              }}
             </strong>
           </td>
           <td>
             <strong>
-              {{
-                t.supervisor?.nombres || ''
-              }}
-              {{
-                t.supervisor?.apellidos || ''
-              }}
+              {{ t.supervisor?.nombres || '' }}
+              {{ t.supervisor?.apellidos || '' }}
             </strong>
             <!-- DNI oculto en la tabla; solo mostramos nombre completo -->
           </td>
@@ -203,7 +203,11 @@
               </span>
 
               <!-- Eliminar -->
-              <button (click)="eliminarTarea(t.id)" class="action-btn delete" title="Eliminar tarea">
+              <button
+                (click)="eliminarTarea(t.id)"
+                class="action-btn delete"
+                title="Eliminar tarea"
+              >
                 🗑️
               </button>
             </ng-container>

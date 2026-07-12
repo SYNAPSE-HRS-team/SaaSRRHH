@@ -40,13 +40,14 @@
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s;
-}
 
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd6, #6a3f8f); // Colores más oscuros
+    color: white;
+  }
 }
-
 .btn-refresh {
   display: inline-flex;
   align-items: center;
