@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EncuestaBienestarService } from '../../../../core/services/encuesta-bienestar.service';
@@ -14,6 +14,12 @@ import { EmpleadoResponse } from '../../../../core/models/empleado.model';
     styleUrls: ['./encuesta-form.component.scss']
 })
 export class EncuestaFormComponent implements OnInit {
+    private fb = inject(FormBuilder);
+    private route = inject(ActivatedRoute);
+    private router = inject(Router);
+    private encuestaService = inject(EncuestaBienestarService);
+    private empleadoService = inject(EmpleadoService);
+
     form!: FormGroup;
     esEdicion = false;
     idEncuesta?: number;
@@ -24,13 +30,7 @@ export class EncuestaFormComponent implements OnInit {
 
     empleados: EmpleadoResponse[] = [];
 
-    constructor(
-        private fb: FormBuilder,
-        private route: ActivatedRoute,
-        private router: Router,
-        private encuestaService: EncuestaBienestarService,
-        private empleadoService: EmpleadoService
-    ) {}
+    constructor() {}
 
     ngOnInit(): void {
         this.inicializarFormulario();
