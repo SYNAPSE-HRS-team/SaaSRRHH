@@ -43,6 +43,20 @@ public interface RegistroAsistenciaRepository extends JpaRepository<RegistroAsis
     // Contar asistencias por empleado en un rango de fechas
     long countByEmpleadoIdAndFechaHoraBetween(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
 
+
+    @Query("""
+    SELECT r
+    FROM RegistroAsistencia r
+    WHERE r.estado = :estado
+    AND r.fechaHora >= :inicio
+    AND r.fechaHora < :fin
+    """)
+    List<RegistroAsistencia> findByEstadoAndFechaHoraBetween(
+            @Param("estado") String estado,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
+
     @Query("""
        SELECT r
        FROM RegistroAsistencia r
