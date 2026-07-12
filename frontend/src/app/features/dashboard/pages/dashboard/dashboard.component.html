@@ -57,42 +57,6 @@
         </div>
       </section>
 
-      <section class="dashboard-section">
-        <h2 class="section-title">📈 Métricas de Riesgo</h2>
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-icon">⏳</span>
-              <span class="metric-title">Ausentismo</span>
-            </div>
-            <div class="metric-value">{{ dashboardData()?.ausencias ?? 0 }}</div>
-            <div class="metric-sub">Total ausencias registradas</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-icon">📊</span>
-              <span class="metric-title">% Ausentismo</span>
-            </div>
-            <div class="metric-value" [class.text-danger]="(dashboardData()?.porcentajeAusentismo ?? 0) > 10">
-              {{ dashboardData()?.porcentajeAusentismo?.toFixed(1) ?? '0.0' }}%
-            </div>
-            <div class="metric-sub">Porcentaje del período</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-header">
-              <span class="metric-icon">🛡️</span>
-              <span class="metric-title">Nivel de Riesgo</span>
-            </div>
-            <div class="metric-value">
-              <span class="risk-badge" [class]="getRiskClass(dashboardData()?.nivelRiesgo)">
-                {{ dashboardData()?.nivelRiesgo ?? '—' }}
-              </span>
-            </div>
-            <div class="metric-sub">Riesgo organizacional</div>
-          </div>
-        </div>
-      </section>
-
       @if ((dashboardData()?.empleadosRiesgoAlto ?? 0) > 0) {
         <section class="dashboard-section">
           <h2 class="section-title">🚨 Alertas de Riesgo</h2>
