@@ -15,65 +15,44 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () =>
-          import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+        loadChildren: () => import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
         title: 'Dashboard - SaaSRRHH',
       },
       {
         path: 'empleados',
-        loadChildren: () =>
-          import('./features/empleados/empleado.routes').then((m) => m.empleadoRoutes),
+        loadChildren: () => import('./features/empleados/empleado.routes').then((m) => m.empleadoRoutes),
         title: 'Empleados - SaaSRRHH',
       },
       {
         path: 'areas-trabajo',
-        loadChildren: () =>
-          import('./features/areas-trabajo/area-trabajo.routes').then((m) => m.areaTrabajoRoutes),
+        loadChildren: () => import('./features/areas-trabajo/area-trabajo.routes').then((m) => m.areaTrabajoRoutes),
         title: 'Áreas de Trabajo - SaaSRRHH',
       },
-
-      // ========================================================
-      // 🚀 TAREAS - Agregado por Miguel
-      // ========================================================
       {
         path: 'tareas',
         loadChildren: () => import('./features/tareas/tarea.routes').then((m) => m.tareaRoutes),
         title: 'Tareas - SaaSRRHH',
       },
-
       {
         path: 'asistencias',
-        loadChildren: () =>
-          import('./features/asistencias/asistencia.routes').then((m) => m.asistenciaRoutes),
+        loadChildren: () => import('./features/asistencias/asistencia.routes').then((m) => m.asistenciaRoutes),
         title: 'Asistencia - SaaSRRHH',
       },
       {
         path: 'usuarios',
-        loadChildren: () =>
-          import('./features/usuarios/usuario.routes').then((m) => m.usuarioRoutes),
+        loadChildren: () => import('./features/usuarios/usuario.routes').then((m) => m.usuarioRoutes),
         title: 'Usuarios - SaaSRRHH',
       },
-
-      // ========================================================
-      // 🚀 REPORTES DE INCIDENTES - Agregado por Miguel
-      // ========================================================
       {
         path: 'reportes-incidentes',
-        loadChildren: () =>
-          import('./features/reportes-incidentes/reporte-incidente.module').then(
-            (m) => m.ReporteIncidenteModule,
-          ),
+        loadChildren: () => import('./features/reportes-incidentes/reporte-incidente.module').then((m) => m.ReporteIncidenteModule),
         title: 'Reportes de Incidentes - SaaSRRHH',
       },
       {
         path: 'reportes-diarios',
-        loadChildren: () =>
-          import('./features/reportes-diarios/reportes-diarios.routes').then(
-            (m) => m.reportesDiariosRoutes
-          ),
+        loadChildren: () => import('./features/reportes-diarios/reportes-diarios.routes').then((m) => m.reportesDiariosRoutes),
         title: 'Reportes Diarios - SaaSRRHH',
       },
-
       {
         path: 'nomina',
         loadChildren: () => import('./features/nomina/nomina.routes').then((m) => m.nominaRoutes),
@@ -94,23 +73,21 @@ export const routes: Routes = [
         loadChildren: () => import('./features/documento/documento.routes').then((m) => m.documentoRoutes),
         title: 'Documentos - SaaSRRHH',
       },
-
       {
-    path: 'bienestar',
-    loadChildren: () => import('./features/bienestar/bienestar.routes')
-        .then(m => m.BIENESTAR_ROUTES),
-    canActivate: [AuthGuard],
-    data: { title: 'Bienestar' }
-},
-      // ========================================================
-      // 👤 PERFIL - Agregado por Nancy
-      // ========================================================
+        path: 'bienestar',
+        loadChildren: () => import('./features/bienestar/bienestar.routes').then((m) => m.BIENESTAR_ROUTES),
+        title: 'Bienestar - SaaSRRHH',
+      },
+      {
+        path: 'feedback',
+        loadChildren: () => import('./features/feedback/feedback.routes').then((m) => m.FEEDBACK_ROUTES),
+        title: 'Feedback - SaaSRRHH',
+      },
       {
         path: 'perfil',
         loadChildren: () => import('./features/perfil/perfil.routes').then((m) => m.PERFIL_ROUTES),
         title: 'Mi Perfil - SaaSRRHH',
       },
-
       {
         path: '',
         redirectTo: 'dashboard',

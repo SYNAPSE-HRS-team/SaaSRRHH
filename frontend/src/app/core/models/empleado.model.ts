@@ -10,6 +10,14 @@ export interface EmpleadoRequest {
   fechaFinContrato?: string;
   cargo?: string;
   activo?: boolean;
+  // ✅ NUEVOS CAMPOS: HORARIO LABORAL
+  horaEntrada?: string;
+  horaSalida?: string;
+  diasLaborables?: string;
+  toleranciaMinutos?: number;
+  // ✅ NUEVOS CAMPOS: TIPO DE PAGO
+  tipoPago?: string;
+  montoPago?: number;
 }
 
 export interface EmpleadoResponse {
@@ -27,7 +35,19 @@ export interface EmpleadoResponse {
   cargo?: string;
   activo?: boolean;
   fechaRegistro?: string;
+  // ✅ NUEVOS CAMPOS: HORARIO LABORAL
+  horaEntrada?: string;
+  horaSalida?: string;
+  diasLaborables?: string;
+  toleranciaMinutos?: number;
+  // ✅ NUEVOS CAMPOS: TIPO DE PAGO
+  tipoPago?: string;
+  montoPago?: number;
+  // ✅ NUEVOS CAMPOS: MÉTRICAS
+  ultimoNivelRiesgo?: string;
+  indicePuntualidad?: number;
+  totalFaltasMes?: number;
+  totalTardanzasMes?: number;
 }
 
-// Alias para compatibilidad con otros modelos que usan 'Empleado'
 export type Empleado = EmpleadoResponse;

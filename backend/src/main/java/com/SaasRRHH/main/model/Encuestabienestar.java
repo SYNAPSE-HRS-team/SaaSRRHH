@@ -49,4 +49,13 @@ public class Encuestabienestar {
         @Max(value = 5, message = "Debe ser entre 1 y 5")
         @Column(name = "proyeccion")
         private Integer proyeccion;
+        
+        // ✅ NUEVOS CAMPOS (faltaban)
+        @Size(max = 500, message = "El comentario no puede superar 500 caracteres")
+        @Column(name = "comentario", length = 500)
+        private String comentario;
+        
+        @Size(max = 20)
+        @Column(name = "nivel_bienestar", length = 20)
+        private String nivelBienestar;
 }

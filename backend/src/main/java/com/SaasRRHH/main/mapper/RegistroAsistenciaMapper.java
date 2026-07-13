@@ -2,45 +2,58 @@ package com.SaasRRHH.main.mapper;
 
 import com.SaasRRHH.main.DTO.RegistroAsistenciaRequestDTO;
 import com.SaasRRHH.main.DTO.RegistroAsistenciaResponseDTO;
-import com.SaasRRHH.main.model.DispositivoAutorizado;
 import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.model.RegistroAsistencia;
 
 public class RegistroAsistenciaMapper {
 
-    public static RegistroAsistenciaResponseDTO toDTO(RegistroAsistencia r) {
-        if (r == null) return null;
-        RegistroAsistenciaResponseDTO dto = new RegistroAsistenciaResponseDTO();
-        dto.setId(r.getId());
-        dto.setEmpleadoId(r.getEmpleado() != null ? r.getEmpleado().getId() : null);
-        dto.setDispositivoId(r.getDispositivo() != null ? r.getDispositivo().getId() : null);
-        dto.setFechaHora(r.getFechaHora());
-        dto.setTipoMarcacion(r.getTipoMarcacion());
-        dto.setMetodo(r.getMetodo());
-        dto.setEstado(r.getEstado());
-        dto.setObservaciones(r.getObservaciones());
-        return dto;
+    public static RegistroAsistencia toEntity(RegistroAsistenciaRequestDTO dto) {
+        RegistroAsistencia registro = new RegistroAsistencia();
+        
+        Empleado empleado = new Empleado();
+        empleado.setId(dto.getEmpleadoId());
+        registro.setEmpleado(empleado);
+        
+        registro.setFechaHora(dto.getFechaHora());
+        registro.setTipoMarcacion(dto.getTipoMarcacion());
+        registro.setMetodo(dto.getMetodo());
+        registro.setEstado(dto.getEstado());
+        registro.setObservaciones(dto.getObservaciones());
+        
+        // ✅ NUEVOS CAMPOS
+        registro.setMinutosTardanza(dto.getMinutosTardanza());
+        registro.setEsFalta(dto.getEsFalta());
+        registro.setJustificado(dto.getJustificado());
+        registro.setMotivoJustificacion(dto.getMotivoJustificacion());
+        
+        return registro;
     }
 
-    public static RegistroAsistencia toEntity(RegistroAsistenciaRequestDTO dto) {
-        if (dto == null) return null;
-        RegistroAsistencia r = new RegistroAsistencia();
-        r.setId(dto.getId());
-        if (dto.getEmpleadoId() != null) {
-            Empleado e = new Empleado();
-            e.setId(dto.getEmpleadoId());
-            r.setEmpleado(e);
+    public static RegistroAsistenciaResponseDTO toDTO(RegistroAsistencia entity) {
+        RegistroAsistenciaResponseDTO dto = new RegistroAsistenciaResponseDTO();
+        dto.setId(entity.getId());
+        dto.setFechaHora(entity.getFechaHora());
+        dto.setTipoMarcacion(entity.getTipoMarcacion());
+        dto.setMetodo(entity.getMetodo());
+        dto.setEstado(entity.getEstado());
+        dto.setObservaciones(entity.getObservaciones());
+        
+        // ✅ NUEVOS CAMPOS
+        dto.setMinutosTardanza(entity.getMinutosTardanza());
+        dto.setEsFalta(entity.getEsFalta());
+        dto.setJustificado(entity.getJustificado());
+        dto.setMotivoJustificacion(entity.getMotivoJustificacion());
+        
+        if (entity.getEmpleado() != null) {
+            dto.setEmpleadoId(entity.getEmpleado().getId());
+            dto.setNombreEmpleado(entity.getEmpleado().getNombres() + " " + entity.getEmpleado().getApellidos());
+            dto.setDniEmpleado(entity.getEmpleado().getDni());
         }
-        if (dto.getDispositivoId() != null) {
-            DispositivoAutorizado d = new DispositivoAutorizado();
-            d.setId(dto.getDispositivoId());
-            r.setDispositivo(d);
+        
+        if (entity.getDispositivo() != null) {
+            dto.setDispositivoId(entity.getDispositivo().getId());
         }
-        r.setFechaHora(dto.getFechaHora());
-        r.setTipoMarcacion(dto.getTipoMarcacion());
-        r.setMetodo(dto.getMetodo());
-        r.setEstado(dto.getEstado());
-        r.setObservaciones(dto.getObservaciones());
-        return r;
+        
+        return dto;
     }
 }

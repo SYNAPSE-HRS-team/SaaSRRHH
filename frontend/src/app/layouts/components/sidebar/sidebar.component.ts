@@ -17,7 +17,6 @@ interface MenuItem {
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-
   @Input() mobileOpen = false;
   @Output() mobileClose = new EventEmitter<void>();
   @Output() collapseChange = new EventEmitter<boolean>();
@@ -25,39 +24,53 @@ export class SidebarComponent {
   collapsed = signal(false);
   currentUser: ReturnType<AuthService['getCurrentUser']>;
 
-  // Menú fusionado
   menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: '📊', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
+    // Todos los roles
+    { label: 'Dashboard', icon: '📊', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    
+    // Solo ADMIN y SUPERVISOR
     { label: 'Empleados', icon: '👥', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
+    
+    // Solo ADMIN
     { label: 'Áreas de Trabajo', icon: '🏢', route: '/areas-trabajo', roles: ['ADMIN'] },
-    { label: 'Tareas', icon: '✅', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Asistencia', icon: '⏰', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
+    
+    // Todos los roles
+    { label: 'Tareas', icon: '✅', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Asistencia', icon: '⏰', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    
+    // Solo ADMIN
     { label: 'Nómina', icon: '💰', route: '/nomina', roles: ['ADMIN'] },
-    { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
+    
+    // ADMIN y TRABAJADOR
+    { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
+    
+    // Solo ADMIN y SUPERVISOR
     { label: 'Incidentes', icon: '⚠️', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
-    { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
+    
+    // Todos los roles
+    { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    
+    // Solo ADMIN y SUPERVISOR
     { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
-    // ✅ CORREGIDO: Ruta de bienestar
-    { label: 'Bienestar', icon: '💚', route: '/bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },
-    { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Métricas Burnout', icon: '💚', route: '/bienestar/metricas-burnout', roles: ['ADMIN', 'SUPERVISOR'] },
-
+    
+    // Solo ADMIN y SUPERVISOR (ellos gestionan encuestas)
+    { label: 'Bienestar', icon: '💚', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
+    
+    // Todos los roles
+    { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    
+    // Solo ADMIN
+    { label: 'Métricas Burnout', icon: '🧠', route: '/bienestar/metricas-burnout', roles: ['ADMIN'] },
     { label: 'Usuarios', icon: '🔐', route: '/usuarios', roles: ['ADMIN'] },
   ];
 
   constructor(private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser();
-
-    // Sincroniza signal → output
-    effect(() => {
-      this.collapseChange.emit(this.collapsed());
-    });
+    effect(() => { this.collapseChange.emit(this.collapsed()); });
   }
 
   getFilteredMenuItems(): MenuItem[] {
-    return this.menuItems.filter(item =>
-      item.roles.some(role => this.authService.hasRole(role))
-    );
+    return this.menuItems.filter(item => item.roles.some(role => this.authService.hasRole(role)));
   }
 
   getInitials(): string {
@@ -67,15 +80,10 @@ export class SidebarComponent {
     return email.substring(0, 2).toUpperCase();
   }
 
-  toggleCollapse(): void {
-    this.collapsed.update(v => !v);
-  }
+  toggleCollapse(): void { this.collapsed.update(v => !v); }
 
   onNavClick(): void {
-    // Cerrar sidebar en móvil al navegar
-    if (window.innerWidth <= 1024) {
-      this.mobileClose.emit();
-    }
+    if (window.innerWidth <= 1024) { this.mobileClose.emit(); }
   }
 
   logout(): void {

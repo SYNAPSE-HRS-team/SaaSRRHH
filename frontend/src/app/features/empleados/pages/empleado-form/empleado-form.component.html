@@ -28,9 +28,7 @@
       </div>
     }
 
-    <!-- ============================================================ -->
-    <!-- SELECCIONAR USUARIO                                           -->
-    <!-- ============================================================ -->
+    <!-- SELECCIONAR USUARIO -->
     <div class="form-section">
       <h2 class="section-title">Usuario Asociado <span class="required">*</span></h2>
       <div class="form-group">
@@ -44,19 +42,10 @@
             <a routerLink="/usuarios/nuevo" target="_blank">Crear un usuario primero</a>
           </div>
         } @else {
-          <select
-            id="usuarioId"
-            name="usuarioId"
-            [(ngModel)]="formData.usuarioId"
-            (change)="onUsuarioChange($event)"
-            required
-            class="form-select"
-          >
+          <select id="usuarioId" name="usuarioId" [(ngModel)]="formData.usuarioId" (change)="onUsuarioChange($event)" required class="form-select">
             <option value="0">-- Selecciona un usuario --</option>
             @for (usuario of usuarios; track usuario.id) {
-              <option [value]="usuario.id">
-                {{ usuario.email }} ({{ usuario.rolNombre || 'USER' }})
-              </option>
+              <option [value]="usuario.id">{{ usuario.email }} ({{ usuario.rolNombre || 'USER' }})</option>
             }
           </select>
         }
@@ -75,54 +64,19 @@
       <div class="form-grid">
         <div class="form-group">
           <label for="nombres">Nombres <span class="required">*</span></label>
-          <input
-            type="text"
-            id="nombres"
-            name="nombres"
-            [(ngModel)]="formData.nombres"
-            required
-            placeholder="Nombres del empleado"
-            [class.auto-filled]="formData.nombres"
-          />
-          @if (formData.nombres) {
-          }
+          <input type="text" id="nombres" name="nombres" [(ngModel)]="formData.nombres" required placeholder="Nombres del empleado" />
         </div>
         <div class="form-group">
           <label for="apellidos">Apellidos <span class="required">*</span></label>
-          <input
-            type="text"
-            id="apellidos"
-            name="apellidos"
-            [(ngModel)]="formData.apellidos"
-            required
-            placeholder="Apellidos del empleado"
-            [class.auto-filled]="formData.apellidos"
-          />
-          @if (formData.apellidos) {
-          }
+          <input type="text" id="apellidos" name="apellidos" [(ngModel)]="formData.apellidos" required placeholder="Apellidos del empleado" />
         </div>
         <div class="form-group">
           <label for="dni">DNI <span class="required">*</span></label>
-          <input
-            type="text"
-            id="dni"
-            name="dni"
-            [(ngModel)]="formData.dni"
-            required
-            maxlength="8"
-            minlength="8"
-            placeholder="12345678"
-          />
+          <input type="text" id="dni" name="dni" [(ngModel)]="formData.dni" required maxlength="8" minlength="8" placeholder="12345678" />
         </div>
         <div class="form-group">
           <label for="cargo">Cargo</label>
-          <input
-            type="text"
-            id="cargo"
-            name="cargo"
-            [(ngModel)]="formData.cargo"
-            placeholder="Ej: Desarrollador Senior"
-          />
+          <input type="text" id="cargo" name="cargo" [(ngModel)]="formData.cargo" placeholder="Ej: Desarrollador Senior" />
         </div>
       </div>
     </div>
@@ -133,44 +87,65 @@
       <div class="form-grid">
         <div class="form-group">
           <label for="sueldoBase">Sueldo Base (S/)</label>
-          <input
-            type="number"
-            id="sueldoBase"
-            name="sueldoBase"
-            step="0.01"
-            min="0"
-            [(ngModel)]="formData.sueldoBase"
-            placeholder="0.00"
-          />
+          <input type="number" id="sueldoBase" name="sueldoBase" step="0.01" min="0" [(ngModel)]="formData.sueldoBase" placeholder="0.00" />
         </div>
         <div class="form-group">
           <label for="fechaInicioContrato">Fecha Inicio Contrato</label>
-          <input
-            type="date"
-            id="fechaInicioContrato"
-            name="fechaInicioContrato"
-            [(ngModel)]="formData.fechaInicioContrato"
-          />
+          <input type="date" id="fechaInicioContrato" name="fechaInicioContrato" [(ngModel)]="formData.fechaInicioContrato" />
         </div>
         <div class="form-group">
           <label for="fechaFinContrato">Fecha Fin Contrato</label>
-          <input
-            type="date"
-            id="fechaFinContrato"
-            name="fechaFinContrato"
-            [(ngModel)]="formData.fechaFinContrato"
-          />
+          <input type="date" id="fechaFinContrato" name="fechaFinContrato" [(ngModel)]="formData.fechaFinContrato" />
         </div>
         <div class="form-group">
           <label class="checkbox-label">
-            <input
-              type="checkbox"
-              id="asignacionFamiliar"
-              name="asignacionFamiliar"
-              [(ngModel)]="formData.asignacionFamiliar"
-            />
+            <input type="checkbox" id="asignacionFamiliar" name="asignacionFamiliar" [(ngModel)]="formData.asignacionFamiliar" />
             Asignación Familiar
           </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Horario Laboral -->
+    <div class="form-section">
+      <h2 class="section-title">⏰ Horario Laboral</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="horaEntrada">Hora de Entrada</label>
+          <input type="time" id="horaEntrada" name="horaEntrada" [(ngModel)]="formData.horaEntrada" />
+        </div>
+        <div class="form-group">
+          <label for="horaSalida">Hora de Salida</label>
+          <input type="time" id="horaSalida" name="horaSalida" [(ngModel)]="formData.horaSalida" />
+        </div>
+        <div class="form-group">
+          <label for="diasLaborables">Días Laborables</label>
+          <input type="text" id="diasLaborables" name="diasLaborables" [(ngModel)]="formData.diasLaborables" placeholder="LUN,MAR,MIE,JUE,VIE" />
+          <p class="field-hint">Días separados por coma: LUN,MAR,MIE,JUE,VIE,SAB,DOM</p>
+        </div>
+        <div class="form-group">
+          <label for="toleranciaMinutos">Tolerancia (minutos)</label>
+          <input type="number" id="toleranciaMinutos" name="toleranciaMinutos" [(ngModel)]="formData.toleranciaMinutos" min="0" max="60" placeholder="10" />
+          <p class="field-hint">Minutos de tolerancia para considerar tardanza (0-60)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tipo de Pago -->
+    <div class="form-section">
+      <h2 class="section-title">💰 Tipo de Pago</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="tipoPago">Modalidad</label>
+          <select id="tipoPago" name="tipoPago" [(ngModel)]="formData.tipoPago">
+            <option value="HORA">Por Hora</option>
+            <option value="DIA">Por Día</option>
+            <option value="MENSUAL">Mensual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="montoPago">Monto (S/)</label>
+          <input type="number" id="montoPago" name="montoPago" [(ngModel)]="formData.montoPago" step="0.01" min="0" placeholder="0.00" />
         </div>
       </div>
     </div>
@@ -184,19 +159,11 @@
             <input type="checkbox" id="activo" name="activo" [(ngModel)]="formData.activo" />
             Empleado Activo
           </label>
-          <p class="field-hint">
-            Los empleados inactivos no aparecerán en las consultas por defecto
-          </p>
+          <p class="field-hint">Los empleados inactivos no aparecerán en las consultas por defecto</p>
         </div>
         <div class="form-group">
           <label for="fotoPerfilUrl">URL de Foto de Perfil</label>
-          <input
-            type="url"
-            id="fotoPerfilUrl"
-            name="fotoPerfilUrl"
-            [(ngModel)]="formData.fotoPerfilUrl"
-            placeholder="https://ejemplo.com/foto.jpg"
-          />
+          <input type="url" id="fotoPerfilUrl" name="fotoPerfilUrl" [(ngModel)]="formData.fotoPerfilUrl" placeholder="https://ejemplo.com/foto.jpg" />
         </div>
       </div>
     </div>

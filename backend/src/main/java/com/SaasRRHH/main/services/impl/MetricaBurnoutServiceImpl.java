@@ -2,12 +2,14 @@ package com.SaasRRHH.main.services.impl;
 
 import com.SaasRRHH.main.DTO.MetricaBurnoutResponseDTO;
 import com.SaasRRHH.main.mapper.MetricaBurnoutMapper;
+import com.SaasRRHH.main.model.Empleado;
 import com.SaasRRHH.main.model.MetricaBurnout;
 import com.SaasRRHH.main.model.RegistroAsistencia;
 import com.SaasRRHH.main.model.TareaAsignada;
 import com.SaasRRHH.main.model.Encuestabienestar;
 import com.SaasRRHH.main.repository.*;
 import com.SaasRRHH.main.services.MetricaBurnoutService;
+import com.SaasRRHH.main.services.RegistroAsistenciaService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +17,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +37,7 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     private final RegistroAsistenciaRepository asistenciaRepository;
     private final TareaAsignadaRepository tareaRepository;
     private final EncuestaBienestarRepository encuestaRepository;
+    private final RegistroAsistenciaService registroAsistenciaService;
 
     // ============================================
     // CRUD BÁSICO
@@ -70,7 +75,7 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     }
 
     // ============================================
-    // ✅ CÁLCULO AUTOMÁTICO DE MÉTRICAS
+    // ✅ CÁLCULO AUTOMÁTICO DE MÉTRICAS (REFACTORIZADO)
     // ============================================
 
     @Override
@@ -81,44 +86,80 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
         var empleado = empleadoRepository.findById(empleadoId)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID: " + empleadoId));
 
-        // 2. Calcular horas extra (últimos 30 días)
+        // 2. Período de evaluación (últimos 30 días)
+        LocalDateTime inicio = LocalDateTime.now().minusDays(30);
+        LocalDateTime fin = LocalDateTime.now();
+
+        // 3. Obtener registros de asistencia del período
+        List<RegistroAsistencia> asistencias = asistenciaRepository
+                .findByEmpleadoIdAndFechaHoraBetween(empleadoId, inicio, fin);
+
+        // 4. ✅ NUEVO: Calcular faltas en el período
+        int faltas = contarFaltasPeriodo(empleado, inicio.toLocalDate(), fin.toLocalDate(), asistencias);
+        log.info("   Faltas en el período: {}", faltas);
+
+        // 5. ✅ NUEVO: Calcular tardanzas en el período
+        int tardanzas = contarTardanzasPeriodo(asistencias);
+        log.info("   Tardanzas en el período: {}", tardanzas);
+
+        // 6. ✅ NUEVO: Detectar patrón de comportamiento
+        String patron = registroAsistenciaService.detectarPatronTardanza(empleadoId);
+        log.info("   Patrón detectado: {}", patron);
+
+        // 7. ✅ NUEVO: Calcular índice de puntualidad (0-100)
+        double indicePuntualidad = calcularIndicePuntualidad(empleado, inicio.toLocalDate(), fin.toLocalDate(), asistencias);
+        log.info("   Índice de puntualidad: {}", indicePuntualidad);
+
+        // 8. ✅ NUEVO: Calcular horas reales vs contrato
+        long[] horasCalculadas = calcularHorasRealesVsContrato(empleado, inicio.toLocalDate(), fin.toLocalDate(), asistencias);
+        int horasReales = (int) horasCalculadas[0];
+        int horasContrato = (int) horasCalculadas[1];
+        int horasExtra = Math.max(0, horasReales - horasContrato);
+        log.info("   Horas reales: {}, Horas contrato: {}, Horas extra: {}", horasReales, horasContrato, horasExtra);
+
+        // 9. ✅ NUEVO: Días trabajados
+        int diasTrabajados = contarDiasTrabajados(asistencias);
+
+        // 10. Calcular horas extra por tareas (método original)
         LocalDate inicioTareas = LocalDate.now().minusDays(30);
         List<TareaAsignada> tareas = tareaRepository.findByEmpleadoIdAndFechaBetween(
                 empleadoId, inicioTareas, LocalDate.now()
         );
-        int horasExtra = calcularHorasExtra(tareas);
-        log.info("   Horas extra acumuladas: {}", horasExtra);
+        int horasExtraTareas = calcularHorasExtra(tareas);
 
-        // 3. Calcular tendencia de tardanza (últimos 15 días)
-        LocalDateTime inicioAsistencias = LocalDateTime.now().minusDays(15);
-        LocalDateTime finAsistencias = LocalDateTime.now();
-        List<RegistroAsistencia> asistencias = asistenciaRepository
-                .findByEmpleadoIdAndFechaHoraBetween(empleadoId, inicioAsistencias, finAsistencias);
-        boolean tendenciaTardanza = calcularTendenciaTardanza(asistencias);
-        log.info("   Tendencia a tardanzas: {}", tendenciaTardanza);
-
-        // 4. Obtener promedio de encuestas recientes (últimos 30 días)
+        // 11. Obtener promedio de encuestas recientes
         LocalDate inicioEncuestas = LocalDate.now().minusDays(30);
         List<Encuestabienestar> encuestas = encuestaRepository
                 .findByEmpleadoIdAndFechaBetween(empleadoId, inicioEncuestas, LocalDate.now());
         double promedioEncuestas = calcularPromedioEncuestas(encuestas);
-        log.info("   Promedio encuestas (últimos 30 días): {}", promedioEncuestas);
 
-        // 5. Calcular nivel de riesgo
-        MetricaBurnout.NivelRiesgoBurnout nivel = calcularNivelRiesgo(
-                horasExtra,
-                tendenciaTardanza,
-                promedioEncuestas
+        // 12. ✅ NUEVO: Calcular nivel de riesgo mejorado
+        boolean tendenciaTardanza = tardanzas > 3;
+        MetricaBurnout.NivelRiesgoBurnout nivel = calcularNivelRiesgoMejorado(
+                horasExtra + horasExtraTareas,
+                tardanzas,
+                faltas,
+                indicePuntualidad,
+                promedioEncuestas,
+                patron
         );
         log.info("   Nivel de riesgo: {}", nivel);
 
-        // 6. Crear y guardar la métrica
+        // 13. Crear y guardar la métrica
         MetricaBurnout metrica = new MetricaBurnout();
         metrica.setEmpleado(empleado);
         metrica.setNivelRiesgo(nivel);
-        metrica.setHorasExtraAcumuladas(horasExtra);
+        metrica.setHorasExtraAcumuladas(horasExtra + horasExtraTareas);
         metrica.setTendenciaTardanza(tendenciaTardanza);
         metrica.setFechaEvaluacion(LocalDateTime.now());
+        // ✅ Nuevos campos
+        metrica.setFaltasPeriodo(faltas);
+        metrica.setTardanzasPeriodo(tardanzas);
+        metrica.setPatronDetectado(patron);
+        metrica.setIndicePuntualidad(indicePuntualidad);
+        metrica.setDiasTrabajados(diasTrabajados);
+        metrica.setHorasReales(horasReales);
+        metrica.setHorasContrato(horasContrato);
 
         MetricaBurnout saved = repository.save(metrica);
         log.info("✅ Métrica guardada con ID: {}", saved.getId());
@@ -130,7 +171,7 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     public List<MetricaBurnoutResponseDTO> recalcularTodas() {
         log.info("📊 Recalculando métricas para todos los empleados");
 
-        List<Long> empleados = empleadoRepository.findAll().stream()
+        List<Long> empleados = empleadoRepository.findByActivoTrue().stream()
                 .map(e -> e.getId())
                 .collect(Collectors.toList());
 
@@ -174,7 +215,122 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
     }
 
     // ============================================
-    // LÓGICA DE CÁLCULO PRIVADA
+    // ✅ NUEVA LÓGICA DE CÁLCULO
+    // ============================================
+
+    /**
+     * Cuenta las faltas en el período basado en días laborables sin registro
+     */
+    private int contarFaltasPeriodo(Empleado empleado, LocalDate inicio, LocalDate fin, List<RegistroAsistencia> asistencias) {
+        int faltas = 0;
+        LocalDate fecha = inicio;
+        
+        while (!fecha.isAfter(fin)) {
+            if (empleado.esDiaLaborable(fecha.getDayOfWeek())) {
+                LocalDate fechaFinal = fecha;
+                boolean marcoEntrada = asistencias.stream()
+                        .anyMatch(a -> a.getFechaHora().toLocalDate().equals(fechaFinal) 
+                                && "ENTRADA".equals(a.getTipoMarcacion())
+                                && !"RECHAZADO".equals(a.getEstado()));
+                if (!marcoEntrada) {
+                    faltas++;
+                }
+            }
+            fecha = fecha.plusDays(1);
+        }
+        
+        // También contar faltas registradas por el sistema
+        long faltasSistema = asistencias.stream()
+                .filter(a -> a.getEsFalta() != null && a.getEsFalta())
+                .count();
+        
+        return Math.max(faltas, (int) faltasSistema);
+    }
+
+    /**
+     * Cuenta las tardanzas en el período
+     */
+    private int contarTardanzasPeriodo(List<RegistroAsistencia> asistencias) {
+        return (int) asistencias.stream()
+                .filter(a -> "ENTRADA".equals(a.getTipoMarcacion()))
+                .filter(a -> a.getMinutosTardanza() != null && a.getMinutosTardanza() > 0)
+                .count();
+    }
+
+    /**
+     * Calcula el índice de puntualidad (0-100)
+     */
+    private double calcularIndicePuntualidad(Empleado empleado, LocalDate inicio, LocalDate fin, List<RegistroAsistencia> asistencias) {
+        List<RegistroAsistencia> entradas = asistencias.stream()
+                .filter(a -> "ENTRADA".equals(a.getTipoMarcacion()))
+                .filter(a -> !"RECHAZADO".equals(a.getEstado()))
+                .collect(Collectors.toList());
+        
+        if (entradas.isEmpty()) return 100.0;
+        
+        long puntuales = entradas.stream()
+                .filter(a -> a.getMinutosTardanza() == null || a.getMinutosTardanza() == 0)
+                .count();
+        
+        return (double) puntuales / entradas.size() * 100.0;
+    }
+
+    /**
+     * Calcula horas reales trabajadas vs horas de contrato
+     * Retorna [horasReales, horasContrato]
+     */
+    private long[] calcularHorasRealesVsContrato(Empleado empleado, LocalDate inicio, LocalDate fin, List<RegistroAsistencia> asistencias) {
+        long horasReales = 0;
+        long horasContrato = 0;
+        long horasPorDia = empleado.horasContratoPorDia();
+        
+        LocalDate fecha = inicio;
+        while (!fecha.isAfter(fin)) {
+            if (empleado.esDiaLaborable(fecha.getDayOfWeek())) {
+                horasContrato += horasPorDia;
+                
+                LocalDate fechaFinal = fecha;
+                Optional<RegistroAsistencia> entrada = asistencias.stream()
+                        .filter(a -> a.getFechaHora().toLocalDate().equals(fechaFinal) 
+                                && "ENTRADA".equals(a.getTipoMarcacion())
+                                && !"RECHAZADO".equals(a.getEstado()))
+                        .findFirst();
+                Optional<RegistroAsistencia> salida = asistencias.stream()
+                        .filter(a -> a.getFechaHora().toLocalDate().equals(fechaFinal) 
+                                && "SALIDA".equals(a.getTipoMarcacion())
+                                && !"RECHAZADO".equals(a.getEstado()))
+                        .findFirst();
+                
+                if (entrada.isPresent() && salida.isPresent()) {
+                    horasReales += ChronoUnit.HOURS.between(
+                        entrada.get().getFechaHora(), 
+                        salida.get().getFechaHora()
+                    );
+                } else if (entrada.isPresent()) {
+                    // Si no hay salida, asumir que trabajó las horas completas
+                    horasReales += horasPorDia;
+                }
+            }
+            fecha = fecha.plusDays(1);
+        }
+        
+        return new long[]{horasReales, horasContrato};
+    }
+
+    /**
+     * Cuenta días efectivamente trabajados
+     */
+    private int contarDiasTrabajados(List<RegistroAsistencia> asistencias) {
+        return (int) asistencias.stream()
+                .filter(a -> "ENTRADA".equals(a.getTipoMarcacion()))
+                .filter(a -> !"RECHAZADO".equals(a.getEstado()))
+                .map(a -> a.getFechaHora().toLocalDate())
+                .distinct()
+                .count();
+    }
+
+    // ============================================
+    // MÉTODOS ORIGINALES
     // ============================================
 
     private int calcularHorasExtra(List<TareaAsignada> tareas) {
@@ -182,39 +338,20 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
         for (TareaAsignada t : tareas) {
             if (t.getEstado() == TareaAsignada.EstadoTarea.INCONCLUSO) {
                 horas += 8;
-                log.debug("      Tarea INCONCLUSO: +8h");
             }
             if (t.getEstado() == TareaAsignada.EstadoTarea.CANCELADO) {
                 horas += 4;
-                log.debug("      Tarea CANCELADO: +4h");
             }
             if (t.getEstado() == TareaAsignada.EstadoTarea.PENDIENTE &&
                     t.getFecha().isBefore(LocalDate.now())) {
                 horas += 2;
-                log.debug("      Tarea PENDIENTE atrasada: +2h");
-            }
-            if (t.getEstado() == TareaAsignada.EstadoTarea.COMPLETADO) {
-                horas += 0;
-                log.debug("      Tarea COMPLETADO: +0h");
             }
         }
         return Math.min(horas, 100);
     }
 
-    private boolean calcularTendenciaTardanza(List<RegistroAsistencia> asistencias) {
-        // Verificar si hay registros con estado "OBSERVADO" (tardanza)
-        long tardanzas = asistencias.stream()
-                .filter(a -> a.getEstado() != null && "OBSERVADO".equals(a.getEstado()))
-                .count();
-        log.debug("      Tardanzas en últimos 15 días: {}", tardanzas);
-        return tardanzas > 3;
-    }
-
     private double calcularPromedioEncuestas(List<Encuestabienestar> encuestas) {
-        if (encuestas.isEmpty()) {
-            log.debug("      Sin encuestas, promedio base: 3.0");
-            return 3.0;
-        }
+        if (encuestas.isEmpty()) return 3.0;
 
         double promedio = encuestas.stream()
                 .mapToDouble(e -> {
@@ -226,59 +363,55 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
                 .average()
                 .orElse(3.0);
 
-        log.debug("      Promedio de encuestas ({} encuestas): {}", encuestas.size(), promedio);
         return promedio;
     }
 
-    private MetricaBurnout.NivelRiesgoBurnout calcularNivelRiesgo(
+    /**
+     * ✅ NUEVO: Cálculo de nivel de riesgo mejorado
+     */
+    private MetricaBurnout.NivelRiesgoBurnout calcularNivelRiesgoMejorado(
             int horasExtra,
-            boolean tendenciaTardanza,
-            double promedioEncuestas
+            int tardanzas,
+            int faltas,
+            double indicePuntualidad,
+            double promedioEncuestas,
+            String patron
     ) {
         int puntaje = 0;
 
-        // 1. Horas extra (máximo 30 puntos)
-        if (horasExtra > 60) {
-            puntaje += 30;
-            log.debug("      +30 puntos por horas extra altas");
-        } else if (horasExtra > 40) {
-            puntaje += 20;
-            log.debug("      +20 puntos por horas extra moderadas");
-        } else if (horasExtra > 20) {
-            puntaje += 10;
-            log.debug("      +10 puntos por horas extra bajas");
-        }
+        // 1. Horas extra
+        if (horasExtra > 60) puntaje += 30;
+        else if (horasExtra > 40) puntaje += 20;
+        else if (horasExtra > 20) puntaje += 10;
 
-        // 2. Tardanzas (máximo 20 puntos)
-        if (tendenciaTardanza) {
-            puntaje += 20;
-            log.debug("      +20 puntos por tendencia a tardanzas");
-        }
+        // 2. Tardanzas
+        if (tardanzas > 5) puntaje += 25;
+        else if (tardanzas > 3) puntaje += 15;
+        else if (tardanzas > 0) puntaje += 5;
 
-        // 3. Encuestas (1-5 -> 0-20 puntos)
-        if (promedioEncuestas > 4.0) {
-            puntaje += 20;
-            log.debug("      +20 puntos por encuestas críticas ({}),", promedioEncuestas);
-        } else if (promedioEncuestas > 3.0) {
+        // 3. Faltas
+        if (faltas > 5) puntaje += 25;
+        else if (faltas > 3) puntaje += 15;
+        else if (faltas > 1) puntaje += 5;
+
+        // 4. Índice de puntualidad
+        if (indicePuntualidad < 50) puntaje += 20;
+        else if (indicePuntualidad < 75) puntaje += 10;
+
+        // 5. Patrón detectado (bonificación de riesgo)
+        if (patron != null && !patron.isEmpty()) {
             puntaje += 15;
-            log.debug("      +15 puntos por encuestas altas ({})", promedioEncuestas);
-        } else if (promedioEncuestas > 2.0) {
-            puntaje += 10;
-            log.debug("      +10 puntos por encuestas medias ({})", promedioEncuestas);
-        } else {
-            puntaje += 5;
-            log.debug("      +5 puntos por encuestas buenas ({})", promedioEncuestas);
+            log.info("   ⚠️ Patrón detectado: +15 puntos");
         }
+
+        // 6. Encuestas
+        if (promedioEncuestas <= 2.0) puntaje += 20;
+        else if (promedioEncuestas <= 3.0) puntaje += 10;
 
         log.info("   Puntaje total: {}", puntaje);
 
-        // Determinar nivel de riesgo
-        if (puntaje >= 50) {
-            return MetricaBurnout.NivelRiesgoBurnout.ALTO;
-        } else if (puntaje >= 30) {
-            return MetricaBurnout.NivelRiesgoBurnout.MEDIO;
-        } else {
-            return MetricaBurnout.NivelRiesgoBurnout.BAJO;
-        }
+        if (puntaje >= 60) return MetricaBurnout.NivelRiesgoBurnout.ALTO;
+        else if (puntaje >= 35) return MetricaBurnout.NivelRiesgoBurnout.MEDIO;
+        else return MetricaBurnout.NivelRiesgoBurnout.BAJO;
     }
 }
