@@ -369,6 +369,7 @@
                       }
                     </td>
                     <td>
+                      <!-- 🔥 ESTADO VISIBLE CORREGIDO -->
                       <span
                         class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
@@ -376,8 +377,9 @@
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
                         [class.pendiente]="reg.estado === 'PENDIENTE'"
                         [class.invalido]="reg.estado === 'INVALIDO'"
-                        >{{ reg.estado }}</span
                       >
+                        {{ reg.estado === 'PENDIENTE' ? '⏳ Pendiente' : reg.estado }}
+                      </span>
                     </td>
                     <td>
                       @if (reg.entrada || reg.salida) {
@@ -456,8 +458,9 @@
                         [class.validado]="reg.estado === 'VALIDADO'"
                         [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
-                        >{{ reg.estado }}</span
                       >
+                        {{ reg.estado }}
+                      </span>
                     </td>
                     <td class="obs">{{ reg.observaciones || '—' }}</td>
                   </tr>
@@ -498,7 +501,7 @@
 
           <!-- SECCION ENTRADA -->
           <div class="attendance-section">
-            <h4>Entrada</h4>
+            <h4>📥 Entrada</h4>
             <div class="section-form-grid">
               <div>
                 <label>Hora</label>
@@ -535,6 +538,13 @@
                 />
               </div>
             </div>
+            <!-- ⚠️ ADVERTENCIA: Si hay entrada pero no salida -->
+            @if (modalEntradaHora && !modalSalidaHora) {
+              <div class="warning-message">
+                ⚠️ La entrada está registrada, pero <strong>falta la salida</strong>. El empleado
+                debe marcar salida o el admin debe registrarla.
+              </div>
+            }
             <div class="impacto-info">
               <span class="impacto-label">Impacto en nómina:</span>
               <span
@@ -560,7 +570,7 @@
 
           <!-- SECCION SALIDA -->
           <div class="attendance-section">
-            <h4>Salida</h4>
+            <h4>📤 Salida</h4>
             <div class="section-form-grid">
               <div>
                 <label>Hora</label>
@@ -601,6 +611,14 @@
                 />
               </div>
             </div>
+            @if (modalSalidaHora && !modalEntradaHora) {
+              <div class="validation-error">⚠️ No se puede registrar salida sin entrada.</div>
+            }
+            @if (modalSalidaEstado === 'VALIDADO' && !modalEntradaHora) {
+              <div class="validation-error">
+                ⚠️ Para validar la salida, primero debe registrar la entrada.
+              </div>
+            }
             <div class="impacto-info">
               <span class="impacto-label">Impacto en nómina:</span>
               <span
@@ -613,14 +631,6 @@
                 {{ getImpactoSalida(modalSalidaEstado) }}
               </span>
             </div>
-            @if (modalSalidaEstado === 'VALIDADO' && !modalEntradaHora) {
-              <div class="validation-error">
-                ⚠️ Para validar la salida, primero debe registrar la entrada.
-              </div>
-            }
-            @if (modalSalidaHora && !modalEntradaHora) {
-              <div class="validation-error">⚠️ No se puede registrar salida sin entrada.</div>
-            }
             @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
               <div class="warning-message">Estás editando una asistencia de un día anterior.</div>
             }

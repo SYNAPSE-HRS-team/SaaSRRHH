@@ -133,7 +133,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   }
 
   // ============================================
-  // VALIDACIONES DE ESTADOS (CORREGIDAS)
+  // VALIDACIONES DE ESTADOS
   // ============================================
 
   validarEstados(): boolean {
@@ -210,28 +210,35 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   }
 
   getResumenDia(entradaEstado: string, salidaEstado: string): string {
+    // Si no hay entrada, no puede haber salida
     if (!this.modalEntradaHora && this.modalSalidaHora) {
       return '❌ Error: Salida sin entrada';
     }
 
-    if (entradaEstado === 'VALIDADO' && salidaEstado === 'VALIDADO' && this.modalSalidaHora) {
-      return '✅ Día completo pagado';
+    // Si hay entrada pero no salida
+    if (this.modalEntradaHora && !this.modalSalidaHora) {
+      return '⏳ Entrada registrada. Falta salida.';
     }
-    if (entradaEstado === 'VALIDADO' && salidaEstado === 'RECHAZADO' && this.modalSalidaHora) {
-      return '⚠️ Descuento por salida temprana';
+
+    // Si hay entrada y salida
+    if (this.modalEntradaHora && this.modalSalidaHora) {
+      if (entradaEstado === 'VALIDADO' && salidaEstado === 'VALIDADO') {
+        return '✅ Día completo pagado';
+      }
+      if (entradaEstado === 'VALIDADO' && salidaEstado === 'RECHAZADO') {
+        return '⚠️ Descuento por salida temprana';
+      }
+      if (entradaEstado === 'RECHAZADO' && salidaEstado === 'VALIDADO') {
+        return '⚠️ Descuento por tardanza';
+      }
+      if (entradaEstado === 'RECHAZADO' && salidaEstado === 'RECHAZADO') {
+        return '❌ Día no pagado';
+      }
+      if (entradaEstado === 'OBSERVADO' || salidaEstado === 'OBSERVADO') {
+        return '⏳ Revisión pendiente';
+      }
     }
-    if (entradaEstado === 'RECHAZADO' && salidaEstado === 'VALIDADO' && this.modalSalidaHora) {
-      return '⚠️ Descuento por tardanza';
-    }
-    if (entradaEstado === 'RECHAZADO' && salidaEstado === 'RECHAZADO' && this.modalSalidaHora) {
-      return '❌ Día no pagado';
-    }
-    if (entradaEstado === 'VALIDADO' && !this.modalSalidaHora) {
-      return '⏳ Entrada registrada, salida pendiente';
-    }
-    if (entradaEstado === 'OBSERVADO' || salidaEstado === 'OBSERVADO') {
-      return '⏳ Revisión pendiente';
-    }
+
     return '📋 Revisar registro';
   }
 
@@ -535,6 +542,10 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     return emp ? emp.dni : '—';
   }
 
+  // ============================================
+  // 🔥 FILTRADO CON ESTADO VISIBLE CORREGIDO
+  // ============================================
+
   getFilteredAsistenciasHoy(): any[] {
     const term = this.searchTerm().toLowerCase().trim();
     const allRegistered = this.asistenciasHoyList();
@@ -555,12 +566,30 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       const entrada = empRecords.find((r) => r.tipoMarcacion === 'ENTRADA');
       const salida = empRecords.find((r) => r.tipoMarcacion === 'SALIDA');
 
-      const estadoGeneral = (() => {
-        if (entrada && salida) return entrada.estado;
-        if (entrada) return entrada.estado;
-        if (salida) return salida.estado;
-        return isPastDay ? 'INVALIDO' : 'PENDIENTE';
-      })();
+      // 🔥 NUEVA LÓGICA DE ESTADO VISIBLE
+      let estadoVisible = '';
+
+      if (entrada && salida) {
+        // Si ambos existen, mostrar el estado real
+        if (entrada.estado === 'VALIDADO' && salida.estado === 'VALIDADO') {
+          estadoVisible = 'VALIDADO';
+        } else if (entrada.estado === 'OBSERVADO' || salida.estado === 'OBSERVADO') {
+          estadoVisible = 'OBSERVADO';
+        } else if (entrada.estado === 'RECHAZADO' || salida.estado === 'RECHAZADO') {
+          estadoVisible = 'RECHAZADO';
+        } else {
+          estadoVisible = entrada.estado || 'PENDIENTE';
+        }
+      } else if (entrada && !salida) {
+        // ✅ SOLO ENTRADA → PENDIENTE (falta salida)
+        estadoVisible = 'PENDIENTE';
+      } else if (!entrada && salida) {
+        // ❌ SALIDA sin entrada → INVALIDO (no puede pasar)
+        estadoVisible = 'INVALIDO';
+      } else {
+        // Sin ningún registro
+        estadoVisible = isPastDay ? 'INVALIDO' : 'PENDIENTE';
+      }
 
       resultList.push({
         id: emp.id,
@@ -569,7 +598,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         nombre: `${emp.apellidos}, ${emp.nombres}`,
         entrada: entrada || null,
         salida: salida || null,
-        estado: estadoGeneral,
+        estado: estadoVisible, // ✅ Estado visible corregido
         isPastDay: isPastDay,
       });
     }
@@ -662,7 +691,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // ✅ VALIDACIONES CORREGIDAS
+    // ✅ VALIDACIONES
     if (this.modalSalidaHora && !this.modalEntradaHora) {
       this.error.set('❌ No se puede registrar salida sin entrada');
       return;

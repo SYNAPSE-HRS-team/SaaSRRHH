@@ -701,10 +701,26 @@ tbody tr:hover {
   background: var(--color-danger-light, #fee2e2);
   color: var(--color-danger, #dc2626);
 }
+/* ===== ESTADO PENDIENTE - ALINEACIÓN CORREGIDA ===== */
 .estado-badge.pendiente {
   background: var(--color-warning-light, #fef3c7);
   color: var(--color-warning, #d97706);
+  display: inline-flex; /* ← Cambiamos a inline-flex */
+  align-items: center; /* ← Centra verticalmente */
+  justify-content: center; /* ← Centra horizontalmente */
+  gap: 4px; /* ← Espacio entre emoji y texto */
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.4; /* ← Altura de línea consistente */
+  vertical-align: middle; /* ← Alinea con el texto */
+  white-space: nowrap; /* ← Evita que el texto se rompa */
+  min-height: 1.6rem; /* ← Altura mínima uniforme */
 }
+
 .estado-badge.invalido {
   background: var(--color-danger-light, #fee2e2);
   color: var(--color-danger, #dc2626);
