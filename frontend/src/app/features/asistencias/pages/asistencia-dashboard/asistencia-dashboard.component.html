@@ -84,7 +84,7 @@
           } @else if (!yaMarcoSalida()) {
             Presenta tu QR nuevamente para marcar <strong>salida</strong>.
           } @else {
-            ¡Listo! Ya registraste entrada y salida hoy. 🎉
+            ¡Listo! Ya registraste entrada y salida hoy.
           }
         </p>
       </div>
@@ -219,10 +219,10 @@
               <span class="day-number">{{ day.fecha | date: 'd' }}</span>
               <div class="day-times">
                 @if (day.horaEntrada) {
-                  <small class="time-entry">↘ {{ day.horaEntrada.slice(0, 5) }}</small>
+                  <small class="time-entry">⬇ {{ day.horaEntrada.slice(0, 5) }}</small>
                 }
                 @if (day.horaSalida) {
-                  <small class="time-exit">↗ {{ day.horaSalida.slice(0, 5) }}</small>
+                  <small class="time-exit">⬆ {{ day.horaSalida.slice(0, 5) }}</small>
                 }
               </div>
             </button>
@@ -253,7 +253,6 @@
         <div class="toolbar-left">
           <h2>📋 Historial de Asistencias</h2>
 
-          <!-- Sub-toggles para Admin y Supervisor -->
           @if (!isEmployee) {
             <div class="sub-tab-toggle">
               <button [class.active]="activeSubTab() === 'hoy'" (click)="setSubTab('hoy')">
@@ -280,7 +279,7 @@
         }
       </div>
 
-      <!-- VISTA 1: ASISTENCIAS DE HOY (Admin / Supervisor) -->
+      <!-- VISTA 1: ASISTENCIAS DE HOY -->
       @if (!isEmployee && activeSubTab() === 'hoy') {
         <div class="search-bar">
           <div class="search-wrapper">
@@ -311,7 +310,7 @@
           </div>
         } @else if (getFilteredAsistenciasHoy().length === 0) {
           <div class="empty-historial">
-            <p>📋 No hay registros de asistencia para el día seleccionado.</p>
+            <p>No hay registros de asistencia para el día seleccionado.</p>
           </div>
         } @else {
           <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} empleado(s)</div>
@@ -349,7 +348,7 @@
                           [class.pendiente]="!reg.isPastDay"
                           [class.no-registrado]="reg.isPastDay"
                         >
-                          {{ reg.isPastDay ? '❌ No registrado' : '⏳ Pendiente' }}
+                          {{ reg.isPastDay ? 'No registrado' : 'Pendiente' }}
                         </span>
                       }
                     </td>
@@ -365,11 +364,12 @@
                           [class.pendiente]="!reg.isPastDay"
                           [class.no-registrado]="reg.isPastDay"
                         >
-                          {{ reg.isPastDay ? '❌ No registrado' : '⏳ Pendiente' }}
+                          {{ reg.isPastDay ? 'No registrado' : 'Pendiente' }}
                         </span>
                       }
                     </td>
                     <td>
+                      <!-- 🔥 ESTADO VISIBLE CORREGIDO -->
                       <span
                         class="estado-badge"
                         [class.validado]="reg.estado === 'VALIDADO'"
@@ -377,11 +377,11 @@
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
                         [class.pendiente]="reg.estado === 'PENDIENTE'"
                         [class.invalido]="reg.estado === 'INVALIDO'"
-                        >{{ reg.estado }}</span
                       >
+                        {{ reg.estado === 'PENDIENTE' ? '⏳ Pendiente' : reg.estado }}
+                      </span>
                     </td>
                     <td>
-                      <!-- ✅ Solo mostrar botón si HAY un registro (entrada o salida) -->
                       @if (reg.entrada || reg.salida) {
                         <button
                           class="btn btn-sm ghost compact"
@@ -391,11 +391,10 @@
                           👁️ Ver / Editar
                         </button>
                         @if (reg.isPastDay) {
-                          <span class="tooltip">⚠️ Día pasado</span>
+                          <span class="tooltip">Día pasado</span>
                         }
                       } @else {
-                        <!-- ❌ No hay registro, no se puede editar -->
-                        <span class="sin-registro-label">📭 Sin registro</span>
+                        <span class="sin-registro-label">Sin registro</span>
                         @if (isAdmin && !reg.isPastDay) {
                           <button class="btn btn-sm primary compact" (click)="crearAsistencia(reg)">
                             ➕ Crear
@@ -411,7 +410,7 @@
         }
       }
 
-      <!-- VISTA 2: HISTORIAL INDIVIDUAL (Empleado o Admin -> Por Empleado) -->
+      <!-- VISTA 2: HISTORIAL INDIVIDUAL -->
       @if (isEmployee || activeSubTab() === 'por_empleado') {
         @if (loadingHistorial()) {
           <div class="loading-state">
@@ -420,7 +419,7 @@
           </div>
         } @else if (historial().length === 0) {
           <div class="empty-historial">
-            <p>📋 No hay registros de asistencia aún.</p>
+            <p>No hay registros de asistencia aún.</p>
           </div>
         } @else {
           <div class="historial-count">{{ historial().length }} registro(s)</div>
@@ -447,7 +446,7 @@
                         [class.entrada]="reg.tipoMarcacion === 'ENTRADA'"
                         [class.salida]="reg.tipoMarcacion === 'SALIDA'"
                       >
-                        {{ reg.tipoMarcacion === 'ENTRADA' ? '📥 Entrada' : '📤 Salida' }}
+                        {{ reg.tipoMarcacion === 'ENTRADA' ? 'Entrada' : 'Salida' }}
                       </span>
                     </td>
                     <td>
@@ -459,8 +458,9 @@
                         [class.validado]="reg.estado === 'VALIDADO'"
                         [class.observado]="reg.estado === 'OBSERVADO'"
                         [class.rechazado]="reg.estado === 'RECHAZADO'"
-                        >{{ reg.estado }}</span
                       >
+                        {{ reg.estado }}
+                      </span>
                     </td>
                     <td class="obs">{{ reg.observaciones || '—' }}</td>
                   </tr>
@@ -480,9 +480,9 @@
         <div class="modal-header">
           <h3>
             @if (modalEntradaExiste || modalSalidaExiste) {
-              👁️ Detalle de Asistencia
+              Detalle de Asistencia
             } @else {
-              ➕ Nueva Asistencia
+              Nueva Asistencia
             }
           </h3>
           <button class="close-btn" (click)="showDetailModal.set(false)">✕</button>
@@ -504,24 +504,32 @@
             <h4>📥 Entrada</h4>
             <div class="section-form-grid">
               <div>
-                <label>Hora de Entrada</label>
+                <label>Hora</label>
                 <input
                   type="time"
                   [(ngModel)]="modalEntradaHora"
                   [disabled]="!isAdmin"
                   placeholder="HH:MM"
+                  (change)="validarEstados()"
                 />
               </div>
               <div>
                 <label>Estado</label>
-                <select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin">
+                <select
+                  [(ngModel)]="modalEntradaEstado"
+                  [disabled]="!isAdmin"
+                  (change)="validarEstados()"
+                >
                   <option value="VALIDADO">✅ VALIDADO</option>
                   <option value="OBSERVADO">⚠️ OBSERVADO</option>
                   <option value="RECHAZADO">❌ RECHAZADO</option>
                 </select>
+                <small class="help-text">
+                  {{ getAyudaEstado(modalEntradaEstado, 'ENTRADA') }}
+                </small>
               </div>
               <div class="full-width">
-                <label>Observaciones de Entrada</label>
+                <label>Observaciones</label>
                 <input
                   type="text"
                   [(ngModel)]="modalEntradaObs"
@@ -530,11 +538,26 @@
                 />
               </div>
             </div>
-            @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
+            <!-- ⚠️ ADVERTENCIA: Si hay entrada pero no salida -->
+            @if (modalEntradaHora && !modalSalidaHora) {
               <div class="warning-message">
-                ⚠️ Estás editando una asistencia de un día anterior. Los cambios quedarán
-                registrados en el historial.
+                ⚠️ La entrada está registrada, pero <strong>falta la salida</strong>. El empleado
+                debe marcar salida o el admin debe registrarla.
               </div>
+            }
+            <div class="impacto-info">
+              <span class="impacto-label">Impacto en nómina:</span>
+              <span
+                class="impacto-valor"
+                [class.positivo]="modalEntradaEstado === 'VALIDADO'"
+                [class.negativo]="modalEntradaEstado === 'RECHAZADO'"
+                [class.neutro]="modalEntradaEstado === 'OBSERVADO'"
+              >
+                {{ getImpactoEntrada(modalEntradaEstado) }}
+              </span>
+            </div>
+            @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
+              <div class="warning-message">Estás editando una asistencia de un día anterior.</div>
             }
             @if (modalEntradaExiste) {
               <div class="badge-row">
@@ -550,24 +573,36 @@
             <h4>📤 Salida</h4>
             <div class="section-form-grid">
               <div>
-                <label>Hora de Salida</label>
+                <label>Hora</label>
                 <input
                   type="time"
                   [(ngModel)]="modalSalidaHora"
                   [disabled]="!isAdmin"
                   placeholder="HH:MM"
+                  (change)="validarEstados()"
                 />
               </div>
               <div>
                 <label>Estado</label>
-                <select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin">
+                <select
+                  [(ngModel)]="modalSalidaEstado"
+                  [disabled]="!isAdmin"
+                  (change)="validarEstados()"
+                  [class.error]="modalSalidaEstado === 'VALIDADO' && !modalEntradaHora"
+                >
                   <option value="VALIDADO">✅ VALIDADO</option>
                   <option value="OBSERVADO">⚠️ OBSERVADO</option>
                   <option value="RECHAZADO">❌ RECHAZADO</option>
                 </select>
+                <small
+                  class="help-text"
+                  [class.text-danger]="modalSalidaEstado === 'VALIDADO' && !modalEntradaHora"
+                >
+                  {{ getAyudaEstado(modalSalidaEstado, 'SALIDA') }}
+                </small>
               </div>
               <div class="full-width">
-                <label>Observaciones de Salida</label>
+                <label>Observaciones</label>
                 <input
                   type="text"
                   [(ngModel)]="modalSalidaObs"
@@ -576,16 +611,44 @@
                 />
               </div>
             </div>
-            @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
-              <div class="warning-message">
-                ⚠️ Estás editando una asistencia de un día anterior. Los cambios quedarán
-                registrados en el historial.
+            @if (modalSalidaHora && !modalEntradaHora) {
+              <div class="validation-error">⚠️ No se puede registrar salida sin entrada.</div>
+            }
+            @if (modalSalidaEstado === 'VALIDADO' && !modalEntradaHora) {
+              <div class="validation-error">
+                ⚠️ Para validar la salida, primero debe registrar la entrada.
               </div>
+            }
+            <div class="impacto-info">
+              <span class="impacto-label">Impacto en nómina:</span>
+              <span
+                class="impacto-valor"
+                [class.positivo]="modalSalidaEstado === 'VALIDADO' && modalEntradaHora"
+                [class.negativo]="modalSalidaEstado === 'RECHAZADO'"
+                [class.neutro]="modalSalidaEstado === 'OBSERVADO'"
+                [class.advertencia]="modalSalidaEstado === 'VALIDADO' && !modalEntradaHora"
+              >
+                {{ getImpactoSalida(modalSalidaEstado) }}
+              </span>
+            </div>
+            @if (!esFechaHoy() && isAdmin && (modalEntradaExiste || modalSalidaExiste)) {
+              <div class="warning-message">Estás editando una asistencia de un día anterior.</div>
             }
             @if (modalSalidaExiste) {
               <div class="badge-row">
                 <span class="info-badge">Registrado por Sistema</span>
               </div>
+            }
+          </div>
+
+          <!-- RESUMEN DEL DÍA -->
+          <div class="resumen-dia" [class.error]="hasErrorEstados()">
+            <span class="resumen-label">Resumen del día:</span>
+            <span class="resumen-valor">
+              {{ getResumenDia(modalEntradaEstado, modalSalidaEstado) }}
+            </span>
+            @if (hasErrorEstados()) {
+              <span class="resumen-error">⚠️ Revisa las validaciones</span>
             }
           </div>
         </div>

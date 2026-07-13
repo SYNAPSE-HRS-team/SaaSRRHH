@@ -18,6 +18,7 @@ import com.SaasRRHH.main.services.EmpleadoService;
 import com.SaasRRHH.main.services.RegistroAsistenciaService;
 import com.SaasRRHH.main.services.TotpService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,29 +61,85 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
                                 .orElseThrow(() -> new RuntimeException("Registro de asistencia no encontrado"));
         }
 
+        public void validarFecha(RegistroAsistenciaRequestDTO dto){
+
+                if(dto.getFechaHora()==null){
+                        throw new RuntimeException("La fecha esta como null");
+                }
+
+                LocalDate fecha = dto.getFechaHora().toLocalDate();
+
+                if(!fecha.equals(LocalDate.now())){
+                        throw new RuntimeException("Esta asistencia no puede ser ingresada, la fecha es diferente a la de hoy");
+                }
+        }
+
         @Override
         public RegistroAsistenciaResponseDTO guardar(RegistroAsistenciaRequestDTO dto) {
                 validarDto(dto);
+                validarFecha(dto);
                 RegistroAsistencia entity = RegistroAsistenciaMapper.toEntity(dto);
+
+
+
                 if (entity.getFechaHora() == null) entity.setFechaHora(LocalDateTime.now());
                 if (entity.getMetodo() == null) entity.setMetodo("QR");
                 if (entity.getEstado() == null) entity.setEstado("VALIDADO");
                 return RegistroAsistenciaMapper.toDTO(repository.save(entity));
         }
 
+        @Scheduled(cron = "0 0 0 * * *")
+        @Transactional
+        public void cerrarDiaAnterior() {
+                // Obtener el día anterior
+                LocalDate ayer = LocalDate.now().minusDays(1);
+                LocalDateTime inicio = ayer.atStartOfDay();
+                LocalDateTime fin = ayer.plusDays(1).atStartOfDay();
+
+                List<RegistroAsistencia> observados = repository.findByEstadoAndFechaHoraBetween(
+                        "OBSERVADO", inicio, fin
+                );
+
+                for (RegistroAsistencia registro : observados) {
+                        registro.setEstado("RECHAZADO");
+                        String obs = registro.getObservaciones();
+                        if (obs == null) obs = "";
+                        registro.setObservaciones(
+                                obs + " | Convertido automáticamente de OBSERVADO a RECHAZADO al cierre del día"
+                        );
+
+                }
+
+                repository.saveAll(observados);
+        }
+
         @Override
         public RegistroAsistenciaResponseDTO actualizar(Long id, RegistroAsistenciaRequestDTO dto) {
                 RegistroAsistencia registro = repository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+                        .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+
+
                 validarDto(dto);
+
+                if (dto.getFechaHora() != null) {
+                        LocalDate fechaOriginal = registro.getFechaHora().toLocalDate();
+                        LocalDate nuevaFecha = dto.getFechaHora().toLocalDate();
+
+                        if (!fechaOriginal.equals(nuevaFecha)) {
+                                throw new RuntimeException("Acceso denegado: No se permite cambiar el día de la marcación original.");
+                        }
+                        registro.setFechaHora(dto.getFechaHora());
+                }
+
                 Empleado empleado = new Empleado();
                 empleado.setId(dto.getEmpleadoId());
                 registro.setEmpleado(empleado);
-                registro.setFechaHora(dto.getFechaHora() != null ? dto.getFechaHora() : registro.getFechaHora());
+
                 registro.setTipoMarcacion(dto.getTipoMarcacion());
                 registro.setMetodo(dto.getMetodo() != null ? dto.getMetodo() : registro.getMetodo());
                 registro.setEstado(dto.getEstado() != null ? dto.getEstado() : registro.getEstado());
                 registro.setObservaciones(dto.getObservaciones());
+
                 return RegistroAsistenciaMapper.toDTO(repository.save(registro));
         }
 
