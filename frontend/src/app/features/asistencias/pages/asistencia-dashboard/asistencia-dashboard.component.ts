@@ -250,4 +250,24 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
       });
     });
   }
+
+  hasErrorEstados(): boolean {
+    return this.modalEntradaEstado === 'RECHAZADO'
+      || this.modalSalidaEstado === 'RECHAZADO'
+      || this.modalEntradaEstado === 'OBSERVADO'
+      || this.modalSalidaEstado === 'OBSERVADO';
+  }
+
+  getResumenDia(entradaEstado: string, salidaEstado: string): string {
+    if (entradaEstado === 'RECHAZADO' || salidaEstado === 'RECHAZADO') {
+      return 'Rechazado';
+    }
+    if (entradaEstado === 'OBSERVADO' || salidaEstado === 'OBSERVADO') {
+      return 'Observado';
+    }
+    if (entradaEstado === 'VALIDADO' || salidaEstado === 'VALIDADO') {
+      return 'Validado';
+    }
+    return 'Pendiente';
+  }
 }
