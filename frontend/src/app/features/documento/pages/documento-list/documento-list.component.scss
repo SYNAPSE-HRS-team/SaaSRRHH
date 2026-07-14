@@ -583,7 +583,7 @@
       background: #f1f5f9;
       border: none;
       border-radius: 6px;
-      padding: 6px 10px;
+      padding: 0;
       cursor: pointer;
       font-size: 14px;
       transition: all 0.2s;
@@ -603,6 +603,12 @@
       &.danger:hover {
         background: #fee2e2;
         color: #dc2626;
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
 
