@@ -103,14 +103,17 @@
                 }
               </td>
               <td class="actions-cell">
-                <button class="btn-icon" title="Ver detalle" (click)="verDetalle(emp)"><mat-icon>visibility</mat-icon></button>
+                <button class="btn-icon" title="Ver detalle" (click)="verDetalle(emp)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
                 <a
                   *ngIf="isAdmin"
-                  [routerLink]="['/empleados', emp.id]"
+                  [routerLink]="['/empleados/editar', emp.id]"
                   class="btn-icon"
                   title="Editar empleado"
-                  ><mat-icon>edit</mat-icon></a
                 >
+                  <mat-icon>edit</mat-icon>
+                </a>
                 <button class="btn-icon" title="Eliminar" (click)="confirmarEliminar(emp)">
                   <mat-icon>delete</mat-icon>
                 </button>
