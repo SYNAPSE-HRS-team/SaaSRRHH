@@ -61,14 +61,21 @@
   transition: all 0.2s;
 }
 
-.tab-toggle button:hover,
-.view-toggle button:hover {
-  background: var(--color-bg, #f0f4f8);
+.tab-toggle button:hover:not(.active),
+.view-toggle button:hover:not(.active) {
+  background: var(--color-primary-light, #dbeafe);
+  color: var(--color-primary, #2563eb);
 }
 
-.tab-toggle .active,
-.view-toggle .active {
-  background: var(--color-accent, #2563eb);
+.tab-toggle button.active,
+.view-toggle button.active {
+  background: var(--color-primary, #2563eb);
+  color: white;
+}
+
+.tab-toggle button.active:hover,
+.view-toggle button.active:hover {
+  background: var(--color-primary-dark, #1e3a8a);
   color: white;
 }
 
@@ -367,12 +374,18 @@ textarea {
   transition: all 0.2s;
 }
 
-.sub-tab-toggle button:hover {
-  background: var(--color-bg, #f0f4f8);
+.sub-tab-toggle button:hover:not(.active) {
+  background: var(--color-primary-light, #dbeafe);
+  color: var(--color-primary, #2563eb);
 }
 
-.sub-tab-toggle .active {
-  background: var(--color-primary, #1e3a5f);
+.sub-tab-toggle button.active {
+  background: var(--color-primary, #2563eb);
+  color: white;
+}
+
+.sub-tab-toggle button.active:hover {
+  background: var(--color-primary-dark, #1e3a8a);
   color: white;
 }
 

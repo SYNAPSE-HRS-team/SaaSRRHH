@@ -160,7 +160,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.7rem 1.25rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-primary, #2563eb);
   color: white;
   border: none;
   border-radius: 8px;
@@ -172,8 +172,8 @@
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    background: linear-gradient(135deg, #8a9af5, #9b6bc4); // Colores más brillantes
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background: var(--color-primary-dark, #1e3a8a);
     color: white;
   }
 }

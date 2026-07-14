@@ -32,8 +32,9 @@ $theme: mat.define-theme((
   --color-secondary-dark: #16A34A;
   --color-secondary-light: #DCFCE7;
 
-  --color-accent: #F59E0B;         /* actions / alerts */
-  --color-accent-light: #FEF3C7;
+  --color-accent: #2563EB;         /* actions / alerts (blue) */
+  --color-accent-light: #DBEAFE;
+  --color-accent-dark: #1E3A8A;
 
   /* ================================
      SEMANTIC STATES

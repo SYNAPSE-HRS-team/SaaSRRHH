@@ -36,29 +36,29 @@ export class SidebarComponent {
     { label: 'Áreas de Trabajo', icon: 'business', route: '/areas-trabajo', roles: ['ADMIN'] },
     
     // Todos los roles
-    { label: 'Tareas', icon: 'assignment_turned_in', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { label: 'Asistencia', icon: 'schedule', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Tareas', icon: 'assignment_turned_in', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
+    { label: 'Asistencia', icon: 'schedule', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
     
     // Solo ADMIN
     { label: 'Nómina', icon: 'payments', route: '/nomina', roles: ['ADMIN'] },
     
     // ADMIN y TRABAJADOR
-    { label: 'Boletas', icon: 'receipt_long', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
+    { label: 'Boletas', icon: 'receipt_long', route: '/boletas', roles: ['ADMIN', 'EMPLEADO'] },
     
     // Solo ADMIN y SUPERVISOR
     { label: 'Incidentes', icon: 'report_problem', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Todos los roles
-    { label: 'Reportes Diarios', icon: 'description', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Reportes Diarios', icon: 'description', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
     
     // Solo ADMIN y SUPERVISOR
     { label: 'Documentos', icon: 'article', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Solo ADMIN y SUPERVISOR (ellos gestionan encuestas)
-    { label: 'Bienestar', icon: 'health_and_safety', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
+    { label: 'Bienestar', icon: 'health_and_safety', route: '/bienestar/encuestas', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Todos los roles
-    { label: 'Feedback', icon: 'forum', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Feedback', icon: 'forum', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
     
     // Solo ADMIN
     { label: 'Métricas Burnout', icon: 'psychology', route: '/bienestar/metricas-burnout', roles: ['ADMIN'] },

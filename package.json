@@ -1,0 +1,8 @@
+{
+    "scripts": {
+        "start": "concurrently \"cd backend && mvnw.cmd spring-boot:run\" \"cd frontend && ng serve\""
+    },
+    "devDependencies": {
+        "concurrently": "^9.0.0"
+    }
+}

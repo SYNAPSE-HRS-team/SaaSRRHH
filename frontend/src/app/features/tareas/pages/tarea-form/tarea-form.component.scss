@@ -46,8 +46,8 @@ textarea {
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    border-color: var(--color-primary, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
   }
 
   &:disabled {
@@ -134,7 +134,7 @@ textarea {
 
 .btn-save {
   padding: 8px 20px;
-  background: #667eea;
+  background: var(--color-primary, #2563eb);
   color: white;
   border: none;
   border-radius: 6px;
@@ -142,7 +142,7 @@ textarea {
   font-weight: 500;
 
   &:hover {
-    background: #5466ca;
+    background: var(--color-primary-dark, #1e3a8a);
   }
 
   &:disabled {
