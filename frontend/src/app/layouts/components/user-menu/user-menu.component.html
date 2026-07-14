@@ -10,7 +10,7 @@
       <span class="user-role">{{ currentUser?.rol }}</span>
     </div>
 
-    <i class="chevron" [class.open]="isOpen()">▼</i>
+    <mat-icon class="chevron" [class.open]="isOpen()">keyboard_arrow_down</mat-icon>
 
   </button>
 
@@ -28,10 +28,10 @@
       </div>
 
       <ul class="dropdown-menu">
-        <li (click)="goToProfile()"><i>👤</i><span>Mi Perfil</span></li>
-        <li (click)="switchAccount()"><i>🔄</i><span>Cambiar Cuenta</span></li>
+        <li (click)="goToProfile()"><mat-icon>person</mat-icon><span>Mi Perfil</span></li>
+        <li (click)="switchAccount()"><mat-icon>sync</mat-icon><span>Cambiar Cuenta</span></li>
         <li class="divider"></li>
-        <li (click)="logout()" class="logout-item"><i>🚪</i><span>Cerrar Sesión</span></li>
+        <li (click)="logout()" class="logout-item"><mat-icon>logout</mat-icon><span>Cerrar Sesión</span></li>
       </ul>
     </div>
   }

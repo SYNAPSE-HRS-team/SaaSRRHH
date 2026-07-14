@@ -1,13 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { AreaTrabajoService } from '../../../../core/services/area-trabajo.service';
 import { AreaTrabajo } from '../../../../core/models/area-trabajo.model';
 
 @Component({
   selector: 'app-area-form',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, MatIconModule],
   templateUrl: './area-form.component.html',
   styleUrls: ['./area-form.component.scss']
 })

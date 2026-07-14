@@ -124,7 +124,23 @@
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--color-primary-light);
 
-  @media (min-width: 2560px) { font-size: 1.5rem; }
+  mat-icon {
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+    width: clamp(1.1rem, 2.5vw, 1.3rem);
+    height: clamp(1.1rem, 2.5vw, 1.3rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 2560px) {
+    font-size: 1.5rem;
+    mat-icon {
+      font-size: 1.75rem;
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
 }
 
 /* ======================================================
@@ -196,15 +212,44 @@
 
   .stat-card:hover & { transform: scale(1.05); }
 
+  mat-icon {
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    width: clamp(1.2rem, 3vw, 1.5rem);
+    height: clamp(1.2rem, 3vw, 1.5rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   /* Mapeado a tus variables corporativas */
   &.blue { background: var(--color-info-light); color: var(--color-info); }
   &.green { background: var(--color-success-light); color: var(--color-success); }
   &.purple { background: var(--color-accent-light); color: var(--color-accent); }
   &.orange { background: var(--color-warning-light); color: var(--color-warning); }
+  &.yellow { background: var(--color-warning-light); color: var(--color-warning); }
   &.red { background: var(--color-danger-light); color: var(--color-danger); }
 
-  @media (min-width: 2560px) { width: 60px; height: 60px; font-size: 1.8rem; }
-  @media (max-width: 360px) { width: 36px; height: 36px; font-size: 1rem; border-radius: var(--radius-sm); }
+  @media (min-width: 2560px) {
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+    mat-icon {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  @media (max-width: 360px) {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+    mat-icon {
+      font-size: 1.1rem;
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
 }
 
 .stat-info {
@@ -314,6 +359,18 @@
   font-size: clamp(2rem, 6vw, 3rem);
   flex-shrink: 0;
   animation: wave 2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: clamp(2.2rem, 6.5vw, 3.2rem);
+    width: clamp(2.2rem, 6.5vw, 3.2rem);
+    height: clamp(2.2rem, 6.5vw, 3.2rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @keyframes wave {
@@ -352,6 +409,19 @@
    necesitas ajustes específicos para el dashboard, usa esto: */
 .dashboard .btn-refresh {
   min-height: 44px; /* Touch target ideal para móviles */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   
   @media (max-width: 640px) {
     flex: 1;
@@ -484,6 +554,11 @@
 
 .action-icon {
   font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+  width: clamp(1.4rem, 3.5vw, 1.8rem);
+  height: clamp(1.4rem, 3.5vw, 1.8rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--color-primary); /* Integrado */
   transition: transform var(--transition);
 
@@ -492,7 +567,11 @@
     color: var(--color-accent);
   }
 
-  @media (min-width: 2560px) { font-size: 2.2rem; }
+  @media (min-width: 2560px) {
+    font-size: 2.2rem;
+    width: 2.2rem;
+    height: 2.2rem;
+  }
 
   @media (hover: none) and (pointer: coarse) {
     .action-card:hover & { transform: none; color: var(--color-primary); }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { EmpleadoRequest } from '../../../../core/models/empleado.model';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { UsuarioService } from '../../../../core/services/usuario.service';
@@ -9,7 +10,7 @@ import { UsuarioService } from '../../../../core/services/usuario.service';
 @Component({
   selector: 'app-empleado-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MatIconModule],
   templateUrl: './empleado-form.component.html',
   styleUrls: ['./empleado-form.component.scss']
 })

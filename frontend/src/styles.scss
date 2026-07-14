@@ -1314,3 +1314,15 @@ textarea {
     break-inside: avoid;
   }
 }
+
+/* ======================================================
+   GLOBAL MAT-ICON ALIGNMENT
+   Ensures professional vertical alignment with text
+====================================================== */
+mat-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}

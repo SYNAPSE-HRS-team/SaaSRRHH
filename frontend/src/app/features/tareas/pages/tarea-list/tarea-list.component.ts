@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { EstadoTarea, TareaAsignadaResponse } from '../../../../core/models/tarea-asignada.model';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { TareaAsignadaService } from '../../../../core/services/tarea-asignada.service';
@@ -10,7 +11,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 @Component({
   selector: 'app-tarea-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TareaFormComponent],
+  imports: [CommonModule, FormsModule, TareaFormComponent, MatIconModule],
   templateUrl: './tarea-list.component.html',
   styleUrls: ['./tarea-list.component.scss'],
 })

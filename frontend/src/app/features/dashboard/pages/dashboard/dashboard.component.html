@@ -10,7 +10,7 @@
     </div>
     <div class="header-actions">
       <button class="btn-refresh" (click)="loadDashboard()" [disabled]="loading()">
-        <span>🔄</span> Actualizar
+        <mat-icon>sync</mat-icon> Actualizar
       </button>
     </div>
   </div>
@@ -24,31 +24,39 @@
     <!-- ADMIN Dashboard -->
     @if (isAdmin) {
       <section class="dashboard-section">
-        <h2 class="section-title">📊 Panorama General</h2>
+        <h2 class="section-title"><mat-icon>analytics</mat-icon> Panorama General</h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon blue">👥</div>
+            <div class="stat-icon blue">
+              <mat-icon>people</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.totalEmpleados ?? '—' }}</span>
               <span class="stat-label">Total Empleados</span>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon purple">🔐</div>
+            <div class="stat-icon purple">
+              <mat-icon>admin_panel_settings</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.totalUsuarios ?? '—' }}</span>
               <span class="stat-label">Usuarios del Sistema</span>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon green">📝</div>
+            <div class="stat-icon green">
+              <mat-icon>description</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.reportesDiarios ?? '—' }}</span>
               <span class="stat-label">Reportes Diarios</span>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon orange">⚠️</div>
+            <div class="stat-icon orange">
+              <mat-icon>report_problem</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.incidentes ?? '—' }}</span>
               <span class="stat-label">Incidentes Reportados</span>
@@ -59,31 +67,39 @@
 
       @if ((dashboardData()?.empleadosRiesgoAlto ?? 0) > 0) {
         <section class="dashboard-section">
-          <h2 class="section-title">🚨 Alertas de Riesgo</h2>
+          <h2 class="section-title"><mat-icon>notification_important</mat-icon> Alertas de Riesgo</h2>
           <div class="stats-grid">
             <div class="stat-card alert">
-              <div class="stat-icon red">🔴</div>
+              <div class="stat-icon red">
+                <mat-icon>dangerous</mat-icon>
+              </div>
               <div class="stat-info">
                 <span class="stat-value">{{ dashboardData()?.empleadosRiesgoAlto ?? 0 }}</span>
                 <span class="stat-label">Empleados Riesgo ALTO</span>
               </div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon yellow">⏰</div>
+              <div class="stat-icon yellow">
+                <mat-icon>schedule</mat-icon>
+              </div>
               <div class="stat-info">
                 <span class="stat-value">{{ dashboardData()?.totalFaltasHoy ?? 0 }}</span>
                 <span class="stat-label">Faltas Hoy</span>
               </div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon orange">⏱️</div>
+              <div class="stat-icon orange">
+                <mat-icon>timer</mat-icon>
+              </div>
               <div class="stat-info">
                 <span class="stat-value">{{ dashboardData()?.totalTardanzasHoy ?? 0 }}</span>
                 <span class="stat-label">Tardanzas Hoy</span>
               </div>
             </div>
             <div class="stat-card">
-              <div class="stat-icon blue">📊</div>
+              <div class="stat-icon blue">
+                <mat-icon>trending_up</mat-icon>
+              </div>
               <div class="stat-info">
                 <span class="stat-value">{{ (dashboardData()?.promedioPuntualidad ?? 0).toFixed(1) }}%</span>
                 <span class="stat-label">Puntualidad General</span>
@@ -95,7 +111,7 @@
 
       @if ((dashboardData()?.rankingBajoDesempeno?.length ?? 0) > 0) {
         <section class="dashboard-section">
-          <h2 class="section-title">📉 Ranking de Bajo Desempeño</h2>
+          <h2 class="section-title"><mat-icon>trending_down</mat-icon> Ranking de Bajo Desempeño</h2>
           <div class="table-container">
             <table class="ranking-table">
               <thead>
@@ -136,7 +152,7 @@
       @if ((dashboardData()?.feedbackPendientes ?? 0) > 0) {
         <section class="dashboard-section">
           <div class="alert-card">
-            <span class="alert-icon">💬</span>
+            <span class="alert-icon"><mat-icon>chat_bubble</mat-icon></span>
             <div class="alert-info">
               <strong>{{ dashboardData()?.feedbackPendientes }}</strong> feedback(s) pendientes de respuesta
             </div>
@@ -149,31 +165,39 @@
     <!-- SUPERVISOR Dashboard -->
     @if (isSupervisor) {
       <section class="dashboard-section">
-        <h2 class="section-title">📋 Resumen de Equipo</h2>
+        <h2 class="section-title"><mat-icon>groups</mat-icon> Resumen de Equipo</h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon blue">👥</div>
+            <div class="stat-icon blue">
+              <mat-icon>people</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.totalEmpleados ?? '—' }}</span>
               <span class="stat-label">Empleados a Cargo</span>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon green">📝</div>
+            <div class="stat-icon green">
+              <mat-icon>description</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.reportesDiarios ?? '—' }}</span>
               <span class="stat-label">Reportes del Equipo</span>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon orange">⚠️</div>
+            <div class="stat-icon orange">
+              <mat-icon>report_problem</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.incidentes ?? '—' }}</span>
               <span class="stat-label">Incidentes</span>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon red">⏳</div>
+            <div class="stat-icon red">
+              <mat-icon>hourglass_empty</mat-icon>
+            </div>
             <div class="stat-info">
               <span class="stat-value">{{ dashboardData()?.ausencias ?? '—' }}</span>
               <span class="stat-label">Ausencias Hoy</span>
@@ -186,9 +210,11 @@
     <!-- TRABAJADOR Dashboard -->
     @if (isTrabajador) {
       <section class="dashboard-section">
-        <h2 class="section-title">👤 Mi Espacio</h2>
+        <h2 class="section-title"><mat-icon>person</mat-icon> Mi Espacio</h2>
         <div class="welcome-card">
-          <div class="welcome-icon">👋</div>
+          <div class="welcome-icon">
+            <mat-icon>waving_hand</mat-icon>
+          </div>
           <div class="welcome-text">
             <h3>¡Bienvenido, {{ user?.email }}!</h3>
             <p>Accede a tus tareas, registra tu asistencia y revisa tus boletas desde aquí.</p>
@@ -199,11 +225,11 @@
 
     <!-- Acciones Rápidas -->
     <section class="dashboard-section">
-      <h2 class="section-title">⚡ Acciones Rápidas</h2>
+      <h2 class="section-title"><mat-icon>bolt</mat-icon> Acciones Rápidas</h2>
       <div class="actions-grid">
         @for (action of filteredActions; track action.route) {
           <a [routerLink]="action.route" class="action-card">
-            <span class="action-icon">{{ action.icon }}</span>
+            <mat-icon class="action-icon">{{ action.icon }}</mat-icon>
             <span class="action-label">{{ action.label }}</span>
           </a>
         }

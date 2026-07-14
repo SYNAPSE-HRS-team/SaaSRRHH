@@ -18,13 +18,14 @@ import {
 import { DocumentoService } from '../../../../core/services/documento.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
+import { MatIconModule } from '@angular/material/icon';
 
 const OPCION_NUEVO_TIPO = -1;
 
 @Component({
   selector: 'app-documento-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule],
   templateUrl: './documento-form.component.html',
   styleUrls: ['./documento-form.component.scss'],
 })

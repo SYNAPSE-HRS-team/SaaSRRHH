@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import {
   TipoDocumentoRequest,
   TipoDocumentoResponse,
@@ -11,7 +12,7 @@ import { TipoDocumentoService } from '../../../../core/services/tipo-documento.s
 @Component({
   selector: 'app-tipo-documento-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MatIconModule],
   templateUrl: './tipo-documento-list.component.html',
   styleUrls: ['./tipo-documento-list.component.scss'],
 })

@@ -6,14 +6,14 @@
     </div>
     <div class="header-actions">
       <button class="btn-refresh" (click)="loadAreas()" [disabled]="loading()">
-        <span>🔄</span> Actualizar
+        <mat-icon>sync</mat-icon> Actualizar
       </button>
       <a routerLink="/areas-trabajo/nuevo" class="btn-primary"> + Nueva Área </a>
     </div>
   </div>
 
   <div class="search-box">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><mat-icon>search</mat-icon></span>
     <input type="text" placeholder="Buscar por nombre..." (input)="onSearch($event)" />
   </div>
 
@@ -26,7 +26,7 @@
 
   @if (error()) {
     <div class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon"><mat-icon>warning</mat-icon></span>
       <p>{{ error() }}</p>
       <button class="btn-retry" (click)="loadAreas()">Reintentar</button>
     </div>
@@ -34,7 +34,7 @@
 
   @if (!loading() && !error() && filteredAreas().length === 0) {
     <div class="empty-state">
-      <span class="empty-icon">🏢</span>
+      <span class="empty-icon"><mat-icon>business</mat-icon></span>
       <h3>No hay áreas registradas</h3>
       <p>Crea la primera área de trabajo en el sistema.</p>
       <a routerLink="/areas-trabajo/nuevo" class="btn-primary">Crear Área</a>
@@ -67,9 +67,9 @@
               </td>
               <td class="date-cell">{{ area.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
               <td class="actions-cell">
-                <button class="btn-icon" title="Editar" (click)="editarArea(area)">✏️</button>
+                <button class="btn-icon" title="Editar" (click)="editarArea(area)"><mat-icon>edit</mat-icon></button>
                 <button class="btn-icon" title="Eliminar" (click)="confirmarEliminar(area)">
-                  🗑️
+                  <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </tr>
@@ -88,7 +88,7 @@
     <div class="modal-overlay" (click)="showDeleteModal.set(false)">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <span class="modal-icon">⚠️</span>
+          <span class="modal-icon"><mat-icon>warning</mat-icon></span>
           <h3>Confirmar Eliminación</h3>
         </div>
         <p>

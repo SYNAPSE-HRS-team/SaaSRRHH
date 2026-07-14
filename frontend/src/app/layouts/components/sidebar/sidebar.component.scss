@@ -346,9 +346,10 @@
 
 /* ---- NAV ICON ---- */
 .nav-icon {
-  font-size: clamp(0.9rem, 2.2vw, 1rem);
-  width: clamp(20px, 4vw, 22px);
-  display: flex;
+  font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+  width: clamp(20px, 4vw, 24px);
+  height: clamp(20px, 4vw, 24px);
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
@@ -360,8 +361,9 @@
 
   // TVs 4K
   @media (min-width: 2560px) {
-    font-size: 1.2rem;
-    width: 26px;
+    font-size: 1.4rem;
+    width: 28px;
+    height: 28px;
   }
 }
 

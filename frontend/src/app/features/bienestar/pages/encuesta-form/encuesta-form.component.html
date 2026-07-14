@@ -7,7 +7,7 @@
             </p>
         </div>
         <div class="header-actions">
-            <button class="btn-secondary" (click)="cancelar()">⬅️ Volver</button>
+            <button class="btn-secondary" (click)="cancelar()"><mat-icon>arrow_back</mat-icon> Volver</button>
         </div>
     </div>
 
@@ -19,13 +19,13 @@
 
     <!-- Success -->
     <div *ngIf="success" class="success-message">
-        <span>✅</span>
+        <mat-icon>check_circle</mat-icon>
         <span>{{ success }}</span>
     </div>
 
     <!-- Error -->
     <div *ngIf="error" class="error-message">
-        <span>❌</span>
+        <mat-icon>cancel</mat-icon>
         <span>{{ error }}</span>
         <button class="btn-close" (click)="error = ''">✕</button>
     </div>
@@ -37,7 +37,7 @@
         <!-- SECCIÓN: DATOS DEL EMPLEADO                   -->
         <!-- ============================================ -->
         <div class="form-section">
-            <h3 class="section-title">👤 Datos del Empleado</h3>
+            <h3 class="section-title"><mat-icon>person</mat-icon> Datos del Empleado</h3>
 
             <div class="form-grid">
                 <div class="form-group">
@@ -67,7 +67,7 @@
         <!-- SECCIÓN: CALIFICACIONES                       -->
         <!-- ============================================ -->
         <div class="form-section">
-            <h3 class="section-title">📊 Calificaciones</h3>
+            <h3 class="section-title"><mat-icon>analytics</mat-icon> Calificaciones</h3>
             <p class="section-description">Califica del 1 al 5 cada aspecto (1 = Muy bajo, 5 = Muy alto)</p>
 
             <div class="form-grid">
@@ -150,7 +150,7 @@
         <!-- RESUMEN                                        -->
         <!-- ============================================ -->
         <div class="form-section" *ngIf="form.valid && !submitted">
-            <h3 class="section-title">📈 Resumen de la Encuesta</h3>
+            <h3 class="section-title"><mat-icon>trending_up</mat-icon> Resumen de la Encuesta</h3>
             <div class="resumen-container">
                 <div class="resumen-item">
                     <span class="resumen-label">Carga Laboral:</span>

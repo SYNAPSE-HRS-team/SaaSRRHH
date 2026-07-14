@@ -235,7 +235,7 @@
 
         @if (documentoForm.get('archivoUrl')?.value && !subiendoArchivo()) {
           <div class="upload-success">
-            <span class="success-icon">✅</span>
+            <span class="success-icon"><mat-icon>check_circle</mat-icon></span>
             <span>Archivo subido correctamente</span>
           </div>
         }
@@ -247,7 +247,7 @@
         documentoForm.get('tipoId')?.value !== OPCION_NUEVO_TIPO
       ) {
         <div class="resumen">
-          <h3>📋 Resumen del documento</h3>
+          <h3><mat-icon>assignment</mat-icon> Resumen del documento</h3>
           <div class="resumen-item">
             <span class="label">Empleado:</span>
             <span class="value">{{ getEmpleadoNombre() }}</span>
@@ -267,7 +267,7 @@
             <span class="value">
               {{ documentoForm.get('fechaVencimiento')?.value | date: 'dd/MM/yyyy' }}
               @if (isVencido()) {
-                <span class="badge-vencido">⚠️ Vencido</span>
+                <span class="badge-vencido"><mat-icon>warning</mat-icon> Vencido</span>
               }
             </span>
           </div>

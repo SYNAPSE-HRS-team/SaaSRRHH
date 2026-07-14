@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PlanillaService } from '../../../../core/services/planilla.service';
 import { Planilla, PlanillaRequest, EstadoPlanilla, getMesNombre, MESES_NOMBRE } from '../../../../core/models/planilla.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-planilla-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './planilla-list.component.html',
   styleUrls: ['./planilla-list.component.scss']
 })

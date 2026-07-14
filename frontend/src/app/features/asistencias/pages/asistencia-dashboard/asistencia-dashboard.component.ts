@@ -7,11 +7,12 @@ import { CalendarioAnual, CalendarioDia, CalendarioMes, RegistroAsistencia } fro
 import { AsistenciaService } from '../../../../core/services/asistencia.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-asistencia-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule, DatePipe, MatIconModule],
   templateUrl: './asistencia-dashboard.component.html',
   styleUrls: ['./asistencia-dashboard.component.scss'],
 })

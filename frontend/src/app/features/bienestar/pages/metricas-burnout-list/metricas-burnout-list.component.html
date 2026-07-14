@@ -1,41 +1,41 @@
 <div class="page-container">
   <div class="page-header">
     <div class="header-left">
-      <h1>🧠 Métricas de Burnout</h1>
+      <h1><mat-icon>psychology</mat-icon> Métricas de Burnout</h1>
       <p class="subtitle">Evaluación preventiva del riesgo laboral</p>
     </div>
     <div class="header-actions">
-      <button class="btn-primary" (click)="recalcularTodas()" [disabled]="loading">🔄 Recalcular Todas</button>
+      <button class="btn-primary" (click)="recalcularTodas()" [disabled]="loading" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>sync</mat-icon> Recalcular Todas</button>
     </div>
   </div>
 
   <div class="stats-grid">
     <div class="stat-card total"><span class="stat-number">{{ totalMetricas }}</span><span class="stat-label">Total Evaluaciones</span></div>
-    <div class="stat-card bajo"><span class="stat-number">{{ metricasBajas }}</span><span class="stat-label">🟢 Bajo Riesgo</span></div>
-    <div class="stat-card medio"><span class="stat-number">{{ metricasMedias }}</span><span class="stat-label">🟡 Riesgo Medio</span></div>
-    <div class="stat-card alto"><span class="stat-number">{{ metricasAltas }}</span><span class="stat-label">🔴 Alto Riesgo</span></div>
+    <div class="stat-card bajo"><span class="stat-number">{{ metricasBajas }}</span><span class="stat-label" style="display: inline-flex; align-items: center; gap: 4px;"><mat-icon style="color: #4caf50;">check_circle</mat-icon> Bajo Riesgo</span></div>
+    <div class="stat-card medio"><span class="stat-number">{{ metricasMedias }}</span><span class="stat-label" style="display: inline-flex; align-items: center; gap: 4px;"><mat-icon style="color: #ffc107;">warning</mat-icon> Riesgo Medio</span></div>
+    <div class="stat-card alto"><span class="stat-number">{{ metricasAltas }}</span><span class="stat-label" style="display: inline-flex; align-items: center; gap: 4px;"><mat-icon style="color: #f44336;">error</mat-icon> Alto Riesgo</span></div>
   </div>
 
   <div class="filtros-container">
     <div class="filtro-group">
-      <label>📊 Nivel de Riesgo</label>
+      <label><mat-icon>analytics</mat-icon> Nivel de Riesgo</label>
       <select [(ngModel)]="filtros.nivelRiesgo" (ngModelChange)="aplicarFiltros()">
         <option value="">Todos</option>
         <option *ngFor="let opcion of opcionesRiesgo" [value]="opcion">{{ opcion }}</option>
       </select>
     </div>
     <div class="filtro-group">
-      <label>👤 Empleado</label>
+      <label><mat-icon>person</mat-icon> Empleado</label>
       <select [(ngModel)]="filtros.empleadoId" (ngModelChange)="aplicarFiltros()">
         <option [ngValue]="null">Todos</option>
         <option *ngFor="let emp of empleados" [ngValue]="emp.id">{{ emp.nombres }} {{ emp.apellidos }}</option>
       </select>
     </div>
-    <button class="btn-limpiar" (click)="limpiarFiltros()">🧹 Limpiar</button>
+    <button class="btn-limpiar" (click)="limpiarFiltros()"><mat-icon>delete_sweep</mat-icon> Limpiar</button>
   </div>
 
   <div *ngIf="loading" class="loading-spinner"><div class="spinner"></div><p>Cargando métricas...</p></div>
-  <div *ngIf="error" class="error-message"><span>❌</span><span>{{ error }}</span><button class="btn-retry" (click)="cargarMetricas()">Reintentar</button></div>
+  <div *ngIf="error" class="error-message"><mat-icon>cancel</mat-icon><span>{{ error }}</span><button class="btn-retry" (click)="cargarMetricas()">Reintentar</button></div>
 
   <div *ngIf="!loading && !error" class="table-container">
     <div class="table-header"><span>Mostrando <strong>{{ metricasFiltradas.length }}</strong> de <strong>{{ metricas.length }}</strong> evaluaciones</span></div>
@@ -50,19 +50,19 @@
         <tr *ngFor="let metrica of metricasFiltradas">
           <td><span class="empleado-nombre">{{ metrica.nombreEmpleado }}</span></td>
           <td>{{ metrica.fechaEvaluacion | date: 'dd/MM/yyyy' }}</td>
-          <td><span class="badge" [style.background]="getColorRiesgo(metrica.nivelRiesgo)">{{ getIconoRiesgo(metrica.nivelRiesgo) }} {{ metrica.nivelRiesgo }}</span></td>
+          <td><span class="badge" [style.background]="getColorRiesgo(metrica.nivelRiesgo)" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon style="font-size: 14px; width: 14px; height: 14px; min-width: 14px;">{{ getMaterialIconoRiesgo(metrica.nivelRiesgo) }}</mat-icon> {{ metrica.nivelRiesgo }}</span></td>
           <td><span [style.color]="(metrica.indicePuntualidad ?? 100) < 75 ? '#ef4444' : '#22c55e'">{{ metrica.indicePuntualidad?.toFixed(1) ?? '—' }}%</span></td>
           <td>{{ metrica.faltasPeriodo ?? 0 }}</td>
           <td>{{ metrica.tardanzasPeriodo ?? 0 }}</td>
-          <td><span *ngIf="metrica.patronDetectado" class="patron-badge">⚠️ {{ metrica.patronDetectado }}</span><span *ngIf="!metrica.patronDetectado">—</span></td>
+          <td><span *ngIf="metrica.patronDetectado" class="patron-badge" style="display: inline-flex; align-items: center; gap: 4px;"><mat-icon style="font-size: 14px; width: 14px; height: 14px; min-width: 14px;">warning</mat-icon> {{ metrica.patronDetectado }}</span><span *ngIf="!metrica.patronDetectado">—</span></td>
           <td>{{ metrica.horasExtraAcumuladas }}h</td>
           <td class="actions-cell">
-            <button class="btn-icon view" (click)="verDetalle(metrica.id)" title="Ver">👁️</button>
-            <button class="btn-icon delete" (click)="eliminar(metrica.id)" title="Eliminar">🗑️</button>
+            <button class="btn-icon view" (click)="verDetalle(metrica.id)" title="Ver"><mat-icon>visibility</mat-icon></button>
+            <button class="btn-icon delete" (click)="eliminar(metrica.id)" title="Eliminar"><mat-icon>delete</mat-icon></button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div *ngIf="metricasFiltradas.length === 0" class="empty-state"><span class="empty-icon">📊</span><h3>No hay métricas de burnout</h3></div>
+    <div *ngIf="metricasFiltradas.length === 0" class="empty-state"><span class="empty-icon"><mat-icon>analytics</mat-icon></span><h3>No hay métricas de burnout</h3></div>
   </div>
 </div>

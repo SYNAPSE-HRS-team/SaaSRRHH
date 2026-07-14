@@ -5,11 +5,12 @@ import { NominaService } from '../../../../core/services/nomina.service';
 import { BoletaPagoService } from '../../../../core/services/boleta-pago.service';
 import { Planilla, getMesNombre, MESES_NOMBRE } from '../../../../core/models/planilla.model';
 import { BoletaPago } from '../../../../core/models/boleta-pago.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-nomina',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './nomina.component.html',
   styleUrls: ['./nomina.component.scss']
 })

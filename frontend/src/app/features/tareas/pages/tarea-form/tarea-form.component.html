@@ -8,7 +8,7 @@
     <!-- ✅ Mensaje de bloqueo -->
     @if (isFormLocked) {
       <div class="lock-message">
-        🔒 Esta tarea está <strong>{{ tareaData?.estado }}</strong> y no puede ser modificada.
+        <mat-icon>lock</mat-icon> Esta tarea está <strong>{{ tareaData?.estado }}</strong> y no puede ser modificada.
       </div>
     }
 
@@ -31,7 +31,7 @@
           *ngIf="tareaForm.get('empleadoId')?.touched && tareaForm.get('empleadoId')?.invalid"
           class="error-text"
         >
-          ⚠️ El empleado es obligatorio
+          <mat-icon>warning</mat-icon> El empleado es obligatorio
         </div>
       </div>
 
@@ -53,7 +53,7 @@
           *ngIf="tareaForm.get('supervisorId')?.touched && tareaForm.get('supervisorId')?.invalid"
           class="error-text"
         >
-          ⚠️ El supervisor es obligatorio
+          <mat-icon>warning</mat-icon> El supervisor es obligatorio
         </div>
       </div>
 
@@ -71,7 +71,7 @@
           *ngIf="tareaForm.get('areaId')?.touched && tareaForm.get('areaId')?.invalid"
           class="error-text"
         >
-          ⚠️ El área es obligatoria
+          <mat-icon>warning</mat-icon> El área es obligatoria
         </div>
       </div>
 
@@ -89,7 +89,7 @@
           *ngIf="tareaForm.get('funcion')?.touched && tareaForm.get('funcion')?.invalid"
           class="error-text"
         >
-          ⚠️ La función es obligatoria
+          <mat-icon>warning</mat-icon> La función es obligatoria
         </div>
       </div>
 
@@ -105,9 +105,9 @@
         @if (tareaForm.get('fecha')?.touched && tareaForm.get('fecha')?.invalid) {
           <div class="error-text">
             @if (tareaForm.get('fecha')?.errors?.['required']) {
-              ⚠️ La fecha es obligatoria
+              <mat-icon>warning</mat-icon> La fecha es obligatoria
             } @else if (tareaForm.get('fecha')?.errors?.['fechaPasada']) {
-              ⚠️ No se pueden crear tareas con fecha pasada. La fecha debe ser hoy o futura.
+              <mat-icon>warning</mat-icon> No se pueden crear tareas con fecha pasada. La fecha debe ser hoy o futura.
             }
           </div>
         }
@@ -128,7 +128,7 @@
           *ngIf="tareaForm.get('descripcion')?.touched && tareaForm.get('descripcion')?.invalid"
           class="error-text"
         >
-          ⚠️ Máximo 500 caracteres
+          <mat-icon>warning</mat-icon> Máximo 500 caracteres
         </div>
       </div>
 
@@ -142,16 +142,16 @@
         <!-- ✅ Mensaje informativo -->
         @if (isFormLocked) {
           <small class="info-text lock">
-            🔒 Tarea finalizada como <strong>{{ tareaData?.estado }}</strong
+            <mat-icon>lock</mat-icon> Tarea finalizada como <strong>{{ tareaData?.estado }}</strong
             >. No se pueden realizar cambios.
           </small>
         } @else if (!editMode) {
           <small class="info-text">
-            ℹ️ Las tareas nuevas solo pueden crearse como PENDIENTE o EN_PROGRESO.
+            <mat-icon>info</mat-icon> Las tareas nuevas solo pueden crearse como PENDIENTE o EN_PROGRESO.
           </small>
         } @else {
           <small class="info-text">
-            ℹ️ Al marcar como COMPLETADO, CANCELADO o INCONCLUSO, la tarea quedará bloqueada.
+            <mat-icon>info</mat-icon> Al marcar como COMPLETADO, CANCELADO o INCONCLUSO, la tarea quedará bloqueada.
           </small>
         }
       </div>

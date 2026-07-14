@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/services/auth.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
@@ -8,7 +9,7 @@ import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 @Component({
   selector: 'app-empleado-list',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, MatIconModule],
   templateUrl: './empleado-list.component.html',
   styleUrls: ['./empleado-list.component.scss']
 })

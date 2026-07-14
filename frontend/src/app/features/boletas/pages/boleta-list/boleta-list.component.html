@@ -2,12 +2,12 @@
   <!-- Header -->
   <div class="page-header">
     <div class="header-left">
-      <h1>🧾 Boletas de Pago</h1>
+      <h1><mat-icon>receipt</mat-icon> Boletas de Pago</h1>
       <p class="subtitle">Consulta y descarga tus boletas de pago</p>
     </div>
     <div class="header-actions">
-      <button class="btn-refresh" (click)="load()" [disabled]="loading()">
-        {{ loading() ? '⏳' : '🔄' }} Actualizar
+      <button class="btn-refresh" (click)="load()" [disabled]="loading()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+        <mat-icon>{{ loading() ? 'hourglass_empty' : 'sync' }}</mat-icon> Actualizar
       </button>
     </div>
   </div>
@@ -15,34 +15,34 @@
   <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-icon">🧾</span>
+      <span class="stat-icon"><mat-icon>receipt</mat-icon></span>
       <span class="stat-label">Total Boletas</span>
       <span class="stat-value">{{ boletas().length }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">💵</span>
+      <span class="stat-icon"><mat-icon>monetization_on</mat-icon></span>
       <span class="stat-label">Total Neto</span>
       <span class="stat-value" style="font-size: 1.4rem;">S/{{ getTotalNeto() | number:'1.0-0' }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">📈</span>
+      <span class="stat-icon"><mat-icon>trending_up</mat-icon></span>
       <span class="stat-label">Prom. Neto</span>
       <span class="stat-value" style="font-size: 1.4rem;">S/{{ getPromedioNeto() | number:'1.0-0' }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">👥</span>
+      <span class="stat-icon"><mat-icon>people</mat-icon></span>
       <span class="stat-label">Empleados</span>
       <span class="stat-value">{{ getEmpleadosUnicos() }}</span>
     </div>
   </div>
 
   <!-- Notices -->
-  @if (error()) { <div class="error-banner">⚠️ {{ error() }}</div> }
+  @if (error()) { <div class="error-banner"><mat-icon>warning</mat-icon> {{ error() }}</div> }
 
   <!-- Filters -->
   <div class="filters-bar">
     <div class="search-box">
-      <i class="search-icon">🔍</i>
+      <i class="search-icon"><mat-icon>search</mat-icon></i>
       <input
         type="text"
         placeholder="Buscar por ID de empleado o planilla..."
@@ -68,7 +68,7 @@
       </div>
     } @else if (filtered().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">🧾</div>
+        <div class="empty-icon"><mat-icon>receipt</mat-icon></div>
         <h3>No hay boletas disponibles</h3>
         <p>Las boletas se generan automáticamente al procesar la nómina.</p>
       </div>
@@ -139,7 +139,7 @@
                     @if (descargandoPdf() === b.id) {
                       <span class="loading-dot"></span>
                     } @else {
-                      📄
+                      <mat-icon>insert_drive_file</mat-icon>
                     }
                   </button>
                 </td>
@@ -160,7 +160,10 @@
     <div class="modal-overlay" (click)="boletaDetalle.set(null)">
       <div class="modal-card" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>🧾 Detalle Boleta #{{ boletaDetalle()!.id }}</h3>
+          <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
+            <mat-icon style="color: white;">receipt</mat-icon>
+            <span>Detalle Boleta #{{ boletaDetalle()!.id }}</span>
+          </h3>
           <button class="modal-close" (click)="boletaDetalle.set(null)">✕</button>
         </div>
         <div class="modal-body">
@@ -215,8 +218,8 @@
         </div>
         <div class="modal-footer">
           <button class="btn-secondary" (click)="boletaDetalle.set(null)">Cerrar</button>
-          <button class="btn-primary" (click)="descargarPdf(boletaDetalle()!.id!)">
-            📄 Descargar PDF
+          <button class="btn-primary" (click)="descargarPdf(boletaDetalle()!.id!)" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+            <mat-icon>picture_as_pdf</mat-icon> Descargar PDF
           </button>
         </div>
       </div>

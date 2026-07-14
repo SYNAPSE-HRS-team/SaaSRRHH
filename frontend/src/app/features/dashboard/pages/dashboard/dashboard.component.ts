@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/services/auth.service';
 import { AnaliticaService, DashboardDTO } from '../../../../core/services/analitica.service';
 
@@ -14,7 +15,7 @@ interface ActionItem {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -29,18 +30,18 @@ export class DashboardComponent implements OnInit {
   dashboardData = signal<DashboardDTO | null>(null);
 
   allActions: ActionItem[] = [
-    { icon: '👥', label: 'Gestionar Empleados', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: '🏢', label: 'Áreas de Trabajo', route: '/areas-trabajo', roles: ['ADMIN'] },
-    { icon: '✅', label: 'Ver Tareas', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { icon: '⏰', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { icon: '💰', label: 'Nómina', route: '/nomina', roles: ['ADMIN'] },
-    { icon: '🧾', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
-    { icon: '⚠️', label: 'Reportar Incidente', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: '📝', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { icon: '📄', label: 'Documentos', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: '💚', label: 'Bienestar', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: '💬', label: 'Feedback', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { icon: '🔐', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] }
+    { icon: 'people', label: 'Gestionar Empleados', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'business', label: 'Áreas de Trabajo', route: '/areas-trabajo', roles: ['ADMIN'] },
+    { icon: 'assignment_turned_in', label: 'Ver Tareas', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'schedule', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'payments', label: 'Nómina', route: '/nomina', roles: ['ADMIN'] },
+    { icon: 'receipt_long', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
+    { icon: 'report_problem', label: 'Reportar Incidente', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'description', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'article', label: 'Documentos', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'health_and_safety', label: 'Bienestar', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'forum', label: 'Feedback', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'admin_panel_settings', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] }
   ];
 
   get filteredActions(): ActionItem[] {

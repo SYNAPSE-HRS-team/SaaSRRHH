@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, signal, effect } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth.service';
 
 interface MenuItem {
@@ -12,7 +13,7 @@ interface MenuItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, MatIconModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
@@ -26,42 +27,42 @@ export class SidebarComponent {
 
   menuItems: MenuItem[] = [
     // Todos los roles
-    { label: 'Dashboard', icon: '📊', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
     
     // Solo ADMIN y SUPERVISOR
-    { label: 'Empleados', icon: '👥', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
+    { label: 'Empleados', icon: 'people', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Solo ADMIN
-    { label: 'Áreas de Trabajo', icon: '🏢', route: '/areas-trabajo', roles: ['ADMIN'] },
+    { label: 'Áreas de Trabajo', icon: 'business', route: '/areas-trabajo', roles: ['ADMIN'] },
     
     // Todos los roles
-    { label: 'Tareas', icon: '✅', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { label: 'Asistencia', icon: '⏰', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Tareas', icon: 'assignment_turned_in', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Asistencia', icon: 'schedule', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
     
     // Solo ADMIN
-    { label: 'Nómina', icon: '💰', route: '/nomina', roles: ['ADMIN'] },
+    { label: 'Nómina', icon: 'payments', route: '/nomina', roles: ['ADMIN'] },
     
     // ADMIN y TRABAJADOR
-    { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
+    { label: 'Boletas', icon: 'receipt_long', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
     
     // Solo ADMIN y SUPERVISOR
-    { label: 'Incidentes', icon: '⚠️', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
+    { label: 'Incidentes', icon: 'report_problem', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Todos los roles
-    { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Reportes Diarios', icon: 'description', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
     
     // Solo ADMIN y SUPERVISOR
-    { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
+    { label: 'Documentos', icon: 'article', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Solo ADMIN y SUPERVISOR (ellos gestionan encuestas)
-    { label: 'Bienestar', icon: '💚', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
+    { label: 'Bienestar', icon: 'health_and_safety', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
     
     // Todos los roles
-    { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { label: 'Feedback', icon: 'forum', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
     
     // Solo ADMIN
-    { label: 'Métricas Burnout', icon: '🧠', route: '/bienestar/metricas-burnout', roles: ['ADMIN'] },
-    { label: 'Usuarios', icon: '🔐', route: '/usuarios', roles: ['ADMIN'] },
+    { label: 'Métricas Burnout', icon: 'psychology', route: '/bienestar/metricas-burnout', roles: ['ADMIN'] },
+    { label: 'Usuarios', icon: 'admin_panel_settings', route: '/usuarios', roles: ['ADMIN'] },
   ];
 
   constructor(private authService: AuthService) {

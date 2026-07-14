@@ -6,11 +6,12 @@ import { EncuestaBienestarResponse } from '../../../../core/models/encuesta-bien
 import { EncuestaBienestarService } from '../../../../core/services/encuesta-bienestar.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-encuesta-list',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, MatIconModule],
     templateUrl: './encuesta-list.component.html',
     styleUrls: ['./encuesta-list.component.scss']
 })
@@ -172,6 +173,16 @@ export class EncuestaListComponent implements OnInit {
             'CRITICO': '😰',
         };
         return iconos[nivel] || '📊';
+    }
+
+    getMaterialIconoNivel(nivel: string): string {
+        const iconos: { [key: string]: string } = {
+            'BAJO': 'sentiment_very_satisfied',
+            'MEDIO': 'sentiment_satisfied',
+            'ALTO': 'sentiment_dissatisfied',
+            'CRITICO': 'sentiment_very_dissatisfied',
+        };
+        return iconos[nivel] || 'analytics';
     }
 
     // ============================================

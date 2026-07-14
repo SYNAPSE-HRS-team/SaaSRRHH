@@ -101,7 +101,7 @@
 
   <!-- Error -->
   <div *ngIf="error" class="error-message">
-    <p>❌ Error al cargar las tareas</p>
+    <p><mat-icon>cancel</mat-icon> Error al cargar las tareas</p>
     <button (click)="cargarTareas()" class="btn-retry">Reintentar</button>
   </div>
 
@@ -111,7 +111,7 @@
   <div *ngIf="!loading && !error" class="table-wrapper">
     <!-- Sin resultados -->
     <div *ngIf="tareasFiltradas.length === 0" class="empty-state">
-      <span class="empty-icon">📋</span>
+      <span class="empty-icon"><mat-icon>assignment</mat-icon></span>
       <h3>No hay tareas</h3>
       <p *ngIf="tareas.length === 0">No hay tareas asignadas en el sistema.</p>
       <p *ngIf="tareas.length > 0">No hay tareas que coincidan con los filtros aplicados.</p>
@@ -174,7 +174,9 @@
           <td class="date-cell">{{ t.fecha | date: 'dd/MM/yyyy' }}</td>
           <td class="actions-cell">
             <!-- Ver (siempre visible) -->
-            <button (click)="verTarea(t)" class="action-btn view" title="Ver tarea">👁️</button>
+            <button (click)="verTarea(t)" class="action-btn view" title="Ver tarea">
+              <mat-icon>visibility</mat-icon>
+            </button>
 
             <!-- Para empleados, las tareas son estrictamente de solo lectura (solo ver detalle) -->
             <ng-container *ngIf="isEmployee">
@@ -190,7 +192,7 @@
                 class="action-btn edit"
                 title="Editar tarea"
               >
-                ✏️
+                <mat-icon>edit</mat-icon>
               </button>
 
               <!-- Candado (cuando NO se puede editar) -->
@@ -199,7 +201,7 @@
                 class="action-btn locked"
                 title="Tarea finalizada ({{ t.estado }}) - No se puede editar"
               >
-                🔒
+                <mat-icon>lock</mat-icon>
               </span>
 
               <!-- Eliminar -->
@@ -208,7 +210,7 @@
                 class="action-btn delete"
                 title="Eliminar tarea"
               >
-                🗑️
+                <mat-icon>delete</mat-icon>
               </button>
             </ng-container>
           </td>

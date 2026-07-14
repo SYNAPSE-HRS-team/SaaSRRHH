@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="header">
     <div>
-      <h1>🏷️ Categorías de Documento</h1>
+      <h1><mat-icon>label</mat-icon> Categorías de Documento</h1>
       <div class="tabs">
         <a routerLink="/documentos" class="tab">Documentos</a>
         <a routerLink="/documentos/tipos-documento" class="tab active">Tipos de Documento</a>
@@ -66,7 +66,7 @@
       <!-- Búsqueda por nombre -->
       <div class="filter-group search-group">
         <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"><mat-icon>search</mat-icon></span>
           <input
             type="text"
             [ngModel]="filtroBusqueda()"
@@ -132,13 +132,13 @@
     </div>
   } @else if (errorHttp()) {
     <div class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon"><mat-icon>warning</mat-icon></span>
       <p>No se pudo conectar con la API de categorías.</p>
       <button class="btn-retry" (click)="cargar()">Reintentar</button>
     </div>
   } @else if (tiposFiltrados().length === 0) {
     <div class="empty-state">
-      <span class="empty-icon">📭</span>
+      <span class="empty-icon"><mat-icon>inbox</mat-icon></span>
       <h3>No hay categorías</h3>
       <p>No se encontraron categorías con los filtros aplicados.</p>
       <button class="btn-primary" (click)="limpiarFiltros()">Limpiar filtros</button>
@@ -164,20 +164,20 @@
               <td class="font-semibold">{{ tipo.nombre }}</td>
               <td>
                 <span [class]="tipo.obligatorio ? 'tag-si' : 'tag-no'">
-                  {{ tipo.obligatorio ? '✅ Sí' : '❌ No' }}
+                  <mat-icon>{{ tipo.obligatorio ? 'check_circle' : 'cancel' }}</mat-icon> {{ tipo.obligatorio ? 'Sí' : 'No' }}
                 </span>
               </td>
               <td>
                 <span [class]="tipo.requiereRenovacion ? 'tag-si' : 'tag-no'">
-                  {{ tipo.requiereRenovacion ? '✅ Sí' : '❌ No' }}
+                  <mat-icon>{{ tipo.requiereRenovacion ? 'check_circle' : 'cancel' }}</mat-icon> {{ tipo.requiereRenovacion ? 'Sí' : 'No' }}
                 </span>
               </td>
               <td>{{ tipo.diasVigencia ?? '—' }}</td>
               <td class="text-muted">{{ tipo.descripcion || '—' }}</td>
               <td class="acciones">
-                <button (click)="editar(tipo)" class="btn-icon" title="Editar">✏️</button>
+                <button (click)="editar(tipo)" class="btn-icon" title="Editar"><mat-icon>edit</mat-icon></button>
                 <button (click)="eliminar(tipo)" class="btn-icon danger" title="Eliminar">
-                  🗑️
+                  <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </tr>

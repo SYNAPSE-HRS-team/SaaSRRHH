@@ -5,11 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EncuestaBienestarService } from '../../../../core/services/encuesta-bienestar.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-encuesta-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, MatIconModule],
     templateUrl: './encuesta-form.component.html',
     styleUrls: ['./encuesta-form.component.scss']
 })

@@ -5,11 +5,12 @@ import { BoletaPagoService } from '../../../../core/services/boleta-pago.service
 import { AuthService } from '../../../../core/services/auth.service';
 import { BoletaPago } from '../../../../core/models/boleta-pago.model';
 import { getMesNombre, MESES_NOMBRE } from '../../../../core/models/planilla.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-boleta-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './boleta-list.component.html',
   styleUrls: ['./boleta-list.component.scss']
 })

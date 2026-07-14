@@ -25,7 +25,7 @@
         (click)="onNavClick()"
         [title]="collapsed() ? item.label : ''"
       >
-        <span class="nav-icon">{{ item.icon }}</span>
+        <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
         @if (!collapsed()) {
           <span class="nav-label">{{ item.label }}</span>
         }
@@ -44,7 +44,7 @@
       </div>
     }
     <button class="nav-item logout-btn" (click)="logout()">
-      <span class="nav-icon">🚪</span>
+      <mat-icon class="nav-icon">logout</mat-icon>
       @if (!collapsed()) {
         <span class="nav-label">Cerrar Sesión</span>
       }

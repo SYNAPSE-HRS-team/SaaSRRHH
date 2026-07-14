@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="header">
     <div>
-      <h1>📄 Documentos</h1>
+      <h1><mat-icon>article</mat-icon> Documentos</h1>
       <div class="tabs">
         <a routerLink="/documentos" class="tab active">Documentos</a>
         <a routerLink="/documentos/tipos-documento" class="tab">Tipos de Documento</a>
@@ -14,21 +14,21 @@
   <!-- Estadísticas -->
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-icon">📊</span>
+      <span class="stat-icon"><mat-icon>analytics</mat-icon></span>
       <div class="stat-info">
         <span class="stat-value">{{ totalDocumentos() }}</span>
         <span class="stat-label">Total</span>
       </div>
     </div>
     <div class="stat-card success">
-      <span class="stat-icon">✅</span>
+      <span class="stat-icon"><mat-icon>check_circle</mat-icon></span>
       <div class="stat-info">
         <span class="stat-value">{{ totalActivos() }}</span>
         <span class="stat-label">Activos</span>
       </div>
     </div>
     <div class="stat-card danger">
-      <span class="stat-icon">⚠️</span>
+      <span class="stat-icon"><mat-icon>warning</mat-icon></span>
       <div class="stat-info">
         <span class="stat-value">{{ totalVencidos() }}</span>
         <span class="stat-label">Vencidos</span>
@@ -42,7 +42,7 @@
       <!-- Búsqueda -->
       <div class="filter-group search-group">
         <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"><mat-icon>search</mat-icon></span>
           <input
             type="text"
             [ngModel]="filtroBusqueda()"
@@ -146,13 +146,13 @@
     </div>
   } @else if (errorHttp()) {
     <div class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon"><mat-icon>warning</mat-icon></span>
       <p>No se pudo conectar con la API de documentos. Verifica que el backend esté corriendo.</p>
       <button class="btn-retry" (click)="cargarDocumentos()">Reintentar</button>
     </div>
   } @else if (documentosFiltrados().length === 0) {
     <div class="empty-state">
-      <span class="empty-icon">📭</span>
+      <span class="empty-icon"><mat-icon>inbox</mat-icon></span>
       <h3>No hay documentos</h3>
       <p>No se encontraron documentos con los filtros aplicados.</p>
       <button class="btn-primary" (click)="limpiarFiltros()">Limpiar filtros</button>
@@ -230,13 +230,13 @@
                     class="btn-icon edit-link"
                     title="Editar"
                   >
-                    ✏️
+                    <mat-icon>edit</mat-icon>
                   </a>
                   <button (click)="verDocumento(doc)" class="btn-icon" title="Ver archivo">
-                    👁️
+                    <mat-icon>visibility</mat-icon>
                   </button>
                   <button (click)="eliminar(doc)" class="btn-icon danger" title="Eliminar">
-                    🗑️
+                    <mat-icon>delete</mat-icon>
                   </button>
                 </div>
               </td>

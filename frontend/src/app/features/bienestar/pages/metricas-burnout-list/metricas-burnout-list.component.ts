@@ -6,11 +6,12 @@ import { MetricaBurnoutResponse } from '../../../../core/models/metrica-burnout.
 import { MetricaBurnoutService } from '../../../../core/services/metrica-burnout.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-metricas-burnout-list',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, MatIconModule],
     templateUrl: './metricas-burnout-list.component.html',
     styleUrls: ['./metricas-burnout-list.component.scss']
 })
@@ -63,6 +64,7 @@ export class MetricasBurnoutListComponent implements OnInit {
 
     getColorRiesgo(nivel: string): string { const colores: any = { 'BAJO': '#22c55e', 'MEDIO': '#f59e0b', 'ALTO': '#ef4444' }; return colores[nivel] || '#64748b'; }
     getIconoRiesgo(nivel: string): string { const iconos: any = { 'BAJO': '🟢', 'MEDIO': '🟡', 'ALTO': '🔴' }; return iconos[nivel] || '📊'; }
+    getMaterialIconoRiesgo(nivel: string): string { const iconos: any = { 'BAJO': 'check_circle', 'MEDIO': 'warning', 'ALTO': 'error' }; return iconos[nivel] || 'analytics'; }
 
     get totalMetricas(): number { return this.metricasFiltradas.length; }
     get metricasAltas(): number { return this.metricasFiltradas.filter(m => m.nivelRiesgo === 'ALTO').length; }

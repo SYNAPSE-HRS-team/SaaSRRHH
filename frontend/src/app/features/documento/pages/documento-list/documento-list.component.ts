@@ -16,11 +16,12 @@ import { DocumentoPrivadoResponse } from '../../../../core/models/documento-priv
 import { TipoDocumentoResponse } from '../../../../core/models/tipo-documento.model';
 import { DocumentoService } from '../../../../core/services/documento.service';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-documento-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, MatIconModule],
   templateUrl: './documento-list.component.html',
   styleUrls: ['./documento-list.component.scss'],
 })

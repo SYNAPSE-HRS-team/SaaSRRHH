@@ -16,14 +16,14 @@
   <form (ngSubmit)="onSubmit()" class="empleado-form">
     @if (error()) {
       <div class="error-banner">
-        <span>⚠️</span>
+        <span class="error-icon"><mat-icon>warning</mat-icon></span>
         <span>{{ error() }}</span>
       </div>
     }
 
     @if (successMessage()) {
       <div class="success-banner">
-        <span>✅</span>
+        <span class="success-icon"><mat-icon>check_circle</mat-icon></span>
         <span>{{ successMessage() }}</span>
       </div>
     }
@@ -35,10 +35,10 @@
         <label for="usuarioId">Seleccionar Usuario <span class="required">*</span></label>
 
         @if (!usuariosCargados()) {
-          <div class="loading-message">⏳ Cargando usuarios disponibles...</div>
+          <div class="loading-message"><mat-icon>hourglass_empty</mat-icon> Cargando usuarios disponibles...</div>
         } @else if (usuarios.length === 0) {
           <div class="warning-message">
-            ⚠️ No hay usuarios disponibles para asignar como empleados.
+            <mat-icon>warning</mat-icon> No hay usuarios disponibles para asignar como empleados.
             <a routerLink="/usuarios/nuevo" target="_blank">Crear un usuario primero</a>
           </div>
         } @else {
@@ -51,7 +51,7 @@
         }
 
         <p class="field-hint">
-          💡 Al seleccionar un usuario, sus nombres y apellidos se cargarán automáticamente.
+          <mat-icon>lightbulb</mat-icon> Al seleccionar un usuario, sus nombres y apellidos se cargarán automáticamente.
           Solo aparecen usuarios que no tienen un empleado asociado.
           <a routerLink="/usuarios/nuevo" target="_blank">Crear nuevo usuario</a>
         </p>
@@ -108,7 +108,7 @@
 
     <!-- Horario Laboral -->
     <div class="form-section">
-      <h2 class="section-title">⏰ Horario Laboral</h2>
+      <h2 class="section-title"><mat-icon>schedule</mat-icon> Horario Laboral</h2>
       <div class="form-grid">
         <div class="form-group">
           <label for="horaEntrada">Hora de Entrada</label>
@@ -133,7 +133,7 @@
 
     <!-- Tipo de Pago -->
     <div class="form-section">
-      <h2 class="section-title">💰 Tipo de Pago</h2>
+      <h2 class="section-title"><mat-icon>payments</mat-icon> Tipo de Pago</h2>
       <div class="form-grid">
         <div class="form-group">
           <label for="tipoPago">Modalidad</label>
@@ -176,7 +176,7 @@
           <span class="spinner"></span>
           Guardando...
         } @else {
-          <span>💾</span>
+          <mat-icon>save</mat-icon>
           {{ isEditMode ? 'Actualizar Empleado' : 'Guardar Empleado' }}
         }
       </button>
