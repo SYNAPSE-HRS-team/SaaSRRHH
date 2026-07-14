@@ -1,0 +1,11 @@
+Para poder usar el comando
+npm start
+
+deberás estar en la carpeta raiz y ejecutar el comando
+npm install
+
+esto instalara unas pocas dependencias
+
+después podrás usar el comando npm start para ejecutar el proyecto
+
+npm start
