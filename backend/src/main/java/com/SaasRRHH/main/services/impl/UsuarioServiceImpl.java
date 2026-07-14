@@ -11,19 +11,20 @@ import com.SaasRRHH.main.repository.UsuarioRepository;
 import com.SaasRRHH.main.services.UsuarioService;
 
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map; // ← AGREGADO
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
@@ -36,7 +37,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public List<UsuarioResponseDTO> listar() {
         List<Usuario> usuarios = usuarioRepository.findAll();
         List<com.SaasRRHH.main.model.Empleado> empleados = empleadoRepository.findAll();
-        
+
         Map<Long, com.SaasRRHH.main.model.Empleado> empleadoMap = empleados.stream()
                 .filter(e -> e.getUsuario() != null)
                 .collect(Collectors.toMap(e -> e.getUsuario().getId(), e -> e, (a, b) -> a));
@@ -117,11 +118,40 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO actualizarUltimoAcceso(Long id) {
-        Usuario u = usuarioRepository.findById(id)
+    public UsuarioResponseDTO actualizar(Long id, UsuarioRequestDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        u.setUltimoAcceso(LocalDateTime.now());
-        return UsuarioMapper.toDTO(usuarioRepository.save(u));
+
+        if (!usuario.getEmail().equals(dto.getEmail()) &&
+                usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("El email ya está siendo usado por otro usuario");
+        }
+
+        Rol rol = rolRepository.findById(dto.getRolId())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        UsuarioMapper.updateEntity(usuario, dto, rol);
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            String passwordEncriptada = passwordEncoder.encode(dto.getPassword());
+            usuario.setPassword(passwordEncriptada);
+        }
+
+        Usuario actualizado = usuarioRepository.save(usuario);
+
+        empleadoRepository.findByUsuarioId(usuario.getId()).ifPresent(empleado -> {
+            if (dto.getNombre() != null) {
+                empleado.setNombres(dto.getNombre());
+            }
+            if (dto.getApellido() != null) {
+                empleado.setApellidos(dto.getApellido());
+            }
+            empleadoRepository.save(empleado);
+            log.info("Empleado sincronizado con Usuario #{}", usuario.getId());
+        });
+
+        log.info("✅ Usuario actualizado: {}", actualizado.getEmail());
+        return UsuarioMapper.toDTO(actualizado);
     }
 
     @Override
@@ -138,7 +168,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public List<UsuarioResponseDTO> listarUsuariosActivos() {
         List<Usuario> usuarios = usuarioRepository.findByActivoTrue();
         List<com.SaasRRHH.main.model.Empleado> empleados = empleadoRepository.findAll();
-        
+
         Map<Long, com.SaasRRHH.main.model.Empleado> empleadoMap = empleados.stream()
                 .filter(e -> e.getUsuario() != null)
                 .collect(Collectors.toMap(e -> e.getUsuario().getId(), e -> e, (a, b) -> a));
@@ -184,30 +214,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.contarUsuariosPorRol();
     }
 
-    // ✅ MÉTODO ACTUALIZAR (CRUD)
-    @Override
-    public UsuarioResponseDTO actualizar(Long id, UsuarioRequestDTO dto) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        if (!usuario.getEmail().equals(dto.getEmail()) &&
-                usuarioRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("El email ya está siendo usado por otro usuario");
-        }
-
-        Rol rol = rolRepository.findById(dto.getRolId())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-
-        UsuarioMapper.updateEntity(usuario, dto, rol);
-
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            String passwordEncriptada = passwordEncoder.encode(dto.getPassword());
-            usuario.setPassword(passwordEncriptada);
-        }
-
-        return UsuarioMapper.toDTO(usuarioRepository.save(usuario));
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioResponseDTO> listarUsuariosSinEmpleado() {
@@ -217,7 +223,6 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ NUEVO MÉTODO PARA PERFIL
     @Override
     public UsuarioResponseDTO actualizarPerfil(Long id, Map<String, String> profileData) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -246,5 +251,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         });
 
         return UsuarioMapper.toDTO(usuario);
+    }
+
+    @Override
+    public UsuarioResponseDTO actualizarUltimoAcceso(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setUltimoAcceso(LocalDateTime.now());
+        return UsuarioMapper.toDTO(usuarioRepository.save(usuario));
     }
 }

@@ -104,24 +104,32 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public EmpleadoResponseDTO actualizar(Long id, EmpleadoRequestDTO dto) {
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID: " + id));
-        
+
         if (dto.getHoraEntrada() != null || dto.getHoraSalida() != null) {
             validarHorarioLaboral(dto);
         }
-        
+
         EmpleadoMapper.updateEntity(empleado, dto);
-        
+
         if (dto.getUsuarioId() != null) {
             Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             empleado.setUsuario(usuario);
+
+            if (dto.getNombres() != null) {
+                usuario.setNombre(dto.getNombres());
+            }
+            if (dto.getApellidos() != null) {
+                usuario.setApellido(dto.getApellidos());
+            }
+            usuarioRepository.save(usuario);
         }
-        
+
         validarTipoPago(empleado);
-        
+
         Empleado actualizado = empleadoRepository.save(empleado);
         log.info("✅ Empleado actualizado: {} {}", actualizado.getNombres(), actualizado.getApellidos());
-        
+
         return EmpleadoMapper.toDTO(actualizado);
     }
 
