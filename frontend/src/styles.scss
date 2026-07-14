@@ -32,8 +32,9 @@ $theme: mat.define-theme((
   --color-secondary-dark: #16A34A;
   --color-secondary-light: #DCFCE7;
 
-  --color-accent: #F59E0B;         /* actions / alerts */
-  --color-accent-light: #FEF3C7;
+  --color-accent: #2563EB;         /* actions / alerts (blue) */
+  --color-accent-light: #DBEAFE;
+  --color-accent-dark: #1E3A8A;
 
   /* ================================
      SEMANTIC STATES
@@ -1313,4 +1314,16 @@ textarea {
     border: 1px solid #ddd;
     break-inside: avoid;
   }
+}
+
+/* ======================================================
+   GLOBAL MAT-ICON ALIGNMENT
+   Ensures professional vertical alignment with text
+====================================================== */
+mat-icon {
+  display: inline-flex;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }

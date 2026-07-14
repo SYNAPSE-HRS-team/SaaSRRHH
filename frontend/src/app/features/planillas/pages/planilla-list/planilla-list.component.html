@@ -1,15 +1,15 @@
 <div class="page-container">
   <div class="page-header">
     <div class="header-left">
-      <h1>📋 Planillas</h1>
+      <h1><mat-icon>assignment</mat-icon> Planillas</h1>
       <p class="subtitle">Administración completa de planillas de pago</p>
     </div>
     <div class="header-actions">
-      <button class="btn-refresh" (click)="load()" [disabled]="loading()">
-        {{ loading() ? '⏳' : '🔄' }} Actualizar
+      <button class="btn-refresh" (click)="load()" [disabled]="loading()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+        <mat-icon>{{ loading() ? 'hourglass_empty' : 'sync' }}</mat-icon> Actualizar
       </button>
-      <button class="btn-primary" (click)="openForm(null)" id="btn-nueva-planilla">
-        ➕ Nueva Planilla
+      <button class="btn-primary" (click)="openForm(null)" id="btn-nueva-planilla" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+        <mat-icon>add</mat-icon> Nueva Planilla
       </button>
     </div>
   </div>
@@ -17,27 +17,27 @@
   <!-- Stats -->
   <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
     <div class="stat-card">
-      <span class="stat-icon">📋</span>
+      <span class="stat-icon"><mat-icon>assignment</mat-icon></span>
       <span class="stat-label">Total</span>
       <span class="stat-value">{{ planillas().length }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">🟢</span>
+      <span class="stat-icon"><mat-icon style="color: #4caf50;">check_circle</mat-icon></span>
       <span class="stat-label">Procesadas</span>
       <span class="stat-value">{{ countEstado('PROCESADO') }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">🔒</span>
+      <span class="stat-icon"><mat-icon>lock</mat-icon></span>
       <span class="stat-label">Cerradas</span>
       <span class="stat-value">{{ countEstado('CERRADO') }}</span>
     </div>
   </div>
 
   @if (error()) {
-    <div class="error-banner">⚠️ {{ error() }}</div>
+    <div class="error-banner"><mat-icon>warning</mat-icon> {{ error() }}</div>
   }
   @if (success()) {
-    <div class="success-banner">✅ {{ success() }}</div>
+    <div class="success-banner"><mat-icon>check_circle</mat-icon> {{ success() }}</div>
   }
 
   <!-- Filters -->
@@ -66,10 +66,10 @@
       </div>
     } @else if (filtered().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📋</div>
+        <div class="empty-icon"><mat-icon>assignment</mat-icon></div>
         <h3>No hay planillas</h3>
         <p>Crea una nueva planilla o revisa los filtros aplicados.</p>
-        <button class="btn-primary" (click)="openForm(null)">➕ Nueva Planilla</button>
+        <button class="btn-primary" (click)="openForm(null)"><mat-icon>add</mat-icon> Nueva Planilla</button>
       </div>
     } @else {
       <div class="table-container">
@@ -110,8 +110,8 @@
                 </td>
                 <td>
                   <div class="table-actions">
-                    <button class="btn-info" (click)="openForm(p)" title="Editar" id="btn-editar-planilla-{{ p.id }}">✏️</button>
-                    <button class="btn-danger" (click)="confirmarEliminar(p)" title="Eliminar" id="btn-eliminar-planilla-{{ p.id }}">🗑️</button>
+                    <button class="btn-info" (click)="openForm(p)" title="Editar" id="btn-editar-planilla-{{ p.id }}"><mat-icon>edit</mat-icon></button>
+                    <button class="btn-danger" (click)="confirmarEliminar(p)" title="Eliminar" id="btn-eliminar-planilla-{{ p.id }}"><mat-icon>delete</mat-icon></button>
                   </div>
                 </td>
               </tr>
@@ -128,12 +128,15 @@
   <div class="modal-overlay" (click)="closeForm()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>{{ editando ? '✏️ Editar Planilla' : '➕ Nueva Planilla' }}</h3>
+        <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
+          <mat-icon style="color: white;">{{ editando ? 'edit' : 'add' }}</mat-icon>
+          <span>{{ editando ? 'Editar Planilla' : 'Nueva Planilla' }}</span>
+        </h3>
         <button class="modal-close" (click)="closeForm()">✕</button>
       </div>
       <div class="modal-body">
         @if (formError()) {
-          <div class="error-banner">⚠️ {{ formError() }}</div>
+          <div class="error-banner"><mat-icon>warning</mat-icon> {{ formError() }}</div>
         }
         <div class="form-grid" style="gap: 1rem;">
           <div class="form-group">
@@ -169,7 +172,7 @@
         <button class="btn-cancel" (click)="closeForm()">Cancelar</button>
         <button class="btn-primary" (click)="guardar()" [disabled]="saving()">
           @if (saving()) { <span class="spinner"></span> Guardando... }
-          @else { 💾 Guardar }
+          @else { <mat-icon>save</mat-icon> Guardar }
         </button>
       </div>
     </div>
@@ -181,7 +184,10 @@
   <div class="modal-overlay" (click)="showDelete.set(false)">
     <div class="modal-card modal-sm" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>⚠️ Confirmar Eliminación</h3>
+        <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
+          <mat-icon style="color: white;">warning</mat-icon>
+          <span>Confirmar Eliminación</span>
+        </h3>
         <button class="modal-close" (click)="showDelete.set(false)">✕</button>
       </div>
       <div class="modal-body">
@@ -195,7 +201,7 @@
         <button class="btn-cancel" (click)="showDelete.set(false)">Cancelar</button>
         <button class="btn-danger" style="padding: 0.6rem 1.25rem;" (click)="eliminar()" [disabled]="deleting()">
           @if (deleting()) { <span class="spinner" style="border-top-color: var(--color-danger);"></span> Eliminando... }
-          @else { 🗑️ Eliminar }
+          @else { <mat-icon>delete</mat-icon> Eliminar }
         </button>
       </div>
     </div>

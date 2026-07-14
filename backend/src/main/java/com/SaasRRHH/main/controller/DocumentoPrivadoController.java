@@ -2,6 +2,7 @@ package com.SaasRRHH.main.controller;
 
 import com.SaasRRHH.main.DTO.DocumentoPrivadoRequestDTO;
 import com.SaasRRHH.main.DTO.DocumentoPrivadoResponseDTO;
+import com.SaasRRHH.main.DTO.TipoDocumentoResponseDTO;
 import com.SaasRRHH.main.services.DocumentoPrivadoService;
 import com.SaasRRHH.main.services.FileStorageService;
 
@@ -155,6 +156,14 @@ public class DocumentoPrivadoController {
                                 service.buscarPorEmpleado(
                                                 empleadoId));
         }
+
+        @GetMapping("/buscar-fecha-emision")
+        public ResponseEntity<List<DocumentoPrivadoResponseDTO>> buscarFechaEmision(@RequestParam("fecha")
+                                                                                            @DateTimeFormat(iso=DateTimeFormat.ISO.DATE)
+                                                                                            LocalDate fecha){
+                return  ResponseEntity.ok(service.buscarPorFechaEmision(fecha));
+        }
+
 
         @GetMapping("/tipo/{tipoId}")
         public ResponseEntity<List<DocumentoPrivadoResponseDTO>> buscarPorTipo(

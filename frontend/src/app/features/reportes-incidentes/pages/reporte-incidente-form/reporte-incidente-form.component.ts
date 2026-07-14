@@ -14,11 +14,12 @@ import { TareaAsignadaService } from '../../../../core/services/tarea-asignada.s
 import { TareaAsignadaResponse } from '../../../../core/models/tarea-asignada.model';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-reporte-incidente-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './reporte-incidente-form.component.html',
   styleUrls: ['./reporte-incidente-form.component.scss'],
 })
@@ -381,6 +382,17 @@ export class ReporteIncidenteFormComponent implements OnInit {
       'INCONCLUSO': '⚠️',
     };
     return iconos[estado] || '📋';
+  }
+
+  getMaterialIconoEstado(estado: string): string {
+    const iconos: { [key: string]: string } = {
+      'PENDIENTE': 'hourglass_empty',
+      'EN_PROGRESO': 'sync',
+      'COMPLETADO': 'check_circle',
+      'CANCELADO': 'cancel',
+      'INCONCLUSO': 'warning',
+    };
+    return iconos[estado] || 'assignment';
   }
 
   // ============================================

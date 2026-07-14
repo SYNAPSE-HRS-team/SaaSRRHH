@@ -1,10 +1,10 @@
 <div class="reporte-incidente-list">
   <!-- Header -->
   <div class="page-header">
-    <h1>📋 Reportes de Incidentes</h1>
+    <h1><mat-icon>assignment</mat-icon> Reportes de Incidentes</h1>
     <div class="header-actions">
       <button class="btn btn-primary" (click)="nuevoReporte()">
-        <i class="fas fa-plus"></i> Nuevo Reporte
+        <i class="fas fa-plus"></i> + Nuevo Reporte
       </button>
     </div>
   </div>
@@ -12,7 +12,7 @@
   <!-- Stats Cards -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"><mat-icon>analytics</mat-icon></div>
       <div class="stat-info">
         <span class="stat-label">Total Reportes</span>
         <span class="stat-value">{{ totalReportes }}</span>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="stat-card critical">
-      <div class="stat-icon">⚠️</div>
+      <div class="stat-icon"><mat-icon>warning</mat-icon></div>
       <div class="stat-info">
         <span class="stat-label">Críticos</span>
         <span class="stat-value">{{ totalCriticos }}</span>
@@ -28,7 +28,7 @@
     </div>
 
     <div class="stat-card today">
-      <div class="stat-icon">📅</div>
+      <div class="stat-icon"><mat-icon>event</mat-icon></div>
       <div class="stat-info">
         <span class="stat-label">De Hoy</span>
         <span class="stat-value">{{ totalHoy }}</span>
@@ -97,7 +97,7 @@
 
   <!-- Error -->
   <div *ngIf="error" class="error-message">
-    <p>❌ Error al cargar los reportes</p>
+    <p><mat-icon>cancel</mat-icon> Error al cargar los reportes</p>
     <button class="btn btn-primary" (click)="cargarReportes()">Reintentar</button>
   </div>
 
@@ -140,21 +140,21 @@
           <td>{{ reporte.fechaIncidente | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td class="actions-cell">
             <button class="btn btn-sm btn-info" (click)="verReporte(reporte.id)" title="Ver">
-              👁️
+              <mat-icon>visibility</mat-icon>
             </button>
             <button
               class="btn btn-sm btn-warning"
               (click)="editarReporte(reporte.id)"
               title="Editar"
             >
-              ✏️
+              <mat-icon>edit</mat-icon>
             </button>
             <button
               class="btn btn-sm btn-danger"
               (click)="eliminarReporte(reporte.id)"
               title="Eliminar"
             >
-              🗑️
+              <mat-icon>delete</mat-icon>
             </button>
           </td>
         </tr>

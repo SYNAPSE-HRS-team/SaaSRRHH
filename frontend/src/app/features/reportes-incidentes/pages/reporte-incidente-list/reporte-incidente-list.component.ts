@@ -10,11 +10,12 @@ import {
     TipoIncidente,
 } from '../../../../core/models/reporte-incidente.model';
 import { ReporteIncidenteService } from '../../../../core/services/reporte-incidente.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-reporte-incidente-list',
   standalone: true, // ← AGREGAR
-  imports: [CommonModule, FormsModule], // ← AGREGAR
+  imports: [CommonModule, FormsModule, MatIconModule], // ← AGREGAR
   templateUrl: './reporte-incidente-list.component.html',
   styleUrls: ['./reporte-incidente-list.component.scss'],
 })

@@ -8,7 +8,15 @@ export interface RegistroAsistencia {
   metodo?: string;
   estado?: string;
   observaciones?: string;
+  // ✅ NUEVOS CAMPOS
+  minutosTardanza?: number;
+  esFalta?: boolean;
+  justificado?: boolean;
+  motivoJustificacion?: string;
+  nombreEmpleado?: string;
+  dniEmpleado?: string;
 }
+
 export interface AsistenciaQr {
   payload: string;
   empleadoId: number;
@@ -16,6 +24,7 @@ export interface AsistenciaQr {
   segundosRestantes: number;
   expiraEnEpoch: number;
 }
+
 export interface CalendarioDia {
   fecha: string;
   estado: 'ASISTIO' | 'FALTA' | 'NEUTRO' | string;
@@ -23,11 +32,13 @@ export interface CalendarioDia {
   horaEntrada?: string | null;
   horaSalida?: string | null;
 }
+
 export interface CalendarioMes {
   anio: number;
   mes: number;
   dias: CalendarioDia[];
 }
+
 export interface CalendarioAnual {
   anio: number;
   meses: CalendarioMes[];

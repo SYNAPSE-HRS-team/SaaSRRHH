@@ -2,7 +2,6 @@ package com.SaasRRHH.main.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,4 +15,10 @@ public class RegistroAsistenciaRequestDTO {
     private String metodo;
     private String estado;
     private String observaciones;
+    
+    // ✅ NUEVOS CAMPOS (faltaban en tu versión)
+    private Integer minutosTardanza;
+    private Boolean esFalta;
+    private Boolean justificado;
+    private String motivoJustificacion;
 }

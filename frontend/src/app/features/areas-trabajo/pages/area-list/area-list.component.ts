@@ -1,13 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { AreaTrabajoService } from '../../../../core/services/area-trabajo.service';
 import { AreaTrabajo } from '../../../../core/models/area-trabajo.model';
 
 @Component({
   selector: 'app-area-list',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, MatIconModule],
   templateUrl: './area-list.component.html',
   styleUrls: ['./area-list.component.scss']
 })

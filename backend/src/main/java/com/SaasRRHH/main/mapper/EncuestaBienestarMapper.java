@@ -27,6 +27,21 @@ public class EncuestaBienestarMapper {
         return encuesta;
     }
 
+    // ✅ NUEVO: Sobrecarga con empleado ya resuelto
+    public static Encuestabienestar toEntity(EncuestaBienestarRequestDTO dto, Empleado empleado) {
+        if (dto == null) {
+            return null;
+        }
+
+        Encuestabienestar encuesta = new Encuestabienestar();
+        encuesta.setEmpleado(empleado);
+        encuesta.setFecha(dto.getFecha());
+        encuesta.setCargaLaboral(dto.getCargaLaboral());
+        encuesta.setApoyoEquipo(dto.getApoyoEquipo());
+        encuesta.setProyeccion(dto.getProyeccion());
+        return encuesta;
+    }
+
     public static EncuestaBienestarResponseDTO toDTO(Encuestabienestar encuesta) {
         if (encuesta == null) {
             return null;
@@ -39,6 +54,7 @@ public class EncuestaBienestarMapper {
         dto.setCargaLaboral(encuesta.getCargaLaboral());
         dto.setApoyoEquipo(encuesta.getApoyoEquipo());
         dto.setProyeccion(encuesta.getProyeccion());
+        
         // Nombre del empleado
         if (encuesta.getEmpleado() != null) {
             dto.setNombreEmpleado(encuesta.getEmpleado().getNombres() + " " + encuesta.getEmpleado().getApellidos());
@@ -48,7 +64,7 @@ public class EncuestaBienestarMapper {
         Double promedio = calcularPromedio(encuesta.getCargaLaboral(), encuesta.getApoyoEquipo(),
                 encuesta.getProyeccion());
         dto.setPromedioGeneral(promedio);
-        dto.setNivelBienestar(clasificarNivel(promedio));
+        dto.setNivelBienestar(encuesta.getNivelBienestar() != null ? encuesta.getNivelBienestar() : clasificarNivel(promedio));
         return dto;
     }
 
@@ -62,9 +78,9 @@ public class EncuestaBienestarMapper {
     private static String clasificarNivel(Double promedio) {
         if (promedio == null)
             return null;
-        if (promedio >= 4.0)
+        if (promedio <= 2.0)
             return "BUENO";
-        if (promedio >= 2.5)
+        if (promedio <= 3.5)
             return "REGULAR";
         return "CRITICO";
     }

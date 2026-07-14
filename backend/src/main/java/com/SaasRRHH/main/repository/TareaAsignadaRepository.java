@@ -21,7 +21,8 @@ public interface TareaAsignadaRepository extends JpaRepository<TareaAsignada, Lo
     @Query("SELECT t FROM TareaAsignada t " +
            "LEFT JOIN FETCH t.empleado e " +
            "LEFT JOIN FETCH t.supervisor s " +
-           "LEFT JOIN FETCH t.area a")
+           "LEFT JOIN FETCH t.area a " +
+            "ORDER BY t.fecha DESC")
     List<TareaAsignada> findAllWithRelations();
 
     @Query("SELECT t FROM TareaAsignada t " +

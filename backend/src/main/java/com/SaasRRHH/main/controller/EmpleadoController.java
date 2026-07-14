@@ -3,9 +3,7 @@ package com.SaasRRHH.main.controller;
 import com.SaasRRHH.main.DTO.EmpleadoRequestDTO;
 import com.SaasRRHH.main.DTO.EmpleadoResponseDTO;
 import com.SaasRRHH.main.services.EmpleadoService;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/empleados")
@@ -21,138 +20,92 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class EmpleadoController {
 
-        private final EmpleadoService service;
+    private final EmpleadoService empleadoService;
 
-        // ===================================
-        // CRUD
-        // ===================================
+    @GetMapping
+    public ResponseEntity<List<EmpleadoResponseDTO>> listar() {
+        return ResponseEntity.ok(empleadoService.listar());
+    }
 
-        @GetMapping
-        public ResponseEntity<List<EmpleadoResponseDTO>> listar() {
-                return ResponseEntity.ok(service.listar());
-        }
+    @GetMapping("/activos")
+    public ResponseEntity<List<EmpleadoResponseDTO>> listarActivos() {
+        return ResponseEntity.ok(empleadoService.listarActivos());
+    }
 
-        @GetMapping("/supervisores")
-        public ResponseEntity<List<EmpleadoResponseDTO>> listarSupervisores() {
-                return ResponseEntity.ok(service.listarSupervisores());
-        }
+    // ✅ ESTE ES EL ENDPOINT QUE FALTABA
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<EmpleadoResponseDTO> buscarPorUsuarioId(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(empleadoService.buscarPorUsuarioId(usuarioId));
+    }
 
-        @GetMapping("/{id}")
-        public ResponseEntity<EmpleadoResponseDTO> obtener(@PathVariable Long id) {
-                try {
-                        return ResponseEntity.ok(service.buscarPorId(id));
-                } catch (RuntimeException e) {
-                        return ResponseEntity.notFound().build();
-                }
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<EmpleadoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(empleadoService.buscarPorId(id));
+    }
 
-        @GetMapping("/dni/{dni}")
-        public ResponseEntity<EmpleadoResponseDTO> buscarPorDni(@PathVariable String dni) {
-                try {
-                        return ResponseEntity.ok(service.buscarPorDni(dni));
-                } catch (RuntimeException e) {
-                        return ResponseEntity.notFound().build();
-                }
-        }
+    @GetMapping("/dni/{dni}")
+    public ResponseEntity<EmpleadoResponseDTO> buscarPorDni(@PathVariable String dni) {
+        return ResponseEntity.ok(empleadoService.buscarPorDni(dni));
+    }
 
-        @GetMapping("/activos")
-        public ResponseEntity<List<EmpleadoResponseDTO>> listarActivos() {
-                return ResponseEntity.ok(service.listarActivos());
-        }
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EmpleadoResponseDTO> guardar(@RequestBody EmpleadoRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(empleadoService.guardar(dto));
+    }
 
-        @GetMapping("/trabajadores")
-        public ResponseEntity<List<EmpleadoResponseDTO>> listarTrabajadores() {
-                return ResponseEntity.ok(service.listarTrabajadores());
-        }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EmpleadoResponseDTO> actualizar(@PathVariable Long id, @RequestBody EmpleadoRequestDTO dto) {
+        return ResponseEntity.ok(empleadoService.actualizar(id, dto));
+    }
 
-        // ✅ TU MÉTODO (Nancy)
-        @GetMapping("/usuario/{usuarioId}")
-        public ResponseEntity<EmpleadoResponseDTO> buscarPorUsuarioId(@PathVariable Long usuarioId) {
-                try {
-                        return ResponseEntity.ok(service.buscarPorUsuarioId(usuarioId));
-                } catch (RuntimeException e) {
-                        return ResponseEntity.notFound().build();
-                }
-        }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        empleadoService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
 
-        // ✅ MÉTODOS DE MIGUEL
-        @GetMapping("/trabajadores-rol")
-        public ResponseEntity<List<EmpleadoResponseDTO>> listarTrabajadoresByRol() {
-                return ResponseEntity.ok(service.listarTrabajadoresByRol());
-        }
+    @GetMapping("/{id}/resumen-puntualidad")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public ResponseEntity<EmpleadoResponseDTO> obtenerResumenPuntualidad(@PathVariable Long id) {
+        return ResponseEntity.ok(empleadoService.obtenerResumenPuntualidad(id));
+    }
 
-        @GetMapping("/supervisores-rol")
-        public ResponseEntity<List<EmpleadoResponseDTO>> listarSupervisoresByRol() {
-                return ResponseEntity.ok(service.listarSupervisoresByRol());
-        }
+    @GetMapping("/{id}/horas-contrato")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+    public ResponseEntity<Map<String, Object>> calcularHorasContrato(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+        long horasContrato = empleadoService.calcularHorasContrato(id, inicio, fin);
+        long horasReales = empleadoService.calcularHorasReales(id, inicio, fin);
+        return ResponseEntity.ok(Map.of(
+                "empleadoId", id,
+                "periodo", Map.of("inicio", inicio.toString(), "fin", fin.toString()),
+                "horasContrato", horasContrato,
+                "horasReales", horasReales,
+                "diferencia", horasReales - horasContrato));
+    }
 
-        @PostMapping
-        public ResponseEntity<EmpleadoResponseDTO> crear(@RequestBody EmpleadoRequestDTO dto) {
-                try {
-                        EmpleadoResponseDTO empleado = service.guardar(dto);
-                        return ResponseEntity.status(HttpStatus.CREATED).body(empleado);
-                } catch (RuntimeException e) {
-                        return ResponseEntity.badRequest().build();
-                }
-        }
+    @PatchMapping("/{id}/horario")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EmpleadoResponseDTO> actualizarHorario(@PathVariable Long id, @RequestBody Map<String, Object> horario) {
+        EmpleadoRequestDTO dto = new EmpleadoRequestDTO();
+        if (horario.containsKey("horaEntrada")) dto.setHoraEntrada(java.time.LocalTime.parse((String) horario.get("horaEntrada")));
+        if (horario.containsKey("horaSalida")) dto.setHoraSalida(java.time.LocalTime.parse((String) horario.get("horaSalida")));
+        if (horario.containsKey("diasLaborables")) dto.setDiasLaborables((String) horario.get("diasLaborables"));
+        if (horario.containsKey("toleranciaMinutos")) dto.setToleranciaMinutos((Integer) horario.get("toleranciaMinutos"));
+        return ResponseEntity.ok(empleadoService.actualizar(id, dto));
+    }
 
-        @PutMapping("/{id}")
-        @PreAuthorize("hasRole('ADMIN')")
-        public ResponseEntity<EmpleadoResponseDTO> actualizar(
-                        @PathVariable Long id,
-                        @RequestBody EmpleadoRequestDTO dto) {
-                try {
-                        EmpleadoResponseDTO empleadoActualizado = service.actualizar(id, dto);
-                        return ResponseEntity.ok(empleadoActualizado);
-                } catch (RuntimeException e) {
-                        return ResponseEntity.badRequest().build();
-                }
-        }
-
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-                try {
-                        service.eliminar(id);
-                        return ResponseEntity.noContent().build();
-                } catch (RuntimeException e) {
-                        return ResponseEntity.notFound().build();
-                }
-        }
-
-        // ===================================
-        // CONSULTAS JPQL
-        // ===================================
-
-        @GetMapping("/cargo/{cargo}")
-        public ResponseEntity<List<EmpleadoResponseDTO>> buscarPorCargo(@PathVariable String cargo) {
-                return ResponseEntity.ok(service.buscarPorCargo(cargo));
-        }
-
-        @GetMapping("/cargo-activo")
-        public ResponseEntity<List<EmpleadoResponseDTO>> buscarPorCargoYActivo(
-                        @RequestParam String cargo,
-                        @RequestParam Boolean activo) {
-                return ResponseEntity.ok(service.buscarPorCargoYActivo(cargo, activo));
-        }
-
-        @GetMapping("/activos-usuario")
-        public ResponseEntity<List<EmpleadoResponseDTO>> listarActivosConUsuario() {
-                return ResponseEntity.ok(service.listarActivosConUsuario());
-        }
-
-        @GetMapping("/contratos-vencidos")
-        public ResponseEntity<List<EmpleadoResponseDTO>> contratosVencidos() {
-                return ResponseEntity.ok(service.contratosVencidos());
-        }
-
-        @GetMapping("/contratos-por-vencer")
-        public ResponseEntity<List<EmpleadoResponseDTO>> contratosPorVencer(
-                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaLimite) {
-                return ResponseEntity.ok(service.contratosPorVencer(fechaLimite));
-        }
-
-        @GetMapping("/estadisticas/cargos")
-        public ResponseEntity<List<Object[]>> contarEmpleadosPorCargo() {
-                return ResponseEntity.ok(service.contarEmpleadosPorCargo());
-        }
+    @PatchMapping("/{id}/tipo-pago")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EmpleadoResponseDTO> actualizarTipoPago(@PathVariable Long id, @RequestBody Map<String, Object> tipoPago) {
+        EmpleadoRequestDTO dto = new EmpleadoRequestDTO();
+        if (tipoPago.containsKey("tipoPago")) dto.setTipoPago((String) tipoPago.get("tipoPago"));
+        if (tipoPago.containsKey("montoPago")) dto.setMontoPago(new java.math.BigDecimal(tipoPago.get("montoPago").toString()));
+        return ResponseEntity.ok(empleadoService.actualizar(id, dto));
+    }
 }

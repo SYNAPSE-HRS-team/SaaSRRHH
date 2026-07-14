@@ -67,8 +67,38 @@ export class EmpleadoService extends BaseService<EmpleadoRequest, EmpleadoRespon
   // ===================================
   // NUEVO MÉTODO PARA PERFIL
   // ===================================
-  
+
   buscarPorUsuarioId(usuarioId: number): Observable<EmpleadoResponse> {
     return this.http.get<EmpleadoResponse>(`${this.baseUrl}/usuario/${usuarioId}`);
+  }
+
+  // Agregar estos métodos a tu EmpleadoService existente:
+
+  /**
+   * ✅ Obtener resumen de puntualidad de un empleado
+   */
+  obtenerResumenPuntualidad(id: number): Observable<EmpleadoResponse> {
+    return this.http.get<EmpleadoResponse>(`${this.baseUrl}/${id}/resumen-puntualidad`);
+  }
+
+  /**
+   * ✅ Calcular horas contrato vs reales
+   */
+  calcularHorasContrato(id: number, inicio: string, fin: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${id}/horas-contrato`, { params: { inicio, fin } });
+  }
+
+  /**
+   * ✅ Actualizar solo el horario de un empleado
+   */
+  actualizarHorario(id: number, horario: any): Observable<EmpleadoResponse> {
+    return this.http.patch<EmpleadoResponse>(`${this.baseUrl}/${id}/horario`, horario);
+  }
+
+  /**
+   * ✅ Actualizar tipo de pago
+   */
+  actualizarTipoPago(id: number, tipoPago: any): Observable<EmpleadoResponse> {
+    return this.http.patch<EmpleadoResponse>(`${this.baseUrl}/${id}/tipo-pago`, tipoPago);
   }
 }

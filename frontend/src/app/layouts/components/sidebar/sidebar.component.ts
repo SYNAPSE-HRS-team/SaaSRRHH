@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, signal, effect } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../core/services/auth.service';
 
 interface MenuItem {
@@ -12,12 +13,11 @@ interface MenuItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, MatIconModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-
   @Input() mobileOpen = false;
   @Output() mobileClose = new EventEmitter<void>();
   @Output() collapseChange = new EventEmitter<boolean>();
@@ -25,39 +25,53 @@ export class SidebarComponent {
   collapsed = signal(false);
   currentUser: ReturnType<AuthService['getCurrentUser']>;
 
-  // Menú fusionado
   menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: '📊', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Empleados', icon: '👥', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
-    { label: 'Áreas de Trabajo', icon: '🏢', route: '/areas-trabajo', roles: ['ADMIN'] },
-    { label: 'Tareas', icon: '✅', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Asistencia', icon: '⏰', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Nómina', icon: '💰', route: '/nomina', roles: ['ADMIN'] },
-    { label: 'Boletas', icon: '🧾', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Incidentes', icon: '⚠️', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
-    { label: 'Reportes Diarios', icon: '📝', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Documentos', icon: '📄', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
-    // ✅ CORREGIDO: Ruta de bienestar
-    { label: 'Bienestar', icon: '💚', route: '/bienestar', roles: ['EMPLEADO', 'TRABAJADOR', 'ADMIN'] },
-    { label: 'Feedback', icon: '💬', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
-    { label: 'Métricas Burnout', icon: '💚', route: '/bienestar/metricas-burnout', roles: ['ADMIN', 'SUPERVISOR'] },
-
-    { label: 'Usuarios', icon: '🔐', route: '/usuarios', roles: ['ADMIN'] },
+    // Todos los roles
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    
+    // Solo ADMIN y SUPERVISOR
+    { label: 'Empleados', icon: 'people', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
+    
+    // Solo ADMIN
+    { label: 'Áreas de Trabajo', icon: 'business', route: '/areas-trabajo', roles: ['ADMIN'] },
+    
+    // Todos los roles
+    { label: 'Tareas', icon: 'assignment_turned_in', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
+    { label: 'Asistencia', icon: 'schedule', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
+    
+    // Solo ADMIN
+    { label: 'Nómina', icon: 'payments', route: '/nomina', roles: ['ADMIN'] },
+    
+    // ADMIN y TRABAJADOR
+    { label: 'Boletas', icon: 'receipt_long', route: '/boletas', roles: ['ADMIN', 'EMPLEADO'] },
+    
+    // Solo ADMIN y SUPERVISOR
+    { label: 'Incidentes', icon: 'report_problem', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
+    
+    // Todos los roles
+    { label: 'Reportes Diarios', icon: 'description', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
+    
+    // Solo ADMIN y SUPERVISOR
+    { label: 'Documentos', icon: 'article', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
+    
+    // Solo ADMIN y SUPERVISOR (ellos gestionan encuestas)
+    { label: 'Bienestar', icon: 'health_and_safety', route: '/bienestar/encuestas', roles: ['ADMIN', 'SUPERVISOR'] },
+    
+    // Todos los roles
+    { label: 'Feedback', icon: 'forum', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO'] },
+    
+    // Solo ADMIN
+    { label: 'Métricas Burnout', icon: 'psychology', route: '/bienestar/metricas-burnout', roles: ['ADMIN'] },
+    { label: 'Usuarios', icon: 'admin_panel_settings', route: '/usuarios', roles: ['ADMIN'] },
   ];
 
   constructor(private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser();
-
-    // Sincroniza signal → output
-    effect(() => {
-      this.collapseChange.emit(this.collapsed());
-    });
+    effect(() => { this.collapseChange.emit(this.collapsed()); });
   }
 
   getFilteredMenuItems(): MenuItem[] {
-    return this.menuItems.filter(item =>
-      item.roles.some(role => this.authService.hasRole(role))
-    );
+    return this.menuItems.filter(item => item.roles.some(role => this.authService.hasRole(role)));
   }
 
   getInitials(): string {
@@ -67,15 +81,10 @@ export class SidebarComponent {
     return email.substring(0, 2).toUpperCase();
   }
 
-  toggleCollapse(): void {
-    this.collapsed.update(v => !v);
-  }
+  toggleCollapse(): void { this.collapsed.update(v => !v); }
 
   onNavClick(): void {
-    // Cerrar sidebar en móvil al navegar
-    if (window.innerWidth <= 1024) {
-      this.mobileClose.emit();
-    }
+    if (window.innerWidth <= 1024) { this.mobileClose.emit(); }
   }
 
   logout(): void {

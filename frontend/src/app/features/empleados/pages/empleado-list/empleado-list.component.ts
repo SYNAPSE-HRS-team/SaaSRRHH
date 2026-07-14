@@ -1,16 +1,17 @@
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
-import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 
 @Component({
   selector: 'app-empleado-list',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, MatIconModule, NgIf],
   templateUrl: './empleado-list.component.html',
-  styleUrls: ['./empleado-list.component.scss']
+  styleUrls: ['./empleado-list.component.scss'],
 })
 export class EmpleadoListComponent implements OnInit {
   empleados = signal<EmpleadoResponse[]>([]);
@@ -36,10 +37,11 @@ export class EmpleadoListComponent implements OnInit {
   constructor(
     private empleadoService: EmpleadoService,
     private authService: AuthService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.hasRole('ADMIN');
+    console.log('isAdmin =', this.isAdmin);
     this.loadEmpleados();
   }
 
@@ -51,13 +53,13 @@ export class EmpleadoListComponent implements OnInit {
       next: (data) => {
         this.empleados.set(data);
         this.applyFilters();
-        this.cargosDisponibles = [...new Set(data.map(e => e.cargo).filter(Boolean) as string[])];
+        this.cargosDisponibles = [...new Set(data.map((e) => e.cargo).filter(Boolean) as string[])];
         this.loading.set(false);
       },
       error: (err) => {
         this.error.set('Error al cargar empleados: ' + (err.error?.message || err.message));
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -80,20 +82,21 @@ export class EmpleadoListComponent implements OnInit {
     let result = this.empleados();
 
     if (this.searchTerm) {
-      result = result.filter(e =>
-        e.nombres.toLowerCase().includes(this.searchTerm) ||
-        e.apellidos.toLowerCase().includes(this.searchTerm) ||
-        e.dni.toLowerCase().includes(this.searchTerm) ||
-        (e.cargo || '').toLowerCase().includes(this.searchTerm)
+      result = result.filter(
+        (e) =>
+          e.nombres.toLowerCase().includes(this.searchTerm) ||
+          e.apellidos.toLowerCase().includes(this.searchTerm) ||
+          e.dni.toLowerCase().includes(this.searchTerm) ||
+          (e.cargo || '').toLowerCase().includes(this.searchTerm),
       );
     }
 
     if (this.filterEstado) {
-      result = result.filter(e => e.activo === (this.filterEstado === 'true'));
+      result = result.filter((e) => e.activo === (this.filterEstado === 'true'));
     }
 
     if (this.filterCargo) {
-      result = result.filter(e => e.cargo === this.filterCargo);
+      result = result.filter((e) => e.cargo === this.filterCargo);
     }
 
     this.filteredEmpleados.set(result);
@@ -123,7 +126,7 @@ export class EmpleadoListComponent implements OnInit {
       error: (err) => {
         this.deleting.set(false);
         alert('Error al eliminar empleado: ' + (err.error?.message || err.message));
-      }
+      },
     });
   }
 }

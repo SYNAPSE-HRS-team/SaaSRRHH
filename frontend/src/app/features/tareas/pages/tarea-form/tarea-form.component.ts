@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import {
   EstadoTarea,
   FuncionTarea,
@@ -14,7 +15,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 @Component({
   selector: 'app-tarea-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './tarea-form.component.html',
   styleUrls: ['./tarea-form.component.scss'],
 })

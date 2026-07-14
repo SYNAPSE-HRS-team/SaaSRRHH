@@ -20,7 +20,7 @@ public class RegistroAsistencia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empleado_id", nullable = false)
     private Empleado empleado;
 
@@ -42,4 +42,20 @@ public class RegistroAsistencia {
 
     @Column(name = "observaciones", length = 500)
     private String observaciones;
+    
+    // ============================================
+    // ✅ NUEVOS CAMPOS: CONTROL DE TARDANZAS Y FALTAS
+    // ============================================
+    
+    @Column(name = "minutos_tardanza")
+    private Integer minutosTardanza = 0; // Minutos de retraso (0 si es puntual)
+    
+    @Column(name = "es_falta")
+    private Boolean esFalta = false; // true si no marcó en un día laborable
+    
+    @Column(name = "justificado")
+    private Boolean justificado = false; // true si la falta/tardanza tiene justificación
+    
+    @Column(name = "motivo_justificacion", length = 500)
+    private String motivoJustificacion; // Texto opcional para justificar
 }

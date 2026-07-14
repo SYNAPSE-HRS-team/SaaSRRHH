@@ -2,7 +2,7 @@
   <div class="page-header">
     <h1>{{ getTitulo() }}</h1>
     <div class="header-actions">
-      <button class="btn btn-secondary" (click)="cancelar()">⬅️ Volver</button>
+      <button class="btn btn-secondary" (click)="cancelar()"><mat-icon>arrow_back</mat-icon> Volver</button>
     </div>
   </div>
 
@@ -14,7 +14,7 @@
 
   <!-- Error -->
   <div *ngIf="error" class="error-message">
-    <p>❌ {{ errorMessage }}</p>
+    <p><mat-icon>cancel</mat-icon> {{ errorMessage }}</p>
     <button class="btn btn-secondary" (click)="error = false">Cerrar</button>
   </div>
 
@@ -25,13 +25,13 @@
     <!-- SECCIÓN: SELECCIÓN DE TAREA CON FILTROS      -->
     <!-- ============================================ -->
     <div class="form-section">
-      <h3 class="section-title">📋 Seleccionar Tarea</h3>
+      <h3 class="section-title"><mat-icon>assignment</mat-icon> Seleccionar Tarea</h3>
 
       <!-- ✅ BARRA DE FILTROS -->
       <div class="filtros-container">
         <!-- Búsqueda -->
         <div class="filtro-group search-group">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"><mat-icon>search</mat-icon></span>
           <input
             type="text"
             placeholder="Buscar tarea..."
@@ -42,7 +42,7 @@
 
         <!-- Filtro por fecha -->
         <div class="filtro-group">
-          <label>📅 Fecha</label>
+          <label><mat-icon>event</mat-icon> Fecha</label>
           <select
             [value]="filtros.fecha"
             (change)="onFiltroFechaChange($event)"
@@ -57,7 +57,7 @@
 
         <!-- Filtro por estado -->
         <div class="filtro-group">
-          <label>📊 Estado</label>
+          <label><mat-icon>analytics</mat-icon> Estado</label>
           <select
             [value]="filtros.estado"
             (change)="onFiltroEstadoChange($event)"
@@ -72,7 +72,7 @@
 
         <!-- Filtro por empleado -->
         <div class="filtro-group">
-          <label>👤 Empleado</label>
+          <label><mat-icon>person</mat-icon> Empleado</label>
           <select
             [value]="filtros.empleadoId ?? ''"
             (change)="onFiltroEmpleadoChange($event)"
@@ -86,7 +86,7 @@
         </div>
 
         <!-- Limpiar filtros -->
-        <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">🧹 Limpiar</button>
+        <button type="button" class="btn-limpiar" (click)="limpiarFiltros()"><mat-icon>delete_sweep</mat-icon> Limpiar</button>
       </div>
 
       <!-- Contador de tareas -->
@@ -96,7 +96,7 @@
           <strong>{{ totalTareasOriginales }}</strong> tareas
         </span>
         <span *ngIf="!hayTareasFiltradas" class="no-tareas-msg">
-          ⚠️ No hay tareas que coincidan con los filtros
+          <mat-icon>warning</mat-icon> No hay tareas que coincidan con los filtros
         </span>
       </div>
 
@@ -127,7 +127,7 @@
         </select>
 
         <small class="field-note">
-          💡 Seleccione una tarea para autocompletar empleado, supervisor y área
+          <mat-icon>lightbulb</mat-icon> Seleccione una tarea para autocompletar empleado, supervisor y área
         </small>
 
         <div class="error-text" *ngIf="f['tareaId'].invalid && submitted">
@@ -137,7 +137,7 @@
 
       <!-- Resumen de la tarea seleccionada -->
       <div *ngIf="selectedTarea" class="tarea-resumen">
-        <h4>📌 Tarea seleccionada</h4>
+        <h4><mat-icon>push_pin</mat-icon> Tarea seleccionada</h4>
         <div class="resumen-grid">
           <div class="resumen-item">
             <span class="label">ID:</span>
@@ -150,7 +150,7 @@
           <div class="resumen-item">
             <span class="label">Estado:</span>
             <span class="value" [style.color]="getColorEstado(selectedTarea.estado)">
-              {{ getIconoEstado(selectedTarea.estado) }} {{ selectedTarea.estado }}
+              <mat-icon>{{ getMaterialIconoEstado(selectedTarea.estado) }}</mat-icon> {{ selectedTarea.estado }}
             </span>
           </div>
           <div class="resumen-item">
@@ -169,7 +169,7 @@
     <!-- SECCIÓN: DATOS DE EMPLEADO, SUPERVISOR, ÁREA  -->
     <!-- ============================================ -->
     <div class="form-section">
-      <h3 class="section-title">👥 Datos Asociados</h3>
+      <h3 class="section-title"><mat-icon>people</mat-icon> Datos Asociados</h3>
 
       <div class="form-grid">
         <div class="form-group">
@@ -179,7 +179,7 @@
               {{ getNombreCompleto(selectedTarea?.empleado) }}
             </span>
             <span *ngIf="!selectedTarea?.empleado" class="empty-text">
-              ⚠️ Seleccione una tarea
+              <mat-icon>warning</mat-icon> Seleccione una tarea
             </span>
           </div>
         </div>
@@ -191,7 +191,7 @@
               {{ getNombreCompleto(selectedTarea?.supervisor) }}
             </span>
             <span *ngIf="!selectedTarea?.supervisor" class="empty-text">
-              ⚠️ Seleccione una tarea
+              <mat-icon>warning</mat-icon> Seleccione una tarea
             </span>
           </div>
         </div>
@@ -202,7 +202,7 @@
             <span *ngIf="selectedTarea?.area">
               {{ selectedTarea?.area?.nombre || 'No disponible' }}
             </span>
-            <span *ngIf="!selectedTarea?.area" class="empty-text"> ⚠️ Seleccione una tarea </span>
+            <span *ngIf="!selectedTarea?.area" class="empty-text"> <mat-icon>warning</mat-icon> Seleccione una tarea </span>
           </div>
         </div>
       </div>
@@ -212,7 +212,7 @@
     <!-- SECCIÓN: DATOS DEL INCIDENTE                 -->
     <!-- ============================================ -->
     <div class="form-section">
-      <h3 class="section-title">⚠️ Datos del Incidente</h3>
+      <h3 class="section-title"><mat-icon>warning</mat-icon> Datos del Incidente</h3>
 
       <div class="form-grid">
         <div class="form-group">

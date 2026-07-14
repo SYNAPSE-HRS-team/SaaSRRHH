@@ -1,5 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/services/auth.service';
 import { AnaliticaService, DashboardDTO } from '../../../../core/services/analitica.service';
 
@@ -13,7 +15,7 @@ interface ActionItem {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -21,25 +23,25 @@ export class DashboardComponent implements OnInit {
   user: ReturnType<AuthService['getCurrentUser']>;
   isAdmin = false;
   isSupervisor = false;
-  isEmpleado = false;
+  isTrabajador = false;
   rolLabel = '';
 
   loading = signal(false);
   dashboardData = signal<DashboardDTO | null>(null);
 
   allActions: ActionItem[] = [
-    { icon: '👥', label: 'Gestionar Empleados', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: '🏢', label: 'Áreas de Trabajo', route: '/areas-trabajo', roles: ['ADMIN'] },
-    { icon: '✅', label: 'Ver Tareas', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { icon: '⏰', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { icon: '💰', label: 'Nómina', route: '/nomina', roles: ['ADMIN'] },
-    { icon: '🧾', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'EMPLEADO', 'TRABAJADOR'] },
-    { icon: '⚠️', label: 'Reportar Incidente', route: '/incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: '📝', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { icon: '📄', label: 'Documentos', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR', 'EMPLEADO', 'TRABAJADOR'] },
-    { icon: '💚', label: 'Encuesta Bienestar', route: '/encuestas-bienestar', roles: ['EMPLEADO', 'TRABAJADOR'] },
-    { icon: '💬', label: 'Feedback Anónimo', route: '/feedback', roles: ['EMPLEADO', 'TRABAJADOR'] },
-    { icon: '🔐', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] }
+    { icon: 'people', label: 'Gestionar Empleados', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'business', label: 'Áreas de Trabajo', route: '/areas-trabajo', roles: ['ADMIN'] },
+    { icon: 'assignment_turned_in', label: 'Ver Tareas', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'schedule', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'payments', label: 'Nómina', route: '/nomina', roles: ['ADMIN'] },
+    { icon: 'receipt_long', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
+    { icon: 'report_problem', label: 'Reportar Incidente', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'description', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'article', label: 'Documentos', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'health_and_safety', label: 'Bienestar', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
+    { icon: 'forum', label: 'Feedback', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'admin_panel_settings', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] }
   ];
 
   get filteredActions(): ActionItem[] {
@@ -62,20 +64,18 @@ export class DashboardComponent implements OnInit {
     const rol = this.user?.rol ?? '';
     this.isAdmin = rol === 'ADMIN';
     this.isSupervisor = rol === 'SUPERVISOR';
-    this.isEmpleado = rol === 'EMPLEADO' || rol === 'TRABAJADOR';
+    this.isTrabajador = rol === 'TRABAJADOR';
 
     const roleLabels: Record<string, string> = {
       'ADMIN': 'Administrador',
       'SUPERVISOR': 'Supervisor',
-      'EMPLEADO': 'Empleado',
-      'TRABAJADOR': 'Empleado'
+      'TRABAJADOR': 'Trabajador'
     };
     this.rolLabel = roleLabels[rol] || rol;
   }
 
   loadDashboard(): void {
     this.loading.set(true);
-
     this.analiticaService.obtenerDashboard().subscribe({
       next: (data) => {
         this.dashboardData.set(data);
@@ -83,7 +83,6 @@ export class DashboardComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        // Si falla la API, mostrar datos vacíos (no bloquear)
       }
     });
   }
@@ -93,8 +92,6 @@ export class DashboardComponent implements OnInit {
       'BAJO': 'bajo',
       'MEDIO': 'medio',
       'ALTO': 'alto',
-      'CRÍTICO': 'critico',
-      'CRITICO': 'critico'
     };
     return map[nivel?.toUpperCase() ?? ''] || '';
   }

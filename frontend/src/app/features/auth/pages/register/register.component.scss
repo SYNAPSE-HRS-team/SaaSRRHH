@@ -26,12 +26,12 @@
 }
 
 .form-group input:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary, #2563eb);
 }
 
 .btn-primary {
   padding: 0.85rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-primary, #2563eb);
   color: white;
   border: none;
   border-radius: 10px;
@@ -47,7 +47,8 @@
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  background: var(--color-primary-dark, #1e3a8a);
 }
 
 .btn-primary:disabled {
@@ -71,7 +72,7 @@
 }
 
 .login-link a {
-  color: #667eea;
+  color: var(--color-primary, #2563eb);
   text-decoration: none;
   font-weight: 600;
 }

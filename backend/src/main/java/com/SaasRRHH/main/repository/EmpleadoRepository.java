@@ -7,119 +7,126 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
 
-   Optional<Empleado> findByDni(String dni);
+    List<Empleado> findByActivoTrue();
+    
+    Optional<Empleado> findByUsuarioId(Long usuarioId);
+    
+    Optional<Empleado> findByDni(String dni);
+    
+    boolean existsByDni(String dni);
+    
+    List<Empleado> findByCargoContainingIgnoreCase(String cargo);
+    
+    List<Empleado> findByFechaInicioContratoBetween(LocalDate inicio, LocalDate fin);
+    
+    @Query("SELECT e FROM Empleado e WHERE e.fechaFinContrato IS NOT NULL AND e.fechaFinContrato < :fecha")
+    List<Empleado> findContratosVencidos(@Param("fecha") LocalDate fecha);
 
-   List<Empleado> findByActivoTrue();
+    // ============================================
+    // ✅ NUEVAS QUERIES PARA HORARIOS Y FILTROS
+    // ============================================
 
-   // ✅ TU VERSIÓN (Nancy) - con @Query explícita
-   @Query("SELECT e FROM Empleado e WHERE e.usuario.id = :usuarioId")
-   Optional<Empleado> findByUsuarioId(@Param("usuarioId") Long usuarioId);
-
-   // ✅ AGREGADO POR MIGUEL - Supervisores
-   @Query("""
-       SELECT DISTINCT t.supervisor
-       FROM TareaAsignada t
-       WHERE t.supervisor IS NOT NULL
-       ORDER BY t.supervisor.apellidos ASC
-   """)
-   List<Empleado> findSupervisores();
-
-   // ✅ AGREGADO POR MIGUEL - Trabajadores (no supervisores)
-   @Query("""
+    /**
+     * Busca empleados activos con su horario configurado
+     */
+    @Query("""
        SELECT e
        FROM Empleado e
-       WHERE e.id NOT IN (
-           SELECT DISTINCT t.supervisor.id
-           FROM TareaAsignada t
-           WHERE t.supervisor IS NOT NULL
-       )
-       AND e.activo = true
-       ORDER BY e.apellidos ASC
-   """)
-   List<Empleado> findTrabajadores();
+       LEFT JOIN FETCH e.usuario u
+       WHERE e.activo = true
+       ORDER BY e.apellidos, e.nombres
+       """)
+    List<Empleado> findActivosConHorario();
 
-   // ✅ AGREGADO POR MIGUEL - Trabajadores por rol
-   @Query("""
+    /**
+     * Busca empleados por área de trabajo (si existe la relación)
+     */
+    @Query("""
        SELECT e
        FROM Empleado e
-       JOIN e.usuario u
-       JOIN u.rol r
-       WHERE r.nombreRol IN ('TRABAJADOR', 'EMPLEADO')
-       AND e.activo = true
-       AND r.nombreRol != 'ADMIN'
-       ORDER BY e.apellidos ASC
-   """)
-   List<Empleado> findTrabajadoresByRol();
+       WHERE e.activo = true
+       AND e.cargo LIKE %:area%
+       ORDER BY e.apellidos, e.nombres
+       """)
+    List<Empleado> findByAreaTrabajo(@Param("area") String area);
 
-   // ✅ AGREGADO POR MIGUEL - Supervisores por rol
-   @Query("""
+    /**
+     * Busca empleados que trabajan en un día específico de la semana
+     */
+    @Query("""
        SELECT e
        FROM Empleado e
-       JOIN e.usuario u
-       JOIN u.rol r
-       WHERE r.nombreRol = 'SUPERVISOR'
-       AND e.activo = true
-       ORDER BY e.apellidos ASC
-   """)
-   List<Empleado> findSupervisoresByRol();
+       WHERE e.activo = true
+       AND e.diasLaborables LIKE %:dia%
+       ORDER BY e.apellidos, e.nombres
+       """)
+    List<Empleado> findEmpleadosPorDiaLaborable(@Param("dia") String dia);
 
-   @Query("""
-         SELECT e
-         FROM Empleado e
-         WHERE e.cargo = :cargo
-         ORDER BY e.apellidos ASC
-         """)
-   List<Empleado> buscarPorCargo(@Param("cargo") String cargo);
+    /**
+     * Busca empleados con un tipo de pago específico
+     */
+    @Query("""
+       SELECT e
+       FROM Empleado e
+       WHERE e.activo = true
+       AND e.tipoPago = :tipoPago
+       ORDER BY e.apellidos, e.nombres
+       """)
+    List<Empleado> findByTipoPago(@Param("tipoPago") String tipoPago);
 
-   @Query("""
-         SELECT e
-         FROM Empleado e
-         WHERE e.cargo = :cargo
-         AND e.activo = :activo
-         ORDER BY e.fechaRegistro DESC
-         """)
-   List<Empleado> buscarPorCargoYEstado(
-         @Param("cargo") String cargo,
-         @Param("activo") Boolean activo);
+    /**
+     * Empleados que deberían estar trabajando ahora (según su horario)
+     */
+    @Query("""
+       SELECT e
+       FROM Empleado e
+       WHERE e.activo = true
+       AND e.horaEntrada <= :horaActual
+       AND e.horaSalida >= :horaActual
+       ORDER BY e.apellidos, e.nombres
+       """)
+    List<Empleado> findEmpleadosEnHorarioLaboral(@Param("horaActual") LocalTime horaActual);
 
-   @Query("""
-         SELECT e
-         FROM Empleado e
-         JOIN FETCH e.usuario u
-         WHERE e.activo = true
-         ORDER BY e.apellidos ASC
-         """)
-   List<Empleado> listarActivosConUsuario();
+    /**
+     * Busca empleados con tolerancia de tardanza específica
+     */
+    @Query("""
+       SELECT e
+       FROM Empleado e
+       WHERE e.activo = true
+       AND e.toleranciaMinutos >= :minutos
+       ORDER BY e.toleranciaMinutos DESC
+       """)
+    List<Empleado> findByToleranciaMinima(@Param("minutos") Integer minutos);
 
-   @Query("""
-         SELECT e
-         FROM Empleado e
-         WHERE e.fechaFinContrato IS NOT NULL
-         AND e.fechaFinContrato < CURRENT_DATE
-         ORDER BY e.fechaFinContrato ASC
-         """)
-   List<Empleado> contratosVencidos();
+    /**
+     * Obtiene estadísticas de tipos de pago
+     */
+    @Query("""
+       SELECT e.tipoPago, COUNT(e)
+       FROM Empleado e
+       WHERE e.activo = true
+       GROUP BY e.tipoPago
+       """)
+    List<Object[]> contarPorTipoPago();
 
-   @Query("""
-         SELECT e
-         FROM Empleado e
-         WHERE e.fechaFinContrato
-         BETWEEN CURRENT_DATE AND :fechaLimite
-         ORDER BY e.fechaFinContrato ASC
-         """)
-   List<Empleado> contratosPorVencer(@Param("fechaLimite") LocalDate fechaLimite);
-
-   @Query("""
-         SELECT e.cargo, COUNT(e)
-         FROM Empleado e
-         GROUP BY e.cargo
-         ORDER BY COUNT(e) DESC
-         """)
-   List<Object[]> contarEmpleadosPorCargo();
+    /**
+     * Busca empleados sin horario configurado
+     */
+    @Query("""
+       SELECT e
+       FROM Empleado e
+       WHERE e.activo = true
+       AND (e.horaEntrada IS NULL OR e.horaSalida IS NULL OR e.diasLaborables IS NULL)
+       ORDER BY e.apellidos, e.nombres
+       """)
+    List<Empleado> findEmpleadosSinHorario();
 }

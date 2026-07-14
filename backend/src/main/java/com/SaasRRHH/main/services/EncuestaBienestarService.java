@@ -2,10 +2,9 @@ package com.SaasRRHH.main.services;
 
 import com.SaasRRHH.main.DTO.EncuestaBienestarRequestDTO;
 import com.SaasRRHH.main.DTO.EncuestaBienestarResponseDTO;
-
-import java.util.List;
-import java.time.LocalDate;
 import com.SaasRRHH.main.DTO.ResumenBienestarDTO;
+import java.time.LocalDate;
+import java.util.List;
 
 public interface EncuestaBienestarService {
 
@@ -26,4 +25,20 @@ public interface EncuestaBienestarService {
     List<Long> obtenerEmpleadosEnRiesgo();
 
     ResumenBienestarDTO obtenerResumenMensual(LocalDate inicio, LocalDate fin);
+
+    // ============================================
+    // ✅ NUEVOS MÉTODOS DE INTEGRACIÓN CON BURNOUT
+    // ============================================
+
+    /**
+     * Evalúa el riesgo de burnout basado en las encuestas de bienestar
+     * @return BAJO, MEDIO, ALTO, SIN_DATOS
+     */
+    String evaluarRiesgoPorEncuestas(Long empleadoId);
+
+    /**
+     * Compara el riesgo detectado en encuestas con el riesgo de métricas de burnout
+     * @return String con el resultado de la comparación
+     */
+    String compararConBurnout(Long empleadoId);
 }

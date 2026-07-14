@@ -32,16 +32,13 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // ✅ NUEVO: Configuración de CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -50,7 +47,6 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -59,67 +55,52 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ AGREGAR CORS
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll().requestMatchers("/uploads/**").permitAll()
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                // Públicas
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/uploads/**").permitAll()
 
-                        .requestMatchers("/api/boletas_pago/mis-boletas")
-                        .authenticated()
+                // Perfil de usuario (cualquier autenticado)
+                .requestMatchers("/api/usuarios/profile").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/profile").authenticated()
 
-                        .requestMatchers("/api/nomina/boleta/*/pdf")
-                        .authenticated()
+                // Cualquier usuario autenticado
+                .requestMatchers("/api/empleados/usuario/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/empleados/activos").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/empleados/dni/**").authenticated()
+                .requestMatchers("/api/tareas-asignadas/**").authenticated()
+                .requestMatchers("/api/asistencias/**").authenticated()
+                .requestMatchers("/api/feedback-anonimo/**").authenticated()
+                .requestMatchers("/api/reportes-diarios/**").authenticated()
+                .requestMatchers("/api/boletas_pago/mis-boletas").authenticated()
+                .requestMatchers("/api/analitica/dashboard").authenticated()
 
-                                .requestMatchers("/api/usuarios/profile").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/profile").authenticated()
+                // ADMIN y SUPERVISOR
+                .requestMatchers("/api/encuestas-bienestar/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/empleados/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/burnout/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/nomina/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/planillas/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/documentos-privados/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/tipos-documento/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/areas-trabajo/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/reportes-incidentes/**").hasAnyRole("ADMIN", "SUPERVISOR")
+                .requestMatchers("/api/boletas_pago/**").hasAnyRole("ADMIN", "SUPERVISOR")
 
-                        .requestMatchers(
-                                "/api/usuarios/**",
-                                "/api/roles/**",
-                                "/api/nomina/**",
-                                "/api/planillas/**",
-                                "/api/boletas_pago/**",
-                                "/api/analitica/**",
-                                "/api/dispositivos-autorizados/**",
-                                "/api/accesos/**",
-                                "/api/validaciones-seguridad/**")
-                        .hasRole("ADMIN")
+                // ADMIN exclusivo (VA DESPUÉS de las rutas específicas)
+                .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/api/roles/**").hasRole("ADMIN")
+                .requestMatchers("/api/dispositivos-autorizados/**").hasRole("ADMIN")
+                .requestMatchers("/api/accesos/**").hasRole("ADMIN")
+                .requestMatchers("/api/validaciones-seguridad/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.PUT, "/api/empleados/**")
-                        .hasRole("ADMIN")
-
-                        // Permitir a usuarios autenticados consultar sus propios datos de empleado y tareas
-                        .requestMatchers(HttpMethod.GET, "/api/empleados/usuario/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/empleado/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/tareas-asignadas/*").authenticated()
-
-                        // Permitir a usuarios autenticados gestionar sus reportes diarios
-                        .requestMatchers(HttpMethod.POST, "/api/reportes-diarios").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/reportes-diarios/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/reportes-diarios/empleado/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/reportes-diarios/*").authenticated()
-
-                        .requestMatchers(
-                                "/api/empleados/**",
-                                "/api/tareas-asignadas/**",
-                                "/api/reportes-incidentes/**",
-                                "/api/reportes-diarios/**",
-                                "/api/documentos-privados/**",
-                                "/api/tipos-documento/**",
-                                "/api/areas-trabajo/**",
-                                "/api/burnout/**")
-                        .hasAnyRole("ADMIN", "SUPERVISOR")
-
-                        .requestMatchers(
-                                "/api/encuestas-bienestar/**",
-                                "/api/feedback-anonimo/**",
-                                "/api/familiares/**",
-                                "/api/asistencias/**")
-                        .authenticated()
-
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // Cualquier otra
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -6,16 +6,16 @@
     </div>
     <div class="header-actions">
       <button class="btn-refresh" (click)="loadEmpleados()" [disabled]="loading()">
-        <span>🔄</span> Actualizar
+        <mat-icon>sync</mat-icon> Actualizar
       </button>
-      <a routerLink="/empleados/nuevo" class="btn-primary"> <span>➕</span> Nuevo Empleado </a>
+      <a routerLink="/empleados/nuevo" class="btn-primary"> + Nuevo Empleado </a>
     </div>
   </div>
 
   <!-- Filtros -->
   <div class="filters-bar">
     <div class="search-box">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon"><mat-icon>search</mat-icon></span>
       <input
         type="text"
         placeholder="Buscar por nombre, apellido, DNI o cargo..."
@@ -48,7 +48,7 @@
   <!-- Error -->
   @if (error()) {
     <div class="error-state">
-      <span class="error-icon">⚠️</span>
+      <span class="error-icon"><mat-icon>warning</mat-icon></span>
       <p>{{ error() }}</p>
       <button class="btn-retry" (click)="loadEmpleados()">Reintentar</button>
     </div>
@@ -57,7 +57,7 @@
   <!-- Empty -->
   @if (!loading() && !error() && filteredEmpleados().length === 0) {
     <div class="empty-state">
-      <span class="empty-icon">👥</span>
+      <span class="empty-icon"><mat-icon>people</mat-icon></span>
       <h3>No hay empleados registrados</h3>
       <p>Comienza registrando un nuevo empleado en el sistema.</p>
       <a routerLink="/empleados/nuevo" class="btn-primary">Registrar Empleado</a>
@@ -103,10 +103,19 @@
                 }
               </td>
               <td class="actions-cell">
-                <button class="btn-icon" title="Ver detalle" (click)="verDetalle(emp)">👁️</button>
-                <a *ngIf="isAdmin" [routerLink]="['/empleados', emp.id]" class="btn-icon" title="Editar empleado">✏️</a>
+                <button class="btn-icon" title="Ver detalle" (click)="verDetalle(emp)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <a
+                  *ngIf="isAdmin"
+                  [routerLink]="['/empleados/editar', emp.id]"
+                  class="btn-icon"
+                  title="Editar empleado"
+                >
+                  <mat-icon>edit</mat-icon>
+                </a>
                 <button class="btn-icon" title="Eliminar" (click)="confirmarEliminar(emp)">
-                  🗑️
+                  <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </tr>
@@ -126,7 +135,7 @@
     <div class="modal-overlay" (click)="showDeleteModal.set(false)">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <span class="modal-icon">⚠️</span>
+          <span class="modal-icon"><mat-icon>warning</mat-icon></span>
           <h3>Confirmar Eliminación</h3>
         </div>
         <p>
@@ -154,7 +163,7 @@
     <div class="modal-overlay" (click)="showDetailModal.set(false)">
       <div class="modal-content modal-detail" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <span class="modal-icon">👤</span>
+          <span class="modal-icon"><mat-icon>person</mat-icon></span>
           <h3>Detalle del Empleado</h3>
           <button class="btn-close" (click)="showDetailModal.set(false)">✕</button>
         </div>

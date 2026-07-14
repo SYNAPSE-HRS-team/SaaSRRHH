@@ -43,6 +43,9 @@ public class DocumentoPrivado {
         @Column(name = "fecha_vencimiento")
         private LocalDate fechaVencimiento;
 
+        @Column(name="fecha_emision", nullable = true)
+        private LocalDate fecha_emision;
+
         @Column(name = "fecha_carga", nullable = false, insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
         private LocalDateTime fechaCarga;
 

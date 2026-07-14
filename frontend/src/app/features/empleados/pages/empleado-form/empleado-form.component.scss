@@ -27,7 +27,7 @@
 }
 
 .breadcrumb a {
-  color: #667eea;
+  color: var(--color-primary, #2563eb);
   text-decoration: none;
 }
 
@@ -81,7 +81,7 @@
 }
 
 .form-select:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary, #2563eb);
 }
 
 .form-select:disabled {
@@ -117,9 +117,9 @@
 /* Agregar a los estilos existentes */
 .loading-message {
   padding: 0.7rem 0.9rem;
-  color: #667eea;
+  color: var(--color-primary, #2563eb);
   font-size: 0.9rem;
-  background: #eef2ff;
+  background: var(--color-primary-light, #dbeafe);
   border-radius: 8px;
 }
 
@@ -133,7 +133,7 @@
 }
 
 .warning-message a {
-  color: #667eea;
+  color: var(--color-primary, #2563eb);
   font-weight: 600;
   text-decoration: none;
 }
@@ -155,7 +155,7 @@
 }
 
 .form-select:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary, #2563eb);
 }
 
 .form-select:disabled {
@@ -192,7 +192,7 @@
 }
 
 .form-group input:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary, #2563eb);
 }
 
 .checkbox-label {
@@ -229,7 +229,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-primary, #2563eb);
   color: white;
   border: none;
   border-radius: 8px;
@@ -241,7 +241,8 @@
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  background: var(--color-primary-dark, #1e3a8a);
 }
 
 .btn-primary:disabled {

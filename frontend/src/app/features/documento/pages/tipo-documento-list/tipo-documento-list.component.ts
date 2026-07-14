@@ -1,28 +1,72 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TipoDocumentoRequest, TipoDocumentoResponse } from '../../../../core/models/tipo-documento.model';
+import { MatIconModule } from '@angular/material/icon';
+import {
+  TipoDocumentoRequest,
+  TipoDocumentoResponse,
+} from '../../../../core/models/tipo-documento.model';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
 
 @Component({
   selector: 'app-tipo-documento-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MatIconModule],
   templateUrl: './tipo-documento-list.component.html',
-  styleUrls: ['./tipo-documento-list.component.scss']
+  styleUrls: ['./tipo-documento-list.component.scss'],
 })
 export class TipoDocumentoListComponent implements OnInit {
-  tipos: TipoDocumentoResponse[] = [];
+  // Cambiar a signal para que sea reactivo
+  tipos = signal<TipoDocumentoResponse[]>([]);
+
+  // Signals para estado
   cargando = signal(true);
   errorHttp = signal(false);
   guardando = signal(false);
   error = signal('');
 
+  // Filtros (como signals)
+  filtroBusqueda = signal('');
+  filtroObligatorio = signal('todos'); // 'todos' | 'si' | 'no'
+  filtroRenovacion = signal('todos'); // 'todos' | 'si' | 'no'
+
+  // Tipos filtrados (computado usando signals)
+  tiposFiltrados = computed(() => {
+    let filtrados = this.tipos(); // Ahora tipos es un signal
+
+    // Filtro por búsqueda
+    const busqueda = this.filtroBusqueda().toLowerCase().trim();
+    if (busqueda) {
+      filtrados = filtrados.filter(
+        (tipo) =>
+          tipo.nombre.toLowerCase().includes(busqueda) ||
+          tipo.descripcion?.toLowerCase().includes(busqueda),
+      );
+    }
+
+    // Filtro por obligatorio
+    if (this.filtroObligatorio() === 'si') {
+      filtrados = filtrados.filter((tipo) => tipo.obligatorio);
+    } else if (this.filtroObligatorio() === 'no') {
+      filtrados = filtrados.filter((tipo) => !tipo.obligatorio);
+    }
+
+    // Filtro por renovación
+    if (this.filtroRenovacion() === 'si') {
+      filtrados = filtrados.filter((tipo) => tipo.requiereRenovacion);
+    } else if (this.filtroRenovacion() === 'no') {
+      filtrados = filtrados.filter((tipo) => !tipo.requiereRenovacion);
+    }
+
+    return filtrados;
+  });
+
+  // Estado del formulario
   mostrandoForm = false;
   editandoId: number | null = null;
 
-  // campos del formulario
+  // Campos del formulario
   nombre = '';
   obligatorio = false;
   requiereRenovacion = false;
@@ -41,14 +85,14 @@ export class TipoDocumentoListComponent implements OnInit {
 
     this.tipoDocumentoService.getAll().subscribe({
       next: (data) => {
-        this.tipos = data;
+        this.tipos.set(data); // Actualizar el signal
         this.cargando.set(false);
       },
       error: (err) => {
         console.error('Error al cargar tipos de documento:', err);
         this.errorHttp.set(true);
         this.cargando.set(false);
-      }
+      },
     });
   }
 
@@ -112,7 +156,7 @@ export class TipoDocumentoListComponent implements OnInit {
         console.error('Error al guardar tipo de documento:', err);
         this.guardando.set(false);
         this.error.set('No se pudo guardar. Verifica que el nombre no esté repetido.');
-      }
+      },
     });
   }
 
@@ -124,7 +168,13 @@ export class TipoDocumentoListComponent implements OnInit {
       error: (err) => {
         console.error('Error al eliminar tipo de documento:', err);
         alert('No se pudo eliminar. Puede que ya tenga documentos asociados.');
-      }
+      },
     });
+  }
+
+  limpiarFiltros(): void {
+    this.filtroBusqueda.set('');
+    this.filtroObligatorio.set('todos');
+    this.filtroRenovacion.set('todos');
   }
 }

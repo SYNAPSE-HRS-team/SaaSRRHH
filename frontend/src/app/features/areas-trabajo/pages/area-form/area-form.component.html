@@ -13,11 +13,11 @@
 
   <form (ngSubmit)="onSubmit()" class="area-form">
     @if (error()) {
-      <div class="error-banner">⚠️ {{ error() }}</div>
+      <div class="error-banner"><mat-icon>warning</mat-icon> {{ error() }}</div>
     }
 
     @if (successMessage()) {
-      <div class="success-banner">✅ {{ successMessage() }}</div>
+      <div class="success-banner"><mat-icon>check_circle</mat-icon> {{ successMessage() }}</div>
     }
 
     <div class="form-section">
@@ -53,7 +53,7 @@
         @if (saving()) {
           <span class="spinner"></span> Guardando...
         } @else {
-          <span>💾</span> {{ isEditing ? 'Actualizar' : 'Guardar' }} Área
+          <mat-icon>save</mat-icon> {{ isEditing ? 'Actualizar' : 'Guardar' }} Área
         }
       </button>
     </div>

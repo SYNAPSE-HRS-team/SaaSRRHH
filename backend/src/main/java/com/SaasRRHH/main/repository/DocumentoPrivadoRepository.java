@@ -41,6 +41,18 @@ public interface DocumentoPrivadoRepository
     listarActivosConRelaciones();
 
     @Query("""
+    SELECT d 
+    FROM DocumentoPrivado d
+    JOIN FETCH d.empleado e
+    JOIN FETCH d.tipo t
+    WHERE d.activo = true 
+    AND d.fecha_emision = :fechaEmision
+    ORDER BY d.fechaCarga DESC
+""")
+List<DocumentoPrivado>
+    listarPorFechaEmision(@Param("fechaEmision") LocalDate fechaEmision);
+
+    @Query("""
            SELECT d
            FROM DocumentoPrivado d
            JOIN FETCH d.empleado e
@@ -75,6 +87,8 @@ public interface DocumentoPrivadoRepository
            """)
     List<Object[]>
     contarDocumentosPorTipo();
+
+
 
     @Query("""
            SELECT e.nombres, e.apellidos, COUNT(d)

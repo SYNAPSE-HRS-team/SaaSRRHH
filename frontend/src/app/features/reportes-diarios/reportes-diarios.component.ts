@@ -8,11 +8,12 @@ import { EmpleadoService } from '../../core/services/empleado.service';
 import { TareaAsignadaService } from '../../core/services/tarea-asignada.service';
 import { ReporteDiarioService } from '../../core/services/reporte-diario.service';
 import { AuthService } from '../../core/services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-reportes-diarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './reportes-diarios.component.html',
   styleUrls: ['./reportes-diarios.component.scss'],
 })

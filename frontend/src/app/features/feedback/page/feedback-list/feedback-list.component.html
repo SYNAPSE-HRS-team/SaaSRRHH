@@ -1,0 +1,210 @@
+<div class="page-container feedback-page">
+  <div class="page-header">
+    <div class="header-left">
+      <h1><mat-icon>chat_bubble</mat-icon> Feedback de Empleados</h1>
+      <p class="subtitle">Gestiona y responde los feedbacks recibidos</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="abrirCrear()"><mat-icon>mail</mat-icon> Nuevo Feedback</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <span class="stat-number">{{ feedbacks.length }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card pendiente">
+      <span class="stat-number">{{ pendientes }}</span>
+      <span class="stat-label"><mat-icon>hourglass_empty</mat-icon> Pendientes</span>
+    </div>
+    <div class="stat-card respondido">
+      <span class="stat-number">{{ respondidos }}</span>
+      <span class="stat-label"><mat-icon>check_circle</mat-icon> Respondidos</span>
+    </div>
+  </div>
+
+  <div class="filtros-container">
+    <div class="filtro-group">
+      <label><mat-icon>analytics</mat-icon> Estado</label>
+      <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()">
+        <option value="">Todos</option>
+        <option value="PENDIENTE">Pendientes</option>
+        <option value="REVISADO">Revisados</option>
+        <option value="NO_PROCEDE">No Procede</option>
+        <option value="ACEPTADO">Aceptados</option>
+      </select>
+    </div>
+    <div class="filtro-group">
+      <label><mat-icon>folder</mat-icon> Categoría</label>
+      <select [(ngModel)]="filtroCategoria" (ngModelChange)="aplicarFiltros()">
+        <option value="">Todas</option>
+        <option value="CLIMA_LABORAL">Clima Laboral</option>
+        <option value="CARGA_TRABAJO">Carga de Trabajo</option>
+        <option value="LIDERAZGO">Liderazgo</option>
+        <option value="CONDICIONES_FISICAS">Condiciones Físicas</option>
+        <option value="COMUNICACION">Comunicación</option>
+        <option value="OTRO">Otro</option>
+      </select>
+    </div>
+    <button class="btn-limpiar" (click)="limpiarFiltros()"><mat-icon>delete_sweep</mat-icon> Limpiar</button>
+  </div>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Cargando feedbacks...</p>
+  </div>
+
+  <div *ngIf="!loading" class="table-container">
+    <table *ngIf="feedbacksFiltrados.length > 0" class="feedback-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Empleado</th><th>Categoría</th><th>Mensaje</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fb of feedbacksFiltrados">
+          <td>#{{ fb.id }}</td>
+          <td><mat-icon>person</mat-icon> Anónimo</td>
+          <td>{{ fb.categoria }}</td>
+          <td class="mensaje-cell">{{ fb.mensaje }}</td>
+          <td>
+            <span class="estado-badge" [class.pendiente]="fb.estado === 'PENDIENTE'" [class.revisado]="fb.estado === 'REVISADO'" [class.aceptado]="fb.estado === 'ACEPTADO'" [class.no-procede]="fb.estado === 'NO_PROCEDE'">{{ fb.estado }}</span>
+          </td>
+          <td>{{ fb.fechaEnvio | date: 'dd/MM/yyyy' }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon view" (click)="verDetalle(fb)" title="Ver"><mat-icon>visibility</mat-icon></button>
+            @if (fb.estado === 'PENDIENTE' && isAdmin) {
+              <button class="btn-icon respond" (click)="abrirResponder(fb)" title="Responder"><mat-icon>mail</mat-icon></button>
+            }
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="feedbacksFiltrados.length === 0" class="empty-state">
+      <span class="empty-icon"><mat-icon>chat_bubble</mat-icon></span>
+      <h3>No hay feedbacks</h3>
+      <button class="btn-primary" (click)="abrirCrear()"><mat-icon>mail</mat-icon> Crear Feedback</button>
+    </div>
+  </div>
+
+  <!-- MODAL CREAR FEEDBACK -->
+  @if (showCreateModal) {
+    <div class="modal-overlay" (click)="showCreateModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3><mat-icon>mail</mat-icon> Nuevo Feedback</h3>
+          <button class="close-btn" (click)="showCreateModal = false">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Categoría</label>
+            <select [(ngModel)]="nuevaCategoria">
+              <option value="CLIMA_LABORAL">Clima Laboral</option>
+              <option value="CARGA_TRABAJO">Carga de Trabajo</option>
+              <option value="LIDERAZGO">Liderazgo</option>
+              <option value="CONDICIONES_FISICAS">Condiciones Físicas</option>
+              <option value="COMUNICACION">Comunicación</option>
+              <option value="OTRO">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mensaje</label>
+            <textarea [(ngModel)]="nuevoMensaje" rows="4" placeholder="Describe tu situación, sugerencia o problema..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="esAnonimo" />
+              Enviar de forma anónima
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn ghost" (click)="showCreateModal = false">Cancelar</button>
+          <button class="btn primary" (click)="crearFeedback()"><mat-icon>send</mat-icon> Enviar Feedback</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL VER DETALLE -->
+  @if (showDetailModal) {
+    <div class="modal-overlay" (click)="showDetailModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3><mat-icon>visibility</mat-icon> Detalle del Feedback #{{ selectedFeedback?.id }}</h3>
+          <button class="close-btn" (click)="showDetailModal = false">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="detail-row">
+            <strong>Empleado:</strong>
+            <span><mat-icon>person</mat-icon> Anónimo</span>
+          </div>
+          <div class="detail-row">
+            <strong>Categoría:</strong>
+            <span>{{ selectedFeedback?.categoria }}</span>
+          </div>
+          <div class="detail-row">
+            <strong>Estado:</strong>
+            <span class="estado-badge" [class.pendiente]="selectedFeedback?.estado === 'PENDIENTE'" [class.revisado]="selectedFeedback?.estado === 'REVISADO'" [class.aceptado]="selectedFeedback?.estado === 'ACEPTADO'" [class.no-procede]="selectedFeedback?.estado === 'NO_PROCEDE'">{{ selectedFeedback?.estado }}</span>
+          </div>
+          <div class="detail-row">
+            <strong>Fecha:</strong>
+            <span>{{ selectedFeedback?.fechaEnvio | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="feedback-original">
+            <strong>Mensaje:</strong>
+            <p>{{ selectedFeedback?.mensaje }}</p>
+          </div>
+          @if (selectedFeedback?.respuesta) {
+            <div class="feedback-original respuesta">
+              <strong>Respuesta del Admin:</strong>
+              <p>{{ selectedFeedback?.respuesta }}</p>
+              <small>{{ selectedFeedback?.fechaRespuesta | date: 'dd/MM/yyyy HH:mm' }}</small>
+            </div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn primary" (click)="showDetailModal = false">Cerrar</button>
+          @if (selectedFeedback?.estado === 'PENDIENTE' && isAdmin) {
+            <button class="btn primary" (click)="showDetailModal = false; abrirResponder(selectedFeedback)"><mat-icon>mail</mat-icon> Responder</button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL RESPONDER -->
+  @if (showModal) {
+    <div class="modal-overlay" (click)="showModal = false">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3><mat-icon>mail</mat-icon> Responder Feedback #{{ selectedFeedback?.id }}</h3>
+          <button class="close-btn" (click)="showModal = false">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="feedback-original">
+            <strong>Mensaje del empleado:</strong>
+            <p>{{ selectedFeedback?.mensaje }}</p>
+          </div>
+          <div class="form-group">
+            <label>Tu Respuesta</label>
+            <textarea [(ngModel)]="respuesta" rows="4" placeholder="Escribe tu respuesta aquí..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Nuevo Estado</label>
+            <select [(ngModel)]="estadoRespuesta">
+              <option value="REVISADO">Revisado</option>
+              <option value="ACEPTADO">Aceptado</option>
+              <option value="NO_PROCEDE">No Procede</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn ghost" (click)="showModal = false">Cancelar</button>
+          <button class="btn primary" (click)="enviarRespuesta()"><mat-icon>send</mat-icon> Enviar Respuesta</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

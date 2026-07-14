@@ -2,15 +2,15 @@
   <!-- Header -->
   <div class="page-header">
     <div class="header-left">
-      <h1>💰 Nómina</h1>
+      <h1><mat-icon>payments</mat-icon> Nómina</h1>
       <p class="subtitle">Generación y gestión de planillas de pago</p>
     </div>
     <div class="header-actions">
-      <button class="btn-refresh" (click)="loadPlanillas()" [disabled]="loadingPlanillas()">
-        {{ loadingPlanillas() ? '⏳' : '🔄' }} Actualizar
+      <button class="btn-refresh" (click)="loadPlanillas()" [disabled]="loadingPlanillas()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+        <mat-icon>{{ loadingPlanillas() ? 'hourglass_empty' : 'sync' }}</mat-icon> Actualizar
       </button>
-      <button class="btn-primary" (click)="showGenerarModal.set(true)" id="btn-generar-planilla">
-        ➕ Generar Planilla
+      <button class="btn-primary" (click)="showGenerarModal.set(true)" id="btn-generar-planilla" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+        <mat-icon>add</mat-icon> Generar Planilla
       </button>
     </div>
   </div>
@@ -18,22 +18,22 @@
   <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-icon">📋</span>
+      <span class="stat-icon"><mat-icon>assignment</mat-icon></span>
       <span class="stat-label">Total Planillas</span>
       <span class="stat-value">{{ planillas().length }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">✅</span>
+      <span class="stat-icon"><mat-icon style="color: #4caf50;">check_circle</mat-icon></span>
       <span class="stat-label">Procesadas</span>
       <span class="stat-value">{{ countByEstado('PROCESADO') }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">🔒</span>
+      <span class="stat-icon"><mat-icon>lock</mat-icon></span>
       <span class="stat-label">Cerradas</span>
       <span class="stat-value">{{ countByEstado('CERRADO') }}</span>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">💵</span>
+      <span class="stat-icon"><mat-icon>monetization_on</mat-icon></span>
       <span class="stat-label">Última Nómina</span>
       <span class="stat-value">{{ getUltimaNomina() }}</span>
     </div>
@@ -41,10 +41,10 @@
 
   <!-- Notices -->
   @if (error()) {
-    <div class="error-banner">⚠️ {{ error() }}</div>
+    <div class="error-banner"><mat-icon>warning</mat-icon> {{ error() }}</div>
   }
   @if (success()) {
-    <div class="success-banner">✅ {{ success() }}</div>
+    <div class="success-banner"><mat-icon>check_circle</mat-icon> {{ success() }}</div>
   }
 
   <!-- Planillas Table -->
@@ -67,7 +67,7 @@
       </div>
     } @else if (filteredPlanillas().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📋</div>
+        <div class="empty-icon"><mat-icon>assignment</mat-icon></div>
         <h3>No hay planillas registradas</h3>
         <p>Genera tu primera planilla de nómina usando el botón de arriba.</p>
       </div>
@@ -92,7 +92,7 @@
                 <td>{{ planilla.mes }}/{{ planilla.anio }}</td>
                 <td>
                   @if (planilla.totalPagado != null) {
-                    <span class="money">S/ {{ planilla.totalPagado | number:'1.2-2' }}</span>
+                    <span class="money">S/ {{ planilla.totalPagado | number: '1.2-2' }}</span>
                   } @else {
                     <span class="text-muted">—</span>
                   }
@@ -109,8 +109,9 @@
                       (click)="verBoletas(planilla)"
                       [disabled]="loadingBoletas()"
                       id="btn-ver-boletas-{{ planilla.id }}"
+                      style="display: inline-flex; align-items: center; gap: 4px;"
                     >
-                      🧾 Ver Boletas
+                      <mat-icon>receipt</mat-icon> Ver Boletas
                     </button>
                     @if (planilla.estado !== 'CERRADO') {
                       <button
@@ -118,8 +119,9 @@
                         (click)="confirmarCerrar(planilla)"
                         title="Cerrar planilla"
                         id="btn-cerrar-{{ planilla.id }}"
+                        style="display: inline-flex; align-items: center; gap: 4px;"
                       >
-                        🔒 Cerrar
+                        <mat-icon>lock</mat-icon> Cerrar
                       </button>
                     }
                   </div>
@@ -138,21 +140,34 @@
   <div class="modal-overlay" (click)="showCerrarModal.set(false)">
     <div class="modal-card modal-sm" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>🔒 Confirmar Cierre</h3>
+        <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
+          <mat-icon style="color: white;">lock</mat-icon>
+          <span>Confirmar Cierre</span>
+        </h3>
         <button class="modal-close" (click)="showCerrarModal.set(false)">✕</button>
       </div>
       <div class="modal-body">
-        <p style="color: var(--color-text-secondary); font-size: 0.9rem;">
+        <p style="color: var(--color-text-secondary); font-size: 0.9rem">
           ¿Estás seguro de cerrar la planilla de
-          <strong>{{ planillaACerrar ? getMesNombre(planillaACerrar.mes) + ' ' + planillaACerrar.anio : '' }}</strong>?
-          Una vez cerrada, ya no se podrá modificar.
+          <strong>{{
+            planillaACerrar ? getMesNombre(planillaACerrar.mes) + ' ' + planillaACerrar.anio : ''
+          }}</strong
+          >? Una vez cerrada, ya no se podrá modificar.
         </p>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="showCerrarModal.set(false)">Cancelar</button>
-        <button class="btn-primary" style="background: var(--color-danger);" (click)="cerrarPlanilla()" [disabled]="cerrando()">
-          @if (cerrando()) { <span class="spinner"></span> Cerrando... }
-          @else { 🔒 Cerrar Planilla }
+        <button
+          class="btn-primary"
+          style="background: var(--color-danger); display: inline-flex; align-items: center; gap: 4px;"
+          (click)="cerrarPlanilla()"
+          [disabled]="cerrando()"
+        >
+          @if (cerrando()) {
+            <span class="spinner"></span> Cerrando...
+          } @else {
+            <mat-icon>lock</mat-icon> Cerrar Planilla
+          }
         </button>
       </div>
     </div>
@@ -164,7 +179,10 @@
   <div class="modal-overlay" (click)="closeGenerarModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>📋 Generar Nueva Planilla</h3>
+        <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
+          <mat-icon style="color: white;">assignment</mat-icon>
+          <span>Generar Nueva Planilla</span>
+        </h3>
         <button class="modal-close" (click)="closeGenerarModal()">✕</button>
       </div>
       <div class="modal-body">
@@ -174,7 +192,7 @@
         </p>
 
         @if (generarError()) {
-          <div class="error-banner">⚠️ {{ generarError() }}</div>
+          <div class="error-banner"><mat-icon>warning</mat-icon> {{ generarError() }}</div>
         }
 
         <div class="modal-form">
@@ -199,17 +217,17 @@
           </div>
         </div>
 
-        <div class="info-banner" style="margin-top: 1rem; margin-bottom: 0;">
-          💡 Si ya existe una planilla para este período, el sistema retornará la existente.
+        <div class="info-banner" style="margin-top: 1rem; margin-bottom: 0">
+          <mat-icon>lightbulb</mat-icon> Si ya existe una planilla para este período, el sistema retornará la existente.
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeGenerarModal()">Cancelar</button>
-        <button class="btn-primary" (click)="generarPlanilla()" [disabled]="generando()">
+        <button class="btn-primary" (click)="generarPlanilla()" [disabled]="generando()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
           @if (generando()) {
             <span class="spinner"></span> Generando...
           } @else {
-            ⚡ Generar Planilla
+            <mat-icon>flash_on</mat-icon> Generar Planilla
           }
         </button>
       </div>
@@ -222,7 +240,17 @@
   <div class="modal-overlay" (click)="showBoletasModal.set(false)">
     <div class="modal-card modal-lg" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>🧾 Boletas — {{ planillaSeleccionada ? getMesNombre(planillaSeleccionada.mes) + ' ' + planillaSeleccionada.anio : '' }}</h3>
+        <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
+          <mat-icon style="color: white;">receipt</mat-icon>
+          <span>
+            Boletas —
+            {{
+              planillaSeleccionada
+                ? getMesNombre(planillaSeleccionada.mes) + ' ' + planillaSeleccionada.anio
+                : ''
+            }}
+          </span>
+        </h3>
         <button class="modal-close" (click)="showBoletasModal.set(false)">✕</button>
       </div>
       <div class="modal-body">
@@ -240,7 +268,7 @@
         } @else {
           <div class="boletas-summary">
             <span>{{ boletas().length }} boleta(s) encontradas</span>
-            <span class="money-positive">Total: S/ {{ getTotalBoletas() | number:'1.2-2' }}</span>
+            <span class="money-positive">Total: S/ {{ getTotalBoletas() | number: '1.2-2' }}</span>
           </div>
           <div class="table-container">
             <table>
@@ -268,12 +296,16 @@
                         }
                       </div>
                     </td>
-                    <td>S/ {{ boleta.sueldoBase | number:'1.2-2' }}</td>
+                    <td>S/ {{ boleta.sueldoBase | number: '1.2-2' }}</td>
                     <td>{{ boleta.diasTrabajados }}</td>
-                    <td class="money-positive">S/ {{ boleta.totalIngresos | number:'1.2-2' }}</td>
-                    <td class="money-negative">S/ {{ boleta.totalDescuentos | number:'1.2-2' }}</td>
+                    <td class="money-positive">S/ {{ boleta.totalIngresos | number: '1.2-2' }}</td>
+                    <td class="money-negative">
+                      S/ {{ boleta.totalDescuentos | number: '1.2-2' }}
+                    </td>
                     <td>
-                      <strong class="neto-badge">S/ {{ boleta.netoPagar | number:'1.2-2' }}</strong>
+                      <strong class="neto-badge"
+                        >S/ {{ boleta.netoPagar | number: '1.2-2' }}</strong
+                      >
                     </td>
                     <td>
                       <button

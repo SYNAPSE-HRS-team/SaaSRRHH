@@ -31,7 +31,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.7rem 1.25rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--color-primary, #2563eb);
   color: white;
   border: none;
   border-radius: 8px;
@@ -40,11 +40,13 @@
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s;
-}
 
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background: var(--color-primary-dark, #1e3a8a);
+    color: white;
+  }
 }
 
 .btn-refresh {
@@ -63,8 +65,8 @@
 }
 
 .btn-refresh:hover:not(:disabled) {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: var(--color-primary, #2563eb);
+  color: var(--color-primary, #2563eb);
 }
 
 .btn-refresh:disabled {
@@ -117,7 +119,7 @@
 }
 
 .filter-select:focus {
-  border-color: #667eea;
+  border-color: var(--color-primary, #2563eb);
 }
 
 .loading-state,
@@ -137,7 +139,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid #e0e0e0;
-  border-top-color: #667eea;
+  border-top-color: var(--color-primary, #2563eb);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -161,7 +163,7 @@
 .btn-retry {
   margin-top: 1rem;
   padding: 0.6rem 1.5rem;
-  background: #667eea;
+  background: var(--color-primary, #2563eb);
   color: white;
   border: none;
   border-radius: 8px;
@@ -217,8 +219,8 @@
 }
 
 .cargo-badge {
-  background: #eef2ff;
-  color: #667eea;
+  background: var(--color-primary-light, #dbeafe);
+  color: var(--color-primary, #2563eb);
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
   font-size: 0.8rem;
