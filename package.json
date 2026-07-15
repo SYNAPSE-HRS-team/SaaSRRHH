@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "concurrently \"cd backend && mvnw.cmd spring-boot:run\" \"cd frontend && ng serve\""
+        "start": "concurrently \"cd backend && mvnw.cmd spring-boot:run\" \"cd frontend && ng serve --host 0.0.0.0\""
     },
     "devDependencies": {
         "concurrently": "^9.0.0"

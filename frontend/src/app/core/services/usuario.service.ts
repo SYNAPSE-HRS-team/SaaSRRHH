@@ -8,7 +8,7 @@ import { UsuarioRequest, UsuarioResponse } from '../models/usuario.model';
 })
 export class UsuarioService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/usuarios';
+  private apiUrl = '/api/usuarios';
 
   listar(): Observable<UsuarioResponse[]> {
     console.log('🔍 Frontend: Llamando a listar()');
