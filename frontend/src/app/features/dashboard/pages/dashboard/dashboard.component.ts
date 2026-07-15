@@ -32,15 +32,15 @@ export class DashboardComponent implements OnInit {
   allActions: ActionItem[] = [
     { icon: 'people', label: 'Gestionar Empleados', route: '/empleados', roles: ['ADMIN', 'SUPERVISOR'] },
     { icon: 'business', label: 'Áreas de Trabajo', route: '/areas-trabajo', roles: ['ADMIN'] },
-    { icon: 'assignment_turned_in', label: 'Ver Tareas', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
-    { icon: 'schedule', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'assignment_turned_in', label: 'Ver Tareas', route: '/tareas', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR', 'EMPLEADO'] },
+    { icon: 'schedule', label: 'Registrar Asistencia', route: '/asistencias', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR', 'EMPLEADO'] },
     { icon: 'payments', label: 'Nómina', route: '/nomina', roles: ['ADMIN'] },
-    { icon: 'receipt_long', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR'] },
+    { icon: 'receipt_long', label: 'Mis Boletas', route: '/boletas', roles: ['ADMIN', 'TRABAJADOR', 'EMPLEADO'] },
     { icon: 'report_problem', label: 'Reportar Incidente', route: '/reportes-incidentes', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: 'description', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'description', label: 'Reportes Diarios', route: '/reportes-diarios', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR', 'EMPLEADO'] },
     { icon: 'article', label: 'Documentos', route: '/documentos', roles: ['ADMIN', 'SUPERVISOR'] },
     { icon: 'health_and_safety', label: 'Bienestar', route: '/bienestar', roles: ['ADMIN', 'SUPERVISOR'] },
-    { icon: 'forum', label: 'Feedback', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR'] },
+    { icon: 'forum', label: 'Feedback', route: '/feedback', roles: ['ADMIN', 'SUPERVISOR', 'TRABAJADOR', 'EMPLEADO'] },
     { icon: 'admin_panel_settings', label: 'Usuarios', route: '/usuarios', roles: ['ADMIN'] }
   ];
 
@@ -64,12 +64,13 @@ export class DashboardComponent implements OnInit {
     const rol = this.user?.rol ?? '';
     this.isAdmin = rol === 'ADMIN';
     this.isSupervisor = rol === 'SUPERVISOR';
-    this.isTrabajador = rol === 'TRABAJADOR';
+    this.isTrabajador = rol === 'TRABAJADOR' || rol === 'EMPLEADO';
 
     const roleLabels: Record<string, string> = {
       'ADMIN': 'Administrador',
       'SUPERVISOR': 'Supervisor',
-      'TRABAJADOR': 'Trabajador'
+      'TRABAJADOR': 'Trabajador',
+      'EMPLEADO': 'Empleado'
     };
     this.rolLabel = roleLabels[rol] || rol;
   }

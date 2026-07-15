@@ -132,8 +132,14 @@ export class UsuariosComponent implements OnInit {
     if (!id) return;
     if (confirm('¿Seguro que deseas eliminar este usuario?')) {
       this.usuarioService.eliminar(id).subscribe({
-        next: () => this.cargarUsuarios(),
-        error: (err: any) => console.error(err),
+        next: () => {
+          this.cargarUsuarios();
+          alert('Usuario eliminado con éxito.');
+        },
+        error: (err: any) => {
+          console.error('Error al eliminar usuario:', err);
+          alert('Error al eliminar el usuario. Por favor, inténtelo de nuevo.');
+        },
       });
     }
   }

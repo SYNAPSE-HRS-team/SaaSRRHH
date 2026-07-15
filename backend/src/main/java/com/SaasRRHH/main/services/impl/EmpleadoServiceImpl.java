@@ -224,7 +224,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public List<EmpleadoResponseDTO> listarTrabajadoresByRol() {
         return empleadoRepository.findByActivoTrue().stream()
                 .filter(e -> e.getUsuario() != null && e.getUsuario().getRol() != null &&
-                        "TRABAJADOR".equalsIgnoreCase(e.getUsuario().getRol().getNombreRol()))
+                        ("TRABAJADOR".equalsIgnoreCase(e.getUsuario().getRol().getNombreRol()) ||
+                         "EMPLEADO".equalsIgnoreCase(e.getUsuario().getRol().getNombreRol())))
                 .map(EmpleadoMapper::toDTO)
                 .collect(Collectors.toList());
     }

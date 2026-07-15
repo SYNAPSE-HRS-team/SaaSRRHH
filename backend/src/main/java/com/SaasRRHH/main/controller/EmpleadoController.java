@@ -38,6 +38,26 @@ public class EmpleadoController {
         return ResponseEntity.ok(empleadoService.buscarPorUsuarioId(usuarioId));
     }
 
+    @GetMapping("/supervisores")
+    public ResponseEntity<List<EmpleadoResponseDTO>> listarSupervisores() {
+        return ResponseEntity.ok(empleadoService.listarSupervisores());
+    }
+
+    @GetMapping("/trabajadores")
+    public ResponseEntity<List<EmpleadoResponseDTO>> listarTrabajadores() {
+        return ResponseEntity.ok(empleadoService.listarTrabajadores());
+    }
+
+    @GetMapping("/trabajadores-rol")
+    public ResponseEntity<List<EmpleadoResponseDTO>> listarTrabajadoresByRol() {
+        return ResponseEntity.ok(empleadoService.listarTrabajadoresByRol());
+    }
+
+    @GetMapping("/supervisores-rol")
+    public ResponseEntity<List<EmpleadoResponseDTO>> listarSupervisoresByRol() {
+        return ResponseEntity.ok(empleadoService.listarSupervisoresByRol());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EmpleadoResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(empleadoService.buscarPorId(id));

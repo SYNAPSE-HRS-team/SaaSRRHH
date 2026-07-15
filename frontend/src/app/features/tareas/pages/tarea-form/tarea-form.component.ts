@@ -184,13 +184,25 @@ export class TareaFormComponent implements OnInit {
     const dto = this.tareaForm.value;
     if (this.editMode && this.tareaData) {
       this.tareaService.actualizar(this.tareaData.id, dto).subscribe({
-        next: () => this.onExito.emit(),
-        error: (err) => console.error('Error al actualizar:', err),
+        next: () => {
+          alert('Tarea actualizada con éxito.');
+          this.onExito.emit();
+        },
+        error: (err) => {
+          console.error('Error al actualizar:', err);
+          alert('Error al actualizar la tarea: ' + (err.error?.message || err.message || 'Error desconocido'));
+        },
       });
     } else {
       this.tareaService.crear(dto).subscribe({
-        next: () => this.onExito.emit(),
-        error: (err) => console.error('Error al crear:', err),
+        next: () => {
+          alert('Tarea asignada con éxito.');
+          this.onExito.emit();
+        },
+        error: (err) => {
+          console.error('Error al crear:', err);
+          alert('Error al asignar la tarea: ' + (err.error?.message || err.message || 'Error desconocido'));
+        },
       });
     }
   }

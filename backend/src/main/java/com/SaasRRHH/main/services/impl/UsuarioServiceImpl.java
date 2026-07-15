@@ -8,6 +8,9 @@ import com.SaasRRHH.main.model.Usuario;
 import com.SaasRRHH.main.repository.EmpleadoRepository;
 import com.SaasRRHH.main.repository.RolRepository;
 import com.SaasRRHH.main.repository.UsuarioRepository;
+import com.SaasRRHH.main.repository.DispositivoAutorizadoRepository;
+import com.SaasRRHH.main.repository.AccesoUsuarioRepository;
+import com.SaasRRHH.main.repository.ValidacionSeguridadRepository;
 import com.SaasRRHH.main.services.UsuarioService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final RolRepository rolRepository;
     private final EmpleadoRepository empleadoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DispositivoAutorizadoRepository dispositivoAutorizadoRepository;
+    private final AccesoUsuarioRepository accesoUsuarioRepository;
+    private final ValidacionSeguridadRepository validacionSeguridadRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -97,7 +103,34 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void eliminar(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // 1. Desvincular de Empleado
+        empleadoRepository.findByUsuarioId(id).ifPresent(empleado -> {
+            empleado.setUsuario(null);
+            empleadoRepository.save(empleado);
+            log.info("Desvinculado el empleado ID #{} del usuario ID #{}", empleado.getId(), id);
+        });
+
+        // 2. Desvincular DispositivoAutorizado de ValidacionSeguridad y eliminar dispositivos
+        List<com.SaasRRHH.main.model.DispositivoAutorizado> dispositivos = dispositivoAutorizadoRepository.findByUsuarioId(id);
+        for (com.SaasRRHH.main.model.DispositivoAutorizado dispositivo : dispositivos) {
+            List<com.SaasRRHH.main.model.ValidacionSeguridad> validaciones = validacionSeguridadRepository.findAllWithRelaciones();
+            for (com.SaasRRHH.main.model.ValidacionSeguridad validacion : validaciones) {
+                if (validacion.getDispositivo() != null && validacion.getDispositivo().getId().equals(dispositivo.getId())) {
+                    validacion.setDispositivo(null);
+                    validacionSeguridadRepository.save(validacion);
+                }
+            }
+            dispositivoAutorizadoRepository.delete(dispositivo);
+        }
+
+        // 3. Eliminar accesos de usuario
+        List<com.SaasRRHH.main.model.AccesoUsuario> accesos = accesoUsuarioRepository.ultimoAccesoUsuario(id);
+        accesoUsuarioRepository.deleteAll(accesos);
+
+        // 4. Eliminar el usuario
         usuarioRepository.delete(usuario);
+        log.info("🗑️ Usuario #{} eliminado con éxito", id);
     }
 
     @Override
