@@ -154,9 +154,12 @@
           <div class="alert-card">
             <span class="alert-icon"><mat-icon>chat_bubble</mat-icon></span>
             <div class="alert-info">
-              <strong>{{ dashboardData()?.feedbackPendientes }}</strong> feedback(s) pendientes de respuesta
+              Tienes <strong>{{ dashboardData()?.feedbackPendientes }}</strong> feedback(s) pendientes de respuesta.
             </div>
-            <a routerLink="/feedback" class="btn-sm primary">Ver Feedback</a>
+            <a routerLink="/feedback" class="btn-sm primary">
+              <span>Ver Feedback</span>
+              <mat-icon>chevron_right</mat-icon>
+            </a>
           </div>
         </section>
       }
