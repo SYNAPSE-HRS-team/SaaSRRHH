@@ -7,8 +7,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
-import { catchError, finalize, of, Subject, takeUntil } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, Router } from '@angular/router';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { DocumentoPrivadoRequest } from '../../../../core/models/documento-privado.model';
 import { EmpleadoResponse } from '../../../../core/models/empleado.model';
 import {
@@ -18,7 +19,6 @@ import {
 import { DocumentoService } from '../../../../core/services/documento.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
-import { MatIconModule } from '@angular/material/icon';
 
 const OPCION_NUEVO_TIPO = -1;
 
@@ -44,9 +44,11 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
   nuevoTipoDias = 365;
   creandoTipo = signal(false);
   esEdicion = false;
+  documentoId?: number;
 
   // Estados de carga
   cargandoCatalogos = signal(true);
+  cargandoDocumento = signal(false);
   subiendoArchivo = signal(false);
   guardando = signal(false);
   error = signal('');
@@ -56,6 +58,7 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
   archivoSeleccionado: File | null = null;
   nombreArchivo = '';
   archivoUrl = '';
+  archivoUrlOriginal = '';
 
   // Manejo de destrucción
   private destroy$ = new Subject<void>();
@@ -65,13 +68,28 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     private documentoService: DocumentoService,
     private tipoDocumentoService: TipoDocumentoService,
     private empleadoService: EmpleadoService,
+    private route: ActivatedRoute,
     public router: Router,
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    this.cargarCatalogos();
-    this.configurarEscuchasFormulario();
+
+    // Verificar si es edición
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      if (params['id']) {
+        this.esEdicion = true;
+        this.documentoId = +params['id'];
+        console.log('✏️ Modo edición - ID:', this.documentoId);
+        this.cargarCatalogos(() => {
+          this.cargarDocumento(this.documentoId!);
+        });
+      } else {
+        this.esEdicion = false;
+        this.cargarCatalogos();
+        this.configurarEscuchasFormulario();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -99,23 +117,19 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
    * Configura los listeners del formulario
    */
   private configurarEscuchasFormulario(): void {
-    // Cuando cambia el tipoId, recalcular fecha de vencimiento
     this.documentoForm
       .get('tipoId')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((tipoId) => {
         if (tipoId === OPCION_NUEVO_TIPO) {
           this.mostrandoNuevoTipo = true;
-          this.documentoForm.patchValue({
-            tipoId: null,
-          });
+          this.documentoForm.patchValue({ tipoId: null });
         } else {
           this.mostrandoNuevoTipo = false;
           this.calcularFechaVencimiento();
         }
       });
 
-    // Cuando cambia la fecha de emisión, recalcular fecha de vencimiento
     this.documentoForm
       .get('fechaEmision')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
@@ -137,15 +151,13 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     }
 
     const tipoSeleccionado = this.tipos.find((tipo) => tipo.idTipo === tipoId);
-
     if (!tipoSeleccionado || !tipoSeleccionado.diasVigencia) {
       this.documentoForm.patchValue({ fechaVencimiento: '' });
       return;
     }
 
     const fechaEmisionDate = new Date(fechaEmision);
-    const diasVigencia = tipoSeleccionado.diasVigencia;
-    fechaEmisionDate.setDate(fechaEmisionDate.getDate() + diasVigencia);
+    fechaEmisionDate.setDate(fechaEmisionDate.getDate() + tipoSeleccionado.diasVigencia);
 
     const year = fechaEmisionDate.getFullYear();
     const month = String(fechaEmisionDate.getMonth() + 1).padStart(2, '0');
@@ -158,80 +170,112 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
   /**
    * Carga los catálogos
    */
-  private cargarCatalogos(): void {
+  private cargarCatalogos(callback?: () => void): void {
     this.cargandoCatalogos.set(true);
 
     this.empleadoService
       .listarActivos()
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((error) => {
-          console.error('Error al cargar empleados:', error);
-          this.error.set('No se pudo cargar la lista de empleados.');
-          return of([]);
-        }),
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
           this.empleados = data;
         },
+        error: (err) => console.error('Error cargando empleados:', err),
       });
 
     this.tipoDocumentoService
       .getAll()
       .pipe(
         takeUntil(this.destroy$),
-        catchError((error) => {
-          console.error('Error al cargar tipos:', error);
-          this.error.set('No se pudo cargar la lista de tipos de documento.');
-          return of([]);
+        finalize(() => {
+          this.cargandoCatalogos.set(false);
+          if (callback) callback();
         }),
-        finalize(() => this.cargandoCatalogos.set(false)),
       )
       .subscribe({
         next: (data) => {
           this.tipos = data;
-          if (this.tipos.length > 0) {
-            this.documentoForm.patchValue({
-              tipoId: this.tipos[0].idTipo,
-            });
+          if (!this.esEdicion && this.tipos.length > 0) {
+            this.documentoForm.patchValue({ tipoId: this.tipos[0].idTipo });
             setTimeout(() => this.calcularFechaVencimiento(), 100);
           }
         },
+        error: (err) => console.error('Error cargando tipos:', err),
       });
   }
 
   /**
-   * Maneja el cambio en el select de tipo
+   * Carga el documento para edición
    */
+  private cargarDocumento(id: number): void {
+    this.cargandoDocumento.set(true);
+    this.documentoService
+      .getById(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          if (!data) return;
+
+          this.documentoForm.patchValue({
+            empleadoId: data.empleadoId,
+            tipoId: data.tipoId,
+            fechaEmision: data.fechaEmision ? this.formatDate(data.fechaEmision) : '',
+            fechaVencimiento: data.fechaVencimiento ? this.formatDate(data.fechaVencimiento) : '',
+            archivoUrl: data.archivoUrl || '',
+            activo: data.activo !== undefined ? data.activo : true,
+          });
+
+          this.archivoUrl = data.archivoUrl || '';
+          this.archivoUrlOriginal = data.archivoUrl || '';
+
+          // Deshabilitar campos en edición
+          this.documentoForm.get('empleadoId')?.disable();
+          this.documentoForm.get('tipoId')?.disable();
+          this.documentoForm.get('activo')?.disable();
+
+          this.configurarEscuchasFormulario();
+          this.cargandoDocumento.set(false);
+        },
+        error: (error) => {
+          console.error('Error cargando documento:', error);
+          this.error.set('No se pudo cargar el documento');
+          this.cargandoDocumento.set(false);
+        },
+      });
+  }
+
+  private formatDate(dateString: string): string {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().split('T')[0];
+    } catch {
+      return '';
+    }
+  }
+
   onTipoChange(): void {
+    if (this.esEdicion) return;
     const tipoId = this.documentoForm.get('tipoId')?.value;
     this.mostrandoNuevoTipo = tipoId === OPCION_NUEVO_TIPO;
-
     if (this.mostrandoNuevoTipo) {
       this.documentoForm.patchValue({ tipoId: null });
     }
   }
 
-  /**
-   * Cancela la creación de un nuevo tipo
-   */
   cancelarNuevoTipo(): void {
+    if (this.esEdicion) return;
     this.mostrandoNuevoTipo = false;
     this.nuevoTipoNombre = '';
     this.nuevoTipoDias = 365;
     if (this.tipos.length > 0) {
-      this.documentoForm.patchValue({
-        tipoId: this.tipos[0].idTipo,
-      });
+      this.documentoForm.patchValue({ tipoId: this.tipos[0].idTipo });
       this.calcularFechaVencimiento();
     }
   }
 
-  /**
-   * Crea un nuevo tipo de documento
-   */
   crearNuevoTipo(): void {
+    if (this.esEdicion) return;
     this.error.set('');
 
     if (!this.nuevoTipoNombre.trim()) {
@@ -245,7 +289,6 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     }
 
     this.creandoTipo.set(true);
-
     const payload: TipoDocumentoRequest = {
       nombre: this.nuevoTipoNombre.trim(),
       obligatorio: false,
@@ -255,23 +298,13 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
 
     this.tipoDocumentoService
       .create(payload)
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((error) => {
-          console.error('Error al crear tipo:', error);
-          this.error.set('No se pudo crear el tipo de documento.');
-          this.creandoTipo.set(false);
-          return of(null);
-        }),
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (tipoCreado) => {
           if (tipoCreado) {
             this.creandoTipo.set(false);
             this.tipos.push(tipoCreado);
-            this.documentoForm.patchValue({
-              tipoId: tipoCreado.idTipo,
-            });
+            this.documentoForm.patchValue({ tipoId: tipoCreado.idTipo });
             this.mostrandoNuevoTipo = false;
             this.nuevoTipoNombre = '';
             this.nuevoTipoDias = 365;
@@ -279,12 +312,14 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
             this.calcularFechaVencimiento();
           }
         },
+        error: (error) => {
+          console.error('Error al crear tipo:', error);
+          this.error.set('No se pudo crear el tipo de documento.');
+          this.creandoTipo.set(false);
+        },
       });
   }
 
-  /**
-   * Maneja la selección de archivo
-   */
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -295,117 +330,90 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Sube el archivo al servidor
-   */
   private subirArchivo(): void {
     if (!this.archivoSeleccionado) return;
-
     this.subiendoArchivo.set(true);
     this.error.set('');
 
     this.documentoService
       .subirArchivo(this.archivoSeleccionado)
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((error) => {
-          console.error('Error al subir archivo:', error);
-          this.error.set('No se pudo subir el archivo. Intenta nuevamente.');
-          this.subiendoArchivo.set(false);
-          return of(null);
-        }),
-      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.subiendoArchivo.set(false);
           if (response && response.url) {
             this.archivoUrl = response.url;
-            this.documentoForm.patchValue({
-              archivoUrl: response.url,
-            });
+            this.documentoForm.patchValue({ archivoUrl: response.url });
             this.error.set('');
           }
+        },
+        error: (error) => {
+          console.error('Error al subir archivo:', error);
+          this.error.set('No se pudo subir el archivo.');
+          this.subiendoArchivo.set(false);
         },
       });
   }
 
-  /**
-   * Elimina el archivo seleccionado
-   */
   removeFile(): void {
     this.archivoSeleccionado = null;
     this.nombreArchivo = '';
-    this.archivoUrl = '';
-    this.documentoForm.patchValue({
-      archivoUrl: '',
-    });
+    this.archivoUrl = this.esEdicion ? this.archivoUrlOriginal : '';
+    this.documentoForm.patchValue({ archivoUrl: this.archivoUrl });
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
+    if (fileInput) fileInput.value = '';
   }
 
-  /**
-   * Envía el formulario
-   */
   onSubmit(): void {
     this.error.set('');
+    const formValues = this.documentoForm.getRawValue();
 
     if (this.documentoForm.invalid) {
       Object.keys(this.documentoForm.controls).forEach((key) => {
-        const control = this.documentoForm.get(key);
-        control?.markAsTouched();
+        this.documentoForm.get(key)?.markAsTouched();
       });
-
-      if (!this.documentoForm.get('archivoUrl')?.value) {
-        this.error.set('Debes seleccionar un archivo.');
-      } else {
-        this.error.set('Por favor, completa todos los campos obligatorios.');
-      }
+      this.error.set('Completa todos los campos obligatorios.');
       return;
     }
 
-    if (!this.documentoForm.get('archivoUrl')?.value) {
-      this.error.set('El archivo no se ha subido correctamente.');
+    if (!formValues.archivoUrl) {
+      this.error.set('Debes subir un archivo.');
       return;
     }
 
     this.guardando.set(true);
-
     const payload: DocumentoPrivadoRequest = {
-      empleadoId: Number(this.documentoForm.get('empleadoId')?.value),
-      tipoId: Number(this.documentoForm.get('tipoId')?.value),
-      archivoUrl: this.documentoForm.get('archivoUrl')?.value,
-      fechaEmision: this.documentoForm.get('fechaEmision')?.value,
-      fechaVencimiento: this.documentoForm.get('fechaVencimiento')?.value || null,
-      activo: this.documentoForm.get('activo')?.value,
+      empleadoId: Number(formValues.empleadoId),
+      tipoId: Number(formValues.tipoId),
+      archivoUrl: formValues.archivoUrl,
+      fechaEmision: formValues.fechaEmision,
+      fechaVencimiento: formValues.fechaVencimiento || null,
+      activo: formValues.activo !== undefined ? formValues.activo : true,
     };
 
-    this.documentoService
-      .create(payload)
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((error) => {
-          console.error('Error al guardar documento:', error);
-          this.error.set('Error al guardar el documento. Verifica los datos ingresados.');
-          this.guardando.set(false);
-          return of(null);
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          this.guardando.set(false);
-          if (response) {
-            this.successMessage.set('¡Documento registrado correctamente!');
-            setTimeout(() => this.router.navigate(['/documentos']), 1500);
-          }
-        },
-      });
+    const operation =
+      this.esEdicion && this.documentoId
+        ? this.documentoService.update(this.documentoId, payload)
+        : this.documentoService.create(payload);
+
+    operation.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        this.guardando.set(false);
+        if (response) {
+          this.successMessage.set(
+            this.esEdicion ? '¡Documento actualizado!' : '¡Documento registrado!',
+          );
+          setTimeout(() => this.router.navigate(['/documentos']), 1500);
+        }
+      },
+      error: (error) => {
+        console.error('Error al guardar:', error);
+        this.error.set('Error al guardar el documento.');
+        this.guardando.set(false);
+      },
+    });
   }
 
-  /**
-   * Obtiene los días de vigencia del tipo seleccionado
-   */
   getDiasVigencia(): number | null {
     const tipoId = this.documentoForm.get('tipoId')?.value;
     if (!tipoId || tipoId === OPCION_NUEVO_TIPO) return null;
@@ -413,9 +421,6 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     return tipo?.diasVigencia || null;
   }
 
-  /**
-   * Obtiene el nombre del tipo seleccionado
-   */
   getTipoNombre(): string {
     const tipoId = this.documentoForm.get('tipoId')?.value;
     if (!tipoId || tipoId === OPCION_NUEVO_TIPO) return '';
@@ -423,9 +428,6 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     return tipo?.nombre || '';
   }
 
-  /**
-   * Obtiene el nombre del empleado seleccionado
-   */
   getEmpleadoNombre(): string {
     const empleadoId = this.documentoForm.get('empleadoId')?.value;
     if (!empleadoId) return '';
@@ -433,9 +435,6 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     return empleado ? `${empleado.nombres} ${empleado.apellidos}` : '';
   }
 
-  /**
-   * Verifica si la fecha de vencimiento ya pasó
-   */
   isVencido(): boolean {
     const fechaVencimiento = this.documentoForm.get('fechaVencimiento')?.value;
     if (!fechaVencimiento) return false;
@@ -445,10 +444,10 @@ export class DocumentoFormComponent implements OnInit, OnDestroy {
     return fechaVenc < hoy;
   }
 
-  /**
-   * Navega a la lista de documentos
-   */
   goToDocumentList(): void {
     this.router.navigate(['/documentos']);
   }
 }
+
+// ✅ UN SOLO EXPORT - ESTE ES EL COMPONENTE PRINCIPAL
+// No agregues exports adicionales aquí
