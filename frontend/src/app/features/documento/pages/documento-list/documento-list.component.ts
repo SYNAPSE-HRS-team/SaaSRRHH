@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import {
   catchError,
@@ -16,7 +17,6 @@ import { DocumentoPrivadoResponse } from '../../../../core/models/documento-priv
 import { TipoDocumentoResponse } from '../../../../core/models/tipo-documento.model';
 import { DocumentoService } from '../../../../core/services/documento.service';
 import { TipoDocumentoService } from '../../../../core/services/tipo-documento.service';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-documento-list',
@@ -120,9 +120,9 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data) => {
           console.log('📄 Documentos cargados:', data);
-          // Verificar que cada documento tenga fechaEmision
+          // ✅ Mostrar las URLs de los archivos para depuración
           data.forEach((doc) => {
-            console.log(`📅 Doc ${doc.id}: fechaEmision = ${doc.fechaEmision}`);
+            console.log(`📎 Doc ${doc.id}: archivoUrl = "${doc.archivoUrl}"`);
           });
           this.documentos.set(data);
           this.aplicarFiltros();
@@ -255,31 +255,81 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Obtiene la URL completa del documento
+   * ✅ Obtiene la URL completa del documento (CORREGIDO)
    */
   urlCompleta(doc: DocumentoPrivadoResponse): string {
-    if (!doc.archivoUrl) return '';
+    if (!doc.archivoUrl) {
+      console.warn('⚠️ archivoUrl es null o undefined');
+      return '';
+    }
+
+    console.log(`📎 archivoUrl original: "${doc.archivoUrl}"`);
+
+    // Si ya es URL absoluta, devolverla
     if (doc.archivoUrl.startsWith('http://') || doc.archivoUrl.startsWith('https://')) {
       return doc.archivoUrl;
     }
-    return `${environment.apiUrl}${doc.archivoUrl}`;
+
+    // Limpiar la URL base
+    let baseUrl = environment.apiUrl;
+    if (baseUrl.endsWith('/')) {
+      baseUrl = baseUrl.slice(0, -1);
+    }
+
+    // Limpiar el archivoUrl
+    let archivoUrl = doc.archivoUrl;
+
+    // Si no empieza con /, agregarlo
+    if (!archivoUrl.startsWith('/')) {
+      archivoUrl = '/' + archivoUrl;
+    }
+
+    const urlCompleta = `${baseUrl}${archivoUrl}`;
+    console.log(`🔗 URL final: "${urlCompleta}"`);
+
+    return urlCompleta;
   }
 
   /**
-   * Ver el documento en nueva pestaña
+   * ✅ Ver el documento en nueva pestaña (CORREGIDO)
    */
-  verDocumento(doc: DocumentoPrivadoResponse): void {
+  verDocumento(doc: DocumentoPrivadoResponse, event?: Event): void {
+    // Prevenir cualquier navegación accidental
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    console.log('👁️ Ver documento:', doc);
+    console.log('📎 archivoUrl:', doc.archivoUrl);
+
     if (doc.archivoUrl) {
-      window.open(this.urlCompleta(doc), '_blank');
+      const url = this.urlCompleta(doc);
+      console.log('🌐 Abriendo URL:', url);
+
+      // Verificar si la URL es válida antes de abrir
+      if (url && url !== '') {
+        window.open(url, '_blank');
+      } else {
+        alert('La URL del archivo es inválida.');
+      }
     } else {
       alert('Archivo no disponible.');
     }
   }
 
   /**
-   * Eliminar documento
+   * ✅ Eliminar documento (CORREGIDO)
    */
-  eliminar(doc: DocumentoPrivadoResponse): void {
+  eliminar(doc: DocumentoPrivadoResponse, event?: Event): void {
+    // Prevenir cualquier navegación accidental
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    console.log('🗑️ Eliminar documento:', doc);
+
     if (!confirm(`¿Eliminar el documento de ${doc.empleadoNombre}?`)) return;
 
     this.documentoService
@@ -287,13 +337,15 @@ export class DocumentoListComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         catchError((error) => {
-          console.error('Error al eliminar documento:', error);
+          console.error('❌ Error al eliminar documento:', error);
           alert('No se pudo eliminar el documento.');
           return of(null);
         }),
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('✅ Documento eliminado:', response);
+          alert('Documento eliminado correctamente.');
           this.cargarDocumentos();
         },
       });
