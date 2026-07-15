@@ -99,7 +99,7 @@ public class SecurityConfig {
                 // ADMIN exclusivo (VA DESPUÉS de las rutas específicas)
                 .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                 .requestMatchers("/api/roles/**").hasRole("ADMIN")
-                .requestMatchers("/api/dispositivos-autorizados/**").hasRole("ADMIN")
+                //.requestMatchers("/api/dispositivos-autorizados/**").hasRole("ADMIN")
                 .requestMatchers("/api/accesos/**").hasRole("ADMIN")
                 .requestMatchers("/api/validaciones-seguridad/**").hasRole("ADMIN")
 
