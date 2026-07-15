@@ -23,6 +23,8 @@ export class MetricasBurnoutListComponent implements OnInit {
     filtros = { nivelRiesgo: '', empleadoId: null as number | null };
     empleados: EmpleadoResponse[] = [];
     opcionesRiesgo = ['BAJO', 'MEDIO', 'ALTO'];
+    showDetailModal = false;
+    metricaDetalle: MetricaBurnoutResponse | null = null;
 
     constructor(private metricaService: MetricaBurnoutService, private empleadoService: EmpleadoService, private router: Router) {}
 
@@ -54,7 +56,13 @@ export class MetricasBurnoutListComponent implements OnInit {
 
     limpiarFiltros(): void { this.filtros = { nivelRiesgo: '', empleadoId: null }; this.aplicarFiltros(); }
 
-    verDetalle(id: number): void { this.router.navigate(['/bienestar/metricas', id]); }
+    verDetalle(id: number): void {
+        const found = this.metricas.find(m => m.id === id);
+        if (found) {
+            this.metricaDetalle = found;
+            this.showDetailModal = true;
+        }
+    }
 
     eliminar(id: number): void {
         if (confirm('¿Estás seguro de eliminar esta métrica?')) {

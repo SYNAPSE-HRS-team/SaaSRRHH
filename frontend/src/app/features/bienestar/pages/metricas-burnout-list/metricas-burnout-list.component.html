@@ -65,4 +65,84 @@
     </table>
     <div *ngIf="metricasFiltradas.length === 0" class="empty-state"><span class="empty-icon"><mat-icon>analytics</mat-icon></span><h3>No hay métricas de burnout</h3></div>
   </div>
+
+  <!-- Modal de detalle de Burnout -->
+  <div *ngIf="showDetailModal && metricaDetalle" class="modal-overlay" (click)="showDetailModal = false">
+    <div class="modal-content modal-detail" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <span class="modal-icon"><mat-icon>psychology</mat-icon></span>
+        <h3>Detalle de Evaluación de Burnout</h3>
+        <button class="btn-close" (click)="showDetailModal = false">✕</button>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-field">
+          <label>Empleado</label>
+          <span class="font-medium">{{ metricaDetalle.nombreEmpleado }}</span>
+        </div>
+        <div class="detail-field">
+          <label>DNI</label>
+          <span>{{ metricaDetalle.dniEmpleado || '—' }}</span>
+        </div>
+        <div class="detail-field">
+          <label>Cargo</label>
+          <span>{{ metricaDetalle.cargo || '—' }}</span>
+        </div>
+        <div class="detail-field">
+          <label>Fecha de Evaluación</label>
+          <span>{{ metricaDetalle.fechaEvaluacion | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="detail-field">
+          <label>Nivel de Riesgo</label>
+          <span>
+            <span class="badge" [style.background]="getColorRiesgo(metricaDetalle.nivelRiesgo)" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;">
+              <mat-icon style="font-size: 14px; width: 14px; height: 14px; min-width: 14px;">{{ getMaterialIconoRiesgo(metricaDetalle.nivelRiesgo) }}</mat-icon>
+              {{ metricaDetalle.nivelRiesgo }}
+            </span>
+          </span>
+        </div>
+        <div class="detail-field">
+          <label>Índice de Puntualidad</label>
+          <span [style.color]="(metricaDetalle.indicePuntualidad ?? 100) < 75 ? '#ef4444' : '#22c55e'">
+            {{ metricaDetalle.indicePuntualidad?.toFixed(1) ?? '—' }}%
+          </span>
+        </div>
+        <div class="detail-field">
+          <label>Faltas en el Período</label>
+          <span>{{ metricaDetalle.faltasPeriodo ?? 0 }}</span>
+        </div>
+        <div class="detail-field">
+          <label>Tardanzas en el Período</label>
+          <span>{{ metricaDetalle.tardanzasPeriodo ?? 0 }}</span>
+        </div>
+        <div class="detail-field">
+          <label>Horas Extra Acumuladas</label>
+          <span>{{ metricaDetalle.horasExtraAcumuladas }}h</span>
+        </div>
+        <div class="detail-field">
+          <label>Horas Contrato vs Reales</label>
+          <span>{{ metricaDetalle.horasReales ?? 0 }}h reales / {{ metricaDetalle.horasContrato ?? 0 }}h contrato</span>
+        </div>
+        <div class="detail-field">
+          <label>Días Trabajados</label>
+          <span>{{ metricaDetalle.diasTrabajados ?? 0 }} días</span>
+        </div>
+        <div class="detail-field">
+          <label>Tendencia a Tardanzas</label>
+          <span>{{ metricaDetalle.tendenciaTardanza ? 'Sí' : 'No' }}</span>
+        </div>
+        <div class="detail-field full-width">
+          <label>Patrón de Conducta Detectado</label>
+          <span class="patron-text" [class.warning]="metricaDetalle.patronDetectado">
+            {{ metricaDetalle.patronDetectado || 'No se han detectado patrones de riesgo' }}
+          </span>
+        </div>
+        <div class="detail-field full-width">
+          <label>Recomendaciones Preventivas</label>
+          <span class="recomendaciones-text">
+            {{ metricaDetalle.recomendaciones || 'Sin recomendaciones registradas para este nivel de riesgo.' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
