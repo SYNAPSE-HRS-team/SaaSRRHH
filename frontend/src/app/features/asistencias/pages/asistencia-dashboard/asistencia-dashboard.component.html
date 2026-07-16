@@ -3,17 +3,35 @@
     <div>
       <h1><mat-icon>schedule</mat-icon> Asistencia</h1>
       <p>
-        {{ isEmployee ? 'Muestra tu QR, marca tu salida y revisa tu historial' : 'Escanea QR, registra y administra asistencias' }}
+        {{
+          isEmployee
+            ? 'Muestra tu QR, marca tu salida y revisa tu historial'
+            : 'Escanea QR, registra y administra asistencias'
+        }}
       </p>
     </div>
     <div class="header-right">
       <div class="tab-toggle">
-        <button [class.active]="activeTab() === 'calendario'" (click)="setTab('calendario')" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>calendar_today</mat-icon> Calendario</button>
-        <button [class.active]="activeTab() === 'historial'" (click)="setTab('historial')" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>assignment</mat-icon> Historial</button>
+        <button
+          [class.active]="activeTab() === 'calendario'"
+          (click)="setTab('calendario')"
+          style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+        >
+          <mat-icon>calendar_today</mat-icon> Calendario
+        </button>
+        <button
+          [class.active]="activeTab() === 'historial'"
+          (click)="setTab('historial')"
+          style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+        >
+          <mat-icon>assignment</mat-icon> Historial
+        </button>
       </div>
       @if (activeTab() === 'calendario') {
         <div class="view-toggle">
-          <button [class.active]="viewMode() === 'mensual'" (click)="setView('mensual')">Mensual</button>
+          <button [class.active]="viewMode() === 'mensual'" (click)="setView('mensual')">
+            Mensual
+          </button>
           <button [class.active]="viewMode() === 'anual'" (click)="setView('anual')">Anual</button>
         </div>
       }
@@ -43,21 +61,33 @@
           <strong>{{ qrName() }}</strong>
           <span>Se renueva en {{ secondsLeft() }}s</span>
         </div>
-        <button class="primary" (click)="loadQr()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>sync</mat-icon> Actualizar QR</button>
+        <button
+          class="primary"
+          (click)="loadQr()"
+          style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+        >
+          <mat-icon>sync</mat-icon> Actualizar QR
+        </button>
       </div>
 
       <div class="panel status-panel">
         <h2>Mi Asistencia Hoy</h2>
         <div class="status-cards">
           <div class="status-card" [class.done]="yaMarcoEntrada()">
-            <span class="status-icon"><mat-icon>{{ yaMarcoEntrada() ? 'check_circle' : 'hourglass_empty' }}</mat-icon></span>
+            <span class="status-icon"
+              ><mat-icon>{{
+                yaMarcoEntrada() ? 'check_circle' : 'hourglass_empty'
+              }}</mat-icon></span
+            >
             <div class="status-info">
               <strong>Entrada</strong>
               <span>{{ yaMarcoEntrada() ? 'Marcado' : 'Pendiente' }}</span>
             </div>
           </div>
           <div class="status-card" [class.done]="yaMarcoSalida()">
-            <span class="status-icon"><mat-icon>{{ yaMarcoSalida() ? 'check_circle' : 'hourglass_empty' }}</mat-icon></span>
+            <span class="status-icon"
+              ><mat-icon>{{ yaMarcoSalida() ? 'check_circle' : 'hourglass_empty' }}</mat-icon></span
+            >
             <div class="status-info">
               <strong>Salida</strong>
               <span>{{ yaMarcoSalida() ? 'Marcado' : 'Pendiente' }}</span>
@@ -78,11 +108,34 @@
       <div class="panel scanner-panel">
         <h2>Escanear QR</h2>
         <div id="qr-reader" class="reader"></div>
-        <textarea [(ngModel)]="manualPayload" placeholder="Pega aquí el QR si la cámara no está disponible"></textarea>
+        <textarea
+          [(ngModel)]="manualPayload"
+          placeholder="Pega aquí el QR si la cámara no está disponible"
+        ></textarea>
         <div class="actions">
-          <button class="primary" (click)="startScanner()" [disabled]="scannerOn()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>photo_camera</mat-icon> Iniciar cámara</button>
-          <button class="ghost" (click)="stopScanner()" [disabled]="!scannerOn()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>stop</mat-icon> Detener</button>
-          <button class="primary" (click)="scanManual()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>check_circle</mat-icon> Registrar</button>
+          <button
+            class="primary"
+            (click)="startScanner()"
+            [disabled]="scannerOn()"
+            style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+          >
+            <mat-icon>photo_camera</mat-icon> Iniciar cámara
+          </button>
+          <button
+            class="ghost"
+            (click)="stopScanner()"
+            [disabled]="!scannerOn()"
+            style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+          >
+            <mat-icon>stop</mat-icon> Detener
+          </button>
+          <button
+            class="primary"
+            (click)="scanManual()"
+            style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+          >
+            <mat-icon>check_circle</mat-icon> Registrar
+          </button>
         </div>
         <p class="scan-hint">El sistema detecta automáticamente si es entrada o salida.</p>
       </div>
@@ -97,8 +150,22 @@
             }
           </select>
           <div class="quick-actions">
-            <button class="primary compact" (click)="marcarEntradaAdmin()" [disabled]="loadingMarcado()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>input</mat-icon> Marcar Entrada</button>
-            <button class="ghost compact" (click)="marcarSalidaAdmin()" [disabled]="loadingMarcado()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>logout</mat-icon> Marcar Salida</button>
+            <button
+              class="primary compact"
+              (click)="marcarEntradaAdmin()"
+              [disabled]="loadingMarcado()"
+              style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+            >
+              <mat-icon>input</mat-icon> Marcar Entrada
+            </button>
+            <button
+              class="ghost compact"
+              (click)="marcarSalidaAdmin()"
+              [disabled]="loadingMarcado()"
+              style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+            >
+              <mat-icon>logout</mat-icon> Marcar Salida
+            </button>
           </div>
           <div class="divider"></div>
           <label>Fecha</label>
@@ -111,7 +178,13 @@
           </select>
           <label>Observaciones</label>
           <textarea [(ngModel)]="editObservaciones"></textarea>
-          <button class="primary" (click)="saveAttendance()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>save</mat-icon> Guardar asistencia</button>
+          <button
+            class="primary"
+            (click)="saveAttendance()"
+            style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+          >
+            <mat-icon>save</mat-icon> Guardar asistencia
+          </button>
         </div>
       } @else {
         <div class="panel editor-panel readonly-panel">
@@ -141,7 +214,13 @@
               }
             </select>
           }
-          <input type="number" [(ngModel)]="selectedYear" (change)="loadCalendar()" min="2020" max="2100" />
+          <input
+            type="number"
+            [(ngModel)]="selectedYear"
+            (change)="loadCalendar()"
+            min="2020"
+            max="2100"
+          />
         </div>
       </div>
       <div class="calendar-legend">
@@ -158,11 +237,21 @@
             <div class="day empty"></div>
           }
           @for (day of monthDays(); track day.fecha) {
-            <button class="day" [class.present]="day.estado === 'ASISTIO'" [class.absent]="day.estado === 'FALTA'" (click)="selectDay(day)" [class.clickable]="isAdmin">
+            <button
+              class="day"
+              [class.present]="day.estado === 'ASISTIO'"
+              [class.absent]="day.estado === 'FALTA'"
+              (click)="selectDay(day)"
+              [class.clickable]="isAdmin"
+            >
               <span class="day-number">{{ day.fecha | date: 'd' }}</span>
               <div class="day-times">
-                @if (day.horaEntrada) { <small class="time-entry">↘ {{ day.horaEntrada.slice(0, 5) }}</small> }
-                @if (day.horaSalida) { <small class="time-exit">↗ {{ day.horaSalida.slice(0, 5) }}</small> }
+                @if (day.horaEntrada) {
+                  <small class="time-entry">↘ {{ day.horaEntrada.slice(0, 5) }}</small>
+                }
+                @if (day.horaSalida) {
+                  <small class="time-exit">↗ {{ day.horaSalida.slice(0, 5) }}</small>
+                }
               </div>
             </button>
           }
@@ -174,7 +263,10 @@
               <h3>{{ monthName(month.mes) }}</h3>
               <div class="mini-days">
                 @for (day of month.dias; track day.fecha) {
-                  <span [class.present]="day.estado === 'ASISTIO'" [class.absent]="day.estado === 'FALTA'"></span>
+                  <span
+                    [class.present]="day.estado === 'ASISTIO'"
+                    [class.absent]="day.estado === 'FALTA'"
+                  ></span>
                 }
               </div>
             </div>
@@ -189,8 +281,20 @@
           <h2><mat-icon>assignment</mat-icon> Historial de Asistencias</h2>
           @if (!isEmployee) {
             <div class="sub-tab-toggle">
-              <button [class.active]="activeSubTab() === 'hoy'" (click)="setSubTab('hoy')" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>calendar_today</mat-icon> Asistencias de Hoy</button>
-              <button [class.active]="activeSubTab() === 'por_empleado'" (click)="setSubTab('por_empleado')" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>people</mat-icon> Por Empleado</button>
+              <button
+                [class.active]="activeSubTab() === 'hoy'"
+                (click)="setSubTab('hoy')"
+                style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+              >
+                <mat-icon>calendar_today</mat-icon> Asistencias de Hoy
+              </button>
+              <button
+                [class.active]="activeSubTab() === 'por_empleado'"
+                (click)="setSubTab('por_empleado')"
+                style="display: inline-flex; align-items: center; gap: 4px; justify-content: center"
+              >
+                <mat-icon>people</mat-icon> Por Empleado
+              </button>
             </div>
           }
         </div>
@@ -205,32 +309,65 @@
         }
       </div>
 
+      <!-- VISTA: ASISTENCIAS DE HOY -->
       @if (!isEmployee && activeSubTab() === 'hoy') {
         <div class="search-bar">
           <div class="search-wrapper">
             <span class="search-icon"><mat-icon>search</mat-icon></span>
-            <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" placeholder="Buscar empleado por nombre o DNI..." />
+            <input
+              type="text"
+              [ngModel]="searchTerm()"
+              (ngModelChange)="searchTerm.set($event)"
+              placeholder="Buscar empleado por nombre o DNI..."
+            />
           </div>
           <div class="date-wrapper">
             <span class="date-label"><mat-icon>event</mat-icon> Fecha:</span>
-            <input type="date" [(ngModel)]="fechaConsultaHoy" [max]="fechaMaxima" (change)="loadAsistenciasHoy()" class="date-input" />
+            <input
+              type="date"
+              [(ngModel)]="fechaConsultaHoy"
+              [max]="fechaMaxima"
+              (change)="loadAsistenciasHoy()"
+              class="date-input"
+            />
           </div>
         </div>
+
         @if (loadingHoy()) {
-          <div class="loading-state"><div class="spinner-dark"></div><p>Cargando asistencias...</p></div>
+          <div class="loading-state">
+            <div class="spinner-dark"></div>
+            <p>Cargando asistencias...</p>
+          </div>
         } @else if (getFilteredAsistenciasHoy().length === 0) {
-          <div class="empty-historial"><p><mat-icon>assignment</mat-icon> No hay registros de asistencia para el día seleccionado.</p></div>
+          <div class="empty-historial">
+            <p>
+              <mat-icon>assignment</mat-icon> No hay registros de asistencia para el día
+              seleccionado.
+            </p>
+          </div>
         } @else {
           <div class="historial-count">{{ getFilteredAsistenciasHoy().length }} empleado(s)</div>
           <div class="table-container">
             <table>
               <thead>
-                <tr><th>DNI</th><th>Empleado</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Acciones</th></tr>
+                <tr>
+                  <th>DNI</th>
+                  <th>Empleado</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
               </thead>
               <tbody>
                 @for (reg of getFilteredAsistenciasHoy(); track reg.id) {
-                  <tr [class.virtual-row]="!reg.entrada && !reg.salida" [class.edicion-pasada]="reg.isPastDay">
-                    <td><span class="dni-badge">{{ reg.dni }}</span></td>
+                  <tr
+                    [class.virtual-row]="!reg.entrada && !reg.salida"
+                    [class.edicion-pasada]="reg.isPastDay"
+                  >
+                    <td>
+                      <span class="dni-badge">{{ reg.dni }}</span>
+                    </td>
                     <td class="empleado-nombre">{{ reg.nombre }}</td>
                     <td>
                       @if (reg.entrada) {
@@ -239,10 +376,7 @@
                           <span class="metodo-chip">{{ reg.entrada.metodo }}</span>
                         </div>
                       } @else {
-                        <span class="tipo-badge" [class.pendiente]="!reg.isPastDay" [class.no-registrado]="reg.isPastDay" style="display: inline-flex; align-items: center; gap: 4px;">
-                          <mat-icon style="font-size: 16px; width: 16px; height: 16px; min-width: 16px;">{{ reg.isPastDay ? 'cancel' : 'hourglass_empty' }}</mat-icon>
-                          <span>{{ reg.isPastDay ? 'No registrado' : 'Pendiente' }}</span>
-                        </span>
+                        <span class="text-muted">—</span>
                       }
                     </td>
                     <td>
@@ -252,24 +386,25 @@
                           <span class="metodo-chip">{{ reg.salida.metodo }}</span>
                         </div>
                       } @else {
-                        <span class="tipo-badge" [class.pendiente]="!reg.isPastDay" [class.no-registrado]="reg.isPastDay" style="display: inline-flex; align-items: center; gap: 4px;">
-                          <mat-icon style="font-size: 16px; width: 16px; height: 16px; min-width: 16px;">{{ reg.isPastDay ? 'cancel' : 'hourglass_empty' }}</mat-icon>
-                          <span>{{ reg.isPastDay ? 'No registrado' : 'Pendiente' }}</span>
-                        </span>
+                        <span class="text-muted">—</span>
                       }
                     </td>
                     <td>
-                      <span class="estado-badge" [class.validado]="reg.estado === 'VALIDADO'" [class.observado]="reg.estado === 'OBSERVADO'" [class.rechazado]="reg.estado === 'RECHAZADO'" [class.pendiente]="reg.estado === 'PENDIENTE'" [class.invalido]="reg.estado === 'INVALIDO'">{{ reg.estado }}</span>
+                      <span class="estado-badge" [attr.data-estado]="reg.estado">
+                        {{ reg.estado }}
+                      </span>
                     </td>
                     <td>
-                      @if (reg.entrada || reg.salida) {
-                        <button class="btn btn-sm ghost compact" (click)="openAsistenciaModal(reg)" [disabled]="!isAdmin" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>visibility</mat-icon> Ver / Editar</button>
-                        @if (reg.isPastDay) { <span class="tooltip"><mat-icon style="font-size: 14px; width: 14px; height: 14px;">warning</mat-icon> Día pasado</span> }
+                      @if (isAdmin) {
+                        <button
+                          class="btn-action"
+                          (click)="openAsistenciaModal(reg)"
+                          title="Editar registro"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
                       } @else {
-                        <span class="sin-registro-label"><mat-icon>inbox</mat-icon> Sin registro</span>
-                        @if (isAdmin && !reg.isPastDay) {
-                          <button class="btn btn-sm primary compact" (click)="crearAsistencia(reg)" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>add</mat-icon> Crear</button>
-                        }
+                        <span class="text-muted">Sin permisos</span>
                       }
                     </td>
                   </tr>
@@ -280,34 +415,58 @@
         }
       }
 
-      @if (isEmployee || activeSubTab() === 'por_empleado') {
+      <!-- VISTA: HISTORIAL INDIVIDUAL / POR EMPLEADO -->
+      @if (isEmployee || (!isEmployee && activeSubTab() === 'por_empleado')) {
         @if (loadingHistorial()) {
-          <div class="loading-state"><div class="spinner-dark"></div><p>Cargando historial...</p></div>
+          <div class="loading-state">
+            <div class="spinner-dark"></div>
+            <p>Cargando historial...</p>
+          </div>
         } @else if (historial().length === 0) {
-          <div class="empty-historial"><p><mat-icon>assignment</mat-icon> No hay registros de asistencia aún.</p></div>
+          <div class="empty-historial">
+            <p>
+              <mat-icon>assignment_turned_in</mat-icon> No hay registros de asistencia disponibles
+              en el historial.
+            </p>
+          </div>
         } @else {
-          <div class="historial-count">{{ historial().length }} registro(s)</div>
           <div class="table-container">
             <table>
               <thead>
-                <tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Método</th><th>Estado</th><th>Observaciones</th></tr>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Hora</th>
+                  <th>Método</th>
+                  <th>Estado</th>
+                  <th>Observaciones</th>
+                </tr>
               </thead>
               <tbody>
                 @for (reg of historial(); track reg.id) {
                   <tr>
-                    <td>{{ reg.fechaHora | date: 'dd/MM/yyyy' }}</td>
-                    <td class="hora">{{ reg.fechaHora | date: 'HH:mm:ss' }}</td>
                     <td>
-                      <span class="tipo-badge" [class.entrada]="reg.tipoMarcacion === 'ENTRADA'" [class.salida]="reg.tipoMarcacion === 'SALIDA'" style="display: inline-flex; align-items: center; gap: 4px;">
-                        <mat-icon style="font-size: 16px; width: 16px; height: 16px; min-width: 16px;">{{ reg.tipoMarcacion === 'ENTRADA' ? 'input' : 'logout' }}</mat-icon>
-                        <span>{{ reg.tipoMarcacion === 'ENTRADA' ? 'Entrada' : 'Salida' }}</span>
+                      <strong>{{ reg.fechaHora | date: 'dd/MM/yyyy' }}</strong>
+                    </td>
+                    <td>
+                      <span
+                        class="tipo-badge"
+                        [class.entrada]="reg.tipoMarcacion === 'ENTRADA'"
+                        [class.salida]="reg.tipoMarcacion === 'SALIDA'"
+                      >
+                        {{ reg.tipoMarcacion }}
                       </span>
                     </td>
-                    <td><span class="metodo-chip">{{ reg.metodo }}</span></td>
+                    <td>{{ reg.fechaHora | date: 'HH:mm:ss' }}</td>
                     <td>
-                      <span class="estado-badge" [class.validado]="reg.estado === 'VALIDADO'" [class.observado]="reg.estado === 'OBSERVADO'" [class.rechazado]="reg.estado === 'RECHAZADO'">{{ reg.estado }}</span>
+                      <span class="metodo-chip">{{ reg.metodo }}</span>
                     </td>
-                    <td class="obs">{{ reg.observaciones || '—' }}</td>
+                    <td>
+                      <span class="estado-badge" [attr.data-estado]="reg.estado">
+                        {{ reg.estado }}
+                      </span>
+                    </td>
+                    <td class="obs-cell">{{ reg.observaciones || 'Sin observaciones' }}</td>
                   </tr>
                 }
               </tbody>
@@ -318,57 +477,93 @@
     </section>
   }
 
-  <!-- MODAL -->
+  <!-- MODAL DE DETALLE / EDICIÓN DE ASISTENCIA (Sujeto a showDetailModal) -->
   @if (showDetailModal()) {
-    <div class="modal-overlay">
-      <div class="modal-card">
+    <div class="modal-backdrop">
+      <div class="modal-content">
         <div class="modal-header">
-          <h3 style="display: inline-flex; align-items: center; gap: 6px; color: white;">
-            <mat-icon style="color: white;">{{ (modalEntradaExiste || modalSalidaExiste) ? 'visibility' : 'add' }}</mat-icon>
-            <span>{{ (modalEntradaExiste || modalSalidaExiste) ? 'Detalle de Asistencia' : 'Nueva Asistencia' }}</span>
+          <h3>
+            <mat-icon>edit_calendar</mat-icon>
+            Asistencia: {{ selectedEmployeeNameForModal }}
           </h3>
-          <button class="close-btn" (click)="showDetailModal.set(false)">✕</button>
+          <button class="btn-close" (click)="showDetailModal.set(false)">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
         <div class="modal-body">
-          <div class="employee-meta"><span class="meta-label">Empleado:</span><span class="meta-value">{{ selectedEmployeeNameForModal }}</span></div>
-          <div class="employee-meta"><span class="meta-label">Fecha:</span><span class="meta-value">{{ selectedDateForModal | date: 'dd/MM/yyyy' }}</span></div>
-          <div class="divider"></div>
-          <div class="attendance-section">
-            <h4><mat-icon>input</mat-icon> Entrada</h4>
-            <div class="section-form-grid">
-              <div><label>Hora de Entrada</label><input type="time" [(ngModel)]="modalEntradaHora" [disabled]="!isAdmin" /></div>
-              <div><label>Estado</label><select [(ngModel)]="modalEntradaEstado" [disabled]="!isAdmin"><option value="VALIDADO">VALIDADO</option><option value="OBSERVADO">OBSERVADO</option><option value="RECHAZADO">RECHAZADO</option></select></div>
-              <div class="full-width"><label>Observaciones</label><input type="text" [(ngModel)]="modalEntradaObs" [disabled]="!isAdmin" /></div>
+          <p class="modal-subtitle">
+            Fecha de Consulta: <strong>{{ selectedDateForModal | date: 'dd/MM/yyyy' }}</strong>
+          </p>
+
+          <div class="modal-grid-cards">
+            <!-- Bloque Entrada -->
+            <div class="modal-card-section">
+              <h4>↘ Registro de Entrada</h4>
+              <div class="form-group">
+                <label>Hora de Entrada (HH:mm)</label>
+                <input type="time" [(ngModel)]="modalEntradaHora" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Estado Entrada</label>
+                <select [(ngModel)]="modalEntradaEstado" class="form-control">
+                  <option value="VALIDADO">VALIDADO</option>
+                  <option value="OBSERVADO">OBSERVADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Observaciones Entrada</label>
+                <textarea
+                  [(ngModel)]="modalEntradaObs"
+                  placeholder="Escribe aquí las observaciones..."
+                  rows="2"
+                  class="form-control"
+                ></textarea>
+              </div>
             </div>
-          </div>
-          <div class="divider"></div>
-          <div class="attendance-section">
-            <h4><mat-icon>logout</mat-icon> Salida</h4>
-            <div class="section-form-grid">
-              <div><label>Hora de Salida</label><input type="time" [(ngModel)]="modalSalidaHora" [disabled]="!isAdmin" /></div>
-              <div><label>Estado</label><select [(ngModel)]="modalSalidaEstado" [disabled]="!isAdmin"><option value="VALIDADO">VALIDADO</option><option value="OBSERVADO">OBSERVADO</option><option value="RECHAZADO">RECHAZADO</option></select></div>
-              <div class="full-width"><label>Observaciones</label><input type="text" [(ngModel)]="modalSalidaObs" [disabled]="!isAdmin" /></div>
+
+            <!-- Bloque Salida -->
+            <div class="modal-card-section">
+              <h4>↗ Registro de Salida</h4>
+              <div class="form-group">
+                <label>Hora de Salida (HH:mm)</label>
+                <input type="time" [(ngModel)]="modalSalidaHora" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Estado Salida</label>
+                <select [(ngModel)]="modalSalidaEstado" class="form-control">
+                  <option value="VALIDADO">VALIDADO</option>
+                  <option value="OBSERVADO">OBSERVADO</option>
+                  <option value="RECHAZADO">RECHAZADO</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Observaciones Salida</label>
+                <textarea
+                  [(ngModel)]="modalSalidaObs"
+                  placeholder="Escribe aquí las observaciones..."
+                  rows="2"
+                  class="form-control"
+                ></textarea>
+              </div>
             </div>
           </div>
 
-          <!-- RESUMEN DEL DÍA -->
-          <div class="resumen-dia" [class.error]="hasErrorEstados()">
-            <span class="resumen-label">Resumen del día:</span>
-            <span class="resumen-valor">
-              {{ getResumenDia(modalEntradaEstado, modalSalidaEstado) }}
-            </span>
-            @if (hasErrorEstados()) {
-              <span class="resumen-error"><mat-icon>warning</mat-icon> Revisa las validaciones</span>
-            }
-          </div>
+          @if (hasErrorEstados()) {
+            <div class="modal-alert-warning">
+              <mat-icon>warning</mat-icon>
+              <span
+                >Atención: Has marcado uno de los registros como <strong>OBSERVADO</strong> o
+                <strong>RECHAZADO</strong>. Asegúrate de justificarlo en las observaciones.</span
+              >
+            </div>
+          }
         </div>
         <div class="modal-footer">
-          @if (isAdmin) {
-            <button class="btn ghost" (click)="showDetailModal.set(false)">Cancelar</button>
-            <button class="btn primary" (click)="saveModalAsistencia()" style="display: inline-flex; align-items: center; gap: 4px; justify-content: center;"><mat-icon>save</mat-icon> Guardar Cambios</button>
-          } @else {
-            <button class="btn primary" (click)="showDetailModal.set(false)">Cerrar</button>
-          }
+          <button class="btn btn-secondary" (click)="showDetailModal.set(false)">Cancelar</button>
+          <button class="btn btn-primary" (click)="saveModalAsistencia()">
+            <mat-icon>save</mat-icon> Guardar Cambios
+          </button>
         </div>
       </div>
     </div>
