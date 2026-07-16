@@ -9,6 +9,13 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { EmpleadoService } from '../../../../core/services/empleado.service';
 import { MatIconModule } from '@angular/material/icon';
 
+function getLocalDateString(d: Date = new Date()): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 @Component({
   selector: 'app-asistencia-dashboard',
   standalone: true,
@@ -37,7 +44,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   searchTerm = signal('');
   asistenciasHoyList = signal<RegistroAsistencia[]>([]);
   loadingHoy = signal(false);
-  fechaConsultaHoy = new Date().toISOString().split('T')[0];
+  fechaConsultaHoy = getLocalDateString();
   yaMarcoEntrada = signal(false);
   yaMarcoSalida = signal(false);
   loadingMarcado = signal(false);
@@ -59,7 +66,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   selectedEmpleadoId?: number;
   selectedMonth = new Date().getMonth() + 1;
   selectedYear = new Date().getFullYear();
-  editFecha = new Date().toISOString().split('T')[0];
+  editFecha = getLocalDateString();
   editEstado = 'VALIDADO';
   editObservaciones = '';
   private qrTimer?: number;
@@ -84,7 +91,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     this.stopScanner();
   }
 
-  get fechaMaxima(): string { return new Date().toISOString().split('T')[0]; }
+  get fechaMaxima(): string { return getLocalDateString(); }
   esFechaHoy(): boolean { return this.selectedDateForModal === this.fechaMaxima; }
 
   setView(mode: 'mensual' | 'anual'): void { this.viewMode.set(mode); this.loadCalendar(); }
@@ -124,7 +131,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   checkMarcadoHoy(): void {
     this.asistencia.miHistorial().subscribe({
       next: (registros) => {
-        const hoy = new Date().toISOString().split('T')[0];
+        const hoy = getLocalDateString();
         const hoyRegistros = registros.filter((r) => r.fechaHora?.startsWith(hoy));
         this.yaMarcoEntrada.set(hoyRegistros.some((r) => r.tipoMarcacion === 'ENTRADA'));
         this.yaMarcoSalida.set(hoyRegistros.some((r) => r.tipoMarcacion === 'SALIDA'));
@@ -177,6 +184,9 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
         this.message.set(`${r.tipoMarcacion || 'asistencia'} registrada`);
         this.error.set('');
         this.manualPayload = '';
+        if (!this.isEmployee && r.empleadoId) {
+          this.selectedEmpleadoId = r.empleadoId;
+        }
         this.loadCalendar();
         this.checkMarcadoHoy();
         if (!this.isEmployee) { this.loadAsistenciasHoy(); }
@@ -212,7 +222,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     const term = this.searchTerm().toLowerCase().trim();
     const allRegistered = this.asistenciasHoyList();
     const emps = this.empleados();
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalDateString();
     const isPastDay = this.fechaConsultaHoy < todayStr;
     const resultList: any[] = [];
     for (const emp of emps) {
