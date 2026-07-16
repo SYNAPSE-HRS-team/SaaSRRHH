@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseService } from './base.service';
 import { AreaTrabajo } from '../models/area-trabajo.model';
+import { BaseService } from './base.service';
 
 @Injectable({ providedIn: 'root' })
 export class AreaTrabajoService extends BaseService<AreaTrabajo, AreaTrabajo> {
-
   constructor(http: HttpClient) {
     super(http, 'areas-trabajo');
   }
@@ -17,7 +16,7 @@ export class AreaTrabajoService extends BaseService<AreaTrabajo, AreaTrabajo> {
 
   buscarPorNombre(nombre: string): Observable<AreaTrabajo> {
     return this.http.get<AreaTrabajo>(`${this.baseUrl}/buscar`, {
-      params: { nombre }
+      params: { nombre },
     });
   }
 }
