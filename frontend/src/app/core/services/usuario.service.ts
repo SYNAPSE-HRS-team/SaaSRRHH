@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { UsuarioRequest, UsuarioResponse } from '../models/usuario.model';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { UsuarioRequest, UsuarioResponse } from '../models/usuario.model';
 })
 export class UsuarioService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/usuarios';
+  private apiUrl = `${environment.apiUrl}/api/usuarios`;
 
   listar(): Observable<UsuarioResponse[]> {
     console.log('🔍 Frontend: Llamando a listar()');
@@ -48,7 +49,7 @@ export class UsuarioService {
   getProfile(): Observable<UsuarioResponse> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
     return this.http.get<UsuarioResponse>(`${this.apiUrl}/profile`, { headers });
   }

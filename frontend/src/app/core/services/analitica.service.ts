@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface EmpleadoAlertaDTO {
   empleadoId: number;
@@ -33,7 +34,7 @@ export interface DashboardDTO {
 
 @Injectable({ providedIn: 'root' })
 export class AnaliticaService {
-  private baseUrl = '/api/analitica';
+  private baseUrl = `${environment.apiUrl}/api/analitica`;
 
   constructor(private http: HttpClient) {}
 

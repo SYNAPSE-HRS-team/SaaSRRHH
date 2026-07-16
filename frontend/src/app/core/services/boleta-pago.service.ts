@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { BoletaPago } from '../models/boleta-pago.model';
 
 @Injectable({ providedIn: 'root' })
 export class BoletaPagoService {
-  private readonly baseUrl = '/api/boletas_pago';
-  private readonly nominaUrl = '/api/nomina';
+  private readonly baseUrl = `${environment.apiUrl}/api/boletas_pago`;
+  private readonly nominaUrl = `${environment.apiUrl}/api/nomina`;
 
   constructor(private http: HttpClient) {}
 

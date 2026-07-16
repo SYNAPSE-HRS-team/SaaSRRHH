@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface LoginRequest {
   email: string;
@@ -21,7 +22,7 @@ export interface AuthResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private authUrl = '/api/auth';
+  private authUrl = `${environment.apiUrl}/api/auth`;
   private tokenKey = 'auth_token';
   private userKey = 'auth_user';
   private jwtHelper = new JwtHelperService();
@@ -29,9 +30,9 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.authUrl}/login`, credentials).pipe(
-      tap(response => this.setSession(response))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.authUrl}/login`, credentials)
+      .pipe(tap((response) => this.setSession(response)));
   }
 
   register(data: { email: string; password: string; rolId: number }): Observable<any> {

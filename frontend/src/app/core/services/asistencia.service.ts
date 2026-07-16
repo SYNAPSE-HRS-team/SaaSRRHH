@@ -1,11 +1,17 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AsistenciaQr, CalendarioAnual, CalendarioMes, RegistroAsistencia } from '../models/registro-asistencia.model';
+import { environment } from '../../../environments/environment';
+import {
+  AsistenciaQr,
+  CalendarioAnual,
+  CalendarioMes,
+  RegistroAsistencia,
+} from '../models/registro-asistencia.model';
 
 @Injectable({ providedIn: 'root' })
 export class AsistenciaService {
-  private baseUrl = '/api/asistencias';
+  private baseUrl = `${environment.apiUrl}/api/asistencias`;
 
   constructor(private http: HttpClient) {}
 
@@ -22,15 +28,21 @@ export class AsistenciaService {
   }
 
   miCalendarioAnual(anio: number): Observable<CalendarioAnual> {
-    return this.http.get<CalendarioAnual>(`${this.baseUrl}/mi-calendario/anual`, { params: { anio } });
+    return this.http.get<CalendarioAnual>(`${this.baseUrl}/mi-calendario/anual`, {
+      params: { anio },
+    });
   }
 
   calendarioEmpleado(empleadoId: number, anio: number, mes: number): Observable<CalendarioMes> {
-    return this.http.get<CalendarioMes>(`${this.baseUrl}/calendario/${empleadoId}`, { params: { anio, mes } });
+    return this.http.get<CalendarioMes>(`${this.baseUrl}/calendario/${empleadoId}`, {
+      params: { anio, mes },
+    });
   }
 
   calendarioAnualEmpleado(empleadoId: number, anio: number): Observable<CalendarioAnual> {
-    return this.http.get<CalendarioAnual>(`${this.baseUrl}/calendario/${empleadoId}/anual`, { params: { anio } });
+    return this.http.get<CalendarioAnual>(`${this.baseUrl}/calendario/${empleadoId}/anual`, {
+      params: { anio },
+    });
   }
 
   asistenciasHoy(fecha?: string): Observable<RegistroAsistencia[]> {
@@ -50,13 +62,17 @@ export class AsistenciaService {
   registrarEntrada(empleadoId: number, metodo?: string): Observable<RegistroAsistencia> {
     const params: any = {};
     if (metodo) params.metodo = metodo;
-    return this.http.post<RegistroAsistencia>(`${this.baseUrl}/entrada/${empleadoId}`, null, { params });
+    return this.http.post<RegistroAsistencia>(`${this.baseUrl}/entrada/${empleadoId}`, null, {
+      params,
+    });
   }
 
   registrarSalida(empleadoId: number, metodo?: string): Observable<RegistroAsistencia> {
     const params: any = {};
     if (metodo) params.metodo = metodo;
-    return this.http.post<RegistroAsistencia>(`${this.baseUrl}/salida/${empleadoId}`, null, { params });
+    return this.http.post<RegistroAsistencia>(`${this.baseUrl}/salida/${empleadoId}`, null, {
+      params,
+    });
   }
 
   crear(data: RegistroAsistencia): Observable<RegistroAsistencia> {
@@ -73,12 +89,18 @@ export class AsistenciaService {
   }
 
   // ✅ NUEVO: Detectar patrón de tardanza de un empleado
-  detectarPatronTardanza(empleadoId: number): Observable<{ empleadoId: string; patronDetectado: string }> {
-    return this.http.get<{ empleadoId: string; patronDetectado: string }>(`${this.baseUrl}/empleado/${empleadoId}/patron-tardanza`);
+  detectarPatronTardanza(
+    empleadoId: number,
+  ): Observable<{ empleadoId: string; patronDetectado: string }> {
+    return this.http.get<{ empleadoId: string; patronDetectado: string }>(
+      `${this.baseUrl}/empleado/${empleadoId}/patron-tardanza`,
+    );
   }
 
   // ✅ NUEVO: Obtener estadísticas de asistencia
   obtenerEstadisticas(empleadoId: number, inicio: string, fin: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/empleado/${empleadoId}/estadisticas`, { params: { inicio, fin } });
+    return this.http.get(`${this.baseUrl}/empleado/${empleadoId}/estadisticas`, {
+      params: { inicio, fin },
+    });
   }
 }

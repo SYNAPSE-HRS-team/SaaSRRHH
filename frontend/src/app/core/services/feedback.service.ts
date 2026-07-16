@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface FeedbackRequest {
   mensaje: string;
@@ -24,7 +25,7 @@ export interface FeedbackResponse {
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackService {
-  private apiUrl = '/api/feedback-anonimo';
+  private apiUrl = `${environment.apiUrl}/api/feedback-anonimo`;
 
   constructor(private http: HttpClient) {}
 
@@ -37,10 +38,15 @@ export class FeedbackService {
   }
 
   listarMisFeedbacks(empleadoId: number): Observable<FeedbackResponse[]> {
-    return this.http.get<FeedbackResponse[]>(`${this.apiUrl}/mis-feedbacks`, { params: { empleadoId } });
+    return this.http.get<FeedbackResponse[]>(`${this.apiUrl}/mis-feedbacks`, {
+      params: { empleadoId },
+    });
   }
 
   responderFeedback(id: number, respuesta: string, estado: string): Observable<FeedbackResponse> {
-    return this.http.post<FeedbackResponse>(`${this.apiUrl}/${id}/responder`, { respuesta, estado });
+    return this.http.post<FeedbackResponse>(`${this.apiUrl}/${id}/responder`, {
+      respuesta,
+      estado,
+    });
   }
 }

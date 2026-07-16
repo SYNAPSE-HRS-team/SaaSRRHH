@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Planilla, PlanillaRequest } from '../models/planilla.model';
 
 @Injectable({ providedIn: 'root' })
 export class PlanillaService {
-  private readonly baseUrl = '/api/planillas';
+  private readonly baseUrl = `${environment.apiUrl}/api/planillas`;
 
   constructor(private http: HttpClient) {}
 

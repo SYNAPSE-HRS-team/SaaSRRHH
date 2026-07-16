@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Planilla } from '../models/planilla.model';
+import { environment } from '../../../environments/environment';
 import { BonoDescuento } from '../models/boleta-pago.model';
+import { Planilla } from '../models/planilla.model';
 
 @Injectable({ providedIn: 'root' })
 export class NominaService {
-  private readonly baseUrl = '/api/nomina';
+  private readonly baseUrl = `${environment.apiUrl}/api/nomina`;
 
   constructor(private http: HttpClient) {}
 
@@ -15,9 +16,7 @@ export class NominaService {
    * Genera una planilla completa para el período indicado.
    */
   generarPlanilla(mes: number, anio: number): Observable<Planilla> {
-    const params = new HttpParams()
-      .set('mes', mes.toString())
-      .set('anio', anio.toString());
+    const params = new HttpParams().set('mes', mes.toString()).set('anio', anio.toString());
     return this.http.post<Planilla>(`${this.baseUrl}/generar`, null, { params });
   }
 
