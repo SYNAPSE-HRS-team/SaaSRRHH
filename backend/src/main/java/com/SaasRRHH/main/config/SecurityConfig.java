@@ -89,6 +89,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/tareas-asignadas/**").authenticated()
                         .requestMatchers("/api/asistencias/**").authenticated()
                         .requestMatchers("/api/feedback-anonimo/**").authenticated()
+                        .requestMatchers("/api/feedback/**").authenticated()
                         .requestMatchers("/api/reportes-diarios/**").authenticated()
                         .requestMatchers("/api/boletas_pago/mis-boletas").authenticated()
                         .requestMatchers("/api/analitica/dashboard").authenticated()
