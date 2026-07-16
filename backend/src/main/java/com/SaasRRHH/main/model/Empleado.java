@@ -126,13 +126,26 @@ public class Empleado {
     // ✅ NUEVOS MÉTODOS DE UTILIDAD
     // ============================================
     
-    // Verifica si un día específico es laborable para este empleado
     public boolean esDiaLaborable(java.time.DayOfWeek dia) {
         if (diasLaborables == null || diasLaborables.isBlank()) return true;
+        String diaStrEs;
+        switch (dia) {
+            case MONDAY: diaStrEs = "LUN"; break;
+            case TUESDAY: diaStrEs = "MAR"; break;
+            case WEDNESDAY: diaStrEs = "MIE"; break;
+            case THURSDAY: diaStrEs = "JUE"; break;
+            case FRIDAY: diaStrEs = "VIE"; break;
+            case SATURDAY: diaStrEs = "SAB"; break;
+            case SUNDAY: diaStrEs = "DOM"; break;
+            default: diaStrEs = "";
+        }
+        String diaStrEn = dia.name().substring(0, 3).toUpperCase(); // MON, TUE, WED...
         String[] dias = diasLaborables.split(",");
-        String diaStr = dia.name().substring(0, 3).toUpperCase(); // MON, TUE, WED...
         for (String d : dias) {
-            if (d.trim().equalsIgnoreCase(diaStr)) return true;
+            String cleanD = d.trim().toUpperCase();
+            if (cleanD.equals(diaStrEs) || cleanD.equals(diaStrEn)) {
+                return true;
+            }
         }
         return false;
     }

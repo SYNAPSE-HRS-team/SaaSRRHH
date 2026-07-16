@@ -235,6 +235,10 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
         LocalDate fecha = inicio;
         
         while (!fecha.isAfter(fin)) {
+            if (empleado.getFechaInicioContrato() != null && fecha.isBefore(empleado.getFechaInicioContrato())) {
+                fecha = fecha.plusDays(1);
+                continue;
+            }
             if (empleado.esDiaLaborable(fecha.getDayOfWeek())) {
                 LocalDate fechaFinal = fecha;
                 boolean marcoEntrada = asistencias.stream()
@@ -251,6 +255,7 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
         // También contar faltas registradas por el sistema
         long faltasSistema = asistencias.stream()
                 .filter(a -> a.getEsFalta() != null && a.getEsFalta())
+                .filter(a -> empleado.getFechaInicioContrato() == null || !a.getFechaHora().toLocalDate().isBefore(empleado.getFechaInicioContrato()))
                 .count();
         
         return Math.max(faltas, (int) faltasSistema);
@@ -275,7 +280,7 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
                 .filter(a -> !"RECHAZADO".equals(a.getEstado()))
                 .collect(Collectors.toList());
         
-        if (entradas.isEmpty()) return 100.0;
+        if (entradas.isEmpty()) return 0.0;
         
         long puntuales = entradas.stream()
                 .filter(a -> a.getMinutosTardanza() == null || a.getMinutosTardanza() == 0)
@@ -295,6 +300,10 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
         
         LocalDate fecha = inicio;
         while (!fecha.isAfter(fin)) {
+            if (empleado.getFechaInicioContrato() != null && fecha.isBefore(empleado.getFechaInicioContrato())) {
+                fecha = fecha.plusDays(1);
+                continue;
+            }
             if (empleado.esDiaLaborable(fecha.getDayOfWeek())) {
                 horasContrato += horasPorDia;
                 
