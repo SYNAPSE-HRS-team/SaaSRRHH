@@ -144,4 +144,6 @@ public interface MetricaBurnoutRepository
        ORDER BY m.fechaEvaluacion DESC
        """)
     List<MetricaBurnout> findEmpleadosConPatronDetectado();
+
+    Optional<MetricaBurnout> findFirstByEmpleadoIdAndFechaEvaluacionBetween(Long empleadoId, LocalDateTime inicio, LocalDateTime fin);
 }

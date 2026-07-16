@@ -50,4 +50,8 @@ export class MetricaBurnoutService {
     recalcularParaEmpleado(empleadoId: number): Observable<any> {
         return this.http.post(`${this.apiUrl}/recalcular/${empleadoId}`, {});
     }
+
+    recalcularTodas(): Observable<MetricaBurnoutResponse[]> {
+        return this.http.post<MetricaBurnoutResponse[]>(`${this.apiUrl}/recalcular-todas`, {});
+    }
 }

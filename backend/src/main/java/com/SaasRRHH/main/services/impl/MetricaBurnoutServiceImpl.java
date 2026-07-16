@@ -145,9 +145,18 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
         );
         log.info("   Nivel de riesgo: {}", nivel);
 
-        // 13. Crear y guardar la métrica
-        MetricaBurnout metrica = new MetricaBurnout();
-        metrica.setEmpleado(empleado);
+        // 13. Buscar si ya existe una métrica del empleado en el mes actual, o crear una nueva
+        LocalDateTime inicioMes = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime finMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(LocalTime.MAX);
+        
+        Optional<MetricaBurnout> metricaExistente = repository.findFirstByEmpleadoIdAndFechaEvaluacionBetween(empleadoId, inicioMes, finMes);
+        
+        MetricaBurnout metrica = metricaExistente.orElseGet(() -> {
+            MetricaBurnout newMetrica = new MetricaBurnout();
+            newMetrica.setEmpleado(empleado);
+            return newMetrica;
+        });
+
         metrica.setNivelRiesgo(nivel);
         metrica.setHorasExtraAcumuladas(horasExtra + horasExtraTareas);
         metrica.setTendenciaTardanza(tendenciaTardanza);

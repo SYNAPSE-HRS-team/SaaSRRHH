@@ -44,7 +44,7 @@ export class MetricasBurnoutListComponent implements OnInit {
 
     recalcularTodas(): void {
         this.loading = true; this.error = '';
-        this.metricaService.listar().subscribe({ next: (data) => { this.metricas = data; this.aplicarFiltros(); this.loading = false; }, error: (err) => { this.error = 'Error al recalcular'; this.loading = false; } });
+        this.metricaService.recalcularTodas().subscribe({ next: (data) => { this.metricas = data; this.aplicarFiltros(); this.loading = false; }, error: (err) => { this.error = 'Error al recalcular'; this.loading = false; } });
     }
 
     aplicarFiltros(): void {
