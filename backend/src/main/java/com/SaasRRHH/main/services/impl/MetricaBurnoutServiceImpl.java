@@ -280,13 +280,27 @@ public class MetricaBurnoutServiceImpl implements MetricaBurnoutService {
                 .filter(a -> !"RECHAZADO".equals(a.getEstado()))
                 .collect(Collectors.toList());
         
-        if (entradas.isEmpty()) return 0.0;
-        
         long puntuales = entradas.stream()
                 .filter(a -> a.getMinutosTardanza() == null || a.getMinutosTardanza() == 0)
                 .count();
         
-        return (double) puntuales / entradas.size() * 100.0;
+        long diasEsperados = 0;
+        LocalDate fecha = inicio;
+        while (!fecha.isAfter(fin)) {
+            if (empleado.getFechaInicioContrato() != null && fecha.isBefore(empleado.getFechaInicioContrato())) {
+                fecha = fecha.plusDays(1);
+                continue;
+            }
+            if (empleado.esDiaLaborable(fecha.getDayOfWeek())) {
+                diasEsperados++;
+            }
+            fecha = fecha.plusDays(1);
+        }
+        
+        long divisor = Math.max(entradas.size(), diasEsperados);
+        if (divisor == 0) return 100.0;
+        
+        return (double) puntuales / divisor * 100.0;
     }
 
     /**
