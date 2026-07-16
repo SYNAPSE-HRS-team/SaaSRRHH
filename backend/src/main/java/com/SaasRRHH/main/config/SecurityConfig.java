@@ -52,8 +52,9 @@ public class SecurityConfig {
                 "http://192.168.*:*",
                 "http://10.*:*",
                 "http://172.*:*",
-                "https://saa-srrhh-*.vercel.app", // <-- Acepta cualquier subdominio tuyo de Vercel
-                "https://saa-srrhh-iusoacbuo-saasrrhh.vercel.app" // <-- Tu url exacta actual
+                 "https://saa-srrhh.vercel.app",
+                "https://saa-srrhh-*.vercel.app", 
+                "https://saa-srrhh-iusoacbuo-saasrrhh.vercel.app" 
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
