@@ -81,7 +81,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   editObservaciones = '';
   private qrTimer?: number;
   private countdownInterval?: any;
-  private scanner: Html5Qrcode | null = null; // Tipado correcto
+  private scanner: any = null;
   weekDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
   months = [
     'Enero',
