@@ -34,23 +34,34 @@ class RegistroAsistenciaServiceImplTest {
         @Mock
         EmpleadoService empleadoService;
 
+        @Mock
+        com.SaasRRHH.main.repository.EmpleadoRepository empleadoRepository;
+
+        @Mock
+        com.SaasRRHH.main.services.TotpService totpService;
+
         @InjectMocks
         RegistroAsistenciaServiceImpl service;
 
         @Test
         void registrarEntrada_guardaAsistenciaCuandoNoExisteRegistroPrevio() {
                 Long empleadoId = 10L;
+                com.SaasRRHH.main.model.Empleado empleado = new com.SaasRRHH.main.model.Empleado();
+                empleado.setId(empleadoId);
+                empleado.setHoraEntrada(java.time.LocalTime.now().plusHours(2));
 
                 when(empleadoService.buscarPorId(empleadoId))
                                 .thenReturn(new EmpleadoResponseDTO());
+                when(empleadoRepository.findById(empleadoId))
+                                .thenReturn(java.util.Optional.of(empleado));
                 when(repository.yaMarcoHoy(eq(empleadoId), any(), any(), eq("ENTRADA")))
                                 .thenReturn(false);
                 when(repository.save(any(RegistroAsistencia.class)))
                                 .thenAnswer(invocation -> {
-                                        RegistroAsistencia registro = invocation.getArgument(0);
-                                        registro.setId(99L);
-                                        return registro;
-                                });
+                                         RegistroAsistencia registro = invocation.getArgument(0);
+                                         registro.setId(99L);
+                                         return registro;
+                                 });
 
                 RegistroAsistenciaResponseDTO response = service.registrarEntrada(empleadoId, null);
 
@@ -76,7 +87,34 @@ class RegistroAsistenciaServiceImplTest {
                                 RuntimeException.class,
                                 () -> service.registrarEntrada(empleadoId, "QR"));
 
-                assertEquals("El empleado ya registró entrada hoy", exception.getMessage());
+                assertEquals("El empleado ya registro entrada hoy", exception.getMessage());
+                verify(repository, never()).save(any(RegistroAsistencia.class));
+        }
+
+        @Test
+        void registrarPorQr_lanzaErrorCuandoMarcacionEsMuyRapida() {
+                Long empleadoId = 10L;
+                String payload = "SAASRRHH_ATT|10|123456|abcd";
+                com.SaasRRHH.main.model.Empleado empleado = new com.SaasRRHH.main.model.Empleado();
+                empleado.setId(empleadoId);
+                empleado.setTotpSecret("secret");
+
+                when(empleadoRepository.findById(empleadoId))
+                                .thenReturn(java.util.Optional.of(empleado));
+                when(totpService.verify(eq("secret"), eq(123456L), eq("abcd")))
+                                .thenReturn(true);
+
+                RegistroAsistencia ultimoRegistro = new RegistroAsistencia();
+                ultimoRegistro.setFechaHora(LocalDateTime.now().minusSeconds(5)); // Hace 5 segundos
+
+                when(repository.findTopByEmpleadoIdOrderByFechaHoraDesc(empleadoId))
+                                .thenReturn(java.util.Optional.of(ultimoRegistro));
+
+                RuntimeException exception = assertThrows(
+                                RuntimeException.class,
+                                () -> service.registrarPorQr(payload));
+
+                assertEquals("Marcación muy rápida. Por favor, espere al menos 10 segundos entre marcaciones.", exception.getMessage());
                 verify(repository, never()).save(any(RegistroAsistencia.class));
         }
 

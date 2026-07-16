@@ -170,6 +170,15 @@ public class RegistroAsistenciaServiceImpl implements RegistroAsistenciaService 
         if (empleado.getTotpSecret() == null || !totpService.verify(empleado.getTotpSecret(), window, parts[3])) {
             throw new RuntimeException("QR vencido o invalido");
         }
+        
+        // Evitar marcaciones consecutivas muy rápidas (menos de 10 segundos)
+        repository.findTopByEmpleadoIdOrderByFechaHoraDesc(empleadoId).ifPresent(ultimoRegistro -> {
+            long segundosTranscurridos = ChronoUnit.SECONDS.between(ultimoRegistro.getFechaHora(), LocalDateTime.now());
+            if (segundosTranscurridos < 10) {
+                throw new RuntimeException("Marcación muy rápida. Por favor, espere al menos 10 segundos entre marcaciones.");
+            }
+        });
+
         boolean yaEntrada = repository.yaMarcoHoy(empleadoId, inicioDelDia(LocalDate.now()), finDelDia(LocalDate.now()), "ENTRADA");
         boolean yaSalida = repository.yaMarcoHoy(empleadoId, inicioDelDia(LocalDate.now()), finDelDia(LocalDate.now()), "SALIDA");
         if (yaEntrada && yaSalida) {

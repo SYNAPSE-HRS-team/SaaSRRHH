@@ -53,14 +53,14 @@
             <span class="status-icon"><mat-icon>{{ yaMarcoEntrada() ? 'check_circle' : 'hourglass_empty' }}</mat-icon></span>
             <div class="status-info">
               <strong>Entrada</strong>
-              <span>{{ yaMarcoEntrada() ? 'Registrada' : 'Pendiente' }}</span>
+              <span>{{ yaMarcoEntrada() ? 'Marcado' : 'Pendiente' }}</span>
             </div>
           </div>
           <div class="status-card" [class.done]="yaMarcoSalida()">
             <span class="status-icon"><mat-icon>{{ yaMarcoSalida() ? 'check_circle' : 'hourglass_empty' }}</mat-icon></span>
             <div class="status-info">
               <strong>Salida</strong>
-              <span>{{ yaMarcoSalida() ? 'Registrada' : 'Pendiente' }}</span>
+              <span>{{ yaMarcoSalida() ? 'Marcado' : 'Pendiente' }}</span>
             </div>
           </div>
         </div>

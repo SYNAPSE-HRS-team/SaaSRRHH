@@ -25,6 +25,7 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   scannerOn = signal(false);
   message = signal('');
   error = signal('');
+  isProcessingScan = signal(false);
   viewMode = signal<'mensual' | 'anual'>('mensual');
   activeTab = signal<'calendario' | 'historial'>('calendario');
   month = signal<CalendarioMes | null>(null);
@@ -169,10 +170,23 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
   scanManual(): void { this.handleScan(this.manualPayload); }
 
   handleScan(payload: string): void {
-    if (!payload) return;
+    if (!payload || this.isProcessingScan()) return;
+    this.isProcessingScan.set(true);
     this.asistencia.scanQr(payload).subscribe({
-      next: (r) => { this.message.set(`${r.tipoMarcacion || 'asistencia'} registrada`); this.error.set(''); this.manualPayload = ''; this.loadCalendar(); this.checkMarcadoHoy(); if (!this.isEmployee) { this.loadAsistenciasHoy(); } this.stopScanner(); },
-      error: (err) => this.error.set(err.error?.message || 'No se pudo registrar'),
+      next: (r) => {
+        this.message.set(`${r.tipoMarcacion || 'asistencia'} registrada`);
+        this.error.set('');
+        this.manualPayload = '';
+        this.loadCalendar();
+        this.checkMarcadoHoy();
+        if (!this.isEmployee) { this.loadAsistenciasHoy(); }
+        this.stopScanner();
+        this.isProcessingScan.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.error?.message || 'No se pudo registrar');
+        this.isProcessingScan.set(false);
+      },
     });
   }
 
