@@ -90,16 +90,24 @@ export class FeedbackListComponent implements OnInit {
 
   crearFeedback(): void {
     if (!this.nuevoMensaje.trim()) return;
+    const user = this.authService.getCurrentUser();
 
-    // 1. Limpiamos el payload para enviar solo lo que un feedback anónimo suele requerir
-    const payloadPrueba = {
+    // Armamos el objeto dinámicamente según si es anónimo o no
+    const feedbackPayload: any = {
       mensaje: this.nuevoMensaje,
-      categoria: this.nuevaCategoria, // Asegúrate de que esto sea lo que el backend espera (¿un string o un ID?)
+      categoria: this.nuevaCategoria,
+      esAnonimo: this.esAnonimo,
     };
 
-    console.log('Enviando esta prueba al backend:', payloadPrueba);
+    // Si NO es anónimo, le adjuntamos el ID del empleado.
+    // Si SÍ es anónimo, no le enviamos NADA en el ID del empleado para que el backend lo acepte.
+    if (!this.esAnonimo) {
+      feedbackPayload.empleadoId = user?.idUsuario || undefined;
+    } else {
+      feedbackPayload.empleadoId = null; // O simplemente omitido
+    }
 
-    this.feedbackService.enviarFeedback(payloadPrueba).subscribe({
+    this.feedbackService.enviarFeedback(feedbackPayload).subscribe({
       next: () => {
         this.showCreateModal = false;
         this.cargarFeedbacks();
