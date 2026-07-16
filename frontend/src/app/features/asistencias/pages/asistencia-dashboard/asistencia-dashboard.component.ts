@@ -283,21 +283,52 @@ export class AsistenciaDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  // 🔥 Método optimizado utilizando la librería instanciada estáticamente
   async startScanner(): Promise<void> {
     this.error.set('');
+    console.log('Iniciando proceso del escáner...');
+
+    // 1. Validar que el elemento físico exista en el DOM antes de instanciar la librería
+    const qrReaderElement = document.getElementById('qr-reader');
+    if (!qrReaderElement) {
+      console.error('Error: El contenedor #qr-reader no se encuentra en el DOM.');
+      this.error.set('El lector de QR no está listo. Intenta recargar la página.');
+      return;
+    }
+
     try {
-      this.scanner = new Html5Qrcode('qr-reader');
-      await this.scanner.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: 220 },
-        (text: string) => this.handleScan(text),
-      );
+      // 2. Si ya hay una instancia previa activa, limpiarla por completo
+      if (this.scanner) {
+        await this.stopScanner();
+      }
+
+      // 3. Cambiar el estado visual
       this.scannerOn.set(true);
+
+      // 4. Esperar un instante para que Angular procese cualquier cambio de estilos
+      setTimeout(async () => {
+        try {
+          this.scanner = new Html5Qrcode('qr-reader');
+          await this.scanner.start(
+            { facingMode: 'environment' },
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 }, // Un tamaño de caja definido ayuda a la renderización
+            },
+            (text: string) => this.handleScan(text),
+            (errorMessage: string) => {
+              // Callback opcional de escaneo fallido (puedes dejarlo vacío para evitar spam de logs)
+            },
+          );
+        } catch (err) {
+          console.error('Error al iniciar la cámara:', err);
+          this.error.set('No se pudo acceder a la cámara. Verifica los permisos.');
+          this.scannerOn.set(false);
+        }
+      }, 100);
     } catch (err) {
-      this.error.set(
-        'No se pudo iniciar la cámara. Asegúrate de otorgar permisos y de usar un entorno seguro (HTTPS/localhost).',
-      );
+      console.error('Error general de inicialización:', err);
+      this.error.set('Ocurrió un inconveniente al preparar el lector.');
+      this.scannerOn.set(false);
     }
   }
 
